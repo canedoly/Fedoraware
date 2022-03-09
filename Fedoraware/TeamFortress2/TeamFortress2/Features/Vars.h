@@ -311,6 +311,36 @@ namespace Vars
 			inline CVar<bool> WeaponsProxyWF{ false, L"Proxy wireframe on weapons" };
 			inline CVar<bool> WeaponRainbow { false, L"Rainbow weapons" };
 			inline CVar<bool> WeaponOverlayRainbow { false, L"Rainbow weapons" };
+
+			
+
+			namespace Players
+			{
+				inline CVar<int> Team{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Enemy{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Friends{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Ignored{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Invul{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Cloaked{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Local{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+				inline CVar<int> Target{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
+
+				inline CVar<bool> PWearables{ true, L"Render Wearables" };
+				inline CVar<bool> PWeapons{ true, L"Render Weapons" };
+				inline CVar<bool> IgnoreZ{ false , L"IgnoreZ" };
+
+				namespace Overlays
+				{
+					inline CVar<int> Team{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Enemies{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Invul{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Ignored{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Cloaked{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Friends{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Local{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+					inline CVar<int> Target{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
+				}
+			}
 		}
 	}
 

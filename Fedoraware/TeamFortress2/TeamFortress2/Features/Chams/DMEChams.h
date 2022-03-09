@@ -7,8 +7,9 @@ public:
 	IMaterial* m_pMatShaded;
 	IMaterial* m_pMatShiny;
 	IMaterial* m_pMatFlat;
-	IMaterial* m_pMatFresnel;
-	IMaterial* m_pMatFresnel2;
+	IMaterial* m_pMatFresnelHands;
+	IMaterial* m_pMatFresnelPlayers;
+	IMaterial* m_pMatFresnelWeap;
 	IMaterial* m_pMatBrick;
 	IMaterial* m_pMatScuffed;
 	IMaterial* m_pMatWFShaded;

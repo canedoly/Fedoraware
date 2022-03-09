@@ -1491,7 +1491,7 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::Checkbox("Building chams###BuildingChamsBox", &Vars::Chams::Buildings::Active.m_Var); HelpMarker("Building chams master switch");
 						ImGui::Checkbox("Ignore team buildings", &Vars::Chams::Buildings::IgnoreTeammates.m_Var); HelpMarker("Whether or not to draw chams on your teams buildings");
 						//static const char* ignoreTeamArr[]{ "Off", "All", "Only friends" }; ImGui::PushItemWidth(100); ImGui::Combo("Ignore team###IgnoreTeamChamsb", &Vars::Chams::Buildings::IgnoreTeammates.m_Var, ignoreTeamArr, IM_ARRAYSIZE(ignoreTeamArr)); ImGui::PopItemWidth();
-						static const char* pchamsMaterials[]{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic" }; ImGui::PushItemWidth(100); ImGui::Combo("Building material", &Vars::Chams::Buildings::Material.m_Var, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+						static const char* dmeMats[]{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic" }; ImGui::PushItemWidth(100); ImGui::Combo("Building material", &Vars::Chams::Buildings::Material.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
 						HelpMarker("Which material the chams will apply to the player");
 
 						ImGui::Checkbox("Ignore Z###BuildingChamsIgnoreZ", &Vars::Chams::Players::IgnoreZ.m_Var); HelpMarker("Draw building chams through walls");
@@ -1505,26 +1505,145 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1);
 						ImGui::Checkbox("Chams###ChamsMasterSwitch", &Vars::Chams::Main::Active.m_Var);  HelpMarker("Chams master switch");
+
+						MultiCombo({ "Ignore-Z", "Render Wearable", "Render Weapon" }, { &Vars::Chams::Players::IgnoreZ.m_Var, &Vars::Chams::Players::Wearables.m_Var, &Vars::Chams::Players::Weapons.m_Var }, "Customize Chams", "Chams Flags");
+
 						ImGui::Dummy(ImVec2(0, 20));
 
-						SectionTitle("Player Chams");
+						static const char* dmeGlowMaterials[]{
+							"None",
+							"Fresnel Glow",
+							"Wireframe Glow"
+						};
+
+						static const char* proxyMats[]{
+							"None",
+							"Spectrum splattered",
+							"Electro skulls",
+							"Jazzy",
+							"Frozen aurora",
+							"Hana",
+							"IDK",
+							"Ghost thing",
+							"Flames",
+							"Spook wood",
+							"Edgy",
+							"Starlight serenity",
+							"Fade"
+						};
+
+						static const char* dmeMats[]{
+							"Original",
+							"Shaded",
+							"Shiny",
+							"Flat",
+							"Wireframe shaded",
+							"Wireframe shiny",
+							"Wireframe flat",
+							"Fresnel",
+							"Brick"
+						};
+
+
+						SectionTitle("Enemy Chams");
 						widget_pos = ImGui::GetCursorScreenPos();
 						widget_pos.y -= 4;
 						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::Checkbox("Player chams###PlayerChamsBox", &Vars::Chams::Players::Active.m_Var); HelpMarker("Player chams master switch");
-						MultiCombo({ "Ignore-Z", "Render Wearable", "Render Weapon" }, { &Vars::Chams::Players::IgnoreZ.m_Var, &Vars::Chams::Players::Wearables.m_Var, &Vars::Chams::Players::Weapons.m_Var }, "Customize Chams", "Chams Flags");
-						static const char* pchamsMaterials[]{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic" }; ImGui::PushItemWidth(100); ImGui::Combo("Player material", &Vars::Chams::Players::Material.m_Var, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
-						HelpMarker("Which material the chams will apply to the player");
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###EnemyChamsMatSelect", &Vars::Chams::DME::Players::Enemy.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
 						ImGui::SetNextItemWidth(20);
-						ColorPicker("Fresnel base colour", Colors::FresnelBase);
-						ImGui::Checkbox("Self chams###PlayerSelfChamsBox", &Vars::Chams::Players::ShowLocal.m_Var); HelpMarker("Draw chams on the local player");
-						static const char* ignoreTeamArr[]{ "Off", "All", "Only friends" }; ImGui::PushItemWidth(100); ImGui::Combo("Ignore team###IgnoreTeamChamsp", &Vars::Chams::Players::IgnoreTeammates.m_Var, ignoreTeamArr, IM_ARRAYSIZE(ignoreTeamArr)); ImGui::PopItemWidth();
-						//ImGui::Checkbox("Player glow overlay", &Vars::Chams::Players::GlowOverlay.m_Var);
+						ColorPicker("Enemy Fresnel Base", Colors::FresnelBaseEnemy);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###EnemyOverlay", &Vars::Chams::DME::Players::Overlays::Enemies.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Enemy glow colour", Colors::PlayersOverlayEnemy);
 						ImGui::Dummy(ImVec2(0, 20));
 
+						SectionTitle("Team Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###TeamChamsMatSelect", &Vars::Chams::DME::Players::Team.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Team Fresnel Base", Colors::FresnelBaseTeam);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###TeamOverlay", &Vars::Chams::DME::Players::Overlays::Team.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Team glow colour", Colors::PlayersOverlayTeam);
+						ImGui::Dummy(ImVec2(0, 20));
 
-						SectionTitle("DME Chams");
+						SectionTitle("Steam Friend Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###FriendChamsMatSelect", &Vars::Chams::DME::Players::Friends.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Friends Fresnel Base", Colors::FresnelBaseFriends);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###FriendsOverlay", &Vars::Chams::DME::Players::Overlays::Friends.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Friends glow colour", Colors::PlayersOverlayFriends);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Local Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###LocalChamsMatSelect", &Vars::Chams::DME::Players::Local.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Local Fresnel Base", Colors::FresnelBaseLocal);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###LocalOverlay", &Vars::Chams::DME::Players::Overlays::Local.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Local glow colour", Colors::PlayersOverlayLocal);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Cloaked Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###CloakedChamsMatSelect", &Vars::Chams::DME::Players::Cloaked.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Cloaked Fresnel Base", Colors::FresnelBaseCloaked);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###CloakedOverlay", &Vars::Chams::DME::Players::Overlays::Cloaked.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Cloaked glow colour", Colors::PlayersOverlayCloaked);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Invul Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###InvulChamsMatSelect", &Vars::Chams::DME::Players::Invul.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Invul Fresnel Base", Colors::FresnelBaseInvul);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###InvulOverlay", &Vars::Chams::DME::Players::Overlays::Invul.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Invul glow colour", Colors::PlayersOverlayInvul);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Target Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						ImGui::PushItemWidth(100); ImGui::Combo("Material###TargetChamsMatSelect", &Vars::Chams::DME::Players::Target.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Target Fresnel Base", Colors::FresnelBaseTarget);
+						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###TargetOverlay", &Vars::Chams::DME::Players::Overlays::Target.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+						ImGui::SetNextItemWidth(20);
+						ColorPicker("Target glow colour", Colors::PlayersOverlayTarget);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Arm Chams");
 						widget_pos = ImGui::GetCursorScreenPos();
 						widget_pos.y -= 4;
 						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
@@ -1535,104 +1654,57 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 44);
 						ImGui::SetNextItemWidth(44);
 						ColorPicker("Hand colour", Colors::Hands);
-						static const char* handsMaterial[]{
-							"Original",
-							"Shaded",
-							"Shiny",
-							"Flat",
-							"Wireframe shaded",
-							"Wireframe shiny",
-							"Wireframe flat",
-							"Fresnel",
-							"Brick",
-							"What",
-							"Wacky"
-						};
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - 68);
+						ImGui::SetNextItemWidth(68);
+						ColorPicker("Player colour", Colors::Players);
 						ImGui::PushItemWidth(100);
-						ImGui::Combo("Hand material", &Vars::Chams::DME::Hands.m_Var, handsMaterial, IM_ARRAYSIZE(handsMaterial));
+						ImGui::Combo("Hand material", &Vars::Chams::DME::Hands.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats));
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
 						ImGui::SetNextItemWidth(20);
 						ColorPicker("Fresnel Hands Base", Colors::FresnelBaseHands);
 						ImGui::PopItemWidth();
 						HelpMarker("What material to put on your viewmodels arms/hands");
-
-						static const char* handsProxyMaterial[]{
-							"None",
-							"Spectrum splattered",
-							"Electro skulls",
-							"Jazzy",
-							"Frozen aurora",
-							"Hana",
-							"IDK",
-							"Ghost thing",
-							"Flames",
-							"Spook wood",
-							"Edgy",
-							"Starlight serenity",
-							"Fade"
-						};
 						ImGui::PushItemWidth(100);
-						ImGui::Combo("Hand proxy material", &Vars::Chams::DME::HandsProxySkin.m_Var, handsProxyMaterial, IM_ARRAYSIZE(handsProxyMaterial));
+						ImGui::Combo("Hand proxy material", &Vars::Chams::DME::HandsProxySkin.m_Var, proxyMats, IM_ARRAYSIZE(proxyMats));
 						ImGui::PopItemWidth();
 						HelpMarker("Puts a cool looking animated skin on your hands");
-						static const char* dmeGlowMaterial[]{
-							"None",
-							"Fresnel Glow",
-							"Wireframe Glow"
-						};
-						ImGui::PushItemWidth(100); ImGui::Combo("Hand Glow", &Vars::Chams::DME::HandsGlowOverlay.m_Var, dmeGlowMaterial, IM_ARRAYSIZE(dmeGlowMaterial)); ImGui::PopItemWidth();
+						ImGui::PushItemWidth(100); ImGui::Combo("Hand Glow", &Vars::Chams::DME::HandsGlowOverlay.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
 						ImGui::SetNextItemWidth(20);
 						ColorPicker("Hand glow colour", Colors::HandsOverlay);
-						static const char* weaponMaterial[]{
-							"Original",
-							"Shaded",
-							"Shiny",
-							"Flat",
-							"Wireframe shaded",
-							"Wireframe shiny",
-							"Wireframe flat",
-							"Fresnel",
-							"Brick",
-							"What",
-							"Wacky"
-						};
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Weapon Chams");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
+						
 						ImGui::PushItemWidth(100);
-						ImGui::Combo("Weapon material", &Vars::Chams::DME::Weapon.m_Var, weaponMaterial, IM_ARRAYSIZE(weaponMaterial));
+						ImGui::Combo("Weapon material", &Vars::Chams::DME::Weapon.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats));
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
 						ImGui::SetNextItemWidth(20);
 						ColorPicker("Fresnel Weapons Base", Colors::FresnelBaseWeps);
 						ImGui::PopItemWidth();
 						HelpMarker("What material to put on your viewmodels weapon");
-
-						static const char* weaponProxyMaterial[]{
-							"None",
-							"Spectrum splattered",
-							"Electro skulls",
-							"Jazzy",
-							"Frozen aurora",
-							"Hana",
-							"IDK",
-							"Ghost thing",
-							"Flames",
-							"Spook wood",
-							"Edgy",
-							"Starlight serenity",
-							"Fade"
-						};
 						ImGui::PushItemWidth(100);
-						ImGui::Combo("Weapon proxy material", &Vars::Chams::DME::WeaponsProxySkin.m_Var, weaponProxyMaterial, IM_ARRAYSIZE(weaponProxyMaterial));
+						ImGui::Combo("Weapon proxy material", &Vars::Chams::DME::WeaponsProxySkin.m_Var, proxyMats, IM_ARRAYSIZE(proxyMats));
 						ImGui::PopItemWidth();
 						HelpMarker("Puts a cool looking animated skin on your weapons");
-						ImGui::PushItemWidth(100); ImGui::Combo("Weapon Glow", &Vars::Chams::DME::WeaponGlowOverlay.m_Var, dmeGlowMaterial, IM_ARRAYSIZE(dmeGlowMaterial)); ImGui::PopItemWidth();
+						ImGui::PushItemWidth(100); ImGui::Combo("Weapon Glow", &Vars::Chams::DME::WeaponGlowOverlay.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
 						ImGui::SetNextItemWidth(20);
 						ColorPicker("Weapon glow colour", Colors::WeaponOverlay);
+						ImGui::Dummy(ImVec2(0, 20));
+
+						SectionTitle("Rainbow VM Options");
+						widget_pos = ImGui::GetCursorScreenPos();
+						widget_pos.y -= 4;
+						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
 						ImGui::PushItemWidth(100);
 						MultiCombo({ "Hands", "Hands overlay", "Weapon", "Weapon overlay" }, { &Vars::Chams::DME::HandsRainbow.m_Var, &Vars::Chams::DME::HandsOverlayRainbow.m_Var, &Vars::Chams::DME::WeaponRainbow.m_Var, &Vars::Chams::DME::WeaponOverlayRainbow.m_Var }, "Rainbow DME chams", "Rainbow DME###RainbowDMEChams");
 						ImGui::PopItemWidth();
-						
 						ImGui::Dummy(ImVec2(0, 20));
+
 						SectionTitle("Backtrack chams");
 						widget_pos = ImGui::GetCursorScreenPos();
 						widget_pos.y -= 4;
@@ -1682,7 +1754,7 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::Checkbox("Health packs###WorldchamsHealthPacks", &Vars::Chams::World::Health.m_Var);
 						ImGui::Checkbox("Ammo packs###Worldchamsammopacks", &Vars::Chams::World::Ammo.m_Var);
 						static const char* wChamsProjectiles[]{ "Off", "All", "Enemy only" }; ImGui::PushItemWidth(100); ImGui::Combo("Projectiles###WorldChamsProjectiles", &Vars::Chams::World::Projectiles.m_Var, wChamsProjectiles, IM_ARRAYSIZE(wChamsProjectiles)); ImGui::PopItemWidth();
-						static const char* pchamsMaterials[]{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic" }; ImGui::PushItemWidth(100); ImGui::Combo("Player material", &Vars::Chams::World::Material.m_Var, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+						static const char* dmeMats[]{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic" }; ImGui::PushItemWidth(100); ImGui::Combo("Player material", &Vars::Chams::World::Material.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
 						ImGui::Checkbox("Ignore Z###worldignorez", &Vars::Chams::World::IgnoreZ.m_Var);
 						ImGui::PopStyleVar();
 					}

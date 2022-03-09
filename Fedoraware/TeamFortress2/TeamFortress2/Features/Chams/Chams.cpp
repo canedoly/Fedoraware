@@ -3,7 +3,8 @@
 
 bool CChams::ShouldRun()
 {
-	return !g_Interfaces.EngineVGui->IsGameUIVisible();
+	//return !g_Interfaces.EngineVGui->IsGameUIVisible();
+	return false;
 }
 
 void CChams::DrawModel(CBaseEntity* pEntity)

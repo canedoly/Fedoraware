@@ -133,17 +133,14 @@ void CGlowEffect::Render()
 		g_Interfaces.RenderView->GetColorModulation(flOriginalColor);
 		float flOriginalBlend = g_Interfaces.RenderView->GetBlend();
 
-		if (!g_Chams.m_bHasSetStencil)
-		{
-			ShaderStencilState_t StencilState = {};
-			StencilState.m_bEnable = true;
-			StencilState.m_nReferenceValue = 1;
-			StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-			StencilState.m_PassOp = STENCILOPERATION_REPLACE;
-			StencilState.m_FailOp = STENCILOPERATION_KEEP;
-			StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
-			StencilState.SetStencilState(pRenderContext);
-		}
+		ShaderStencilState_t StencilState = {};
+		StencilState.m_bEnable = true;
+		StencilState.m_nReferenceValue = 1;
+		StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+		StencilState.m_PassOp = STENCILOPERATION_REPLACE;
+		StencilState.m_FailOp = STENCILOPERATION_KEEP;
+		StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
+		StencilState.SetStencilState(pRenderContext);
 
 		g_Interfaces.RenderView->SetBlend(1.0f);
 		g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
@@ -377,7 +374,6 @@ void CGlowEffect::Render()
 			pRenderContext->PopRenderTargetAndViewport();
 		}
 
-		ShaderStencilState_t StencilState = {};
 		StencilState.m_bEnable = true;
 		StencilState.m_nWriteMask = 0x0;
 		StencilState.m_nTestMask = 0xFF;
