@@ -592,11 +592,13 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 {
 	m_bRendering = false;
 	bool foundselfillumtint = false;
+	const auto& pRenderContext = g_Interfaces.MatSystem->GetRenderContext();
 	if (ShouldRun())
 	{
 		m_bRendering = true;
 
-		/* {
+		/*
+		{
 			m_pMatWFFlat->SetMaterialVarFlag(MATERIAL_VAR_IGNOREZ, Vars::Chams::DME::Players::IgnoreZ.m_Var);
 			m_pMatWFShiny->SetMaterialVarFlag(MATERIAL_VAR_IGNOREZ, Vars::Chams::DME::Players::IgnoreZ.m_Var);
 			m_pMatWFShaded->SetMaterialVarFlag(MATERIAL_VAR_IGNOREZ, Vars::Chams::DME::Players::IgnoreZ.m_Var);
@@ -836,7 +838,8 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 			int pGlowSet = GetOverVarP(pEntity);
 			int pDrawSet = GetDrawVarP(pEntity);
 
-
+			if (Vars::Chams::DME::Players::IgnoreZ.m_Var)
+				pRenderContext->DepthRange(0.0f, 0.2f);
 
 			if (pDrawSet) // handles chams
 			{
@@ -959,7 +962,10 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 
 			g_Interfaces.RenderView->SetBlend(1.0f);
 
-			return true;
+			if (Vars::Chams::DME::Players::IgnoreZ.m_Var)
+				pRenderContext->DepthRange(0.0f, 1.0f);
+
+			return true; // fixes ignore z artifacts
 		}
 		if (!pEntity && pInfo.m_pModel)
 		{

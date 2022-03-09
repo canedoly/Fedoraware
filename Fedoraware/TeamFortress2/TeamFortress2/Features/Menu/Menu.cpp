@@ -1506,7 +1506,7 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1);
 						ImGui::Checkbox("Chams###ChamsMasterSwitch", &Vars::Chams::Main::Active.m_Var);  HelpMarker("Chams master switch");
 
-						MultiCombo({ "Ignore-Z", "Render Wearable", "Render Weapon" }, { &Vars::Chams::Players::IgnoreZ.m_Var, &Vars::Chams::Players::Wearables.m_Var, &Vars::Chams::Players::Weapons.m_Var }, "Customize Chams", "Chams Flags");
+						MultiCombo({ "Ignore-Z", "Render Wearable", "Render Weapon" }, { &Vars::Chams::DME::Players::IgnoreZ.m_Var, &Vars::Chams::DME::Players::PWearables.m_Var, &Vars::Chams::DME::Players::PWeapons.m_Var }, "Customize Chams", "Chams Flags");
 
 						ImGui::Dummy(ImVec2(0, 20));
 
