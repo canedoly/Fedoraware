@@ -74,6 +74,24 @@ void CConfigManager::Save(const wchar_t *name, Color_t val)
 	m_Write << buffer << "\n";
 }
 
+void CConfigManager::Save(const wchar_t* name, Chams_t val)
+{
+	char buffer[128];
+	sprintf_s(buffer, "%ls: %d %d %d %d %d %d %d %d %d %d", name, val.showObstructed, val.drawMaterial, val.overlayType, val.chamsActive, val.overlayColor.r, val.overlayColor.g, val.overlayColor.b, val.fresnelBaseColor.r, val.fresnelBaseColor.g, val.fresnelBaseColor.b );
+	m_Write << buffer << "\n";
+}
+
+void CConfigManager::Load(const wchar_t* name, Chams_t& val)
+{
+	std::wstring line = {};
+
+	if (Find(name, line)) {
+		int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0;
+		swscanf_s(line.c_str(), L"%*ls %d %d %d %d %d %d %d %d %d %d", &a, &b, &c, &d, &e, &f, &g, &h, &i, &j);
+		val = { static_cast<bool>(a), static_cast<int>(b), static_cast<int>(c), static_cast<bool>(d), static_cast<byte>(e), static_cast<byte>(f), static_cast<byte>(g), static_cast<byte>(h), static_cast<byte>(i), static_cast<byte>(j) };
+	}
+}
+
 void CConfigManager::Load(const wchar_t* name, std::string& val)
 {
 	std::wstring line = {};
@@ -719,6 +737,14 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_OTHER(Colors::NoscopeLines1);
 			SAVE_OTHER(Colors::NoscopeLines2);
 			SAVE_OTHER(Colors::bonecolor);
+
+			SAVE_OTHER(Vars::Chams::Players::Local);
+			SAVE_OTHER(Vars::Chams::Players::Enemy);
+			SAVE_OTHER(Vars::Chams::Players::Team);
+			SAVE_OTHER(Vars::Chams::Players::Friend);
+			SAVE_OTHER(Vars::Chams::Players::Target);
+			SAVE_OTHER(Vars::Chams::Players::Arms);
+			SAVE_OTHER(Vars::Chams::Players::Weapon);
 
 			SAVE_OTHER(g_Radar.m_nRadarX);
 			SAVE_OTHER(g_Radar.m_nRadarY);
@@ -1367,6 +1393,14 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_OTHER(Colors::NoscopeLines1);
 			LOAD_OTHER(Colors::NoscopeLines2);
 			LOAD_OTHER(Colors::bonecolor);
+
+			LOAD_OTHER(Vars::Chams::Players::Local);
+			LOAD_OTHER(Vars::Chams::Players::Enemy);
+			LOAD_OTHER(Vars::Chams::Players::Team);
+			LOAD_OTHER(Vars::Chams::Players::Friend);
+			LOAD_OTHER(Vars::Chams::Players::Target);
+			LOAD_OTHER(Vars::Chams::Players::Arms);
+			LOAD_OTHER(Vars::Chams::Players::Weapon);
 
 			LOAD_OTHER(g_Radar.m_nRadarX);
 			LOAD_OTHER(g_Radar.m_nRadarY);

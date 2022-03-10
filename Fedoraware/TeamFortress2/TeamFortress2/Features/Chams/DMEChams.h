@@ -10,6 +10,7 @@ public:
 	IMaterial* m_pMatFresnelHands;
 	IMaterial* m_pMatFresnelPlayers;
 	IMaterial* m_pMatFresnelWeap;
+	IMaterial* m_pMatFresnel;
 	IMaterial* m_pMatBrick;
 	IMaterial* m_pMatScuffed;
 	IMaterial* m_pMatWFShaded;
@@ -18,6 +19,7 @@ public:
 	IMaterial* m_pMatProxy;
 private:
 	bool ShouldRun();
+	IMaterial* fetchMaterial(Chams_t chams);
 
 public:
 	void Init();

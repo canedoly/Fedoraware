@@ -127,16 +127,6 @@ namespace Colors
 	inline Color_t HandsOverlay =			{ 255, 127, 0, 255 };
 	inline Color_t Weapon =					{ 30, 144, 255, 255 };
 	inline Color_t WeaponOverlay =			{ 255, 127, 0, 255 };
-	inline Color_t Players =				{ 30, 144, 255, 255 };
-	inline Color_t PlayersOverlay =			{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayEnemy =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayTarget =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayCloaked =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayInvul =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayIgnored =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayFriends =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayLocal =	{ 255, 127, 0, 255 };
-	inline Color_t PlayersOverlayTeam =		{ 255, 127, 0, 255 };
 	inline Color_t WorldModulation =		{ 255, 255, 255, 255 };
 	inline Color_t SkyModulation =			{ 255, 255, 255, 255 };
 	inline Color_t StaticPropModulation =	{ 255, 255, 255, 255 };
@@ -144,16 +134,8 @@ namespace Colors
 	inline Color_t Bones =					{ 255, 255, 255, 255 };
 	inline Color_t BulletTracer =			{ 255, 255, 255, 255 };
 	inline Color_t FresnelBase =			{ 0,0,0,255 };
-	inline Color_t FresnelBaseEnemy =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseLocal =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseTeam =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseFriends =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseIgnored =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseCloaked =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseInvul =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseTarget =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseHands =		{ 0,0,0,255 };
-	inline Color_t FresnelBaseWeps =		{ 0,0,0,255 };
+	inline Color_t FresnelBaseHands =			{ 0,0,0,255 };
+	inline Color_t FresnelBaseWeps =			{ 0,0,0,255 };
 	inline Color_t FresnelTop = 			{ 0,255,0,255 };
 	inline Color_t AimSquareCol = 			{ 0,255,0,255 };
 	inline Color_t DtChargingLeft =			{ 255, 192, 81, 180};
@@ -161,14 +143,14 @@ namespace Colors
 	inline Color_t DtChargedLeft =			{ 106, 255, 131, 180};
 	inline Color_t DtChargedRight =			{ 106, 255, 250, 180 };
 	inline Color_t DtOutline =				{ 30, 30, 30, 180 };
-	inline Color_t NotifBG =				{ 30, 30, 30, 255 };
-	inline Color_t NotifOutline =			{ 255, 101, 101, 255};
-	inline Color_t NotifText =				{ 255, 255, 255, 255 };
-	inline Color_t Hitbox =					{ 255, 255, 255, 0 };
-	inline Color_t WeaponIcon =				{ 255,255,255,255 };
-	inline Color_t NoscopeLines1 =			{ 0,0,0,255 };
-	inline Color_t NoscopeLines2 =			{ 0,0,0,100 };
-	inline Color_t bonecolor =				{ 231, 95, 255, 10 };
+	inline Color_t NotifBG =	{ 30, 30, 30, 255 };
+	inline Color_t NotifOutline =		{ 255, 101, 101, 255};
+	inline Color_t NotifText =			{ 255, 255, 255, 255 };
+	inline Color_t Hitbox =			{ 255, 255, 255, 0 };
+	inline Color_t WeaponIcon = { 255,255,255,255 };
+	inline Color_t NoscopeLines1 = { 0,0,0,255 };
+	inline Color_t NoscopeLines2 = { 0,0,0,100 };
+	inline Color_t bonecolor = { 231, 95, 255, 10 };
 }
 
 namespace Utils
@@ -324,76 +306,6 @@ namespace Utils
 
 		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
 			out = Colors::Target;
-
-		return out;
-	}
-
-	__inline Color_t GetFresnelDrawColor(CBaseEntity* pEntity)
-	{
-		Color_t out = Colors::FresnelBase;
-		PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
-
-		if (pEntity->IsPlayer())
-		{
-			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-				out = Colors::FresnelBaseLocal;
-
-			else if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
-				out = Colors::FresnelBaseFriends;
-
-			else if (g_GlobalInfo.ignoredPlayers.find(info.friendsID) != g_GlobalInfo.ignoredPlayers.end())
-				out = Colors::FresnelBaseIgnored;
-
-			else if (pEntity->IsCloaked())
-				out = Colors::FresnelBaseCloaked;
-
-			else if (!pEntity->IsVulnerable())
-				out = Colors::FresnelBaseInvul;
-
-			else if (g_EntityCache.m_pLocal->GetTeamNum() == pEntity->GetTeamNum())
-				out = Colors::FresnelBaseTeam;
-
-			else if (g_EntityCache.m_pLocal->GetTeamNum() != pEntity->GetTeamNum())
-				out = Colors::FresnelBaseEnemy;
-		}
-
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = Colors::Target;
-
-		return out;
-	}
-
-	__inline Color_t GetOverDrawCol(CBaseEntity* pEntity)
-	{
-		Color_t out = Colors::PlayersOverlay;
-		PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
-
-		if (pEntity->IsPlayer())
-		{
-			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-				out = Colors::PlayersOverlayLocal;
-
-			else if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
-				out = Colors::PlayersOverlayFriends;
-
-			else if (g_GlobalInfo.ignoredPlayers.find(info.friendsID) != g_GlobalInfo.ignoredPlayers.end())
-				out = Colors::PlayersOverlayIgnored;
-
-			else if (g_EntityCache.m_pLocal->GetTeamNum() == pEntity->GetTeamNum())
-				out = Colors::PlayersOverlayTeam;
-
-			else if (pEntity->IsCloaked())
-				out = Colors::PlayersOverlayCloaked;
-
-			else if (!pEntity->IsVulnerable())
-				out = Colors::PlayersOverlayInvul;
-
-			else if (g_EntityCache.m_pLocal->GetTeamNum() != pEntity->GetTeamNum())
-				out = Colors::PlayersOverlayEnemy;
-		}
-
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = Colors::PlayersOverlayTarget;
 
 		return out;
 	}
@@ -741,3 +653,66 @@ namespace Utils
 	}
 }
 
+namespace Particles {
+	inline void DispatchEffect(const char* pName, const CEffectData& data)
+	{
+		using DispatchEffect_Fn = int(__cdecl*)(const char*, const CEffectData&);
+		static DWORD a = g_Pattern.Find(L"client.dll", L"E8 ? ? ? ? 83 C4 08 EB 15") + 0x1;
+		static DWORD b = ((*(PDWORD)(a)) + a + 4);
+		static DispatchEffect_Fn fn = (DispatchEffect_Fn)b;
+
+		fn(pName, data);
+	}
+
+	inline int GetParticleSystemIndex(const char* pParticleSystemName)
+	{
+		using GetParticleSystemIndex_Fn = int(__cdecl*)(const char*);
+		static DWORD a = g_Pattern.Find(L"client.dll", L"E8 ? ? ? ? D9 EE 83 C4 04 50") + 0x1;
+		static DWORD b = ((*(PDWORD)(a)) + a + 4);
+		static GetParticleSystemIndex_Fn fn = (GetParticleSystemIndex_Fn)b;
+
+		return fn(pParticleSystemName);
+	}
+
+	inline void DispatchParticleEffect(int iEffectIndex, Vector vecOrigin, Vector vecStart, Vector vecAngles, CBaseEntity* pEntity)
+	{
+		//E8 ? ? ? ? 83 C4 2C F6 46 30 01
+
+		CEffectData data;
+		data.m_nHitBox = iEffectIndex;
+		data.m_vOrigin = vecOrigin;
+		data.m_vStart = vecStart;
+		data.m_vAngles = vecAngles;
+
+		if (pEntity) {
+			data.m_nEntIndex = pEntity->GetIndex();
+			data.m_fFlags |= (1 << 0);
+			data.m_nDamageType = 2;
+		}
+		else {
+			data.m_nEntIndex = 0;
+		}
+
+		data.m_bCustomColors = true;
+
+		DispatchEffect("ParticleEffect", data);
+	}
+
+
+	inline void DispatchParticleEffect(const char* pszParticleName, Vec3 vecOrigin, Vec3 vecAngles, CBaseEntity* pEntity = 0);
+	inline void DispatchParticleEffect(const char* pszParticleName, Vec3 vecOrigin, Vec3 vecAngles, CBaseEntity* pEntity)
+	{
+		//E8 ? ? ? ? 83 C4 20 8D 4D CC
+
+		int iIndex = GetParticleSystemIndex(pszParticleName);
+		DispatchParticleEffect(iIndex, vecOrigin, vecOrigin, vecAngles, pEntity);
+	}
+
+
+	inline void ParticleTracer(const char* pszTracerEffectName, const Vector& vecStart, const Vector& vecEnd, int iEntIndex, int iAttachment, bool bWhiz) {
+		using ParticleTracerFn = void(__cdecl*)(const char*, const Vec3&, const Vec3&, int, int, bool);
+		static auto UTIL_ParticleTracer = reinterpret_cast<ParticleTracerFn>(g_Pattern.Find(L"client.dll", _(L"55 8B EC FF 75 08 E8 ? ? ? ? D9 EE 83")));
+		UTIL_ParticleTracer(pszTracerEffectName, vecStart, vecEnd, iEntIndex, iAttachment, bWhiz);
+
+	}
+}

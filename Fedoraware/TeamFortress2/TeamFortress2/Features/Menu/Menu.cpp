@@ -1505,10 +1505,32 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1);
 						ImGui::Checkbox("Chams###ChamsMasterSwitch", &Vars::Chams::Main::Active.m_Var);  HelpMarker("Chams master switch");
-
-						MultiCombo({ "Ignore-Z", "Render Wearable", "Render Weapon" }, { &Vars::Chams::DME::Players::IgnoreZ.m_Var, &Vars::Chams::DME::Players::PWearables.m_Var, &Vars::Chams::DME::Players::PWeapons.m_Var }, "Customize Chams", "Chams Flags");
-
 						ImGui::Dummy(ImVec2(0, 20));
+
+						static const char* chamOptions[]{
+							"Local",
+							"Friends",
+							"Enemies",
+							"Teammates",
+							"Target",
+							"Arms",
+							"Weapon"
+						};
+
+						static int currentSelected = 0; // 0 - local, 1 - friends, 2 - enemy, 3 - team
+						static auto currentSelectedStruct = &Vars::Chams::Players::Local; // 0 - local, 1 - friends, 2 - enemy, 3 - team
+
+						static const char* pchamsMaterials[]{ 
+							"Original",
+							"Shaded",
+							"Shiny",
+							"Flat",
+							"Wireframe shaded",
+							"Wireframe shiny",
+							"Wireframe flat",
+							"Fresnel",
+							"Brick"
+						};
 
 						static const char* dmeGlowMaterials[]{
 							"None",
@@ -1532,117 +1554,125 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 							"Fade"
 						};
 
-						static const char* dmeMats[]{
-							"Original",
-							"Shaded",
-							"Shiny",
-							"Flat",
-							"Wireframe shaded",
-							"Wireframe shiny",
-							"Wireframe flat",
-							"Fresnel",
-							"Brick"
-						};
-
-
-						SectionTitle("Enemy Chams");
+						SectionTitle("Player Chams");
 						widget_pos = ImGui::GetCursorScreenPos();
 						widget_pos.y -= 4;
 						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###EnemyChamsMatSelect", &Vars::Chams::DME::Players::Enemy.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Enemy Fresnel Base", Colors::FresnelBaseEnemy);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###EnemyOverlay", &Vars::Chams::DME::Players::Overlays::Enemies.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Enemy glow colour", Colors::PlayersOverlayEnemy);
-						ImGui::Dummy(ImVec2(0, 20));
+						ImGui::Checkbox("Player chams###PlayerChamsBox", &Vars::Chams::Players::Active.m_Var); HelpMarker("Player chams master switch");
+						MultiCombo({ "Render Wearable", "Render Weapon" }, { &Vars::Chams::Players::Wearables.m_Var, &Vars::Chams::Players::Weapons.m_Var }, "Customize Chams", "Flags");
+						ImGui::Combo("Target", &currentSelected, chamOptions, IM_ARRAYSIZE(chamOptions));
 
-						SectionTitle("Team Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###TeamChamsMatSelect", &Vars::Chams::DME::Players::Team.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Team Fresnel Base", Colors::FresnelBaseTeam);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###TeamOverlay", &Vars::Chams::DME::Players::Overlays::Team.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Team glow colour", Colors::PlayersOverlayTeam);
-						ImGui::Dummy(ImVec2(0, 20));
+						switch (currentSelected) // please find a better way to do this, i have tried so many things and i cant get it to work properly
+						{
+						case 0:
+						{
+							MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Local.chamsActive, &Vars::Chams::Players::Local.showObstructed }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Local.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply to the player");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Local.fresnelBaseColor);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Local.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Local.overlayColor);
+							break;
+						}
+						case 1:
+						{
+							MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Friend.chamsActive, &Vars::Chams::Players::Friend.showObstructed }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Friend.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply to the player");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Friend.fresnelBaseColor);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Friend.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Friend.overlayColor);
+							break;
+						}
+						case 2:
+						{
+							MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Enemy.chamsActive, &Vars::Chams::Players::Enemy.showObstructed }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Enemy.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply to the player");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Enemy.fresnelBaseColor);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Enemy.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Enemy.overlayColor);
+							break;
+						}
+						case 3:
+						{
+							MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Team.chamsActive, &Vars::Chams::Players::Team.showObstructed, }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Team.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply to the player");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Team.fresnelBaseColor);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Team.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Team.overlayColor);
+							break;
+						}
+						case 4:
+						{
+							MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Target.chamsActive, &Vars::Chams::Players::Target.showObstructed, }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Target.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply to the player");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Target.fresnelBaseColor);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Target.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Target.overlayColor);
+							break;
+						}
+						case 5:
+						{
+							MultiCombo({ "Active"}, { &Vars::Chams::Players::Arms.chamsActive }, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Arms.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Arms.fresnelBaseColor);
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 44);
+							ImGui::SetNextItemWidth(44);
+							ColorPicker("Hand colour", Colors::Hands);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Arms.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Arms.overlayColor);
+							break;
+						}
+						case 6:
+						{
+							MultiCombo({ "Active"}, {&Vars::Chams::Players::Weapon.chamsActive}, "", "Options");
+							ImGui::PushItemWidth(100); combo("Material", &Vars::Chams::Players::Weapon.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+							HelpMarker("Which material the chams will apply");
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Fresnel base colour", Vars::Chams::Players::Weapon.fresnelBaseColor);
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 44);
+							ImGui::SetNextItemWidth(44);
+							ColorPicker("Hand colour", Colors::Weapon);
+							ImGui::PushItemWidth(100); combo("Overlay", &Vars::Chams::Players::Weapon.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+							ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+							ImGui::SetNextItemWidth(20);
+							ColorPicker("Overlay colour", Vars::Chams::Players::Weapon.overlayColor);
+							break;
+						}
+						}
 
-						SectionTitle("Steam Friend Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###FriendChamsMatSelect", &Vars::Chams::DME::Players::Friends.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Friends Fresnel Base", Colors::FresnelBaseFriends);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###FriendsOverlay", &Vars::Chams::DME::Players::Overlays::Friends.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Friends glow colour", Colors::PlayersOverlayFriends);
+						
 						ImGui::Dummy(ImVec2(0, 20));
-
-						SectionTitle("Local Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###LocalChamsMatSelect", &Vars::Chams::DME::Players::Local.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Local Fresnel Base", Colors::FresnelBaseLocal);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###LocalOverlay", &Vars::Chams::DME::Players::Overlays::Local.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Local glow colour", Colors::PlayersOverlayLocal);
-						ImGui::Dummy(ImVec2(0, 20));
-
-						SectionTitle("Cloaked Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###CloakedChamsMatSelect", &Vars::Chams::DME::Players::Cloaked.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Cloaked Fresnel Base", Colors::FresnelBaseCloaked);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###CloakedOverlay", &Vars::Chams::DME::Players::Overlays::Cloaked.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Cloaked glow colour", Colors::PlayersOverlayCloaked);
-						ImGui::Dummy(ImVec2(0, 20));
-
-						SectionTitle("Invul Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###InvulChamsMatSelect", &Vars::Chams::DME::Players::Invul.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Invul Fresnel Base", Colors::FresnelBaseInvul);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###InvulOverlay", &Vars::Chams::DME::Players::Overlays::Invul.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Invul glow colour", Colors::PlayersOverlayInvul);
-						ImGui::Dummy(ImVec2(0, 20));
-
-						SectionTitle("Target Chams");
-						widget_pos = ImGui::GetCursorScreenPos();
-						widget_pos.y -= 4;
-						if (widget_pos.y - winPos.y > 97 && widget_pos.y < winPos.y + winSize.y - 24)  ImGui::GradientRect(fgDrawList, &normal, widget_pos, ImGui::GetContentRegionMax().x - 12, 3);
-						ImGui::PushItemWidth(100); ImGui::Combo("Material###TargetChamsMatSelect", &Vars::Chams::DME::Players::Target.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Target Fresnel Base", Colors::FresnelBaseTarget);
-						ImGui::PushItemWidth(100); ImGui::Combo("Overlay###TargetOverlay", &Vars::Chams::DME::Players::Overlays::Target.m_Var, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
-						ImGui::SetNextItemWidth(20);
-						ColorPicker("Target glow colour", Colors::PlayersOverlayTarget);
-						ImGui::Dummy(ImVec2(0, 20));
-
+						/*
 						SectionTitle("Arm Chams");
 						widget_pos = ImGui::GetCursorScreenPos();
 						widget_pos.y -= 4;
@@ -1655,8 +1685,6 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::SetNextItemWidth(44);
 						ColorPicker("Hand colour", Colors::Hands);
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 68);
-						ImGui::SetNextItemWidth(68);
-						ColorPicker("Player colour", Colors::Players);
 						ImGui::PushItemWidth(100);
 						ImGui::Combo("Hand material", &Vars::Chams::DME::Hands.m_Var, dmeMats, IM_ARRAYSIZE(dmeMats));
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
@@ -1695,6 +1723,7 @@ void CMenu::Render(IDirect3DDevice9* pDevice) {
 						ImGui::SetNextItemWidth(20);
 						ColorPicker("Weapon glow colour", Colors::WeaponOverlay);
 						ImGui::Dummy(ImVec2(0, 20));
+						*/
 
 						SectionTitle("Rainbow VM Options");
 						widget_pos = ImGui::GetCursorScreenPos();

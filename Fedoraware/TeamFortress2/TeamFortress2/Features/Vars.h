@@ -274,6 +274,15 @@ namespace Vars
 			inline CVar<int> Material{ 3, L"Material" }; //0 - None, 1 - Shaded, 2 - Shiny, 3 - Flat
 			inline CVar<bool> IgnoreZ{ false , L"IgnoreZ" };
 			inline CVar<bool> GlowOverlay { false , L"Glow overlay" };
+
+			// {ignorez, material, overlay type (0 = off), active}
+			inline Chams_t Local{ false, 0, 0, false };
+			inline Chams_t Friend{ false, 0, 0, false };
+			inline Chams_t Enemy{ false, 0, 0, false };
+			inline Chams_t Team{ false, 0, 0, false };
+			inline Chams_t Target{ false, 0, 0, false };
+			inline Chams_t Weapon{ false, 0, 0, false };
+			inline Chams_t Arms{ false, 0, 0, false };
 		}
 
 		namespace Buildings
@@ -311,36 +320,6 @@ namespace Vars
 			inline CVar<bool> WeaponsProxyWF{ false, L"Proxy wireframe on weapons" };
 			inline CVar<bool> WeaponRainbow { false, L"Rainbow weapons" };
 			inline CVar<bool> WeaponOverlayRainbow { false, L"Rainbow weapons" };
-
-			
-
-			namespace Players
-			{
-				inline CVar<int> Team{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Enemy{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Friends{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Ignored{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Invul{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Cloaked{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Local{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-				inline CVar<int> Target{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
-
-				inline CVar<bool> PWearables{ true, L"Render Wearables" };
-				inline CVar<bool> PWeapons{ true, L"Render Weapons" };
-				inline CVar<bool> IgnoreZ{ false , L"IgnoreZ" };
-
-				namespace Overlays
-				{
-					inline CVar<int> Team{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Enemies{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Invul{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Ignored{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Cloaked{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Friends{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Local{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-					inline CVar<int> Target{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
-				}
-			}
 		}
 	}
 
