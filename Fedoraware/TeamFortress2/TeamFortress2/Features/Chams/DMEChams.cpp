@@ -518,17 +518,16 @@ void CDMEChams::Init()
 	ProxySkins::Init();
 }
 
-int GetOverVarP(CBaseEntity* pEntity)
+int GetOverVarP(CBaseEntity* pEntity, PlayerInfo_t info)
 {
 	int out = 0;
-	PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
 
 	if (pEntity->IsPlayer())
 	{
 		if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
 			out = Vars::Chams::DME::Players::Overlays::Local.m_Var;
 
-		else if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
+		else if (g_EntityCache.Friends[pEntity->GetIndex()])
 			out = Vars::Chams::DME::Players::Overlays::Friends.m_Var;
 
 		else if (g_GlobalInfo.ignoredPlayers.find(info.friendsID) != g_GlobalInfo.ignoredPlayers.end())
@@ -553,17 +552,16 @@ int GetOverVarP(CBaseEntity* pEntity)
 	return out;
 }
 
-int GetDrawVarP(CBaseEntity* pEntity)
+int GetDrawVarP(CBaseEntity* pEntity, PlayerInfo_t info)
 {
 	int out = 0;
-	PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
 
 	if (pEntity->IsPlayer())
 	{
 		if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
 			out = Vars::Chams::DME::Players::Local.m_Var;
 
-		else if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
+		else if (g_EntityCache.Friends[pEntity->GetIndex()])
 			out = Vars::Chams::DME::Players::Friends.m_Var;
 
 		else if (g_GlobalInfo.ignoredPlayers.find(info.friendsID) != g_GlobalInfo.ignoredPlayers.end())
@@ -828,18 +826,24 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 
 				return true;
 			}
-			if (pEntity && (pEntity->GetClassID() == ETFClassID::CTFPlayer && Vars::Chams::DME::Active.m_Var))
+			if (pEntity && !pEntity->GetDormant() && pEntity->IsPlayer() && Vars::Chams::DME::Active.m_Var)
 			{
 				bool bMatWasForced = false;
 				bool bIsLocal = pEntity->GetIndex() == g_Interfaces.Engine->GetLocalPlayer();
+				static auto pLocal = g_EntityCache.m_pLocal;
+				PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
 				Color_t DrawColor = Utils::GetEntityDrawColor(pEntity, Vars::ESP::Main::EnableTeamEnemyColors.m_Var);
 				Color_t FresDrawColor = Utils::GetFresnelDrawColor(pEntity);
 				Color_t OverDrawColor = Utils::GetOverDrawCol(pEntity);
-				int pGlowSet = GetOverVarP(pEntity);
-				int pDrawSet = GetDrawVarP(pEntity);
+				int pGlowSet = GetOverVarP(pEntity, info);
+				int pDrawSet = GetDrawVarP(pEntity, info);
 
-				if (Vars::Chams::DME::Players::IgnoreZ.m_Var)
-					pRenderContext->DepthRange(0.0f, 0.2f);
+				if (pEntity->GetTeamNum() == pLocal->GetTeamNum()) {
+					if (!bIsLocal && Vars::Chams::Players::IgnoreTeammates.m_Var == 1)
+						return false;
+					if (!bIsLocal && Vars::Chams::Players::IgnoreTeammates.m_Var == 2 && !(g_EntityCache.Friends[pEntity->GetIndex()]))
+						return false;
+				}
 
 				if (pDrawSet) // handles chams
 				{
@@ -916,6 +920,9 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 					}
 				}
 
+				if (Vars::Chams::DME::Players::IgnoreZ.m_Var && bMatWasForced)
+					pRenderContext->DepthRange(0.0f, 0.2f);
+
 				g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(DrawColor.a));
 				ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
 					ModelRenderHook::DrawModelExecute::index)
@@ -965,7 +972,7 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 				if (Vars::Chams::DME::Players::IgnoreZ.m_Var)
 					pRenderContext->DepthRange(0.0f, 1.0f);
 
-				return true; // fixes ignore z artifacts
+				return true; // replace with ignorez var for only occluded chams???
 			}
 			if (!pEntity && pInfo.m_pModel)
 			{
