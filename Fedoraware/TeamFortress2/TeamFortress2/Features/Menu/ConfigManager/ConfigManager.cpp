@@ -88,7 +88,7 @@ void CConfigManager::Load(const wchar_t* name, Chams_t& val)
 	if (Find(name, line)) {
 		int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0;
 		swscanf_s(line.c_str(), L"%*ls %d %d %d %d %d %d %d %d %d %d", &a, &b, &c, &d, &e, &f, &g, &h, &i, &j);
-		val = { static_cast<bool>(a), static_cast<int>(b), static_cast<int>(c), static_cast<bool>(d), static_cast<byte>(e), static_cast<byte>(f), static_cast<byte>(g), static_cast<byte>(h), static_cast<byte>(i), static_cast<byte>(j) };
+		val = { static_cast<bool>(a), static_cast<int>(b), static_cast<int>(c), static_cast<bool>(d), {static_cast<byte>(e), static_cast<byte>(f), static_cast<byte>(g), 255}, {static_cast<byte>(h), static_cast<byte>(i), static_cast<byte>(j), 255} };
 	}
 }
 

@@ -620,7 +620,8 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 				if (cMat == m_pMatFresnel) cMat == m_pMatFresnelHands; // this stops an issue where it becomes the colour of other fresnel??? idk why pls fix lord pastr mfed
 
 				g_Interfaces.ModelRender->ForcedMaterialOverride(cMat);
-				bMatWasForced = true;
+				if (cMat != nullptr) 
+					bMatWasForced = true;
 
 				if (chams.drawMaterial != 7)
 				{
@@ -746,8 +747,8 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 				auto chams = fetchChams(pEntity);
 				Color_t DrawColor = Utils::GetEntityDrawColor(pEntity, Vars::ESP::Main::EnableTeamEnemyColors.m_Var);
 
-				if (!chams.chamsActive)
-					return false;
+				if (fetchMaterial(chams) == nullptr)
+					bMatWasForced = false;
 
 				if (chams.drawMaterial) // handles chams
 				{
