@@ -594,278 +594,46 @@ IMaterial* ProxySkins::getProxy(int var) {
 bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo, matrix3x4* pBoneToWorld)
 {
 	m_bRendering = false;
-	bool foundselfillumtint = false;
-	if (const auto& pRenderContext = g_Interfaces.MatSystem->GetRenderContext()) {
+	bool found1 = true;
+	bool found2 = true;
+	bool found3 = true;
+	bool found4 = true;
+	auto pLocal = g_EntityCache.m_pLocal;
+	if (pLocal) {
+		if (IMatRenderContext* pRenderContext = g_Interfaces.MatSystem->GetRenderContext()) {
 
-		ShaderStencilState_t StencilState = {};
-		StencilState.m_bEnable = true;
-		StencilState.m_nReferenceValue = 1;
-		StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-		StencilState.m_PassOp = STENCILOPERATION_REPLACE;
-		StencilState.m_FailOp = STENCILOPERATION_KEEP;
-		StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
-		StencilState.SetStencilState(pRenderContext);
+			static IMaterialVar* fresnelSelfillumtint = m_pMatFresnel->FindVar(_("$selfillumtint"), &found1);
+			static IMaterialVar* envmap = m_pMatFresnel->FindVar(_("$envmaptint"), &found2);
+			static IMaterialVar* pVar = m_pMatScuffed->FindVar(_("$phongtint"), &found3);
+			static IMaterialVar* pVar2 = m_pMatScuffed->FindVar(_("$envmaptint"), &found4);
 
-		if (ShouldRun())
-		{
-			m_bRendering = true;
-			CBaseEntity* pEntity = g_Interfaces.EntityList->GetClientEntity(pInfo.m_nEntIndex);
+			ShaderStencilState_t StencilState = {};
+			StencilState.m_bEnable = true;
+			StencilState.m_nReferenceValue = 1;
+			StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+			StencilState.m_PassOp = STENCILOPERATION_REPLACE;
+			StencilState.m_FailOp = STENCILOPERATION_KEEP;
+			StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
+			StencilState.SetStencilState(pRenderContext);
 
-			if (pEntity && pEntity->GetClassID() == ETFClassID::CTFViewModel)
+			if (ShouldRun())
 			{
-				bool bMatWasForced = false;
-				auto chams = Vars::Chams::Players::Arms;
-				auto cMat = fetchMaterial(chams);
+				m_bRendering = true;
+				CBaseEntity* pEntity = g_Interfaces.EntityList->GetClientEntity(pInfo.m_nEntIndex);
 
-				if (cMat == m_pMatFresnel) cMat == m_pMatFresnelHands; // this stops an issue where it becomes the colour of other fresnel??? idk why pls fix lord pastr mfed
-
-				g_Interfaces.ModelRender->ForcedMaterialOverride(cMat);
-				if (cMat != nullptr) 
-					bMatWasForced = true;
-
-				if (chams.drawMaterial != 7)
+				if (pEntity && pEntity->GetClassID() == ETFClassID::CTFViewModel)
 				{
-					if (Vars::Chams::DME::HandsRainbow.m_Var) // this looks like trash bro
-					{
-						g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Utils::Rainbow().r),
-							Color::TOFLOAT(Utils::Rainbow().g),
-							Color::TOFLOAT(Utils::Rainbow().b));
-					}
-					else
-					{
-						g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Colors::Hands.r),
-							Color::TOFLOAT(Colors::Hands.g),
-							Color::TOFLOAT(Colors::Hands.b));
-					}
-				}
+					bool bMatWasForced = false;
+					auto chams = Vars::Chams::Players::Arms;
+					auto cMat = fetchMaterial(chams);
 
-				g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(Colors::Hands.a));
-
-				ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-					ModelRenderHook::DrawModelExecute::index)
-					(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-				bMatWasForced = true;
-				foundselfillumtint = false;
-				if (chams.drawMaterial == 7)
-				{
-					IMaterial* mat = m_pMatFresnelHands;
-					IMaterialVar* fresnelSelfillumtint = mat->FindVar(_("$selfillumtint"), &foundselfillumtint);
-					if (foundselfillumtint)
-					{
-						fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(chams.fresnelBaseColor.r) * 4,
-							Color::TOFLOAT(chams.fresnelBaseColor.g) * 4,
-							Color::TOFLOAT(chams.fresnelBaseColor.b) * 4);
-					}
-					bool found = false;
-					IMaterialVar* envmap = mat->FindVar(_("$envmaptint"), &found);
-					if (found)
-					{
-						envmap->SetVecValue(Color::TOFLOAT(Colors::Hands.r) * 4, Color::TOFLOAT(Colors::Hands.g) * 4,
-							Color::TOFLOAT(Colors::Hands.b) * 4);
-					}
-				}
-
-				if (Vars::Chams::DME::HandsProxySkin.m_Var && bMatWasForced)
-				{
-
-					IMaterial* pMaterial = nullptr;
-					{
-						pMaterial = ProxySkins::getProxy(Vars::Chams::DME::HandsProxySkin.m_Var);
-					}
-					pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, Vars::Chams::DME::HandsProxyWF.m_Var);
-					g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
-					g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
-
-					ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-						ModelRenderHook::DrawModelExecute::index)
-						(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-				}
-
-				if (chams.overlayType && bMatWasForced)
-				{
-					// Overlay
-					IMaterial* pMaterial = m_pMatScuffed;
-					bool found = false;
-					bool found2 = false;
-					IMaterialVar* pVar = pMaterial->FindVar(_("$phongtint"), &found);
-					if (found)
-					{
-						if (Vars::Chams::DME::HandsOverlayRainbow.m_Var)
-						{
-							pVar->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
-								Color::TOFLOAT(Utils::Rainbow().g) * 4,
-								Color::TOFLOAT(Utils::Rainbow().b) * 4);
-						}
-						else
-						{
-							pVar->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
-								Color::TOFLOAT(chams.overlayColor.g),
-								Color::TOFLOAT(chams.overlayColor.b));
-						}
-					}
-					IMaterialVar* pVar2 = pMaterial->FindVar(_("$envmaptint"), &found2);
-					if (found2)
-					{
-						if (Vars::Chams::DME::HandsOverlayRainbow.m_Var)
-						{
-							pVar2->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
-								Color::TOFLOAT(Utils::Rainbow().g) * 4,
-								Color::TOFLOAT(Utils::Rainbow().b) * 4);
-						}
-						else
-						{
-							pVar2->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
-								Color::TOFLOAT(chams.overlayColor.g),
-								Color::TOFLOAT(chams.overlayColor.b));
-						}
-					}
-					pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
-
-					g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
-
-					ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-						ModelRenderHook::DrawModelExecute::index)
-						(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-				}
-
-
-				if (bMatWasForced)
-				{
-					g_Interfaces.ModelRender->ForcedMaterialOverride(nullptr);
-					g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
-				}
-
-				g_Interfaces.RenderView->SetBlend(1.0f);
-
-				return true;
-			}
-			if (pEntity && !pEntity->GetDormant() && pEntity->IsPlayer() && Vars::Chams::DME::Active.m_Var)
-			{
-				bool bMatWasForced = false;
-				bool bIsLocal = pEntity->GetIndex() == g_Interfaces.Engine->GetLocalPlayer();
-				static auto pLocal = g_EntityCache.m_pLocal;
-				auto chams = fetchChams(pEntity);
-				Color_t DrawColor = Utils::GetEntityDrawColor(pEntity, Vars::ESP::Main::EnableTeamEnemyColors.m_Var);
-
-				if (fetchMaterial(chams) == nullptr)
-					bMatWasForced = false;
-
-				if (chams.drawMaterial) // handles chams
-				{
-					g_Interfaces.ModelRender->ForcedMaterialOverride(fetchMaterial(chams));
+					g_Interfaces.ModelRender->ForcedMaterialOverride(cMat);
+					if (cMat != nullptr)
+						bMatWasForced = true;
 
 					if (chams.drawMaterial != 7)
 					{
-						g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(DrawColor.r),
-							Color::TOFLOAT(DrawColor.g),
-							Color::TOFLOAT(DrawColor.b));
-					}
-					else
-					{
-						IMaterial* mat = m_pMatFresnel;
-						IMaterialVar* fresnelSelfillumtint = mat->FindVar(_("$selfillumtint"), &foundselfillumtint);
-						if (foundselfillumtint)
-						{
-							fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(chams.fresnelBaseColor.r),
-								Color::TOFLOAT(chams.fresnelBaseColor.g),
-								Color::TOFLOAT(chams.fresnelBaseColor.b));
-						}
-						bool found = false;
-						IMaterialVar* envmap = mat->FindVar(_("$envmaptint"), &found);
-						if (found)
-						{
-							envmap->SetVecValue(Color::TOFLOAT(DrawColor.r), Color::TOFLOAT(DrawColor.g),
-								Color::TOFLOAT(DrawColor.b));
-						}
-					}
-				}
-
-				if (chams.showObstructed)
-					pRenderContext->DepthRange(0.0f, 0.2f);
-
-				g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(DrawColor.a));
-				ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-					ModelRenderHook::DrawModelExecute::index)
-					(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-				bMatWasForced = true;
-				foundselfillumtint = false;
-
-
-				if (chams.overlayType && bMatWasForced) // handles glow overlay
-				{
-					IMaterial* pMaterial = m_pMatScuffed;
-					bool found = false;
-					bool found2 = false;
-					IMaterialVar* pVar = pMaterial->FindVar(_("$phongtint"), &found);
-					if (found)
-					{
-						pVar->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
-							Color::TOFLOAT(chams.overlayColor.g),
-							Color::TOFLOAT(chams.overlayColor.b));
-					}
-					IMaterialVar* pVar2 = pMaterial->FindVar(_("$envmaptint"), &found2);
-					if (found2)
-					{
-
-						pVar2->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
-							Color::TOFLOAT(chams.overlayColor.g),
-							Color::TOFLOAT(chams.overlayColor.b));
-					}
-					pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
-
-					g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
-
-					ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-						ModelRenderHook::DrawModelExecute::index)
-						(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-				}
-
-				g_Interfaces.ModelRender->ForcedMaterialOverride(nullptr);
-				g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
-
-				g_Interfaces.RenderView->SetBlend(1.0f);
-
-				if (chams.showObstructed)
-					pRenderContext->DepthRange(0.0f, 1.0f);
-
-				return true;
-			}
-			if (!pEntity && pInfo.m_pModel)
-			{
-				std::string_view szModelName(g_Interfaces.ModelInfo->GetModelName(pInfo.m_pModel));
-
-				if (szModelName.find(_("weapon")) != std::string_view::npos
-					&& szModelName.find(_("arrow")) == std::string_view::npos
-					&& szModelName.find(_("w_syringe")) == std::string_view::npos
-					&& szModelName.find(_("nail")) == std::string_view::npos
-					&& szModelName.find(_("shell")) == std::string_view::npos
-					&& szModelName.find(_("parachute")) == std::string_view::npos
-					&& szModelName.find(_("buffbanner")) == std::string_view::npos
-					&& szModelName.find(_("shogun_warbanner")) == std::string_view::npos
-					&& szModelName.find(_("targe")) == std::string_view::npos //same as world model, can't filter
-					&& szModelName.find(_("shield")) == std::string_view::npos //same as world model, can't filter
-					&& szModelName.find(_("repair_claw")) == std::string_view::npos)
-				{
-					//g_Interfaces.DebugOverlay->AddTextOverlay(pInfo.m_vOrigin, 0.003f, "%hs", szModelName);
-
-					bool bMatWasForced = false;
-					auto chams = Vars::Chams::Players::Weapon;
-					auto cMat = fetchMaterial(chams);
-
-					if (!chams.chamsActive)
-						return false;
-
-
-					int _case = 0;
-
-					if (Vars::Chams::DME::Weapon.m_Var)
-					{
-						g_Interfaces.ModelRender->ForcedMaterialOverride(cMat);
-					}
-
-					if (bMatWasForced && (chams.drawMaterial != 7))
-					{
-						if (Vars::Chams::DME::WeaponRainbow.m_Var)
+						if (Vars::Chams::DME::HandsRainbow.m_Var) // this looks like trash bro
 						{
 							g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Utils::Rainbow().r),
 								Color::TOFLOAT(Utils::Rainbow().g),
@@ -873,44 +641,42 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 						}
 						else
 						{
-							g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Colors::Weapon.r),
-								Color::TOFLOAT(Colors::Weapon.g),
-								Color::TOFLOAT(Colors::Weapon.b));
+							g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Colors::Hands.r),
+								Color::TOFLOAT(Colors::Hands.g),
+								Color::TOFLOAT(Colors::Hands.b));
+						}
+					}
+					else if (chams.drawMaterial == 7)
+					{
+						if (found1)
+						{
+							fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(chams.fresnelBaseColor.r) * 4,
+								Color::TOFLOAT(chams.fresnelBaseColor.g) * 4,
+								Color::TOFLOAT(chams.fresnelBaseColor.b) * 4);
+						}
+						if (found2)
+						{
+							envmap->SetVecValue(Color::TOFLOAT(Colors::Hands.r) * 4, Color::TOFLOAT(Colors::Hands.g) * 4,
+								Color::TOFLOAT(Colors::Hands.b) * 4);
 						}
 					}
 
-					g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(Colors::Weapon.a));
+					g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(Colors::Hands.a));
+
+
 
 					ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-						ModelRenderHook::DrawModelExecute::index) // base
+						ModelRenderHook::DrawModelExecute::index)
 						(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
 					bMatWasForced = true;
-					foundselfillumtint = false;
-					if (chams.drawMaterial == 7)
-					{
-						IMaterial* mat = m_pMatFresnelWeap;
-						IMaterialVar* fresnelSelfillumtint = mat->FindVar(_("$selfillumtint"), &foundselfillumtint);
-						if (foundselfillumtint)
-						{
-							fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(Colors::FresnelBaseWeps.r) * 4,
-								Color::TOFLOAT(Colors::FresnelBaseWeps.g) * 4,
-								Color::TOFLOAT(Colors::FresnelBaseWeps.b) * 4);
-						}
-						bool found = false;
-						IMaterialVar* envmap = mat->FindVar(_("$envmaptint"), &found);
-						if (found)
-						{
-							envmap->SetVecValue(Color::TOFLOAT(Colors::Weapon.r) * 4, Color::TOFLOAT(Colors::Weapon.g) * 4,
-								Color::TOFLOAT(Colors::Weapon.b) * 4);
-						}
-					}
 
-					if (Vars::Chams::DME::WeaponsProxySkin.m_Var && bMatWasForced)
+
+					if (Vars::Chams::DME::HandsProxySkin.m_Var && bMatWasForced)
 					{
 
 						IMaterial* pMaterial = nullptr;
 						{
-							pMaterial = ProxySkins::getProxy(Vars::Chams::DME::WeaponsProxySkin.m_Var);
+							pMaterial = ProxySkins::getProxy(Vars::Chams::DME::HandsProxySkin.m_Var);
 						}
 						pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, Vars::Chams::DME::HandsProxyWF.m_Var);
 						g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
@@ -923,14 +689,10 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 
 					if (chams.overlayType && bMatWasForced)
 					{
-						IMaterial* pMaterial = m_pMatScuffed;
-						bool found = false;
-						bool found2 = false;
-						bool found3 = false;
-						IMaterialVar* pVar = pMaterial->FindVar(_("$phongtint"), &found);
-						if (found)
+						// Overlay
+						if (found3)
 						{
-							if (Vars::Chams::DME::WeaponOverlayRainbow.m_Var)
+							if (Vars::Chams::DME::HandsOverlayRainbow.m_Var)
 							{
 								pVar->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
 									Color::TOFLOAT(Utils::Rainbow().g) * 4,
@@ -943,10 +705,9 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 									Color::TOFLOAT(chams.overlayColor.b));
 							}
 						}
-						IMaterialVar* pVar2 = pMaterial->FindVar(_("$envmaptint"), &found2);
-						if (found2)
+						if (found4)
 						{
-							if (Vars::Chams::DME::WeaponOverlayRainbow.m_Var)
+							if (Vars::Chams::DME::HandsOverlayRainbow.m_Var)
 							{
 								pVar2->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
 									Color::TOFLOAT(Utils::Rainbow().g) * 4,
@@ -959,14 +720,15 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 									Color::TOFLOAT(chams.overlayColor.b));
 							}
 						}
-						pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
+						m_pMatScuffed->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
 
-						g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
+						g_Interfaces.ModelRender->ForcedMaterialOverride(m_pMatScuffed);
 
 						ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
-							ModelRenderHook::DrawModelExecute::index) //overlay
+							ModelRenderHook::DrawModelExecute::index)
 							(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
 					}
+
 
 					if (bMatWasForced)
 					{
@@ -978,9 +740,234 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 
 					return true;
 				}
-			}
+				if (pEntity && !pEntity->GetDormant() && pEntity->IsPlayer() && Vars::Chams::DME::Active.m_Var)
+				{
+					bool bMatWasForced = false;
+					bool bIsLocal = pEntity->GetIndex() == g_Interfaces.Engine->GetLocalPlayer();
+					static auto pLocal = g_EntityCache.m_pLocal;
+					auto chams = fetchChams(pEntity);
+					Color_t DrawColor = Utils::GetEntityDrawColor(pEntity, Vars::ESP::Main::EnableTeamEnemyColors.m_Var);
 
-			m_bRendering = false;
+					if (fetchMaterial(chams) == nullptr)
+						bMatWasForced = false;
+
+					if (chams.drawMaterial) // handles chams
+					{
+						g_Interfaces.ModelRender->ForcedMaterialOverride(fetchMaterial(chams));
+
+						if (chams.drawMaterial != 7)
+						{
+							g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(DrawColor.r),
+								Color::TOFLOAT(DrawColor.g),
+								Color::TOFLOAT(DrawColor.b));
+						}
+						else
+						{
+							if (found1)
+							{
+								fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(chams.fresnelBaseColor.r),
+									Color::TOFLOAT(chams.fresnelBaseColor.g),
+									Color::TOFLOAT(chams.fresnelBaseColor.b));
+							}
+							if (found2)
+							{
+								envmap->SetVecValue(Color::TOFLOAT(DrawColor.r), Color::TOFLOAT(DrawColor.g),
+									Color::TOFLOAT(DrawColor.b));
+							}
+						}
+					}
+
+					if (chams.showObstructed)
+						pRenderContext->DepthRange(0.0f, 0.2f);
+
+					g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(DrawColor.a));
+					ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
+						ModelRenderHook::DrawModelExecute::index)
+						(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
+					bMatWasForced = true;
+
+
+					if (chams.overlayType && bMatWasForced) // handles glow overlay
+					{
+						if (found3)
+						{
+							pVar->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
+								Color::TOFLOAT(chams.overlayColor.g),
+								Color::TOFLOAT(chams.overlayColor.b));
+						}
+						if (found4)
+						{
+
+							pVar2->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
+								Color::TOFLOAT(chams.overlayColor.g),
+								Color::TOFLOAT(chams.overlayColor.b));
+						}
+						m_pMatScuffed->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
+						g_Interfaces.ModelRender->ForcedMaterialOverride(m_pMatScuffed);
+
+						ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
+							ModelRenderHook::DrawModelExecute::index)
+							(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
+					}
+
+					g_Interfaces.ModelRender->ForcedMaterialOverride(nullptr);
+					g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
+
+					g_Interfaces.RenderView->SetBlend(1.0f);
+
+					if (chams.showObstructed)
+						pRenderContext->DepthRange(0.0f, 1.0f);
+
+					m_DrawnEntities[pEntity] = true;
+					return true;
+				}
+				if (!pEntity && pInfo.m_pModel)
+				{
+					std::string_view szModelName(g_Interfaces.ModelInfo->GetModelName(pInfo.m_pModel));
+
+					if (szModelName.find(_("weapon")) != std::string_view::npos
+						&& szModelName.find(_("arrow")) == std::string_view::npos
+						&& szModelName.find(_("w_syringe")) == std::string_view::npos
+						&& szModelName.find(_("nail")) == std::string_view::npos
+						&& szModelName.find(_("shell")) == std::string_view::npos
+						&& szModelName.find(_("parachute")) == std::string_view::npos
+						&& szModelName.find(_("buffbanner")) == std::string_view::npos
+						&& szModelName.find(_("shogun_warbanner")) == std::string_view::npos
+						&& szModelName.find(_("targe")) == std::string_view::npos //same as world model, can't filter
+						&& szModelName.find(_("shield")) == std::string_view::npos //same as world model, can't filter
+						&& szModelName.find(_("repair_claw")) == std::string_view::npos)
+					{
+						//g_Interfaces.DebugOverlay->AddTextOverlay(pInfo.m_vOrigin, 0.003f, "%hs", szModelName);
+
+						bool bMatWasForced = false;
+						auto chams = Vars::Chams::Players::Weapon;
+						auto cMat = fetchMaterial(chams);
+
+						if (!chams.chamsActive)
+							return false;
+
+
+						int _case = 0;
+
+						if (Vars::Chams::DME::Weapon.m_Var)
+						{
+							g_Interfaces.ModelRender->ForcedMaterialOverride(cMat);
+						}
+
+						if (bMatWasForced && (chams.drawMaterial != 7))
+						{
+							if (Vars::Chams::DME::WeaponRainbow.m_Var)
+							{
+								g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Utils::Rainbow().r),
+									Color::TOFLOAT(Utils::Rainbow().g),
+									Color::TOFLOAT(Utils::Rainbow().b));
+							}
+							else
+							{
+								g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(Colors::Weapon.r),
+									Color::TOFLOAT(Colors::Weapon.g),
+									Color::TOFLOAT(Colors::Weapon.b));
+							}
+						}
+
+						g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(Colors::Weapon.a));
+
+						ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
+							ModelRenderHook::DrawModelExecute::index) // base
+							(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
+						bMatWasForced = true;
+						if (chams.drawMaterial == 7)
+						{
+							if (found1)
+							{
+								fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(Colors::FresnelBaseWeps.r) * 4,
+									Color::TOFLOAT(Colors::FresnelBaseWeps.g) * 4,
+									Color::TOFLOAT(Colors::FresnelBaseWeps.b) * 4);
+							}
+							if (found2)
+							{
+								envmap->SetVecValue(Color::TOFLOAT(Colors::Weapon.r) * 4, Color::TOFLOAT(Colors::Weapon.g) * 4,
+									Color::TOFLOAT(Colors::Weapon.b) * 4);
+							}
+						}
+
+						if (Vars::Chams::DME::WeaponsProxySkin.m_Var && bMatWasForced)
+						{
+
+							IMaterial* pMaterial = nullptr;
+							{
+								pMaterial = ProxySkins::getProxy(Vars::Chams::DME::WeaponsProxySkin.m_Var);
+							}
+							pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, Vars::Chams::DME::HandsProxyWF.m_Var);
+							g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
+							g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
+
+							ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
+								ModelRenderHook::DrawModelExecute::index)
+								(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
+						}
+
+						if (chams.overlayType && bMatWasForced)
+						{
+							IMaterial* pMaterial = m_pMatScuffed;
+							bool found = false;
+							bool found2 = false;
+							bool found3 = false;
+							IMaterialVar* pVar = pMaterial->FindVar(_("$phongtint"), &found);
+							if (found)
+							{
+								if (Vars::Chams::DME::WeaponOverlayRainbow.m_Var)
+								{
+									pVar->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
+										Color::TOFLOAT(Utils::Rainbow().g) * 4,
+										Color::TOFLOAT(Utils::Rainbow().b) * 4);
+								}
+								else
+								{
+									pVar->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
+										Color::TOFLOAT(chams.overlayColor.g),
+										Color::TOFLOAT(chams.overlayColor.b));
+								}
+							}
+							IMaterialVar* pVar2 = pMaterial->FindVar(_("$envmaptint"), &found2);
+							if (found2)
+							{
+								if (Vars::Chams::DME::WeaponOverlayRainbow.m_Var)
+								{
+									pVar2->SetVecValue(Color::TOFLOAT(Utils::Rainbow().r) * 4,
+										Color::TOFLOAT(Utils::Rainbow().g) * 4,
+										Color::TOFLOAT(Utils::Rainbow().b) * 4);
+								}
+								else
+								{
+									pVar2->SetVecValue(Color::TOFLOAT(chams.overlayColor.r),
+										Color::TOFLOAT(chams.overlayColor.g),
+										Color::TOFLOAT(chams.overlayColor.b));
+								}
+							}
+							pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
+
+							g_Interfaces.ModelRender->ForcedMaterialOverride(pMaterial);
+
+							ModelRenderHook::Table.Original<ModelRenderHook::DrawModelExecute::fn>(
+								ModelRenderHook::DrawModelExecute::index) //overlay
+								(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
+						}
+
+						if (bMatWasForced)
+						{
+							g_Interfaces.ModelRender->ForcedMaterialOverride(nullptr);
+							g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
+						}
+
+						g_Interfaces.RenderView->SetBlend(1.0f);
+
+						return true;
+					}
+				}
+
+				m_bRendering = false;
+			}
 		}
 	}
 	return false;

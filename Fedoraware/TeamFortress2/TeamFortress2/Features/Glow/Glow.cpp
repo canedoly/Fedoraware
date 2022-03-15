@@ -1,6 +1,6 @@
 #include "Glow.h"
 #include "../Vars.h"
-#include "../Chams/Chams.h"
+#include "../Chams/DMEChams.h"
 
 void CGlowEffect::DrawModel(CBaseEntity* pEntity, int nFlags, bool bIsDrawingModels)
 {
@@ -209,7 +209,7 @@ void CGlowEffect::Render()
 
 				m_vecGlowEntities.push_back({Player, DrawColor, Vars::Glow::Players::Alpha.m_Var});
 
-				if (!g_Chams.HasDrawn(Player))
+				if (!g_DMEChams.HasDrawn(Player))
 					DrawModel(Player, STUDIO_RENDER, true);
 
 				if (Vars::Glow::Players::Wearables.m_Var)
@@ -225,7 +225,7 @@ void CGlowEffect::Render()
 						{
 							m_vecGlowEntities.push_back({pAttachment, DrawColor, Vars::Glow::Players::Alpha.m_Var});
 
-							if (!g_Chams.HasDrawn(pAttachment))
+							if (!g_DMEChams.HasDrawn(pAttachment))
 								DrawModel(pAttachment, STUDIO_RENDER, true);
 						}
 
@@ -239,7 +239,7 @@ void CGlowEffect::Render()
 					{
 						m_vecGlowEntities.push_back({pWeapon, DrawColor, Vars::Glow::Players::Alpha.m_Var});
 
-						if (!g_Chams.HasDrawn(pWeapon))
+						if (!g_DMEChams.HasDrawn(pWeapon))
 							DrawModel(pWeapon, STUDIO_RENDER, true);
 					}
 				}
@@ -268,7 +268,7 @@ void CGlowEffect::Render()
 
 				m_vecGlowEntities.push_back({Building, DrawColor, Vars::Glow::Buildings::Alpha.m_Var});
 
-				if (!g_Chams.HasDrawn(Building))
+				if (!g_DMEChams.HasDrawn(Building))
 					DrawModel(Building, STUDIO_RENDER, true);
 			}
 		}
@@ -284,7 +284,7 @@ void CGlowEffect::Render()
 
 					m_vecGlowEntities.push_back({Health, Colors::Health, Vars::Glow::World::Alpha.m_Var});
 
-					if (!g_Chams.HasDrawn(Health))
+					if (!g_DMEChams.HasDrawn(Health))
 						DrawModel(Health, STUDIO_RENDER, true);
 				}
 			}
@@ -298,7 +298,7 @@ void CGlowEffect::Render()
 
 					m_vecGlowEntities.push_back({Ammo, Colors::Ammo, Vars::Glow::World::Alpha.m_Var});
 
-					if (!g_Chams.HasDrawn(Ammo))
+					if (!g_DMEChams.HasDrawn(Ammo))
 						DrawModel(Ammo, STUDIO_RENDER, true);
 				}
 			}
@@ -323,7 +323,7 @@ void CGlowEffect::Render()
 						Vars::Glow::World::Alpha.m_Var
 					});
 
-					if (!g_Chams.HasDrawn(Projectile))
+					if (!g_DMEChams.HasDrawn(Projectile))
 						DrawModel(Projectile, STUDIO_RENDER, true);
 				}
 			}

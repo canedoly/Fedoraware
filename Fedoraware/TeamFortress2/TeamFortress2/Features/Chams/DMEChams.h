@@ -20,8 +20,13 @@ public:
 private:
 	bool ShouldRun();
 	IMaterial* fetchMaterial(Chams_t chams);
+	std::map<CBaseEntity*, bool> m_DrawnEntities;
 
 public:
+	bool HasDrawn(CBaseEntity* pEntity)
+	{
+		return m_DrawnEntities.find(pEntity) != m_DrawnEntities.end();
+	}
 	void Init();
 	bool Render(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo, matrix3x4* pBoneToWorld);
 	bool m_bRendering;
