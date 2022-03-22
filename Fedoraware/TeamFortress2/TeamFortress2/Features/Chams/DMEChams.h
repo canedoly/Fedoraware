@@ -29,7 +29,6 @@ public:
 	}
 	void Init();
 	bool Render(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo, matrix3x4* pBoneToWorld);
-	bool m_bRendering;
 };
 
 inline CDMEChams g_DMEChams;

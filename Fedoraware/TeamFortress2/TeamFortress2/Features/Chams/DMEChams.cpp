@@ -522,17 +522,20 @@ void CDMEChams::Init()
 
 Chams_t fetchChams(CBaseEntity* pEntity) {
 	PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
-
-	if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-		return Vars::Chams::Players::Target;
-	if (pEntity == g_EntityCache.m_pLocal)
-		return Vars::Chams::Players::Local;
-	if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
-		return Vars::Chams::Players::Friend;
-	if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum())
-		return Vars::Chams::Players::Enemy;
-	if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum())
-		return Vars::Chams::Players::Team;
+	if (pEntity) {
+		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
+			return Vars::Chams::Players::Target;
+		if (pEntity == g_EntityCache.m_pLocal)
+			return Vars::Chams::Players::Local;
+		if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
+			return Vars::Chams::Players::Friend;
+		if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum())
+			return Vars::Chams::Players::Enemy;
+		if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum())
+			return Vars::Chams::Players::Team;
+	}
+	Chams_t noDraw;
+	return noDraw;
 }
 
 IMaterial* CDMEChams::fetchMaterial(Chams_t chams)
@@ -593,7 +596,6 @@ IMaterial* ProxySkins::getProxy(int var) {
 
 bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo, matrix3x4* pBoneToWorld)
 {
-	m_bRendering = false;
 	bool found1 = true;
 	bool found2 = true;
 	bool found3 = true;
@@ -607,18 +609,8 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 			static IMaterialVar* pVar = m_pMatScuffed->FindVar(_("$phongtint"), &found3);
 			static IMaterialVar* pVar2 = m_pMatScuffed->FindVar(_("$envmaptint"), &found4);
 
-			ShaderStencilState_t StencilState = {};
-			StencilState.m_bEnable = true;
-			StencilState.m_nReferenceValue = 1;
-			StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-			StencilState.m_PassOp = STENCILOPERATION_REPLACE;
-			StencilState.m_FailOp = STENCILOPERATION_KEEP;
-			StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
-			StencilState.SetStencilState(pRenderContext);
-
 			if (ShouldRun())
 			{
-				m_bRendering = true;
 				CBaseEntity* pEntity = g_Interfaces.EntityList->GetClientEntity(pInfo.m_nEntIndex);
 
 				if (pEntity && pEntity->GetClassID() == ETFClassID::CTFViewModel)
@@ -966,7 +958,6 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 					}
 				}
 
-				m_bRendering = false;
 			}
 		}
 	}

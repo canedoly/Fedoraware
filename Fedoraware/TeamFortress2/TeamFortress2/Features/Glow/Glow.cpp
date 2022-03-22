@@ -1,6 +1,6 @@
 #include "Glow.h"
 #include "../Vars.h"
-#include "../Chams/DMEChams.h"
+#include "../Chams/Chams.h"
 
 void CGlowEffect::DrawModel(CBaseEntity* pEntity, int nFlags, bool bIsDrawingModels)
 {
@@ -58,7 +58,7 @@ void CGlowEffect::Init()
 		\n{\
 		\n\t\"$basetexture\" \"glow_buffer_1\"\
 		\n}\n")
-	});
+		});
 
 	m_pMatBlurXwf = Utils::CreateMaterial
 	({
@@ -67,7 +67,7 @@ void CGlowEffect::Init()
 		\n\t\"$basetexture\" \"glow_buffer_1\"\
 		\n\t\"$wireframe\" \"1\"\
 		\n}\n")
-	});
+		});
 
 	m_pMatBlurY = Utils::CreateMaterial
 	({
@@ -75,7 +75,7 @@ void CGlowEffect::Init()
 		\n{\
 		\n\t\"$basetexture\" \"glow_buffer_2\"\
 		\n}\n")
-	});
+		});
 
 	m_pMatBlurYwf = Utils::CreateMaterial
 	({
@@ -84,7 +84,7 @@ void CGlowEffect::Init()
 		\n\t\"$basetexture\" \"glow_buffer_2\"\
 		\n\t\"$wireframe\" \"1\"\
 		\n}\n")
-	});
+		});
 
 
 	m_pMatHaloAddToScreen = Utils::CreateMaterial
@@ -94,7 +94,7 @@ void CGlowEffect::Init()
 		\n\t\"$basetexture\" \"glow_buffer_1\"\
 		\n\t\"$additive\" \"1\"\
 		\n}\n")
-	});
+		});
 }
 
 void CGlowEffect::Render()
@@ -133,14 +133,17 @@ void CGlowEffect::Render()
 		g_Interfaces.RenderView->GetColorModulation(flOriginalColor);
 		float flOriginalBlend = g_Interfaces.RenderView->GetBlend();
 
-		ShaderStencilState_t StencilState = {};
-		StencilState.m_bEnable = true;
-		StencilState.m_nReferenceValue = 1;
-		StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-		StencilState.m_PassOp = STENCILOPERATION_REPLACE;
-		StencilState.m_FailOp = STENCILOPERATION_KEEP;
-		StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
-		StencilState.SetStencilState(pRenderContext);
+		if (!g_Chams.m_bHasSetStencil)
+		{
+			ShaderStencilState_t StencilState = {};
+			StencilState.m_bEnable = true;
+			StencilState.m_nReferenceValue = 1;
+			StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+			StencilState.m_PassOp = STENCILOPERATION_REPLACE;
+			StencilState.m_FailOp = STENCILOPERATION_KEEP;
+			StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
+			StencilState.SetStencilState(pRenderContext);
+		}
 
 		g_Interfaces.RenderView->SetBlend(1.0f);
 		g_Interfaces.RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
@@ -160,16 +163,18 @@ void CGlowEffect::Render()
 					{
 					case 0: break;
 					case 1:
-						{
-							if (Player->GetTeamNum() == pLocal->GetTeamNum()) { continue; }
-							break;
-						}
+					{
+						if (Player->GetTeamNum() == pLocal->GetTeamNum()) { continue; }
+						break;
+					}
 					case 2:
-						{
-							if (Player->GetTeamNum() == pLocal->GetTeamNum() && !g_EntityCache.Friends[Player->
-								GetIndex()]) { continue; }
-							break;
+					{
+						if (Player->GetTeamNum() == pLocal->GetTeamNum() && !g_EntityCache.Friends[Player->
+							GetIndex()]) {
+							continue;
 						}
+						break;
+					}
 					}
 				}
 
@@ -207,25 +212,25 @@ void CGlowEffect::Render()
 					DrawColor = Utils::GetHealthColor(Player->GetHealth(), Player->GetMaxHealth());
 				}
 
-				m_vecGlowEntities.push_back({Player, DrawColor, Vars::Glow::Players::Alpha.m_Var});
+				m_vecGlowEntities.push_back({ Player, DrawColor, Vars::Glow::Players::Alpha.m_Var });
 
-				if (!g_DMEChams.HasDrawn(Player))
+				if (!g_Chams.HasDrawn(Player))
 					DrawModel(Player, STUDIO_RENDER, true);
 
 				if (Vars::Glow::Players::Wearables.m_Var)
 				{
 					CBaseEntity* pAttachment = Player->FirstMoveChild();
 
-					for (int n = 0; n < 10; n++)
+					for (int n = 0; n < 32; n++)
 					{
 						if (!pAttachment)
-							break;
+							continue;
 
 						if (pAttachment->IsWearable())
 						{
-							m_vecGlowEntities.push_back({pAttachment, DrawColor, Vars::Glow::Players::Alpha.m_Var});
+							m_vecGlowEntities.push_back({ pAttachment, DrawColor, Vars::Glow::Players::Alpha.m_Var });
 
-							if (!g_DMEChams.HasDrawn(pAttachment))
+							if (!g_Chams.HasDrawn(pAttachment))
 								DrawModel(pAttachment, STUDIO_RENDER, true);
 						}
 
@@ -237,9 +242,9 @@ void CGlowEffect::Render()
 				{
 					if (const auto& pWeapon = Player->GetActiveWeapon())
 					{
-						m_vecGlowEntities.push_back({pWeapon, DrawColor, Vars::Glow::Players::Alpha.m_Var});
+						m_vecGlowEntities.push_back({ pWeapon, DrawColor, Vars::Glow::Players::Alpha.m_Var });
 
-						if (!g_DMEChams.HasDrawn(pWeapon))
+						if (!g_Chams.HasDrawn(pWeapon))
 							DrawModel(pWeapon, STUDIO_RENDER, true);
 					}
 				}
@@ -266,9 +271,9 @@ void CGlowEffect::Render()
 
 				else DrawColor = Utils::GetHealthColor(Building->GetHealth(), Building->GetMaxHealth());
 
-				m_vecGlowEntities.push_back({Building, DrawColor, Vars::Glow::Buildings::Alpha.m_Var});
+				m_vecGlowEntities.push_back({ Building, DrawColor, Vars::Glow::Buildings::Alpha.m_Var });
 
-				if (!g_DMEChams.HasDrawn(Building))
+				if (!g_Chams.HasDrawn(Building))
 					DrawModel(Building, STUDIO_RENDER, true);
 			}
 		}
@@ -282,9 +287,9 @@ void CGlowEffect::Render()
 					if (!Utils::IsOnScreen(pLocal, Health))
 						continue;
 
-					m_vecGlowEntities.push_back({Health, Colors::Health, Vars::Glow::World::Alpha.m_Var});
+					m_vecGlowEntities.push_back({ Health, Colors::Health, Vars::Glow::World::Alpha.m_Var });
 
-					if (!g_DMEChams.HasDrawn(Health))
+					if (!g_Chams.HasDrawn(Health))
 						DrawModel(Health, STUDIO_RENDER, true);
 				}
 			}
@@ -296,9 +301,9 @@ void CGlowEffect::Render()
 					if (!Utils::IsOnScreen(pLocal, Ammo))
 						continue;
 
-					m_vecGlowEntities.push_back({Ammo, Colors::Ammo, Vars::Glow::World::Alpha.m_Var});
+					m_vecGlowEntities.push_back({ Ammo, Colors::Ammo, Vars::Glow::World::Alpha.m_Var });
 
-					if (!g_DMEChams.HasDrawn(Ammo))
+					if (!g_Chams.HasDrawn(Ammo))
 						DrawModel(Ammo, STUDIO_RENDER, true);
 				}
 			}
@@ -321,9 +326,9 @@ void CGlowEffect::Render()
 					m_vecGlowEntities.push_back({
 						Projectile, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.m_Var),
 						Vars::Glow::World::Alpha.m_Var
-					});
+						});
 
-					if (!g_DMEChams.HasDrawn(Projectile))
+					if (!g_Chams.HasDrawn(Projectile))
 						DrawModel(Projectile, STUDIO_RENDER, true);
 				}
 			}
@@ -347,8 +352,8 @@ void CGlowEffect::Render()
 			{
 				g_Interfaces.RenderView->SetBlend(GlowEntity.m_flAlpha);
 				g_Interfaces.RenderView->SetColorModulation(Color::TOFLOAT(GlowEntity.m_Color.r),
-				                                            Color::TOFLOAT(GlowEntity.m_Color.g),
-				                                            Color::TOFLOAT(GlowEntity.m_Color.b));
+					Color::TOFLOAT(GlowEntity.m_Color.g),
+					Color::TOFLOAT(GlowEntity.m_Color.b));
 				DrawModel(GlowEntity.m_pEntity, STUDIO_RENDER | STUDIO_NOSHADOWS, false);
 			}
 
@@ -374,6 +379,7 @@ void CGlowEffect::Render()
 			pRenderContext->PopRenderTargetAndViewport();
 		}
 
+		ShaderStencilState_t StencilState = {};
 		StencilState.m_bEnable = true;
 		StencilState.m_nWriteMask = 0x0;
 		StencilState.m_nTestMask = 0xFF;
