@@ -276,13 +276,13 @@ namespace Vars
 			inline CVar<bool> GlowOverlay { false , L"Glow overlay" };
 
 			// {ignorez, material, overlay type (0 = off), active}
-			inline Chams_t Local{ false, 0, 0, false };
-			inline Chams_t Friend{ false, 0, 0, false };
-			inline Chams_t Enemy{ false, 0, 0, false };
-			inline Chams_t Team{ false, 0, 0, false };
-			inline Chams_t Target{ false, 0, 0, false };
-			inline Chams_t Weapon{ false, 0, 0, false };
-			inline Chams_t Arms{ false, 0, 0, false };
+			inline Chams_t Local	{};
+			inline Chams_t Friend	{};
+			inline Chams_t Enemy	{};
+			inline Chams_t Team		{};
+			inline Chams_t Target	{};
+			inline Chams_t Weapon	{};
+			inline Chams_t Arms		{};
 		}
 
 		namespace Buildings

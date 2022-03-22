@@ -522,18 +522,18 @@ void CDMEChams::Init()
 
 Chams_t fetchChams(CBaseEntity* pEntity) {
 	PlayerInfo_t info{}; g_Interfaces.Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
-	if (pEntity) {
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			return Vars::Chams::Players::Target;
-		if (pEntity == g_EntityCache.m_pLocal)
-			return Vars::Chams::Players::Local;
-		if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
-			return Vars::Chams::Players::Friend;
-		if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum())
-			return Vars::Chams::Players::Enemy;
-		if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum())
-			return Vars::Chams::Players::Team;
-	}
+
+	if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
+		return Vars::Chams::Players::Target;
+	if (pEntity == g_EntityCache.m_pLocal)
+		return Vars::Chams::Players::Local;
+	if (g_EntityCache.Friends[pEntity->GetIndex()] || pEntity == g_EntityCache.m_pLocal)
+		return Vars::Chams::Players::Friend;
+	if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum())
+		return Vars::Chams::Players::Enemy;
+	if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum())
+		return Vars::Chams::Players::Team;
+
 	Chams_t noDraw;
 	return noDraw;
 }
@@ -604,10 +604,11 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 	if (pLocal) {
 		if (IMatRenderContext* pRenderContext = g_Interfaces.MatSystem->GetRenderContext()) {
 
-			static IMaterialVar* fresnelSelfillumtint = m_pMatFresnel->FindVar(_("$selfillumtint"), &found1);
-			static IMaterialVar* envmap = m_pMatFresnel->FindVar(_("$envmaptint"), &found2);
-			static IMaterialVar* pVar = m_pMatScuffed->FindVar(_("$phongtint"), &found3);
-			static IMaterialVar* pVar2 = m_pMatScuffed->FindVar(_("$envmaptint"), &found4);
+			// apprntly static doesn't work very well here...
+			IMaterialVar* fresnelSelfillumtint	=	m_pMatFresnel->FindVar(_("$selfillumtint"), &found1);
+			IMaterialVar* envmap				=	m_pMatFresnel->FindVar(_("$envmaptint"), &found2);
+			IMaterialVar* pVar					=	m_pMatScuffed->FindVar(_("$phongtint"), &found3);
+			IMaterialVar* pVar2					=	m_pMatScuffed->FindVar(_("$envmaptint"), &found4);
 
 			if (ShouldRun())
 			{
@@ -735,8 +736,6 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 				if (pEntity && !pEntity->GetDormant() && pEntity->IsPlayer() && Vars::Chams::DME::Active.m_Var)
 				{
 					bool bMatWasForced = false;
-					bool bIsLocal = pEntity->GetIndex() == g_Interfaces.Engine->GetLocalPlayer();
-					static auto pLocal = g_EntityCache.m_pLocal;
 					auto chams = fetchChams(pEntity);
 					Color_t DrawColor = Utils::GetEntityDrawColor(pEntity, Vars::ESP::Main::EnableTeamEnemyColors.m_Var);
 
