@@ -1,6 +1,5 @@
 #include "ClientModeHook.h"
 
-#include "../../Features/Menu/Menu.h"
 #include "../../Features/Prediction/Prediction.h"
 #include "../../Features/Aimbot/Aimbot.h"
 #include "../../Features/Auto/Auto.h"
@@ -9,11 +8,12 @@
 #include "../../Features/Chams/Chams.h"
 #include "../../Features/Glow/Glow.h"
 #include "../../Features/AntiHack/AntiAim.h"
-#include "../../Features/Crits/Crits.h"
 #include "../../Features/Backtrack/Backtrack.h"
 #include "../../Features/Visuals/FakeAngleManager/FakeAng.h"
 #include "../../Features/Camera/CameraWindow.h"
+#include "../../Features/CritHack/CritHack.h"
 #include "../../Features/Fedworking/Fedworking.h"
+#include "../../Features/Resolver/Resolver.h"
 
 #include "../../Features/Vars.h"
 #include "../../Features/PlayerResource/PlayerResource.h"
@@ -29,45 +29,6 @@ void AngleVectors2(const QAngle& angles, Vector* forward)
 	forward->y = cp * sy;
 	forward->z = -sp;
 }
-
-/*void FastStop(CUserCmd* pCmd)
-{
-	if (g_EntityCache.m_pLocal)
-	{
-		// Get velocity
-		Vector vel = g_EntityCache.m_pLocal->GetVelocity();
-		//velocity::EstimateAbsVelocity(RAW_ENT(LOCAL_E), vel);
-
-		static auto sv_friction = g_Interfaces.CVars->FindVar("sv_friction");
-		static auto sv_stopspeed = g_Interfaces.CVars->FindVar("sv_stopspeed");
-
-		auto speed = vel.Length2D();
-		auto friction = sv_friction->GetFloat() * *reinterpret_cast<float*>(g_EntityCache.m_pLocal + 0x12b8);
-		auto control = (speed < sv_stopspeed->GetFloat()) ? sv_stopspeed->GetFloat() : speed;
-		auto drop = control * friction * g_Interfaces.GlobalVars->interval_per_tick;
-
-		if (speed > drop - 1.0f)
-		{
-			Vector velocity = vel;
-			Vector direction;
-			Math::VectorAngles(vel, direction);
-			float speed = velocity.Length();
-
-			direction.y = pCmd->viewangles.y - direction.y;
-
-			Vector forward;
-			AngleVectors2(direction, &forward);
-			Vector negated_direction = forward * -speed;
-
-			pCmd->forwardmove = negated_direction.x;
-			pCmd->sidemove = negated_direction.y;
-		}
-		else
-		{
-			pCmd->forwardmove = pCmd->sidemove = 0.0f;
-		}
-	}
-}*/
 
 void __stdcall ClientModeHook::OverrideView::Hook(CViewSetup* pView)
 {
@@ -95,44 +56,10 @@ static void UpdateAntiAFK(CUserCmd* pCmd)
 		static float last_time = 0.0f;
 		static int buttones = 0;
 
-		if (g_Interfaces.GlobalVars->curtime - last_time > 20)
-		{
-			pCmd->buttons &= IN_FORWARD;
-			pCmd->buttons &= IN_JUMP;
-			last_time = g_Interfaces.GlobalVars->curtime;
+		if (pCmd->command_number % 2){
+			pCmd->buttons |= 1 << 27;
 		}
 	}
-}
-
-inline Vector ComputeMove(CUserCmd* pCmd, CBaseEntity* pLocal, Vec3& a, Vec3& b)
-{
-	Vec3 diff = (b - a);
-	if (diff.Length() == 0.0f)
-		return Vec3(0.0f, 0.0f, 0.0f);
-	const float x = diff.x;
-	const float y = diff.y;
-	Vec3 vsilent(x, y, 0);
-	Vec3 ang;
-	Math::VectorAngles(vsilent, ang);
-	float yaw = DEG2RAD(ang.y - pCmd->viewangles.y);
-	float pitch = DEG2RAD(ang.x - pCmd->viewangles.x);
-	Vec3 move = {cos(yaw) * 450.0f, -sin(yaw) * 450.0f, -cos(pitch) * 450.0f};
-
-	// Only apply upmove in water
-	if (!(g_Interfaces.EngineTrace->GetPointContents(pLocal->GetEyePosition()) & CONTENTS_WATER))
-		move.z = pCmd->upmove;
-	return move;
-}
-
-// Function for when you want to goto a vector
-inline void WalkTo(CUserCmd* pCmd, CBaseEntity* pLocal, Vec3& a, Vec3& b, float scale)
-{
-	// Calculate how to get to a vector
-	auto result = ComputeMove(pCmd, pLocal, a, b);
-	// Push our move to usercmd
-	pCmd->forwardmove = result.x * scale;
-	pCmd->sidemove = result.y * scale;
-	pCmd->upmove = result.z * scale;
 }
 
 void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
@@ -142,7 +69,7 @@ void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 	static int nShiftTick = 0;
 	if (pLocal && pLocal->IsAlive())
 	{
-		if (g_GlobalInfo.m_bShouldShift && g_GlobalInfo.m_nShifted > 0 && Vars::Misc::CL_Move::AntiWarp.m_Var)
+		if (g_GlobalInfo.m_bShouldShift && g_GlobalInfo.m_nShifted > 0 && Vars::Misc::CL_Move::AntiWarp.m_Var && pLocal->GetVecVelocity().Length2D() > 10.f)
 		{
 			if (vStartOrigin.IsZero())
 			{
@@ -154,17 +81,12 @@ void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 				vStartVel = pLocal->GetVecVelocity();
 			}
 
-			pCmd->forwardmove = 0.0f;
-			pCmd->sidemove = 0.0f;
+			const Vec3 vPredicted = vStartOrigin + (vStartVel * TICKS_TO_TIME(3 - nShiftTick));
+			Vec3 vPredictedMax = vStartOrigin + (vStartVel * TICKS_TO_TIME(3));
 
-			Vec3 vPredicted = vStartOrigin + (vStartVel *
-				TICKS_TO_TIME(8 - nShiftTick));
-			Vec3 vPredictedMax = vStartOrigin + (vStartVel * TICKS_TO_TIME(8));
-
-			float flScale = Math::RemapValClamped(vPredicted.DistTo(vStartOrigin), 0.0f,
-			                                      vPredictedMax.DistTo(vStartOrigin) * 1.27f, 1.0f, 0.0f);
-			float flScaleScale = Math::RemapValClamped(vStartVel.Length2D(), 0.f, 520.f, 0.f, 1.f);
-			WalkTo(pCmd, pLocal, vPredictedMax, vStartOrigin, flScale * flScaleScale);
+			const float flScale = Math::RemapValClamped(vPredicted.DistTo(vStartOrigin), 0.0f, vPredictedMax.DistTo(vStartOrigin) * 1.5, 1.2f, 0.0f);
+			const float flScaleScale = Math::RemapValClamped(vStartVel.Length2D(), 0.0f, 540.0f, 0.5f, 2.0f);
+			Utils::WalkTo(pCmd, pLocal, vPredictedMax, vStartOrigin, flScale * flScaleScale);
 
 			nShiftTick++;
 		}
@@ -183,6 +105,7 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 {
 	g_GlobalInfo.m_bSilentTime = false;
 	g_GlobalInfo.m_bAttacking = false;
+	g_GlobalInfo.m_bFakeShotPitch = false;
 
 	auto OriginalFn = Table.Original<fn>(index);
 
@@ -205,54 +128,10 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 	float fOldSide = pCmd->sidemove;
 	float fOldForward = pCmd->forwardmove;
 
+	g_GlobalInfo.currentUserCmd = pCmd;
+
 	if (const auto& pLocal = g_EntityCache.m_pLocal)
 	{
-		// Freecam
-		{
-			if (Vars::Visuals::FreecamKey.m_Var && GetAsyncKeyState(Vars::Visuals::FreecamKey.m_Var) & 0x8000) {
-				if (g_GlobalInfo.m_bFreecamActive == false) {
-					g_GlobalInfo.m_vFreecamPos = pLocal->GetVecOrigin();
-					g_GlobalInfo.m_bFreecamActive = true;
-				}
-
-				const Vec3 viewAngles = g_Interfaces.Engine->GetViewAngles();
-				float zMove = sinf(DEG2RAD(viewAngles.x));
-				Vec3 vForward, vRight, vUp;
-				Math::AngleVectors(viewAngles, &vForward, &vRight, &vUp);
-				Vec3 moveVector;
-
-				if (pCmd->buttons & IN_FORWARD) {
-					moveVector += vForward;
-					moveVector.z -= zMove;
-				}
-
-				if (pCmd->buttons & IN_BACK) {
-					moveVector -= vForward;
-					moveVector.z += zMove;
-				}
-
-				if (pCmd->buttons & IN_MOVELEFT) {
-					moveVector -= vRight;
-				}
-
-				if (pCmd->buttons & IN_MOVERIGHT) {
-					moveVector += vRight;
-				}
-
-				Math::VectorNormalize(moveVector);
-				moveVector *= Vars::Visuals::FreecamSpeed.m_Var;
-				g_GlobalInfo.m_vFreecamPos += moveVector;
-
-				pCmd->buttons = 0;
-				pCmd->forwardmove = 0.f;
-				pCmd->sidemove = 0.f;
-				pCmd->upmove = 0.f;
-			}
-			else {
-				g_GlobalInfo.m_bFreecamActive = false;
-			}
-		}
-		
 		nOldFlags = pLocal->GetFlags();
 
 		if (const auto& pWeapon = g_EntityCache.m_pLocalWeapon)
@@ -289,26 +168,18 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 				}
 			}
 		}
-	}
 
-	UpdateAntiAFK(pCmd);
-
-	if (Vars::Misc::CL_Move::RechargeWhileDead.m_Var)
-	{
-		if (const auto& pLocal = g_EntityCache.m_pLocal)
+		if (Vars::Misc::CL_Move::RechargeWhileDead.m_Var)
 		{
 			if (!pLocal->IsAlive() && g_GlobalInfo.m_nShifted)
 			{
 				g_GlobalInfo.m_bRecharging = true;
 			}
 		}
-	}
 
-	if (Vars::Misc::CL_Move::AutoRecharge.m_Var)
-	{
-		if (g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_bShouldShift)
+		if (Vars::Misc::CL_Move::AutoRecharge.m_Var)
 		{
-			if (const auto& pLocal = g_EntityCache.m_pLocal)
+			if (g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_bShouldShift)
 			{
 				if (pLocal->GetVecVelocity().Length2D() < 5.0f && !(pCmd->buttons == 0))
 				{
@@ -317,6 +188,8 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 			}
 		}
 	}
+
+	UpdateAntiAFK(pCmd);
 
 	if (Vars::Misc::Roll.m_Var && pCmd->buttons & IN_DUCK)
 	{
@@ -353,7 +226,6 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 	g_PR->Update();
 	g_Misc.Run(pCmd);
 	g_Fedworking.Run();
-	g_Crits.Tick(pCmd);
 	g_CameraWindow.Update();
 
 	g_EnginePrediction.Start(pCmd);
@@ -363,11 +235,13 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 		g_Auto.Run(pCmd);
 		g_AntiAim.Run(pCmd, pSendPacket);
 		g_Misc.EdgeJump(pCmd, nOldFlags);
-		FastStop(pCmd, g_EntityCache.m_pLocal);
 	}
-
 	g_EnginePrediction.End(pCmd);
-	g_Misc.AutoRocketJump(pCmd);
+	g_CritHack.Run(pCmd);
+
+	FastStop(pCmd, g_EntityCache.m_pLocal);
+	g_Misc.RunLate(pCmd);
+	g_Resolver.Update(pCmd);
 
 	g_GlobalInfo.m_vViewAngles = pCmd->viewangles;
 
@@ -472,10 +346,9 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 		AntiWarp(pCmd);
 	}*/
 
-
-	if (Vars::Misc::TauntSlide.m_Var)
+	if (const auto& pLocal = g_EntityCache.m_pLocal)
 	{
-		if (const auto& pLocal = g_EntityCache.m_pLocal)
+		if (Vars::Misc::TauntSlide.m_Var)
 		{
 			if (pLocal->IsTaunting())
 			{
@@ -489,8 +362,22 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 				return false;
 			}
 		}
-	}
 
+		static float cycledelta = 0.f;
+		if (!*pSendPacket) {
+			pLocal->m_bClientSideAnimation() = false;
+			pLocal->m_flPlaybackRate() = 0.f;
+			cycledelta += 0.02f;
+		}
+		else {
+			pLocal->m_bClientSideAnimation() = true;
+			pLocal->m_flPlaybackRate() = 1.f;
+
+			pLocal->m_flCycle() += cycledelta;
+			cycledelta = 0.f;
+		}
+	}
+	
 	static bool bWasSet = false;
 
 	if (g_GlobalInfo.m_bSilentTime)
@@ -553,7 +440,9 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 
 	return g_GlobalInfo.m_bSilentTime
 	       || g_GlobalInfo.m_bAAActive
-	       || g_GlobalInfo.m_bHitscanSilentActive
+		   || g_GlobalInfo.m_bFakeShotPitch
+		   || g_GlobalInfo.m_bHitscanSilentActive
+		   || g_GlobalInfo.m_bAvoidingBackstab
 	       || g_GlobalInfo.m_bProjectileSilentActive
 	       || g_GlobalInfo.m_bRollExploiting
 		       ? false

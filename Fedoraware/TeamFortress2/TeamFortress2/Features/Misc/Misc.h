@@ -2,14 +2,30 @@
 
 #include "../../SDK/SDK.h"
 
+static float angleDiffRad(float a1, float a2) noexcept
+{
+	float delta = Utils::NormalizeRad(a1 - a2);
+	if (a1 > a2)
+	{
+		if (delta >= PI) { delta -= PI * 2; }
+	}
+	else
+	{
+		if (delta <= -PI) { delta += PI * 2; }
+	}
+	return delta;
+}
+
 class CMisc
 {
 private:
+	void AccurateMovement(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoStrafe(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void NoiseMakerSpam(CBaseEntity* pLocal);
 	void PingReducer();
 	void ExtendFreeze(CBaseEntity* pLocal);
+	void Freecam(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoJoin();
 	void InitSpamKV(void* pKV);
 	void ChatSpam();
@@ -17,15 +33,24 @@ private:
 
 public:
 	void Run(CUserCmd* pCmd);
+	void RunLate(CUserCmd* pCmd);
 	void CheatsBypass();
 	void ServerHitbox();
+	void AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd);
 	void WeaponSway();
+	void DetectChoke();
+	void LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void EdgeJump(CUserCmd* pCmd, int nOldFlags);
 	void BypassPure();
-	void AutoRocketJump(CUserCmd* pCmd);
+	void AutoRocketJump(CUserCmd* pCmd, CBaseEntity* pLocal);
+	void AutoPeek(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void NoPush();
 	void SteamRPC();
+	void UnlockAchievements();
+	void LockAchievements();
+
 	std::vector<std::string> strings;
+	Vec3 PeekReturnPos;
 };
 
 inline CMisc g_Misc;
@@ -49,13 +74,13 @@ public:
 	}
 };
 
-class Notify
+class CNotifications
 {
 private:
-	std::vector<std::shared_ptr<NotifyText>> m_notify_text;
+	std::vector<std::shared_ptr<NotifyText>> m_vNotificationTexts;
 
 public:
-	Notify() : m_notify_text{}
+	CNotifications() : m_vNotificationTexts{}
 	{
 	}
 
@@ -63,10 +88,10 @@ public:
 	__forceinline void Add(const std::string& text, Color_t color = {255, 255, 255, 255},
 	                       float time = Vars::Visuals::despawnTime.m_Var)
 	{
-		m_notify_text.push_back(std::make_shared<NotifyText>(text, color, time));
+		m_vNotificationTexts.push_back(std::make_shared<NotifyText>(text, color, time));
 	}
 
 	void Think();
 };
 
-inline Notify g_notify;
+inline CNotifications g_Notifications;

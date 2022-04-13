@@ -2,9 +2,9 @@
 
 #include "../../Features/Misc/Misc.h"
 #include "../../Features/Visuals/Visuals.h"
-#include "../../Features/Menu/Menu.h"
 #include "../../Features/AttributeChanger/AttributeChanger.h"
-#include "../../Features/PlayerList/PlayerList.h"
+#include "../../Features/Resolver/Resolver.h"
+#include "../../Features/Menu/Playerlist/Playerlist.h"
 
 const static std::string clear("?\nServer:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 	"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
@@ -15,6 +15,9 @@ const static std::string clear("?\nServer:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 	"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 
 static std::string clr({'\x7', '0', 'D', '9', '2', 'F', 'F'});
+static std::string yellow({ '\x7', 'C', '8', 'A', '9', '0', '0' }); //C8A900
+static std::string white({ '\x7', 'F', 'F', 'F', 'F', 'F', 'F' }); //FFFFFF
+static std::string green({ '\x7', '3', 'A', 'F', 'F', '4', 'D' }); //3AFF4D
 
 void __stdcall ClientHook::PreEntity::Hook(const char* szMapName)
 {
@@ -26,7 +29,7 @@ void __stdcall ClientHook::PostEntity::Hook()
 	Table.Original<fn>(index)(g_Interfaces.Client);
 	g_Interfaces.Engine->ClientCmd_Unrestricted(_("r_maxdlights 69420"));
 	g_Interfaces.Engine->ClientCmd_Unrestricted(_("r_dynamic 1"));
-	g_Visuals.ModulateWorld();
+
 }
 
 void __stdcall ClientHook::ShutDown::Hook()
@@ -34,6 +37,9 @@ void __stdcall ClientHook::ShutDown::Hook()
 	Table.Original<fn>(index)(g_Interfaces.Client);
 	g_EntityCache.Clear();
 	g_Visuals.rain.Cleanup();
+	g_GlobalInfo.partyPlayerESP.clear();
+	g_Resolver.ResolveData.clear();
+	g_GlobalInfo.chokeMap.clear();
 }
 
 
@@ -44,17 +50,16 @@ void __stdcall ClientHook::FrameStageNotify::Hook(EClientFrameStage FrameStage)
 	case EClientFrameStage::FRAME_RENDER_START:
 		{
 			g_GlobalInfo.m_vPunchAngles = Vec3();
-			Vec3 localHead;
 
 			if (const auto& pLocal = g_EntityCache.m_pLocal)
 			{
-				localHead = pLocal->GetHitboxPos(HITBOX_HEAD);
-
+				// Handle freecam position
 				if (g_GlobalInfo.m_bFreecamActive && Vars::Visuals::FreecamKey.m_Var && GetAsyncKeyState(Vars::Visuals::FreecamKey.m_Var) & 0x8000) {
 					pLocal->SetVecOrigin(g_GlobalInfo.m_vFreecamPos);
 					pLocal->SetAbsOrigin(g_GlobalInfo.m_vFreecamPos);
 				}
 
+				// Remove punch effect
 				if (Vars::Visuals::RemovePunch.m_Var)
 				{
 					g_GlobalInfo.m_vPunchAngles = pLocal->GetPunchAngles();
@@ -63,112 +68,9 @@ void __stdcall ClientHook::FrameStageNotify::Hook(EClientFrameStage FrameStage)
 				}
 			}
 
-			if (Vars::AntiHack::Resolver::Resolver.m_Var)
-			{
-				for (auto i = 1; i <= g_Interfaces.Engine->GetMaxClients(); i++)
-				{
-					CBaseEntity* entity = nullptr;
-					PlayerInfo_t temp;
+			// Resolver
+			g_Resolver.Run();
 
-					if (!(entity = g_Interfaces.EntityList->GetClientEntity(i)))
-						continue;
-
-					if (entity->GetDormant())
-						continue;
-
-					if (!g_Interfaces.Engine->GetPlayerInfo(i, &temp))
-						continue;
-
-					if (!entity->GetLifeState() == LIFE_ALIVE)
-						continue;
-
-					if (entity->IsTaunting())
-						continue;
-
-					Vector vX = entity->GetEyeAngles();
-					auto* m_angEyeAnglesX = reinterpret_cast<float*>(reinterpret_cast<DWORD>(entity) + g_NetVars.
-						get_offset("DT_TFPlayer", "tfnonlocaldata", "m_angEyeAngles[0]"));
-					auto* m_angEyeAnglesY = reinterpret_cast<float*>(reinterpret_cast<DWORD>(entity) + g_NetVars.
-						get_offset("DT_TFPlayer", "tfnonlocaldata", "m_angEyeAngles[1]"));
-
-					auto findResolve = g_GlobalInfo.resolvePlayers.find(temp.friendsID);
-					ResolveMode resolveMode;
-					if (findResolve != g_GlobalInfo.resolvePlayers.end())
-					{
-						resolveMode = findResolve->second;
-					}
-
-					// Pitch resolver 
-					switch (resolveMode.m_Pitch)
-					{
-					case 1:
-						{
-							*m_angEyeAnglesX = -89; // Up
-							break;
-						}
-					case 2:
-						{
-							*m_angEyeAnglesX = 89; // Down
-							break;
-						}
-					case 3:
-						{
-							*m_angEyeAnglesX = 0; // Zero
-							break;
-						}
-					case 4:
-						{
-							// Auto (Will resolve fake up/down)
-							if (vX.x >= 90)
-							{
-								*m_angEyeAnglesX = -89;
-							}
-
-							if (vX.x <= -90)
-							{
-								*m_angEyeAnglesX = 89;
-							}
-							break;
-						}
-					default:
-						break;
-					}
-
-					// Yaw resolver
-					Vec3 vAngleTo = Math::CalcAngle(entity->GetHitboxPos(HITBOX_HEAD), localHead);
-					switch (resolveMode.m_Yaw)
-					{
-					case 1:
-						{
-							*m_angEyeAnglesY = vAngleTo.y; // Forward
-							break;
-						}
-					case 2:
-						{
-							*m_angEyeAnglesY = vAngleTo.y + 180.f; // Backward
-							break;
-						}
-					case 3:
-						{
-							*m_angEyeAnglesY = vAngleTo.y - 90.f; // Left
-							break;
-						}
-					case 4:
-						{
-							*m_angEyeAnglesY = vAngleTo.y + 90.f; // Right
-							break;
-						}
-					case 5:
-						{
-							*m_angEyeAnglesY += 180; // Invert (this doesn't work properly)
-							break;
-						}
-					default:
-						break;
-					}
-				}
-			}
-			/*g_Visuals.ThirdPerson();*/
 			g_Visuals.SkyboxChanger();
 
 			break;
@@ -177,10 +79,6 @@ void __stdcall ClientHook::FrameStageNotify::Hook(EClientFrameStage FrameStage)
 	default: break;
 	}
 
-	g_Visuals.BigHeads(Vars::ESP::Players::Headscale.m_Var,
-	                   Vars::ESP::Players::Torsoscale.m_Var,
-	                   Vars::ESP::Players::Handscale.m_Var);
-
 	Table.Original<fn>(index)(g_Interfaces.Client, FrameStage);
 
 	switch (FrameStage)
@@ -188,6 +86,7 @@ void __stdcall ClientHook::FrameStageNotify::Hook(EClientFrameStage FrameStage)
 	case EClientFrameStage::FRAME_NET_UPDATE_START:
 		{
 			g_EntityCache.Clear();
+
 			break;
 		}
 
@@ -203,7 +102,7 @@ void __stdcall ClientHook::FrameStageNotify::Hook(EClientFrameStage FrameStage)
 	case EClientFrameStage::FRAME_NET_UPDATE_END:
 		{
 			g_EntityCache.Fill();
-			g_PlayerList.GetPlayers();
+			g_PlayerList.UpdatePlayers();
 
 			g_GlobalInfo.m_bLocalSpectated = false;
 
@@ -343,6 +242,75 @@ bool __stdcall ClientHook::DispatchUserMessage::Hook(int type, bf_read& msg_data
 				}
 				msg_data.Seek(0);
 			}
+			break;
+		}
+	case 46:
+		{
+			int team = msg_data.ReadByte(), caller = msg_data.ReadByte();
+			char reason[64], vote_target[64];
+			msg_data.ReadString(reason, 64);
+			msg_data.ReadString(vote_target, 64);
+			int target = static_cast<unsigned char>(msg_data.ReadByte()) >> 1;
+
+			PlayerInfo_t info_target{}, info_caller{};
+			if (const auto& pLocal = g_EntityCache.m_pLocal)
+			{
+				if (target > 0 && g_Interfaces.Engine->GetPlayerInfo(target, &info_target) && caller > 0 && g_Interfaces.Engine->GetPlayerInfo(caller, &info_caller))
+				{
+					bool bSameTeam = team == pLocal->GetTeamNum();
+
+					if (Vars::Misc::AnnounceVotesConsole.m_Var)
+					{
+						if (Vars::Misc::AnnounceVotes.m_Var == 0) {
+							g_Interfaces.CVars->ConsoleColorPrintf({ 133, 255, 66, 255 }, tfm::format("%s %s called a vote on %s", bSameTeam ? "" : "(Enemy)", info_caller.name, info_target.name).c_str());
+						}
+						else {
+							g_Interfaces.CVars->ConsoleColorPrintf({ 133, 255, 66, 255 }, tfm::format("%s %s [U:1:%s] called a vote on %s [U:1:%s]", bSameTeam ? "" : "(Enemy)", info_caller.name, info_caller.friendsID, info_target.name, info_target.friendsID).c_str());
+						}
+					}
+					if (Vars::Misc::AnnounceVotesText.m_Var)
+					{
+						if (Vars::Misc::AnnounceVotes.m_Var == 0) {
+							g_Notifications.Add(tfm::format("%s %s called a vote on %s", bSameTeam ? "" : "(Enemy)", info_caller.name, info_target.name));
+						}
+						else {
+							g_Notifications.Add(tfm::format("%s %s [U:1:%s] called a vote on %s [U:1:%s]", bSameTeam ? "" : "(Enemy)", info_caller.name, info_caller.friendsID, info_target.name, info_target.friendsID));
+						}
+					}
+					if (Vars::Misc::AnnounceVotesChat.m_Var)
+					{
+						if (Vars::Misc::AnnounceVotes.m_Var == 0) {
+							g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(pLocal->GetIndex(), tfm::format("%s[FeD] \x3%s %s %s %scalled a vote on %s%s", clr, green, bSameTeam ? "" : "(Enemy)", info_caller.name, white, green, info_target.name).c_str());
+						}
+						else {
+							g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(pLocal->GetIndex(), tfm::format("%s[FeD] \x3%s %s %s %s[U:1:%s] %scalled a vote on %s%s %s[U:1:%s]", clr, green, bSameTeam ? "" : "(Enemy)", info_caller.name, yellow, info_caller.friendsID, white, green, info_target.name, yellow, info_target.friendsID).c_str());
+						}
+					}
+					if (Vars::Misc::AnnounceVotesParty.m_Var)
+					{
+						if (Vars::Misc::AnnounceVotes.m_Var == 0) {
+							g_Interfaces.Engine->ClientCmd_Unrestricted(
+								tfm::format("say_party \"%s %s called a vote on %s\"", bSameTeam ? "" : "(Enemy)", info_caller.name, info_target.name).c_str());
+						}
+						else {
+							g_Interfaces.Engine->ClientCmd_Unrestricted(
+								tfm::format("say_party \"%s %s [U:1:%s] called a vote on %s [U:1:%s]\"", bSameTeam ? "" : "(Enemy)", info_caller.name, info_caller.friendsID, info_target.name, info_target.friendsID).c_str());
+						}
+					}
+
+					if (Vars::Misc::AutoVote.m_Var && bSameTeam && target != g_Interfaces.Engine->GetLocalPlayer())
+					{
+						if (g_GlobalInfo.ignoredPlayers.find(info_target.friendsID) != g_GlobalInfo.ignoredPlayers.end() ||
+							(target > 0 && target <= 129 && g_EntityCache.Friends[target])) {
+							g_Interfaces.Engine->ClientCmd_Unrestricted("vote option2"); //f2 on ignored and steam friends
+						}
+						else {
+							g_Interfaces.Engine->ClientCmd_Unrestricted("vote option1"); //f1 on everyone else
+						}
+					}
+				}
+			}
+			msg_data.Seek(0);
 			break;
 		}
 	}

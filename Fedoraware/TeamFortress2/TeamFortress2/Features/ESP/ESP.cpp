@@ -308,8 +308,16 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						g_Draw.Rect(middle - wideth / 2 - 5, y - offset - 2, wideth + 10, 2, LineColor);
 						offset -= 1;
 					}
-					g_Draw.String(FONT_NAME, middle, y - offset, DrawColor, ALIGN_CENTERHORIZONTAL,
-						Utils::ConvertUtf8ToWide(pi.name).data());
+					if (Vars::ESP::Players::NameC.m_Var)
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Vars::ESP::Players::NameColor, ALIGN_CENTERHORIZONTAL,
+							Utils::ConvertUtf8ToWide(pi.name).data());
+					}
+					else
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, DrawColor, ALIGN_CENTERHORIZONTAL,
+							Utils::ConvertUtf8ToWide(pi.name).data());
+					}
 				}
 
 				if (Vars::ESP::Players::GUID.m_Var)
@@ -317,6 +325,8 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, "%s", pi.guid);
 					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 				}
+
+				
 			}
 
 			if (Vars::ESP::Players::Class.m_Var)
@@ -369,7 +379,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 			}
 
-			if (0 < Vars::ESP::Players::Cond.m_Var < 2)
+			if (Vars::ESP::Players::Cond.m_Var)
 			{
 				size_t FONT = FONT_ESP_COND;
 				int offset = g_Draw.m_vecFonts[FONT].nTall / 4;
@@ -383,10 +393,6 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					}
 				}
 			}
-			else if (Vars::ESP::Players::Cond.m_Var == 1)
-			{
-
-			}
 
 			if (Vars::ESP::Players::HealthBar.m_Var)
 			{
@@ -395,24 +401,29 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				float flHealth = static_cast<float>(nHealth);
 				float flMaxHealth = static_cast<float>(nMaxHealth);
 
-				Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : HealthColor;
+				Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
 
 				if (!Player->IsVulnerable())
-					clr = Colors::Invuln;
+					clr = { Colors::Invuln, Colors::Invuln };
 
 				if (flHealth > flMaxHealth)
 					flHealth = flMaxHealth;
 
-				static const int nWidth = 2;
-				int nHeight = h + (flHealth < flMaxHealth ? 2 : 1);
-				int nHeight2 = h + 1;
-
 				float ratio = flHealth / flMaxHealth;
-				g_Draw.Rect(x - nWidth - 2, y + nHeight - nHeight * ratio, nWidth, nHeight * ratio, clr);
+				g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
 
-				if (Vars::ESP::Main::Outlinedbar.m_Var)
-					g_Draw.OutlinedRect(x - nWidth - 2 - 1, y + nHeight - nHeight * ratio - 1, nWidth + 2,
-						nHeight * ratio + 2, Colors::OutlineESP);
+				x += 1;
+			}
+
+			if (Vars::ESP::Players::Choked.m_Var)
+			{
+				x -= 1;
+				static float ratio = 0.0f;
+				int chokeCount = g_GlobalInfo.chokeMap[nIndex].ChokedTicks;
+
+				Vec2 position = { (float)x - 2.f - 8.f,  (float)y + (float)h };
+				ratio = chokeCount/22.0f;
+				g_Draw.OutlinedGradientBar(position.x, position.y, 2, h, ratio, Colors::ChokedBar.startColour, Colors::ChokedBar.endColour, Colors::OutlineESP, false);
 
 				x += 1;
 			}
@@ -512,12 +523,9 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 				case EBuildingType::SENTRY:
 				{
 					if (bIsMini)
-					{
 						szName = _(L"Mini Sentry");
-						break;
-					}
-
-					szName = _(L"Sentry");
+					else
+						szName = _(L"Sentry");
 					break;
 				}
 				case EBuildingType::DISPENSER:
@@ -527,7 +535,10 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 				}
 				case EBuildingType::TELEPORTER:
 				{
-					szName = _(L"Teleporter");
+					if (Building->GetObjectMode())
+						szName = _(L"Teleporter Out");
+					else
+						szName = _(L"Teleporter In");
 					break;
 				}
 				default:
@@ -660,8 +671,12 @@ void CESP::DrawWorld() const
 	{
 		for (const auto& Health : g_EntityCache.GetGroup(EGroupType::WORLD_HEALTH))
 		{
-			if (Utils::W2S(Health->GetWorldSpaceCenter(), vScreen))
-				g_Draw.String(FONT, vScreen.x, vScreen.y, Colors::Health, ALIGN_CENTER, _(L"HEALTH"));
+			int x = 0, y = 0, w = 0, h = 0;
+			Vec3 vTrans[8];
+			if (GetDrawBounds(Health, vTrans, x, y, w, h)) {
+				if (Utils::W2S(Health->GetVecOrigin(), vScreen))
+					g_Draw.String(FONT, vScreen.x, y + h, Colors::Health, ALIGN_CENTER, _(L"Health"));
+			} // obviously a health pack isn't going to be upside down, this just looks nicer.
 		}
 	}
 
@@ -669,8 +684,12 @@ void CESP::DrawWorld() const
 	{
 		for (const auto& Ammo : g_EntityCache.GetGroup(EGroupType::WORLD_AMMO))
 		{
-			if (Utils::W2S(Ammo->GetWorldSpaceCenter(), vScreen))
-				g_Draw.String(FONT, vScreen.x, vScreen.y, Colors::Ammo, ALIGN_CENTER, _(L"AMMO"));
+			int x = 0, y = 0, w = 0, h = 0;
+			Vec3 vTrans[8];
+			if (GetDrawBounds(Ammo, vTrans, x, y, w, h)) {
+				if (Utils::W2S(Ammo->GetVecOrigin(), vScreen))
+					g_Draw.String(FONT, vScreen.x, y + h, Colors::Ammo, ALIGN_CENTER, _(L"Ammo"));
+			}
 		}
 	}
 

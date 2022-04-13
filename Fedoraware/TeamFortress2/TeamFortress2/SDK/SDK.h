@@ -56,7 +56,9 @@
 
 #define TICK_INTERVAL		( g_Interfaces.GlobalVars->interval_per_tick )
 #define TIME_TO_TICKS( dt )	( static_cast<int>( 0.5f + static_cast<float>(dt) / TICK_INTERVAL ) )
+#ifndef TICKS_TO_TIME
 #define TICKS_TO_TIME( t )	( TICK_INTERVAL * ( t ) )
+#endif
 #define GetKey(vKey) (Utils::IsGameWindowInFocus() && GetAsyncKeyState(vKey))
 #define Q_ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
 
@@ -106,51 +108,54 @@ inline void ShaderStencilState_t::SetStencilState(IMatRenderContext *pRenderCont
 
 namespace Colors
 {
-	inline Color_t White =					{ 255, 255, 255, 255 };
-	inline Color_t OutlineESP =				{ 0, 0, 0, 220 };
-	inline Color_t Cond =					{ 254, 202, 87, 255 };
-	inline Color_t Target =					{ 240, 147, 43, 255 };
-	inline Color_t Invuln =					{ 120, 111, 166, 255 };
-	inline Color_t Cloak =					{ 165, 177, 194, 255 };
-	inline Color_t Friend =					{ 32, 191, 107, 255 };
-	inline Color_t Local =					{ 168, 255, 211, 255 };
-	inline Color_t Ignored =				{ 32, 191, 107, 255 };
-	inline Color_t Overheal =				{ 84, 160, 255, 255 };
-	inline Color_t Health =					{ 0, 230, 64, 255 };
-	inline Color_t Ammo =					{ 191, 191, 191, 255 };
-	inline Color_t UberColor =				{ 224, 86, 253, 255 };
-	inline Color_t TeamRed =				{ 255, 100, 87, 255 };
-	inline Color_t TeamBlu =				{ 30, 144, 255, 255 };
-	inline Color_t Enemy =					{ 255, 100, 87, 255 };
-	inline Color_t rTeam =					{ 30, 144, 255, 255 };
-	inline Color_t Hands =					{ 30, 144, 255, 255 };
-	inline Color_t HandsOverlay =			{ 255, 127, 0, 255 };
-	inline Color_t Weapon =					{ 30, 144, 255, 255 };
-	inline Color_t WeaponOverlay =			{ 255, 127, 0, 255 };
-	inline Color_t WorldModulation =		{ 255, 255, 255, 255 };
-	inline Color_t SkyModulation =			{ 255, 255, 255, 255 };
-	inline Color_t StaticPropModulation =	{ 255, 255, 255, 255 };
-	inline Color_t FOVCircle =				{ 255, 255, 255, 10 };
-	inline Color_t Bones =					{ 255, 255, 255, 255 };
-	inline Color_t BulletTracer =			{ 255, 255, 255, 255 };
-	inline Color_t FresnelBase =			{ 0,0,0,255 };
+	inline Color_t White =						{ 255, 255, 255, 255 };
+	inline Color_t OutlineESP =					{ 0, 0, 0, 255 };
+	inline Gradient_t DTBarIndicatorsCharged = { {106, 255, 131, 180}, {106, 255, 250, 180} };
+	inline Gradient_t DTBarIndicatorsCharging = { {255, 192, 81, 180}, {255, 134, 81, 180} };
+	inline Gradient_t ChokedBar =				{ { 47, 39, 0, 255 }, { 255, 210, 0, 255 } };
+	inline Gradient_t GradientHealthBar =				{ { 255, 0, 0, 255 }, { 0, 202, 124, 255 } };
+	inline Gradient_t OverhealHealthBar =		{ { 0, 202, 124, 255 }, { 167, 255, 237, 255 } };
+	inline Gradient_t UberchargeBar =			{ { 255, 255, 255, 255 }, { 255, 0, 228, 255 } };
+	inline Color_t Cond =						{ 254, 202, 87, 255 };
+	inline Color_t Target =						{ 240, 147, 43, 255 };
+	inline Color_t Invuln =						{ 120, 111, 166, 255 };
+	inline Color_t Cloak =						{ 165, 177, 194, 255 };
+	inline Color_t Friend =						{ 32, 191, 107, 255 };
+	inline Color_t Local =						{ 168, 255, 211, 255 };
+	inline Color_t Ignored =					{ 32, 191, 107, 255 };
+	inline Color_t Overheal =					{ 84, 160, 255, 255 };
+	inline Color_t Health =						{ 0, 230, 64, 255 };
+	inline Color_t Ammo =						{ 191, 191, 191, 255 };
+	inline Color_t UberColor =					{ 224, 86, 253, 255 };
+	inline Color_t TeamRed =					{ 255, 100, 87, 255 };
+	inline Color_t TeamBlu =					{ 30, 144, 255, 255 };
+	inline Color_t Enemy =						{ 255, 100, 87, 255 };
+	inline Color_t rTeam =						{ 30, 144, 255, 255 };
+	inline Color_t Hands =						{ 30, 144, 255, 255 };
+	inline Color_t HandsOverlay =				{ 255, 127, 0, 255 };
+	inline Color_t Weapon =						{ 30, 144, 255, 255 };
+	inline Color_t WeaponOverlay =				{ 255, 127, 0, 255 };
+	inline Color_t WorldModulation =			{ 255, 255, 255, 255 };
+	inline Color_t SkyModulation =				{ 255, 255, 255, 255 };
+	inline Color_t StaticPropModulation =		{ 255, 255, 255, 255 };
+	inline Color_t FOVCircle =					{ 255, 255, 255, 10 };
+	inline Color_t Bones =						{ 255, 255, 255, 255 };
+	inline Color_t BulletTracer =				{ 255, 255, 255, 255 };
+	inline Color_t FresnelBase =				{ 0,0,0,255 };
 	inline Color_t FresnelBaseHands =			{ 0,0,0,255 };
 	inline Color_t FresnelBaseWeps =			{ 0,0,0,255 };
-	inline Color_t FresnelTop = 			{ 0,255,0,255 };
-	inline Color_t AimSquareCol = 			{ 0,255,0,255 };
-	inline Color_t DtChargingLeft =			{ 255, 192, 81, 180};
-	inline Color_t DtChargingRight =		{ 255, 134, 81, 180};
-	inline Color_t DtChargedLeft =			{ 106, 255, 131, 180};
-	inline Color_t DtChargedRight =			{ 106, 255, 250, 180 };
-	inline Color_t DtOutline =				{ 30, 30, 30, 180 };
-	inline Color_t NotifBG =	{ 30, 30, 30, 255 };
-	inline Color_t NotifOutline =		{ 255, 101, 101, 255};
-	inline Color_t NotifText =			{ 255, 255, 255, 255 };
-	inline Color_t Hitbox =			{ 255, 255, 255, 0 };
-	inline Color_t WeaponIcon = { 255,255,255,255 };
-	inline Color_t NoscopeLines1 = { 0,0,0,255 };
-	inline Color_t NoscopeLines2 = { 0,0,0,100 };
-	inline Color_t bonecolor = { 231, 95, 255, 10 };
+	inline Color_t FresnelTop = 				{ 0,255,0,255 };
+	inline Color_t AimSquareCol = 				{ 0,255,0,255 };
+	inline Color_t DtOutline =					{ 30, 30, 30, 180 };
+	inline Color_t NotifBG =					{ 30, 30, 30, 255 };
+	inline Color_t NotifOutline =				{ 255, 101, 101, 255};
+	inline Color_t NotifText =					{ 255, 255, 255, 255 };
+	inline Color_t HitboxFace =					{ 255, 255, 255, 0 };
+	inline Color_t HitboxEdge =					{ 255, 255, 255, 0 };
+	inline Color_t WeaponIcon =					{ 255,255,255,255 };
+	inline Color_t NoscopeLines1 =				{ 0,0,0,255 };
+	inline Color_t NoscopeLines2 =				{ 0,0,0,100 };
+	inline Color_t bonecolor =					{ 231, 95, 255, 10 };
 }
 
 namespace Utils
@@ -526,7 +531,7 @@ namespace Utils
 		switch (pWeapon->GetWeaponID())
 		{
 			case TF_WEAPON_ROCKETLAUNCHER:
-			case 109:
+			case TF_WEAPON_FLAME_BALL:
 			case TF_WEAPON_GRENADELAUNCHER:
 			case TF_WEAPON_FLAREGUN:
 			case TF_WEAPON_COMPOUND_BOW:
@@ -535,19 +540,15 @@ namespace Utils
 			case TF_WEAPON_PARTICLE_CANNON:
 			case TF_WEAPON_DRG_POMSON:
 			case TF_WEAPON_RAYGUN_REVENGE:
+			case TF_WEAPON_RAYGUN:
 			case TF_WEAPON_CANNON:
 			case TF_WEAPON_SYRINGEGUN_MEDIC:
 			case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
 			case TF_WEAPON_FLAMETHROWER:
 			case TF_WEAPON_CLEAVER:
+			case TF_WEAPON_PIPEBOMBLAUNCHER:
 			{
 				return EWeaponType::PROJECTILE;
-			}
-
-			case TF_WEAPON_PIPEBOMBLAUNCHER://dragon's fury
-			{
-				//broken Idk
-				return EWeaponType::UNKNOWN;
 			}
 
 			default:
@@ -646,6 +647,102 @@ namespace Utils
 					if ((pCmd->buttons & IN_ATTACK) && g_GlobalInfo.m_bWeaponCanAttack)
 						return true;
 				}
+			}
+		}
+
+		return false;
+	}
+
+	__inline Vector ComputeMove(const CUserCmd* pCmd, CBaseEntity* pLocal, Vec3& a, Vec3& b)
+	{
+		Vec3 diff = (b - a);
+		if (diff.Length() == 0.0f)
+			return Vec3(0.0f, 0.0f, 0.0f);
+		const float x = diff.x;
+		const float y = diff.y;
+		Vec3 vsilent(x, y, 0);
+		Vec3 ang;
+		Math::VectorAngles(vsilent, ang);
+		float yaw = DEG2RAD(ang.y - pCmd->viewangles.y);
+		float pitch = DEG2RAD(ang.x - pCmd->viewangles.x);
+		Vec3 move = { cos(yaw) * 450.0f, -sin(yaw) * 450.0f, -cos(pitch) * 450.0f };
+
+		// Only apply upmove in water
+		if (!(g_Interfaces.EngineTrace->GetPointContents(pLocal->GetEyePosition()) & CONTENTS_WATER))
+			move.z = pCmd->upmove;
+		return move;
+	}
+
+	__inline void WalkTo(CUserCmd* pCmd, CBaseEntity* pLocal, Vec3& a, Vec3& b, float scale)
+	{
+		// Calculate how to get to a vector
+		auto result = ComputeMove(pCmd, pLocal, a, b);
+		// Push our move to usercmd
+		pCmd->forwardmove = result.x * scale;
+		pCmd->sidemove = result.y * scale;
+		pCmd->upmove = result.z * scale;
+	}
+
+	__inline void WalkTo(CUserCmd* pCmd, CBaseEntity* pLocal, Vec3& pDestination)
+	{
+		Vec3 localPos = pLocal->GetVecOrigin();
+		WalkTo(pCmd, pLocal, localPos, pDestination, 1.f);
+	}
+
+	__inline void BlockMovement(CUserCmd* pCmd)
+	{
+		pCmd->forwardmove = 0.f;
+		pCmd->sidemove = 0.f;
+		pCmd->upmove = 0.f;
+	}
+
+	__inline int HandleToIDX(int pHandle)
+	{
+		return pHandle & 0xFFF;
+	}
+
+	// A function to find a weapon by WeaponID
+	__inline int GetWeaponByID(CBaseEntity* pPlayer, int pWeaponID)
+	{
+		// Invalid player
+		if (!pPlayer) { return -1; }
+
+		const size_t* hWeapons = pPlayer->GetMyWeapons();
+		// Go through the handle array and search for the item
+		for (int i = 0; hWeapons[i]; i++)
+		{
+			if (!(HandleToIDX(hWeapons[i]) >= 0 && HandleToIDX(hWeapons[i]) <= 2049 && HandleToIDX(hWeapons[i]) < 2048))
+			{
+				continue;
+			}
+			// Get the weapon
+			auto* weapon = reinterpret_cast<CBaseCombatWeapon*>(g_Interfaces.EntityList->GetClientEntityFromHandle(HandleToIDX(hWeapons[i])));
+			// if weapon is what we are looking for, return true
+			if (weapon && weapon->GetWeaponID() == pWeaponID)
+			{
+				return weapon->GetIndex();
+			}
+		}
+		// Nothing found
+		return -1;
+	}
+
+	// Returns the teleporter exit of a given owner
+	__inline bool GetTeleporterExit(int ownerIdx, Vec3* out)
+	{
+		const auto& buildings = g_EntityCache.GetGroup(EGroupType::BUILDINGS_ALL);
+
+		for (const auto& pBuilding : buildings)
+		{
+			if (!pBuilding->IsAlive()) { continue; }
+
+			const auto& building = reinterpret_cast<CBaseObject*>(pBuilding);
+			const auto nType = static_cast<EBuildingType>(building->GetType());
+
+			if (nType == EBuildingType::TELEPORTER && building->GetObjectMode() == 1 && building->GetOwner()->GetIndex() == ownerIdx)
+			{
+				*out = building->GetAbsOrigin();
+				return true;
 			}
 		}
 

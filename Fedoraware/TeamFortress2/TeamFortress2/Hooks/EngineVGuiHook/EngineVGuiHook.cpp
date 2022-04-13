@@ -1,17 +1,16 @@
 #include "EngineVGuiHook.h"
 
 #include "../../SDK/Includes/icons.h"
-#include "../../Features/Menu/Menu.h"
-#include "../../Features/SpectatorList/SpectatorList.h"
 #include "../../Features/SpyWarning/SpyWarning.h"
 #include "../../Features/PlayerArrows/PlayerArrows.h"
 #include "../../Features/ESP/ESP.h"
 #include "../../Features/Misc/Misc.h"
-#include "../../Features/Radar/Radar.h"
-#include "../../Features/DTBar/DTBar.h"
 #include "../../Features/Visuals/Visuals.h"
-#include "../../Features/Crits/Crits.h"
 #include "../../Features/PlayerResource/PlayerResource.h"
+#include "../../Features/CritHack/CritHack.h"
+#include "../../Features/Menu/Menu.h"
+#include "../../Features/Menu/SpectatorList/SpectatorList.h"
+#include "../../Features/Radar/Radar.h"
 
 void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 {
@@ -68,6 +67,7 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 				
 				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero())
 				{
+					if (Vars::Visuals::MoveSimLine.m_Var)
 					for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 					{
 						Vec3 vScreenpast, vScreenfuture;
@@ -76,7 +76,7 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 							if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 							{
 								g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-								            {255, 255, 255, 255});
+								            {Vars::Aimbot::Projectile::PredictionColor});
 							}
 						}
 					}
@@ -119,13 +119,13 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 
 							if (g_GlobalInfo.m_nWaitForShift)
 							{
-								color1 = Colors::DtChargingLeft;
-								color2 = Colors::DtChargingRight;
+								color1 = Colors::DTBarIndicatorsCharging.startColour;
+								color2 = Colors::DTBarIndicatorsCharging.endColour;
 							}
 							else
 							{
-								color1 = Colors::DtChargedLeft;
-								color2 = Colors::DtChargedRight;
+								color1 = Colors::DTBarIndicatorsCharged.startColour;
+								color2 = Colors::DTBarIndicatorsCharged.endColour;
 							}
 
 							if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 1)
@@ -148,7 +148,6 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
 							{
-								g_DTBar.Run();
 								// put this here so we don't move menu if we r using something else, no biggie
 								float rratio = (static_cast<float>(g_GlobalInfo.m_nShifted) / static_cast<float>(
 									Vars::Misc::CL_Move::DTTicks.m_Var));
@@ -207,20 +206,99 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 					}
 				}
 
-				// build date
-				if (g_Menu.m_bOpen)
-					g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.m_Var,
-					              {116, 255, 48, 255}, ALIGN_DEFAULT, _(__DATE__));
+				// Build Date
+				if (g_Menu.IsOpen)
+				{
+					g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.m_Var, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
+				}
 
 				// debug
+				if (Vars::Visuals::DebugInfo.m_Var)
 				{
-					#ifdef _DEBUG
-
+					int yoffset = 0, xoffset = 0;
 					if (const int localDamage = g_PR->GetDamageByIndex(g_Interfaces.Engine->GetLocalPlayer())) {
-						g_Draw.String(FONT_MENU, 300, 300, { 255,255,255,255 }, ALIGN_CENTER, "localDamage = %d", localDamage);
+						g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "localDamage = %d", localDamage);
+						yoffset += 20;
 					}
 
-					#endif
+					if (const auto& pWeapon = g_EntityCache.m_pLocalWeapon) {
+						int weaponid = pWeapon->GetWeaponID();
+						if (weaponid) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "weaponid = %i", weaponid);
+							yoffset += 20;
+						}
+						int weaponindex = pWeapon->GetItemDefIndex();
+						if (weaponid) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "weaponindex = %i", weaponindex);
+							yoffset += 20;
+						}
+					}
+
+					if (const auto& pLocal = g_EntityCache.m_pLocal) {
+						int tickbase = pLocal->GetTickBase();
+						if (tickbase) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "tickbase = %i", tickbase);
+							yoffset += 20;
+						}
+						int sequence = pLocal->m_nSequence();
+						if (sequence) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "sequence = %i", sequence);
+							yoffset += 20;
+						}
+						//int animtime = pLocal->m_flAnimTime();	// unused??? always returns the same value
+						//if (animtime) {
+						//	g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "animtime = %i", animtime);
+						//	yoffset += 20;
+						//}
+						float cycle = pLocal->m_flCycle();
+						{
+						g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "cycle = %+.1f", cycle);
+						yoffset += 20;
+						}
+						float playbackrate = pLocal->m_flPlaybackRate();
+						{
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "playbackrate = %+.1f", playbackrate);
+							yoffset += 20;
+						}
+						bool clientanimations = pLocal->m_bClientSideAnimation();
+						{
+							Color_t clr = clientanimations ? Color_t{ 108, 255, 0, 255 } : Color_t{ 255, 118, 36, 255 };
+							g_Draw.String(FONT_MENU, xoffset, yoffset, clr, ALIGN_DEFAULT, "client animating");
+							yoffset += 20;
+						}
+						/*std::array poseparam = pLocal->GetPoseParam(); // 0 & 1, viewangles, 4 & 5, movement. and the other 20 entries do nothing?????? n1 valve
+						int n = 0;
+						for (; n < 24; n++) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "poseparam[%i] = %+.1f", n, poseparam[n]);
+							yoffset += 20;
+						}*/
+					}
+
+					/*for (const auto& Projectile : g_EntityCache.GetGroup(EGroupType::WORLD_PROJECTILES))
+					{
+						Vec3 CollideableMins = Projectile->GetCollideableMins();
+						Vec3 CollideableMaxs = Projectile->GetCollideableMaxs();
+						if (!CollideableMins.IsZero()) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "mins = %+.2f %+.2f %+.2f", CollideableMins.x, CollideableMins.y, CollideableMins.z);
+							yoffset += 20;
+						}
+						if (!CollideableMaxs.IsZero()) {
+							g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "maxs = %+.2f %+.2f %+.2f", CollideableMaxs.x, CollideableMaxs.y, CollideableMaxs.z);
+							yoffset += 20;
+						}
+
+						model_t* pModel = Projectile->GetModel();
+						if (pModel) {
+							studiohdr_t* pHDR = g_Interfaces.ModelInfo->GetStudioModel(pModel);
+							if (pHDR) {
+								g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "hullmin = %+.2f %+.2f %+.2f", pHDR->hull_min.x, pHDR->hull_min.y, pHDR->hull_min.z);
+								yoffset += 20;
+								g_Draw.String(FONT_MENU, xoffset, yoffset, { 255,255,255,255 }, ALIGN_DEFAULT, "hullmax = %+.2f %+.2f %+.2f", pHDR->hull_max.x, pHDR->hull_max.y, pHDR->hull_max.z);
+								yoffset += 20;
+							}
+						}
+					}*/
+					
 				}
 
 				//Current Active Aimbot FOV
@@ -239,16 +317,29 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 				}
 			};
 			OtherDraws();
+			// blocks my vision to my debug info thanks
+			//if (Vars::Visuals::DebugInfo.m_Var)
+			//{
+			//	if (const auto& pLocal = g_EntityCache.m_pLocal)
+			//	{
+			//		if (const int nDamage = g_PR->GetDamageByIndex(pLocal->GetIndex()))
+			//		{
+			//			g_Draw.String(FONT_MENU, 5, 17, { 255, 255, 255, 255 }, ALIGN_DEFAULT, _("total damage dealt: %d"), nDamage);
+			//		}
+			//	}
+			//}
+			
 			g_Misc.BypassPure();
 			g_ESP.Run();
+			g_Visuals.PickupTimers();
 			g_SpyWarning.Run();
 			g_PlayerArrows.Run();
 			g_SpectatorList.Run();
+			g_CritHack.Draw();
 			g_Radar.Run();
-			g_Crits.Frame();
 			
 			// you can use it for more, i'm sure. - myzarfin
-			g_notify.Think();
+			g_Notifications.Think();
 
 			if (const auto& pLocal = g_EntityCache.m_pLocal)
 			{

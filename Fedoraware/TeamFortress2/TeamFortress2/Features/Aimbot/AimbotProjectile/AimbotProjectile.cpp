@@ -113,7 +113,7 @@ bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, Projectile
 
 	case Pyro_m_DragonsFury:
 	{
-		out = { 3000.0f, 0.0f, 0.12f };
+		out = { 3000.0f, 0.0f, 0.1753f };
 		m_bIsFlameThrower = true;
 		break;
 	}
@@ -191,17 +191,6 @@ bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, Projectile
 		};
 		break;
 	}
-/*
-float CTFCompoundBow::GetProjectileSpeed( void )
-{
-	return RemapValClamped( GetCurrentCharge(), 0.0f, 1.f, 1800, 2600 );
-}
-
-float CTFCompoundBow::GetProjectileGravity( void )
-{
-	return RemapValClamped( GetCurrentCharge(), 0.0f, 1.f, 0.5, 0.1 );
-}
-*/
 	}
 
 	return out.m_flVelocity;
@@ -541,15 +530,12 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 					case TF_WEAPON_COMPOUND_BOW:
 					case TF_WEAPON_SYRINGEGUN_MEDIC:
 					{
-						if (g_GlobalInfo.m_nCurItemDefIndex != Soldier_m_TheOriginal)
-						{
-							Vec3 vecOffset(23.5f, 12.0f, -3.0f);
+						Vec3 vecOffset(23.5f, 12.0f, -3.0f);
+						if (pLocal->IsDucking())
+							vecOffset.z = 8.0f;
+						if (g_GlobalInfo.m_nCurItemDefIndex == Soldier_m_TheOriginal) { vecOffset.z = 0.f; }
 
-							if (pLocal->IsDucking())
-								vecOffset.z = 8.0f;
-
-							Utils::GetProjectileFireSetup(pLocal, pCmd->viewangles, vecOffset, &vVisCheck);
-						}
+						Utils::GetProjectileFireSetup(pLocal, pCmd->viewangles, vecOffset, &vVisCheck);
 
 						break;
 					}
@@ -571,7 +557,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 					default: break;
 					}
 
-					Utils::TraceHull(vVisCheck, vPredictedPos, Vec3(-2, -2, -2), Vec3(2, 2, 2), MASK_SOLID_BRUSHONLY,
+					Utils::TraceHull(vVisCheck, vPredictedPos, Vec3(-18.6f, -3.8f, -3.8f), Vec3(18.6f, 3.8f, 3.8f), MASK_SOLID_BRUSHONLY,
 						&TraceFilter, &Trace);
 
 					if (Trace.DidHit())
@@ -696,7 +682,7 @@ bool CAimbotProjectile::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeap
 		for (const auto& Player : g_EntityCache.GetGroup(
 			bIsCrossbow ? EGroupType::PLAYERS_ALL : EGroupType::PLAYERS_ENEMIES))
 		{
-			if (!Player->IsAlive() || Player->IsAGhost() || Player == pLocal || (bIsCrossbow && (Player->GetHealth() ==
+			if (!Player->IsAlive() || Player->IsAGhost() || Player == pLocal || (bIsCrossbow && (Player->GetHealth() >=
 				Player->GetMaxHealth()) && (Player->GetTeamNum() == pLocal->GetTeamNum())))
 				continue;
 
@@ -945,15 +931,19 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 		{
 			pCmd->buttons |= IN_ATTACK;
 
-			if (Vars::Misc::CL_Move::Enabled.m_Var && Vars::Misc::CL_Move::Doubletap.m_Var && (pCmd->buttons &
-				IN_ATTACK) && !g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_nWaitForShift)
-			{
-				if ((Vars::Misc::CL_Move::NotInAir.m_Var && !pLocal->IsOnGround() && g_GlobalInfo.m_nShifted))
+			if (Vars::Misc::CL_Move::Enabled.m_Var && Vars::Misc::CL_Move::Doubletap.m_Var && (pCmd->buttons & IN_ATTACK) && g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_nWaitForShift) {
+				if (
+					(Vars::Misc::CL_Move::DTMode.m_Var == 0 && GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)) ||
+					(Vars::Misc::CL_Move::DTMode.m_Var == 1) ||
+					(Vars::Misc::CL_Move::DTMode.m_Var == 2 && !GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)))
 				{
-					g_GlobalInfo.m_bShouldShift = false;
-				}
-				else {
-					g_GlobalInfo.m_bShouldShift = true;
+					if ((Vars::Misc::CL_Move::NotInAir.m_Var && !pLocal->IsOnGround() && g_GlobalInfo.m_nShifted))
+					{
+						g_GlobalInfo.m_bShouldShift = false;
+					}
+					else {
+						g_GlobalInfo.m_bShouldShift = true;
+					}
 				}
 			}
 

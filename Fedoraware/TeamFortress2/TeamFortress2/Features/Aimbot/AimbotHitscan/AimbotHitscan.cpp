@@ -7,8 +7,9 @@ int CAimbotHitscan::GetHitbox(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
 	switch (Vars::Aimbot::Hitscan::AimHitbox.m_Var)
 	{
 	case 0: { return HITBOX_HEAD; }
-	case 1: { return HITBOX_PELVIS; }
-	case 2:
+	case 1: { return HITBOX_SPINE_1; }
+	case 2: { return HITBOX_PELVIS; }
+	case 3:
 	{
 		int nClassNum = pLocal->GetClassNum();
 
@@ -61,10 +62,12 @@ bool CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
 		int nHitbox = GetHitbox(pLocal, pWeapon);
 		bool bIsMedigun = pWeapon->GetWeaponID() == TF_WEAPON_MEDIGUN;
 
-		for (const auto& Player : g_EntityCache.GetGroup(
-			bIsMedigun ? EGroupType::PLAYERS_TEAMMATES : SandvichAimbot::bIsSandvich ? EGroupType::PLAYERS_ALL : EGroupType::PLAYERS_ENEMIES))
+		for (const auto& Player : g_EntityCache.GetGroup(bIsMedigun ? EGroupType::PLAYERS_TEAMMATES : SandvichAimbot::bIsSandvich ? EGroupType::PLAYERS_ALL : EGroupType::PLAYERS_ENEMIES))
 		{
 			if (!Player->IsAlive() || Player->IsAGhost())
+				continue;
+
+			if (bIsMedigun && pLocal->GetWorldSpaceCenter().DistTo(Player->GetWorldSpaceCenter()) > 472.f)
 				continue;
 
 			if (!g_Interfaces.Engine->GetPlayerInfo(Player->GetIndex(), &info))
@@ -105,7 +108,16 @@ bool CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
 				if (g_GlobalInfo.m_nCurItemDefIndex == Spy_m_TheAmbassador || g_GlobalInfo.m_nCurItemDefIndex ==
 					Spy_m_FestiveAmbassador)
 				{
-					if (pWeapon->GetWeaponData().m_nDamage >= Player->GetHealth())
+					// This doesn't work
+					/*if (pWeapon->GetWeaponData().m_nDamage >= Player->GetHealth())
+					{
+						nHitbox = HITBOX_PELVIS;
+					}*/
+					// Min damage is 18, max damage is 51 (non headshot)
+					float flDistTo = Player->GetAbsOrigin().DistTo(pLocal->GetAbsOrigin());
+					int nAmbassadorBodyshotDamage = Math::RemapValClamped(flDistTo, 90, 900, 51, 18);
+
+					if (Player->GetHealth() < (nAmbassadorBodyshotDamage + 2)) // whatever
 					{
 						nHitbox = HITBOX_PELVIS;
 					}
@@ -300,26 +312,56 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapo
 				return false;
 		}
 
-		else if (Target.m_nAimedHitbox == HITBOX_PELVIS)
-		{
+		//else if (Target.m_nAimedHitbox == HITBOX_PELVIS)
+		//{
+		//	if (Vars::Backtrack::Enabled.m_Var && Vars::Backtrack::Aim.m_Var && Vars::Aimbot::Hitscan::AimMethod.m_Var != 1) {
+		//		
+		//		Vec3 pelvisPos;
+		//		if (!g_Backtrack.Record[Target.m_pEntity->GetIndex()].empty()) {
+		//			auto lastTick = g_Backtrack.Record[Target.m_pEntity->GetIndex()].back();
+		//			if (const auto& pHdr = lastTick.HDR) {
+		//				if (const auto& pSet = pHdr->GetHitboxSet(lastTick.HitboxSet)) {
+		//					if (const auto& pBox = pSet->hitbox(HITBOX_PELVIS)) {
+		//						Vec3 vPos = (pBox->bbmin + pBox->bbmax) * 0.5f, vOut;
+		//						Math::VectorTransform(vPos, reinterpret_cast<matrix3x4*>(&lastTick.BoneMatrix)[pBox->bone], vOut);
+		//						pelvisPos = vOut;
+		//					}
+		//				}
+		//			}
+
+
+		//			if (Utils::VisPos(pLocal, Target.m_pEntity, pLocal->GetShootPos(), pelvisPos)) {
+		//				Target.m_vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), pelvisPos);
+		//				return true;
+		//			}
+
+
+		//		}
+		//	}
+		//	if (!Utils::VisPos(pLocal, Target.m_pEntity, pLocal->GetShootPos(), Target.m_vPos) && !ScanHitboxes(
+		//		pLocal, Target))
+		//		return false;
+		//}
+
+		else {
 			if (Vars::Backtrack::Enabled.m_Var && Vars::Backtrack::Aim.m_Var && Vars::Aimbot::Hitscan::AimMethod.m_Var != 1) {
-				
-				Vec3 pelvisPos;
+
+				Vec3 hitboxPos;
 				if (!g_Backtrack.Record[Target.m_pEntity->GetIndex()].empty()) {
 					auto lastTick = g_Backtrack.Record[Target.m_pEntity->GetIndex()].back();
 					if (const auto& pHdr = lastTick.HDR) {
 						if (const auto& pSet = pHdr->GetHitboxSet(lastTick.HitboxSet)) {
-							if (const auto& pBox = pSet->hitbox(HITBOX_PELVIS)) {
+							if (const auto& pBox = pSet->hitbox(Target.m_nAimedHitbox)) {
 								Vec3 vPos = (pBox->bbmin + pBox->bbmax) * 0.5f, vOut;
 								Math::VectorTransform(vPos, reinterpret_cast<matrix3x4*>(&lastTick.BoneMatrix)[pBox->bone], vOut);
-								pelvisPos = vOut;
+								hitboxPos = vOut;
 							}
 						}
 					}
 
 
-					if (Utils::VisPos(pLocal, Target.m_pEntity, pLocal->GetShootPos(), pelvisPos)) {
-						Target.m_vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), pelvisPos);
+					if (Utils::VisPos(pLocal, Target.m_pEntity, pLocal->GetShootPos(), hitboxPos)) {
+						Target.m_vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), hitboxPos);
 						return true;
 					}
 
@@ -420,6 +462,16 @@ void CAimbotHitscan::Aim(CUserCmd* pCmd, Vec3& vAngle)
 
 	case 2: //Silent
 	{
+		if (Vars::AntiHack::AntiAim::invalidshootpitch.m_Var && Vars::AntiHack::AntiAim::Active.m_Var && ((Vars::AntiHack::AntiAim::YawReal.m_Var && Vars::AntiHack::AntiAim::YawFake.m_Var) || Vars::AntiHack::AntiAim::Pitch.m_Var)) {
+			g_GlobalInfo.m_bFakeShotPitch = true;
+
+			if (vAngle.x > 0.f)
+				vAngle.x = Math::RemapValClamped(vAngle.x, 0.0f, 89.0f, 180.0f, 91.0f);
+			else
+				vAngle.x = Math::RemapValClamped(vAngle.x, 0.0f, -89.0f, -180.0f, -91.0f);
+
+			vAngle.y = Math::RemapValClamped(vAngle.y, 0.0f, 180.0f, -180.0f, 0.0f);
+		}
 		Utils::FixMovement(pCmd, vAngle);
 		pCmd->viewangles = vAngle;
 		break;
@@ -508,11 +560,12 @@ bool CAimbotHitscan::ShouldFire(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon,
 
 	case CLASS_SPY:
 	{
-		if (Vars::Aimbot::Hitscan::WaitForHeadshot.m_Var && !g_GlobalInfo.m_bWeaponCanHeadShot)
+		if (Vars::Aimbot::Hitscan::WaitForHeadshot.m_Var && !pWeapon->AmbassadorCanHeadshot())
 		{
-			if (g_GlobalInfo.m_nCurItemDefIndex == Spy_m_TheAmbassador || g_GlobalInfo.m_nCurItemDefIndex ==
-				Spy_m_FestiveAmbassador)
+			if (Target.m_nAimedHitbox == HITBOX_HEAD)
+			{
 				return false;
+			}
 		}
 
 		break;
@@ -660,15 +713,19 @@ void CAimbotHitscan::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserC
 
 			pCmd->buttons |= IN_ATTACK;
 
-			if (Vars::Misc::CL_Move::Enabled.m_Var && Vars::Misc::CL_Move::Doubletap.m_Var && (pCmd->buttons &
-				IN_ATTACK) && g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_nWaitForShift)
-			{
-				if ((Vars::Misc::CL_Move::NotInAir.m_Var && !pLocal->IsOnGround() && g_GlobalInfo.m_nShifted))
+			if (Vars::Misc::CL_Move::Enabled.m_Var && Vars::Misc::CL_Move::Doubletap.m_Var && (pCmd->buttons & IN_ATTACK) && g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_nWaitForShift) {
+				if (
+					(Vars::Misc::CL_Move::DTMode.m_Var == 0 && GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)) ||
+					(Vars::Misc::CL_Move::DTMode.m_Var == 1) ||
+					(Vars::Misc::CL_Move::DTMode.m_Var == 2 && !GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)))
 				{
-					g_GlobalInfo.m_bShouldShift = false;
-				}
-				else {
-					g_GlobalInfo.m_bShouldShift = true;
+					if ((Vars::Misc::CL_Move::NotInAir.m_Var && !pLocal->IsOnGround() && g_GlobalInfo.m_nShifted))
+					{
+						g_GlobalInfo.m_bShouldShift = false;
+					}
+					else {
+						g_GlobalInfo.m_bShouldShift = true;
+					}
 				}
 			}
 
