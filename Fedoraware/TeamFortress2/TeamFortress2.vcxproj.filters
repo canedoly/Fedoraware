@@ -670,6 +670,7 @@
     <None Include="TeamFortress2\SDK\DirectX\Include\xnamathmisc.inl" />
     <None Include="TeamFortress2\SDK\DirectX\Include\xnamathvector.inl" />
     <None Include="cpp.hint" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="TeamFortress2\SDK\DirectX\d3dx9.lib" />
