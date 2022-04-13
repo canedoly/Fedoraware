@@ -1,5 +1,6 @@
 #include "Fedworking.h"
 #include "../../Utils/Base64/Base64.hpp"
+#include "NullNexus/NullNexus.hpp"
 
 enum MessageType {
 	None,

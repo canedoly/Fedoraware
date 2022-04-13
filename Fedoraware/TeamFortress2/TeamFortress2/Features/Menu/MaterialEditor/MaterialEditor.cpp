@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <shellapi.h>
 
 #include "../ImGui/imgui_impl_win32.h"
 #include "../ImGui/imgui_stdlib.h"
