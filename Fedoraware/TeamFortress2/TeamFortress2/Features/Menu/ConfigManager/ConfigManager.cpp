@@ -146,16 +146,16 @@ void CConfigManager::Load(const wchar_t* name, Gradient_t& val)
 	}
 }
 
-void CConfigManager::Load(const wchar_t* name, Vec3& val)
-{
-	std::wstring line = {};
-
-	if (Find(name, line)) {
-		float x = 0.f, y = 0.f, z = 0.f;
-		swscanf_s(line.c_str(), L"%*ls %f %f %f", &x, &y, &z);
-		val = { x, y, z };
-	}
-}
+//void CConfigManager::Load(const wchar_t* name, Vec3& val)
+//{
+//	std::wstring line = {};
+//
+//	if (Find(name, line)) {
+//		float x = 0.f, y = 0.f, z = 0.f;
+//		swscanf_s(line.c_str(), L"%*ls %f %f %f", &x, &y, &z);
+//		val = { x, y, z };
+//	}
+//}
 
 void CConfigManager::Load(const wchar_t* name, Chams_t& val)
 {
@@ -577,7 +577,7 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_VAR(Vars::Visuals::AimbotViewmodel);
 			SAVE_VAR(Vars::Visuals::ViewmodelSway);
 			SAVE_VAR(Vars::Visuals::MoveSimLine);
-			SAVE_OTHER(Vars::Visuals::VMOffsets);
+			//SAVE_OTHER(Vars::Visuals::VMOffsets);
 			SAVE_VAR(Vars::Visuals::VMRoll);
 			SAVE_VAR(Vars::Visuals::OutOfFOVArrows);
 			SAVE_VAR(Vars::Visuals::ArrowLength);
@@ -818,8 +818,8 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_OTHER(Vars::Chams::Players::Arms);
 			SAVE_OTHER(Vars::Chams::Players::Weapon);
 
-			SAVE_OTHER(g_Radar.m_nRadarX);
-			SAVE_OTHER(g_Radar.m_nRadarY);
+			/*SAVE_OTHER(g_Radar.m_nRadarX);
+			SAVE_OTHER(g_Radar.m_nRadarY);*/
 			SAVE_OTHER(Vars::Skybox::SkyboxNum);
 			SAVE_STRING(Vars::Skybox::SkyboxName);
 
@@ -1289,7 +1289,7 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_VAR(Vars::Visuals::AimbotViewmodel);
 			LOAD_VAR(Vars::Visuals::ViewmodelSway);
 			LOAD_VAR(Vars::Visuals::MoveSimLine);
-			LOAD_OTHER(Vars::Visuals::VMOffsets);
+			//LOAD_OTHER(Vars::Visuals::VMOffsets);
 			LOAD_VAR(Vars::Visuals::VMRoll);
 			LOAD_VAR(Vars::Visuals::OutOfFOVArrows);
 			LOAD_VAR(Vars::Visuals::ArrowLength);
@@ -1533,8 +1533,8 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_OTHER(Vars::Chams::Players::Arms);
 			LOAD_OTHER(Vars::Chams::Players::Weapon);
 
-			LOAD_OTHER(g_Radar.m_nRadarX);
-			LOAD_OTHER(g_Radar.m_nRadarY);
+			//LOAD_OTHER(g_Radar.m_nRadarX);
+			//LOAD_OTHER(g_Radar.m_nRadarY);
 			LOAD_OTHER(Vars::Chams::Buildings::Local);
 			LOAD_OTHER(Vars::Chams::Buildings::Enemy);
 			LOAD_OTHER(Vars::Chams::Buildings::Team);

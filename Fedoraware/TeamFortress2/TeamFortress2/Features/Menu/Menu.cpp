@@ -460,83 +460,162 @@ void CMenu::MenuVisuals()
 				SectionTitle("Chams Main");
 				WToggle("Chams###ChamsMasterSwitch", &Vars::Chams::Main::Active.m_Var); HelpMarker("Chams master switch");
 
-				static std::vector chamOptions{
-					"Local",
-					"Friends",
-					"Enemies",
-					"Teammates",
-					"Target"
+				static const char* chamOptions[]{
+							"Local",
+							"Friends",
+							"Enemies",
+							"Teammates",
+							"Target",
+							"Arms",
+							"Weapon"
 				};
 
 				static int currentSelected = 0; // 0 - local, 1 - friends, 2 - enemy, 3 - team
-				static std::vector pchamsMaterials{ "None", "Shaded", "Shiny", "Flat", "Brick", "Blur", "Fresnel", "Plastic", "Custom" };
+
+				static const char* pchamsMaterials[]{
+					"Original",
+					"Shaded",
+					"Shiny",
+					"Flat",
+					"Wireframe shaded",
+					"Wireframe shiny",
+					"Wireframe flat",
+					"Fresnel",
+					"Brick"
+				};
+
+				static const char* dmeGlowMaterials[]{
+					"None",
+					"Fresnel Glow",
+					"Wireframe Glow"
+				};
+
+				static const char* proxyMats[]{
+					"None",
+					"Spectrum splattered",
+					"Electro skulls",
+					"Jazzy",
+					"Frozen aurora",
+					"Hana",
+					"IDK",
+					"Ghost thing",
+					"Flames",
+					"Spook wood",
+					"Edgy",
+					"Starlight serenity",
+					"Fade"
+				};
 
 				SectionTitle("Player Chams");
 				WToggle("Player chams###PlayerChamsBox", &Vars::Chams::Players::Active.m_Var); HelpMarker("Player chams master switch");
 				MultiCombo({ "Render Wearable", "Render Weapon" }, { &Vars::Chams::Players::Wearables.m_Var, &Vars::Chams::Players::Weapons.m_Var }, "Flags");
 				HelpMarker("Customize Chams");
-				WCombo("Config", &currentSelected, chamOptions);
+				ImGui::Combo("Target", &currentSelected, chamOptions, IM_ARRAYSIZE(chamOptions));
 
 				switch (currentSelected) // please find a better way to do this, i have tried so many things and i cant get it to work properly
 				{
 				case 0:
 				{
-					// Local
-					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Local.chamsActive, &Vars::Chams::Players::Local.showObstructed }, "Options");
-					WCombo("Material", &Vars::Chams::Players::Local.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the player");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Players::Local.fresnelBase);
-					if (Vars::Chams::Players::Local.drawMaterial == 8)
-					{
-						MaterialCombo("Custom Material", &Vars::Chams::Players::Local.customMaterial);
-					}
+					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Local.chamsActive, &Vars::Chams::Players::Local.showObstructed }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Local.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply to the player");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Local.fresnelBaseColor);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Local.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Local.overlayColor);
 					break;
 				}
 				case 1:
 				{
-					// Friends
-					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Friend.chamsActive, &Vars::Chams::Players::Friend.showObstructed }, "Options");
-					WCombo("Material", &Vars::Chams::Players::Friend.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the player");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Players::Friend.fresnelBase);
-					if (Vars::Chams::Players::Friend.drawMaterial == 8)
-					{
-						MaterialCombo("Custom Material", &Vars::Chams::Players::Friend.customMaterial);
-					}
+					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Friend.chamsActive, &Vars::Chams::Players::Friend.showObstructed }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Friend.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply to the player");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Friend.fresnelBaseColor);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Friend.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Friend.overlayColor);
 					break;
 				}
 				case 2:
 				{
-					// Enemies
-					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Enemy.chamsActive, &Vars::Chams::Players::Enemy.showObstructed }, "Options");
-					WCombo("Material", &Vars::Chams::Players::Enemy.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the player");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Players::Enemy.fresnelBase);
-					if (Vars::Chams::Players::Enemy.drawMaterial == 8)
-					{
-						MaterialCombo("Custom Material", &Vars::Chams::Players::Enemy.customMaterial);
-					}
+					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Enemy.chamsActive, &Vars::Chams::Players::Enemy.showObstructed }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Enemy.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply to the player");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Enemy.fresnelBaseColor);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Enemy.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Enemy.overlayColor);
 					break;
 				}
 				case 3:
 				{
-					// Teammates
-					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Team.chamsActive, &Vars::Chams::Players::Team.showObstructed, }, "Options");
-					WCombo("Material", &Vars::Chams::Players::Team.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the player");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Players::Team.fresnelBase);
-					if (Vars::Chams::Players::Team.drawMaterial == 8)
-					{
-						MaterialCombo("Custom Material", &Vars::Chams::Players::Team.customMaterial);
-					}
+					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Team.chamsActive, &Vars::Chams::Players::Team.showObstructed, }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Team.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply to the player");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Team.fresnelBaseColor);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Team.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Team.overlayColor);
 					break;
 				}
 				case 4:
 				{
-					// Target
-					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Target.chamsActive, &Vars::Chams::Players::Target.showObstructed, }, "Options");
-					WCombo("Material", &Vars::Chams::Players::Target.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the player");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Players::Target.fresnelBase);
-					if (Vars::Chams::Players::Target.drawMaterial == 8)
-					{
-						MaterialCombo("Custom Material", &Vars::Chams::Players::Target.customMaterial);
-					}
+					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Players::Target.chamsActive, &Vars::Chams::Players::Target.showObstructed, }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Target.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply to the player");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Target.fresnelBaseColor);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Target.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Target.overlayColor);
+					break;
+				}
+				case 5:
+				{
+					MultiCombo({ "Active" }, { &Vars::Chams::Players::Arms.chamsActive }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Arms.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Arms.fresnelBaseColor);
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 44);
+					ImGui::SetNextItemWidth(44);
+					ColorPicker("Hand colour", Colors::Hands);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Arms.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Arms.overlayColor);
+					break;
+				}
+				case 6:
+				{
+					MultiCombo({ "Active" }, { &Vars::Chams::Players::Weapon.chamsActive }, "options");
+					ImGui::PushItemWidth(100); ImGui::Combo("Material", &Vars::Chams::Players::Weapon.drawMaterial, pchamsMaterials, IM_ARRAYSIZE(pchamsMaterials)); ImGui::PopItemWidth();
+					HelpMarker("Which material the chams will apply");
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Fresnel base colour", Vars::Chams::Players::Weapon.fresnelBaseColor);
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 44);
+					ImGui::SetNextItemWidth(44);
+					ColorPicker("Hand colour", Colors::Weapon);
+					ImGui::PushItemWidth(100); ImGui::Combo("Overlay", &Vars::Chams::Players::Weapon.overlayType, dmeGlowMaterials, IM_ARRAYSIZE(dmeGlowMaterials)); ImGui::PopItemWidth();
+					ImGui::SameLine(ImGui::GetContentRegionMax().x - 20);
+					ImGui::SetNextItemWidth(20);
+					ColorPicker("Overlay colour", Vars::Chams::Players::Weapon.overlayColor);
 					break;
 				}
 				}
@@ -725,7 +804,7 @@ void CMenu::MenuVisuals()
 					// Local
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Buildings::Local.chamsActive, &Vars::Chams::Buildings::Local.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::Buildings::Local.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the building");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Local.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Local.fresnelBaseColor);
 					if (Vars::Chams::Buildings::Local.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Local.customMaterial);
@@ -737,7 +816,7 @@ void CMenu::MenuVisuals()
 					// Friends
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Buildings::Friend.chamsActive, &Vars::Chams::Buildings::Friend.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::Buildings::Friend.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the building");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Friend.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Friend.fresnelBaseColor);
 					if (Vars::Chams::Buildings::Friend.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Friend.customMaterial);
@@ -749,7 +828,7 @@ void CMenu::MenuVisuals()
 					// Enemy
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Buildings::Enemy.chamsActive, &Vars::Chams::Buildings::Enemy.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::Buildings::Enemy.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the building");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Enemy.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Enemy.fresnelBaseColor);
 					if (Vars::Chams::Buildings::Enemy.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Enemy.customMaterial);
@@ -761,7 +840,7 @@ void CMenu::MenuVisuals()
 					// Team
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Buildings::Team.chamsActive, &Vars::Chams::Buildings::Team.showObstructed, }, "Options");
 					WCombo("Material", &Vars::Chams::Buildings::Team.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the building");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Team.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Team.fresnelBaseColor);
 					if (Vars::Chams::Buildings::Team.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Team.customMaterial);
@@ -773,7 +852,7 @@ void CMenu::MenuVisuals()
 					// Target
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::Buildings::Target.chamsActive, &Vars::Chams::Buildings::Target.showObstructed, }, "Options");
 					WCombo("Material", &Vars::Chams::Buildings::Target.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to the building");
-					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Target.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::Buildings::Target.fresnelBaseColor);
 					if (Vars::Chams::Buildings::Target.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Target.customMaterial);
@@ -837,7 +916,7 @@ void CMenu::MenuVisuals()
 				{
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::World::Health.chamsActive, &Vars::Chams::World::Health.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::World::Health.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to healthpacks");
-					ColorPickerL("Fresnel base colour", Vars::Chams::World::Health.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::World::Health.fresnelBaseColor);
 					if (Vars::Chams::World::Health.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::World::Health.customMaterial);
@@ -848,7 +927,7 @@ void CMenu::MenuVisuals()
 				{
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::World::Ammo.chamsActive, &Vars::Chams::World::Ammo.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::World::Ammo.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to ammopacks");
-					ColorPickerL("Fresnel base colour", Vars::Chams::World::Ammo.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::World::Ammo.fresnelBaseColor);
 					if (Vars::Chams::World::Ammo.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::World::Ammo.customMaterial);
@@ -859,7 +938,7 @@ void CMenu::MenuVisuals()
 				{
 					MultiCombo({ "Active", "Obstructed" }, { &Vars::Chams::World::Projectiles.chamsActive, &Vars::Chams::World::Projectiles.showObstructed }, "Options");
 					WCombo("Material", &Vars::Chams::World::Projectiles.drawMaterial, pchamsMaterials); HelpMarker("Which material the chams will apply to projectiles");
-					ColorPickerL("Fresnel base colour", Vars::Chams::World::Projectiles.fresnelBase);
+					ColorPickerL("Fresnel base colour", Vars::Chams::World::Projectiles.fresnelBaseColor);
 					if (Vars::Chams::World::Projectiles.drawMaterial == 8)
 					{
 						MaterialCombo("Custom Material", &Vars::Chams::World::Projectiles.customMaterial);

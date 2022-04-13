@@ -16,9 +16,9 @@ private:
 	void DrawModel(CBaseEntity* pEntity);
 
 private:
-	void RenderPlayers(CBaseEntity* pLocal, IMatRenderContext* pRenderContext);
+	/*void RenderPlayers(CBaseEntity* pLocal, IMatRenderContext* pRenderContext);
 	void RenderBuildings(CBaseEntity* pLocal, IMatRenderContext* pRenderContext);
-	void RenderWorld(CBaseEntity* pLocal, IMatRenderContext* pRenderContext);
+	void RenderWorld(CBaseEntity* pLocal, IMatRenderContext* pRenderContext);*/
 	IMaterial* fetchMaterial(Chams_t chams);
 
 public:
