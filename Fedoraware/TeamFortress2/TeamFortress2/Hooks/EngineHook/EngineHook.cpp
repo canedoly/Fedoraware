@@ -207,3 +207,8 @@ void __cdecl EngineHook::CL_NameCvarChanged::Hook(IConVar* pConvar)
 		g_Interfaces.CVars->ConsolePrintf("[FeD] Name set to: %s\n", name->GetString());
 	}
 }
+
+bool __fastcall EngineHook::SendNetMsg::Hook(void* ecx, void* edx, INetMessage& msg, bool bForceReliable, bool bVoice)
+{
+	return Func.Original<fn>()(ecx, edx, msg, bForceReliable, bVoice);
+}
