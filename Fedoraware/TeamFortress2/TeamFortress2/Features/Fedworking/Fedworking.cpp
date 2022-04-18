@@ -171,7 +171,7 @@ bool CFedworking::SendChatMessage(const std::string& message, const std::string&
 {
 	if (Vars::Fedworking::Enabled.m_Var && Vars::Fedworking::Chat.m_Var)
 	{
-		return fedNexus.sendChat(message, channel);
+		return fedNexus.SendChat(message, channel);
 	}
 	return false;
 }
@@ -190,12 +190,12 @@ void OnMessage(const std::string& username, const std::string& msg, int color)
 void CFedworking::Init()
 {
 	// Initialize FedNexus
-	fedNexus.changeData();
-	fedNexus.setHandlerChat(OnMessage);
-	fedNexus.connect("localhost", "3000", "/api/v1/client", true);
+	fedNexus.ChangeData();
+	fedNexus.SetHandlerChat(OnMessage);
+	fedNexus.Connect("localhost", "3000", "/api/v1/client", true);
 }
 
 void CFedworking::Disconnect()
 {
-	fedNexus.disconnect();
+	fedNexus.Disconnect();
 }
