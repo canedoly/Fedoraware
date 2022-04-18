@@ -3,10 +3,8 @@
 
 class CFedworking
 {
-private:
-	void ConsoleLog(const std::string& pMessage);
-
 public:
+	void ConsoleLog(const std::string& pMessage);
 	void HandleMessage(const char* pMessage);
 	void SendMarker(const Vec3& pPos, int pPlayerIdx);
 	void SendESP(CBaseEntity* pPlayer);

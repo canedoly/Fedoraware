@@ -658,6 +658,7 @@ namespace Vars
 	{
 		inline CVar<bool> Enabled{ true };
 		inline CVar<bool> Chat{ true };
+		inline CVar<int> NetworkMode { 0 }; // 0 - FedNexus, 1 - Party chat
 	}
 
 	namespace AntiHack

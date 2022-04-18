@@ -1,6 +1,7 @@
 #include "EngineHook.h"
 #include "../../Features/Vars.h"
 #include "../../Features/Misc/Misc.h"
+#include "../../Features/Fedworking/Fedworking.h"
 
 void __cdecl EngineHook::CL_Move::Hook(float accumulated_extra_samples, bool bFinalTick)
 {
@@ -210,5 +211,27 @@ void __cdecl EngineHook::CL_NameCvarChanged::Hook(IConVar* pConvar)
 
 bool __fastcall EngineHook::SendNetMsg::Hook(void* ecx, void* edx, INetMessage& msg, bool bForceReliable, bool bVoice)
 {
+	if (msg.GetType() == net_StringCmd)
+	{
+		std::string str(msg.ToString());
+		const size_t sayIDX = str.find("net_StringCmd: \"say \"");
+		const size_t sayTeamIDX = str.find("net_StringCmd: \"say_team \"");
+		if (!sayIDX || !sayTeamIDX)
+		{
+			const int msgOffset = sayIDX ? 26 : 21;
+			if (Vars::Fedworking::Chat.m_Var)
+			{
+				std::string cmdMsg(str.substr(msgOffset));
+				cmdMsg = cmdMsg.substr(0, cmdMsg.length() - 2);
+				if (cmdMsg.find("!!") == 0)
+				{
+					const std::string cleanMsg(cmdMsg.substr(2));
+					g_Fedworking.SendChatMessage(cleanMsg);
+					return false;
+				}
+			}
+		}
+	}
+
 	return Func.Original<fn>()(ecx, edx, msg, bForceReliable, bVoice);
 }

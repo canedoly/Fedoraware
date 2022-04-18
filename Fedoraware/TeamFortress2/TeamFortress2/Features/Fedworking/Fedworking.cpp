@@ -111,14 +111,24 @@ void CFedworking::SendESP(CBaseEntity* pPlayer)
 
 void CFedworking::SendMessage(const std::string& pData)
 {
+	if (!Vars::Fedworking::Enabled.m_Var) { return; }
+
 	const std::string encMsg = Base64::Encode(pData);
-	if (encMsg.size() <= 253) {
-		std::string cmd = "tf_party_chat \"FED@";
-		cmd.append(encMsg);
-		cmd.append("\"");
-		g_Interfaces.Engine->ClientCmd_Unrestricted(cmd.c_str());
-	} else {
-		ConsoleLog("Failed to send message! The message was too long.");
+	if (Vars::Fedworking::NetworkMode.m_Var == 0)
+	{
+		// Server Networking (FedNexus)
+	} else
+	{
+		// Party Networking
+		if (encMsg.size() <= 253) {
+			std::string cmd = "tf_party_chat \"FED@";
+			cmd.append(encMsg);
+			cmd.append("\"");
+			g_Interfaces.Engine->ClientCmd_Unrestricted(cmd.c_str());
+		}
+		else {
+			ConsoleLog("Failed to send message! The message was too long.");
+		}
 	}
 }
 
@@ -176,15 +186,23 @@ bool CFedworking::SendChatMessage(const std::string& message, const std::string&
 	return false;
 }
 
-void OnMessage(const std::string& username, const std::string& msg, int color)
+void OnMessage(const std::string& username, const std::string& msg, int color = 0xFF9340)
 {
+	if (username.size() > 32 || msg.size() > 128)
+	{
+		g_Fedworking.ConsoleLog("Received message or username wasa too long.");
+		return;
+	}
+
 #ifdef _DEBUG
-	std::stringstream ssMessage;
-	ssMessage << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
-	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssMessage.str().c_str());
+	std::stringstream ssConsole;
+	ssConsole << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
+	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssConsole.str().c_str());
 #endif
 
-
+	std::stringstream ssMessage;
+	ssMessage << "\x04[FedNexus] \x05" << username << "\x01: \x03" << msg;
+	g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
 }
 
 void CFedworking::Init()

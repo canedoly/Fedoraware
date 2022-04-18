@@ -1585,6 +1585,7 @@ void CMenu::MenuMisc()
 			SectionTitle("Chat");
 			WToggle("Chat Censor", &Vars::Misc::ChatCensor.m_Var); HelpMarker("Clears the chat when someone accuses your");
 			WCombo("Chat spam", &Vars::Misc::ChatSpam.m_Var, { "Off", "Fedoraware", "Lmaobox", "Cathook" });
+			WToggle("Party crasher", &Vars::Misc::PartyCrasher.m_Var); HelpMarker("Annoy your friends by crashing their game");
 
 			SectionTitle("Exploits");
 			WToggle("Anti Autobalance", &Vars::Misc::AntiAutobal.m_Var); HelpMarker("Prevents auto balance by reconnecting to the server");
@@ -1597,11 +1598,14 @@ void CMenu::MenuMisc()
 				WSlider("Target ping", &Vars::Misc::PingTarget.m_Var, 0, 200); HelpMarker("Target ping that should be reached");
 			}
 
-			SectionTitle("Party Networking");
-			WToggle("Enable", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
-			WToggle("Party crasher", &Vars::Misc::PartyCrasher.m_Var); HelpMarker("Annoy your friends by crashing their game");
-			InputKeybind("Party marker", Vars::Misc::PartyMarker, true);  HelpMarker("Sends a marker to other Fedoraware users in your party");
-			WToggle("Party ESP", &Vars::Misc::PartyESP.m_Var); HelpMarker("Sends player locations to your party members");
+			SectionTitle("Fedworking");
+			WToggle("Enable", &Vars::Fedworking::Enabled.m_Var); HelpMarker("Enables networking between users");
+			WCombo("Connection", &Vars::Fedworking::NetworkMode.m_Var, { "FedNexus", "Party chat" }); HelpMarker("The networking system you want to use. Party networking only allows limited features.");
+
+			// Legacy
+			WToggle("[L] Party Networking", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
+			InputKeybind("[L] Party marker", Vars::Misc::PartyMarker, true);  HelpMarker("Sends a marker to other Fedoraware users in your party");
+			WToggle("[L]Party ESP", &Vars::Misc::PartyESP.m_Var); HelpMarker("Sends player locations to your party members");
 		} EndChild();
 
 		/* Column 3 */
