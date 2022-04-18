@@ -2,6 +2,8 @@
 #include "../../Utils/Base64/Base64.hpp"
 #include "NullNexus/NullNexus.hpp"
 
+static NullNexus fedNexus;
+
 enum MessageType {
 	None,
 	Marker,	// [ Type, X-Pos, Y-Pos, Z-Pos, Player-IDX ]
@@ -163,4 +165,37 @@ void CFedworking::ConsoleLog(const std::string& pMessage)
 	consoleMsg.append(pMessage);
 	consoleMsg.append("\n");
 	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, consoleMsg.c_str());
+}
+
+bool CFedworking::SendChatMessage(const std::string& message, const std::string& channel)
+{
+	if (Vars::Fedworking::Enabled.m_Var && Vars::Fedworking::Chat.m_Var)
+	{
+		return fedNexus.sendChat(message, channel);
+	}
+	return false;
+}
+
+void OnMessage(const std::string& username, const std::string& msg, int color)
+{
+#ifdef _DEBUG
+	std::stringstream ssMessage;
+	ssMessage << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
+	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssMessage.str().c_str());
+#endif
+
+
+}
+
+void CFedworking::Init()
+{
+	// Initialize FedNexus
+	fedNexus.changeData();
+	fedNexus.setHandlerChat(OnMessage);
+	fedNexus.connect("localhost", "3000", "/api/v1/client", true);
+}
+
+void CFedworking::Disconnect()
+{
+	fedNexus.disconnect();
 }

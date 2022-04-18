@@ -654,6 +654,12 @@ namespace Vars
 		}
 	}
 
+	namespace Fedworking
+	{
+		inline CVar<bool> Enabled{ true };
+		inline CVar<bool> Chat{ true };
+	}
+
 	namespace AntiHack
 	{
 		namespace AntiAim
@@ -681,6 +687,7 @@ namespace Vars
 		inline int SkyboxNum = 0;
 		inline std::string SkyboxName = "mr_04";
 	}
+
 	namespace Fonts
 	{
 		namespace FONT_ESP

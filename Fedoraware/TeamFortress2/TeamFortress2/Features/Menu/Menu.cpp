@@ -4,6 +4,7 @@
 #include "../Camera/CameraWindow.h"
 #include "../AttributeChanger/AttributeChanger.h"
 #include "../Misc/Misc.h"
+#include "../Fedworking/Fedworking.h"
 #include "Playerlist/Playerlist.h"
 
 #include "ImGui/imgui_impl_win32.h"
@@ -1823,6 +1824,7 @@ void CMenu::DebugMenu()
 	if (Begin("Debug", &ShowDebugMenu, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
 	{
 		const auto& pLocal = g_EntityCache.m_pLocal;
+
 		// Particle tester
 		if (CollapsingHeader("Particles"))
 		{
@@ -1832,6 +1834,17 @@ void CMenu::DebugMenu()
 			if (Button("Dispatch") && pLocal != nullptr)
 			{
 				Particles::DispatchParticleEffect(particleName.c_str(), pLocal->GetAbsOrigin(), { });
+			}
+		}
+
+		if (CollapsingHeader("Fedworking"))
+		{
+			static std::string chatMessage = "Test";
+
+			InputText("Message", &chatMessage);
+			if (Button("Dispatch"))
+			{
+				g_Fedworking.SendChatMessage(chatMessage);
 			}
 		}
 
