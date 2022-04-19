@@ -211,6 +211,11 @@ void __cdecl EngineHook::CL_NameCvarChanged::Hook(IConVar* pConvar)
 
 bool __fastcall EngineHook::SendNetMsg::Hook(void* ecx, void* edx, INetMessage& msg, bool bForceReliable, bool bVoice)
 {
+	if (msg.GetGroup() == INetChannelInfo::VOICE)
+	{
+		bVoice = true;
+	}
+
 	if (msg.GetType() == net_StringCmd)
 	{
 		std::string str(msg.ToString());
@@ -219,7 +224,7 @@ bool __fastcall EngineHook::SendNetMsg::Hook(void* ecx, void* edx, INetMessage& 
 		if (!sayIDX || !sayTeamIDX)
 		{
 			const int msgOffset = sayIDX ? 26 : 21;
-			if (Vars::Fedworking::Chat.m_Var)
+			if (Vars::Fedworking::Enabled.m_Var)
 			{
 				std::string cmdMsg(str.substr(msgOffset));
 				cmdMsg = cmdMsg.substr(0, cmdMsg.length() - 2);

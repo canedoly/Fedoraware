@@ -657,7 +657,6 @@ namespace Vars
 	namespace Fedworking
 	{
 		inline CVar<bool> Enabled{ true };
-		inline CVar<bool> Chat{ true };
 		inline CVar<int> NetworkMode { 0 }; // 0 - FedNexus, 1 - Party chat
 	}
 

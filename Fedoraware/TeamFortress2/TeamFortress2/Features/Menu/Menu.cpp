@@ -1599,13 +1599,22 @@ void CMenu::MenuMisc()
 			}
 
 			SectionTitle("Fedworking");
-			WToggle("Enable", &Vars::Fedworking::Enabled.m_Var); HelpMarker("Enables networking between users");
-			WCombo("Connection", &Vars::Fedworking::NetworkMode.m_Var, { "FedNexus", "Party chat" }); HelpMarker("The networking system you want to use. Party networking only allows limited features.");
+			if (WToggle("Enable", &Vars::Fedworking::Enabled.m_Var))
+			{
+				if (Vars::Fedworking::Enabled.m_Var)
+				{
+					g_Fedworking.Connect();
+				} else
+				{
+					g_Fedworking.Disconnect();
+				}
+			}
+			HelpMarker("Enables networking between users (Chat, Identification)");
 
 			// Legacy
-			WToggle("[L] Party Networking", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
-			InputKeybind("[L] Party marker", Vars::Misc::PartyMarker, true);  HelpMarker("Sends a marker to other Fedoraware users in your party");
-			WToggle("[L]Party ESP", &Vars::Misc::PartyESP.m_Var); HelpMarker("Sends player locations to your party members");
+			WToggle("Party Networking", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
+			InputKeybind("Party marker", Vars::Misc::PartyMarker, true);  HelpMarker("Sends a marker to other Fedoraware users in your party");
+			WToggle("Party ESP", &Vars::Misc::PartyESP.m_Var); HelpMarker("Sends player locations to your party members");
 		} EndChild();
 
 		/* Column 3 */
@@ -1846,7 +1855,7 @@ void CMenu::DebugMenu()
 			static std::string chatMessage = "Test";
 
 			InputText("Message", &chatMessage);
-			if (Button("Dispatch"))
+			if (Button("Send chat message"))
 			{
 				g_Fedworking.SendChatMessage(chatMessage);
 			}

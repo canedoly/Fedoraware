@@ -10,7 +10,9 @@ public:
 	void SendESP(CBaseEntity* pPlayer);
 	void SendMessage(const std::string& pData);
 	bool SendChatMessage(const std::string& message, const std::string& channel = "public");
+	void UpdateServer();
 	void Init();
+	void Connect();
 	void Disconnect();
 	void Run();
 };

@@ -26,9 +26,9 @@ public:
 				ServerSpawnCount == other.ServerSpawnCount;
 		}
 
-		explicit TF2Server(bool connected = false, std::string ip = "", std::string port = "", std::string steamid = "",
-		                   int server_spawn_count = -1) : Connected(connected), IP(std::move(ip)), Port(std::move(port)), SteamID(std::move(steamid)),
-		                                                  ServerSpawnCount(server_spawn_count) { }
+		TF2Server(bool connected = false, std::string ip = "", std::string port = "", std::string steamid = "", int server_spawn_count = -1) : Connected(connected), IP(ip), Port(port), SteamID(steamid), ServerSpawnCount(server_spawn_count)
+		{
+		}
 	};
 
 	struct UserSettings {
@@ -119,6 +119,11 @@ private:
 	}
 
 public:
+	UserSettings GetSettings()
+	{
+		return Settings;
+	}
+
 	// Change some setting
 	void ChangeData(UserSettings newSettings = UserSettings())
 	{

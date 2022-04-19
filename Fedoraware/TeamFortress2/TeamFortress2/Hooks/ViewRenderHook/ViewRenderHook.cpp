@@ -2,6 +2,7 @@
 #include "../../Features/Chams/Chams.h"
 #include "../../Features/Visuals/Visuals.h"
 #include "../../Features/Camera/CameraWindow.h"
+#include "../../Features/Fedworking/Fedworking.h"
 
 void CustomFogSetup() {
 	if (static auto fog_enable = g_Interfaces.CVars->FindVar("fog_enable"); fog_enable) {
@@ -56,6 +57,7 @@ void __fastcall ViewRenderHook::LevelInit::Hook(void* ecx, void* edx)
 	CustomFogSetup();
 	g_Visuals.StoreMaterialHandles();
 	g_Visuals.OverrideWorldTextures();
+	g_Fedworking.UpdateServer();
 	Func.Original<fn>()(ecx);
 	g_Visuals.ModulateWorld();
 }
@@ -63,6 +65,7 @@ void __fastcall ViewRenderHook::LevelInit::Hook(void* ecx, void* edx)
 void __fastcall ViewRenderHook::LevelShutdown::Hook(void* ecx, void* edx)
 {
 	g_Visuals.ClearMaterialHandles();
+	g_Fedworking.UpdateServer();
 	Func.Original<fn>()(ecx);
 }
 

@@ -69,11 +69,70 @@ class CNetMessage;
 class INetChannel;
 class CNetChannel;
 
+typedef enum
+{
+	NA_NULL = 0,
+	NA_LOOPBACK,
+	NA_BROADCAST,
+	NA_IP,
+} netadrtype_t;
+
 typedef struct NetAdr_s
 {
 public:
-	unsigned char ip[4];
-	unsigned short port;
+	netadrtype_t	type;
+	unsigned char	ip[4];
+	unsigned short	port;
+
+	[[nodiscard]] bool IsReservedAdr() const
+	{
+		if (type == NA_LOOPBACK)
+		{
+			return true;
+		}
+
+		if (type == NA_IP)
+		{
+			if ((ip[0] == 10) ||									// 10.x.x.x is reserved
+				(ip[0] == 127) ||									// 127.x.x.x 
+				(ip[0] == 172 && ip[1] >= 16 && ip[1] <= 31) ||	// 172.16.x.x  - 172.31.x.x 
+				(ip[0] == 192 && ip[1] >= 168)) 					// 192.168.x.x
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	[[nodiscard]] const char* ToString(bool onlyBase) const
+	{
+		static char s[64];
+
+		strncpy(s, "unknown", sizeof(s));
+
+		if (type == NA_LOOPBACK)
+		{
+			strncpy(s, "loopback", sizeof(s));
+		}
+		else if (type == NA_BROADCAST)
+		{
+			strncpy(s, "broadcast", sizeof(s));
+		}
+		else if (type == NA_IP)
+		{
+			if (onlyBase)
+			{
+				snprintf(s, sizeof(s), "%i.%i.%i.%i", ip[0], ip[1], ip[2], ip[3]);
+			}
+			else
+			{
+				const USHORT hsPort = (port & 0xff) << 8 | (port & 0xff00) >> 8;
+				snprintf(s, sizeof(s), "%i.%i.%i.%i:%i", ip[0], ip[1], ip[2], ip[3], hsPort);
+			}
+		}
+
+		return s;
+	}
 } netadr_t;
 
 typedef void* FileHandle_t;
@@ -184,9 +243,17 @@ public:
 	virtual void	RequestFile_OLD(const char* filename, unsigned int transferID) = 0;	// get rid of this function when we version the 
 	virtual void	SetChoked(void) = 0;
 	virtual int		SendDatagram(bf_write* data) = 0;
-	virtual bool	Transmit(bool onlyReliable = false) = 0;
 
-	virtual const netadr_t& GetRemoteAddress(void) const = 0;
+	bool Transmit(bool onlyReliable = false)
+	{
+		return GetVFunc<bool(__thiscall*)(void*, bool)>(this, 44)(this, onlyReliable);
+	}
+
+	const netadr_t& GetRemoteAddress() const
+	{
+		return GetVFunc<netadr_t&(__thiscall*)(const void*)>(this, 45)(this);
+	}
+
 	virtual INetChannelHandler* GetMsgHandler(void) const = 0;
 	virtual int				GetDropNumber(void) const = 0;
 	virtual int				GetSocket(void) const = 0;

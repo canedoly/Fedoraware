@@ -2,6 +2,7 @@
 #include "../../Utils/Base64/Base64.hpp"
 #include "NullNexus/NullNexus.hpp"
 
+constexpr bool useAuth = false;
 static NullNexus fedNexus;
 
 enum MessageType {
@@ -179,37 +180,121 @@ void CFedworking::ConsoleLog(const std::string& pMessage)
 
 bool CFedworking::SendChatMessage(const std::string& message, const std::string& channel)
 {
-	if (Vars::Fedworking::Enabled.m_Var && Vars::Fedworking::Chat.m_Var)
+	if (Vars::Fedworking::Enabled.m_Var)
 	{
 		return fedNexus.SendChat(message, channel);
 	}
 	return false;
 }
 
+void CFedworking::UpdateServer()
+{
+	NullNexus::UserSettings userSettings = fedNexus.GetSettings();
+	userSettings.Username = g_SteamInterfaces.Friends002->GetPersonaName();
+
+	INetChannel* netChannel = g_Interfaces.Engine->GetNetChannelInfo();
+	if (netChannel)
+	{
+		const netadr_t address = netChannel->GetRemoteAddress();
+		if (!address.IsReservedAdr())
+		{
+			PlayerInfo_t pInfo{ };
+			if (g_Interfaces.Engine->GetPlayerInfo(g_Interfaces.Engine->GetLocalPlayer(), &pInfo))
+			{
+				MD5Value_t result{ };
+				std::string steamIDHash = std::to_string(pInfo.friendsID) + pInfo.name;
+				MD5_ProcessSingleBuffer(steamIDHash.c_str(), strlen(steamIDHash.c_str()), result);
+				std::stringstream ss;
+				ss << std::hex;
+				for (const auto iBits : result.bits)
+				{
+					ss << std::setw(2) << std::setfill('0') << static_cast<int>(iBits);
+				}
+				steamIDHash = ss.str();
+				userSettings.GameServer = { true, address.ToString(true), std::to_string(address.port), steamIDHash, 1 };
+				fedNexus.ChangeData(userSettings);
+				return;
+			}
+		}
+	}
+
+	userSettings.GameServer = { false };
+	fedNexus.ChangeData(userSettings);
+}
+
 void OnMessage(const std::string& username, const std::string& msg, int color = 0xFF9340)
 {
 	if (username.size() > 32 || msg.size() > 128)
 	{
-		g_Fedworking.ConsoleLog("Received message or username wasa too long.");
+		g_Fedworking.ConsoleLog("Received message or username was too long.");
 		return;
 	}
 
-#ifdef _DEBUG
-	std::stringstream ssConsole;
-	ssConsole << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
-	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssConsole.str().c_str());
-#endif
+	#ifdef _DEBUG
+		std::stringstream ssConsole;
+		ssConsole << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
+		g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssConsole.str().c_str());
+	#endif
 
 	std::stringstream ssMessage;
 	ssMessage << "\x04[FedNexus] \x05" << username << "\x01: \x03" << msg;
 	g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
 }
 
+void OnAuthedPlayers(const std::vector<std::string>& steamIDs)
+{
+	if (!g_Interfaces.Engine->IsInGame()) { return; }
+
+	if (Vars::Fedworking::Enabled.m_Var)
+	{
+		for (int i = 0; i <= g_Interfaces.Engine->GetMaxClients(); i++)
+		{
+			PlayerInfo_t pInfo{ };
+			if (g_Interfaces.Engine->GetPlayerInfo(i, &pInfo))
+			{
+				if (pInfo.friendsID == 0) { continue; }
+
+				MD5Value_t result{ };
+				std::string steamIDHash = std::to_string(pInfo.friendsID) + pInfo.name;
+				MD5_ProcessSingleBuffer(steamIDHash.c_str(), strlen(steamIDHash.c_str()), result);
+
+				std::stringstream sidStream;
+				sidStream << std::hex;
+				for (const auto bit : result.bits)
+				{
+					sidStream << std::setw(2) << std::setfill('0') << static_cast<int>(bit);
+				}
+
+				steamIDHash = sidStream.str();
+				for (const auto& sid : steamIDs)
+				{
+					if (sid == steamIDHash)
+					{
+						std::stringstream ssMessage;
+						ssMessage << "\x04[FedNexus] \x05" << pInfo.name << " detected as FedNexus user";
+						g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
+					}
+				}
+			}
+		}
+	}
+}
+
 void CFedworking::Init()
 {
 	// Initialize FedNexus
-	fedNexus.ChangeData();
 	fedNexus.SetHandlerChat(OnMessage);
+	fedNexus.SetHandlerAuthedplayers(OnAuthedPlayers);
+
+	if (Vars::Fedworking::Enabled.m_Var)
+	{
+		Connect();
+	}
+}
+
+void CFedworking::Connect()
+{
+	UpdateServer();
 	fedNexus.Connect("localhost", "3000", "/api/v1/client", true);
 }
 
