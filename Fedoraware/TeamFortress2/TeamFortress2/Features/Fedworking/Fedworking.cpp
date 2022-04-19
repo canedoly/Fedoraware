@@ -2,7 +2,6 @@
 #include "../../Utils/Base64/Base64.hpp"
 #include "NullNexus/NullNexus.hpp"
 
-constexpr bool useAuth = false;
 static NullNexus fedNexus;
 
 enum MessageType {
@@ -268,11 +267,12 @@ void OnAuthedPlayers(const std::vector<std::string>& steamIDs)
 				steamIDHash = sidStream.str();
 				for (const auto& sid : steamIDs)
 				{
-					if (sid == steamIDHash)
+					if (sid == steamIDHash && std::find(g_Fedworking.NexusUsers.begin(), g_Fedworking.NexusUsers.end(), pInfo.friendsID) == g_Fedworking.NexusUsers.end())
 					{
 						std::stringstream ssMessage;
-						ssMessage << "\x04[FedNexus] \x05" << pInfo.name << " detected as FedNexus user";
+						ssMessage << "\x04[FedNexus] \x05" << pInfo.name << " is a FedNexus user!";
 						g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
+						g_Fedworking.NexusUsers.push_back(pInfo.friendsID);
 					}
 				}
 			}

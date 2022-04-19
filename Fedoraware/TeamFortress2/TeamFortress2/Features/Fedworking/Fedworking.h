@@ -15,6 +15,8 @@ public:
 	void Connect();
 	void Disconnect();
 	void Run();
+
+	std::vector<int> NexusUsers;
 };
 
 inline CFedworking g_Fedworking;

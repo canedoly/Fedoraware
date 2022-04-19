@@ -1859,6 +1859,11 @@ void CMenu::DebugMenu()
 			{
 				g_Fedworking.SendChatMessage(chatMessage);
 			}
+			SameLine();
+			if (Button("Update Server"))
+			{
+				g_Fedworking.UpdateServer();
+			}
 		}
 
 		End();
