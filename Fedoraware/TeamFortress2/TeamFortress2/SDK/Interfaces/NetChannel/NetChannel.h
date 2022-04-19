@@ -689,6 +689,50 @@ protected:
 	INetChannel* m_NetChannel; // netchannel this message is from/for
 };
 
+class NET_SetConVar : public CNetMessage
+{
+	DECLARE_NET_MESSAGE(SetConVar);
+
+	int GetGroup() const
+	{
+		return INetChannelInfo::STRINGCMD;
+	}
+
+	NET_SetConVar() { }
+	NET_SetConVar(const char* name, const char* value)
+	{
+		cvar_t cvar;
+		strncpy(cvar.Name, name, MAX_OSPATH);
+		strncpy(cvar.Value, value, MAX_OSPATH);
+		ConVar = cvar;
+	}
+
+public:
+	typedef struct cvar_s
+	{
+		char Name[MAX_OSPATH];
+		char Value[MAX_OSPATH];
+	} cvar_t;
+	cvar_t ConVar;
+};
+
+class NET_StringCmd : public CNetMessage
+{
+	DECLARE_NET_MESSAGE(StringCmd);
+
+	int	GetGroup() const { return INetChannelInfo::STRINGCMD; }
+
+	NET_StringCmd() { m_szCommand = NULL; };
+	NET_StringCmd(const char* cmd) { m_szCommand = cmd; };
+
+public:
+	const char* m_szCommand;	// execute this command
+
+private:
+	char		m_szCommandBuffer[1024];	// buffer for received messages
+
+};
+
 class CLC_Move : public CNetMessage
 {
 public:
@@ -709,31 +753,19 @@ public:
 	bf_write m_DataOut;
 };
 
-class NET_SetConVar : public CNetMessage
+class CLC_VoiceData : public CNetMessage
 {
-	DECLARE_NET_MESSAGE(SetConVar);
+	DECLARE_CLC_MESSAGE(VoiceData);
 
-	int GetGroup() const
-	{
-		return INetChannelInfo::STRINGCMD;
-	}
+	int	GetGroup() const { return INetChannelInfo::VOICE; }
 
-	NET_SetConVar() { }
-	NET_SetConVar(const char* name, const char* value)
-	{
-		CVar_t cvar;
-		strncpy(cvar.Name, name, MAX_OSPATH);
-		strncpy(cvar.Value, value, MAX_OSPATH);
-		ConVar = cvar;
-	}
+	CLC_VoiceData() { m_bReliable = false; };
 
 public:
-	typedef struct CVar_s
-	{
-		char Name[MAX_OSPATH];
-		char Value[MAX_OSPATH];
-	} CVar_t;
-	CVar_t ConVar;
+	int				m_nLength;
+	bf_read			m_DataIn;
+	bf_write		m_DataOut;
+	UINT64			m_xuid;
 };
 
 #endif

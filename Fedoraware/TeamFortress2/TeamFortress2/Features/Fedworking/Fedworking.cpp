@@ -111,24 +111,18 @@ void CFedworking::SendESP(CBaseEntity* pPlayer)
 
 void CFedworking::SendMessage(const std::string& pData)
 {
-	if (!Vars::Fedworking::Enabled.m_Var) { return; }
+	if (!Vars::Misc::PartyNetworking.m_Var) { return; }
 
 	const std::string encMsg = Base64::Encode(pData);
-	if (Vars::Fedworking::NetworkMode.m_Var == 0)
-	{
-		// Server Networking (FedNexus)
-	} else
-	{
-		// Party Networking
-		if (encMsg.size() <= 253) {
-			std::string cmd = "tf_party_chat \"FED@";
-			cmd.append(encMsg);
-			cmd.append("\"");
-			g_Interfaces.Engine->ClientCmd_Unrestricted(cmd.c_str());
-		}
-		else {
-			ConsoleLog("Failed to send message! The message was too long.");
-		}
+	// Party Networking
+	if (encMsg.size() <= 253) {
+		std::string cmd = "tf_party_chat \"FED@";
+		cmd.append(encMsg);
+		cmd.append("\"");
+		g_Interfaces.Engine->ClientCmd_Unrestricted(cmd.c_str());
+	}
+	else {
+		ConsoleLog("Failed to send message! The message was too long.");
 	}
 }
 
@@ -188,6 +182,8 @@ bool CFedworking::SendChatMessage(const std::string& message, const std::string&
 
 void CFedworking::UpdateServer()
 {
+	if (!Vars::Fedworking::Enabled.m_Var) { return; }
+
 	NullNexus::UserSettings userSettings = fedNexus.GetSettings();
 	userSettings.Username = g_SteamInterfaces.Friends002->GetPersonaName();
 
@@ -221,7 +217,7 @@ void CFedworking::UpdateServer()
 	fedNexus.ChangeData(userSettings);
 }
 
-void OnMessage(const std::string& username, const std::string& msg, int color = 0xFF9340)
+void OnChatMessage(const std::string& username, const std::string& msg, int color = 0xFF9340)
 {
 	if (username.size() > 32 || msg.size() > 128)
 	{
@@ -231,12 +227,12 @@ void OnMessage(const std::string& username, const std::string& msg, int color = 
 
 	#ifdef _DEBUG
 		std::stringstream ssConsole;
-		ssConsole << "[FedNexus] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
+		ssConsole << "[Fedworking] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
 		g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssConsole.str().c_str());
 	#endif
 
 	std::stringstream ssMessage;
-	ssMessage << "\x04[FedNexus] \x05" << username << "\x01: \x03" << msg;
+	ssMessage << "\x04[Fedworking] \x05" << username << "\x01: \x03" << msg;
 	g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
 }
 
@@ -283,7 +279,7 @@ void OnAuthedPlayers(const std::vector<std::string>& steamIDs)
 void CFedworking::Init()
 {
 	// Initialize FedNexus
-	fedNexus.SetHandlerChat(OnMessage);
+	fedNexus.SetHandlerChat(OnChatMessage);
 	fedNexus.SetHandlerAuthedplayers(OnAuthedPlayers);
 
 	if (Vars::Fedworking::Enabled.m_Var)
