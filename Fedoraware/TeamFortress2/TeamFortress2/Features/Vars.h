@@ -99,10 +99,10 @@ namespace Vars
 			inline CVar<int> SortMethod{ 0, L"Sort Method" };	//0 - FOV,		1 - Distance
 			inline CVar<int> AimMethod{ 2, L"Aim Method" };	//0 - Normal,	1 - Smooth, 2 - Silent
 			inline CVar<int> AimHitbox{ 2, L"Aim Hitbox" };	//0 - Head,		1 - Body,	2 - Auto
+			inline CVar<int> ScanHitboxes{ 7 };	// Binary: 00111 {legs, arms, body, pelvis, head}
+			inline CVar<int> MultiHitboxes{ 5 };	// Binary: 00101 {legs, arms, body, pelvis, head}
 			inline CVar<int> SmoothingAmount{ 4, L"Smoothing Amount" };
 			inline CVar<int> TapFire{ 1, L"Tap Fire" };	//0 - Off, 1 - Distance, 2 - Always
-			inline CVar<bool> ScanHitboxes{ true, L"Scan Body" };
-			inline CVar<bool> ScanHead{ true, L"Scan Head" };
 			inline CVar<bool> ScanBuildings{ true, L"Scan Buildings" };
 			inline CVar<bool> WaitForHeadshot{ true, L"Wait For Headshot" };
 			inline CVar<bool> WaitForCharge{ true, L"Wait For Charge" };
@@ -217,7 +217,7 @@ namespace Vars
 			inline CVar<int> IgnoreTeammates{ 2, L"Ignore Teammates" };	//0 - OFF, 1 - All, 2 - Keep Friends
 			inline CVar<int> IgnoreCloaked{ 2, L"Ignore Cloaked" };	//0 - OFF, 1 - All, 2 - Enemies Only
 			inline CVar<bool> Name{ true, L"Name" };
-			inline CVar<bool> NameC{ false, L"Name Color" };
+			inline CVar<bool> NameCustom{ false, L"Name Color" };
 			inline Color_t NameColor{ 255,255,255,255 };
 			inline CVar<bool> NameBox{ false, L"Name box" };
 			inline CVar<int> Uber{ 2, L"Uber" }; //0 - Off, 1 - Text, 2 - Bar
@@ -241,6 +241,8 @@ namespace Vars
 			inline CVar<bool> Active{ true, L"Active" };
 			inline CVar<bool> IgnoreTeammates{ true, L"Ignore Teammates" };
 			inline CVar<bool> Name{ true, L"Name" };
+			inline CVar<bool> NameCustom{ false, L"Name Color" };
+			inline Color_t NameColor{ 255,255,255,255 };
 			inline CVar<bool> NameBox{ false, L"Name box" };
 			inline CVar<bool> Health{ false, L"Health" };
 			inline CVar<bool> Owner{ false, L"Owner" };
@@ -319,6 +321,7 @@ namespace Vars
 			inline CVar<bool> HandsProxyWF{ false, L"Proxy wireframe on hands" };
 			inline CVar<bool> HandsRainbow{ false, L"Rainbow hands" };
 			inline CVar<bool> HandsOverlayRainbow{ false, L"Rainbow hands" };
+			inline CVar<bool> HandsOverlayPulse{ false };
 
 			inline CVar<int> Weapon{ 0, L"Weapon" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
 			inline CVar<int> WeaponGlowOverlay{ 0, L"Weapon Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
@@ -327,6 +330,7 @@ namespace Vars
 			inline CVar<bool> WeaponsProxyWF{ false, L"Proxy wireframe on weapons" };
 			inline CVar<bool> WeaponRainbow{ false, L"Rainbow weapons" };
 			inline CVar<bool> WeaponOverlayRainbow{ false, L"Rainbow weapons" };
+			inline CVar<bool> WeaponOverlayPulse{ false };
 		}
 	}
 

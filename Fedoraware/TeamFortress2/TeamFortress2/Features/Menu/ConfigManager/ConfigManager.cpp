@@ -276,7 +276,7 @@ void CConfigManager::Save(const wchar_t *name)
 				SAVE_VAR(Vars::Aimbot::Hitscan::SmoothingAmount);
 				SAVE_VAR(Vars::Aimbot::Hitscan::TapFire);
 				SAVE_VAR(Vars::Aimbot::Hitscan::ScanHitboxes);
-				SAVE_VAR(Vars::Aimbot::Hitscan::ScanHead);
+				SAVE_VAR(Vars::Aimbot::Hitscan::MultiHitboxes);
 				SAVE_VAR(Vars::Aimbot::Hitscan::ScanBuildings);
 				SAVE_VAR(Vars::Aimbot::Hitscan::WaitForHeadshot);
 				SAVE_VAR(Vars::Aimbot::Hitscan::WaitForCharge);
@@ -389,7 +389,7 @@ void CConfigManager::Save(const wchar_t *name)
 				SAVE_VAR(Vars::ESP::Players::IgnoreTeammates);
 				SAVE_VAR(Vars::ESP::Players::IgnoreCloaked);
 				SAVE_VAR(Vars::ESP::Players::Name);
-				SAVE_VAR(Vars::ESP::Players::NameC);
+				SAVE_VAR(Vars::ESP::Players::NameCustom);
 				SAVE_OTHER(Vars::ESP::Players::NameColor);
 				SAVE_VAR(Vars::ESP::Players::NameBox);
 				SAVE_VAR(Vars::ESP::Players::Uber);
@@ -412,6 +412,8 @@ void CConfigManager::Save(const wchar_t *name)
 				SAVE_VAR(Vars::ESP::Buildings::Active);
 				SAVE_VAR(Vars::ESP::Buildings::IgnoreTeammates);
 				SAVE_VAR(Vars::ESP::Buildings::Name);
+				SAVE_VAR(Vars::ESP::Buildings::NameCustom);
+				SAVE_OTHER(Vars::ESP::Buildings::NameColor);
 				SAVE_VAR(Vars::ESP::Buildings::NameBox);
 				SAVE_VAR(Vars::ESP::Buildings::Health);
 				SAVE_VAR(Vars::ESP::Buildings::Owner);
@@ -476,6 +478,8 @@ void CConfigManager::Save(const wchar_t *name)
 				SAVE_VAR(Vars::Chams::DME::WeaponsProxySkin);
 				SAVE_VAR(Vars::Chams::DME::HandsGlowAmount);
 				SAVE_VAR(Vars::Chams::DME::WeaponGlowAmount);
+				SAVE_VAR(Vars::Chams::DME::WeaponOverlayPulse);
+				SAVE_VAR(Vars::Chams::DME::HandsOverlayPulse);
 			}
 		}
 
@@ -976,7 +980,7 @@ void CConfigManager::Load(const wchar_t *name)
 				LOAD_VAR(Vars::Aimbot::Hitscan::SmoothingAmount);
 				LOAD_VAR(Vars::Aimbot::Hitscan::TapFire);
 				LOAD_VAR(Vars::Aimbot::Hitscan::ScanHitboxes);
-				LOAD_VAR(Vars::Aimbot::Hitscan::ScanHead);
+				LOAD_VAR(Vars::Aimbot::Hitscan::MultiHitboxes);
 				LOAD_VAR(Vars::Aimbot::Hitscan::ScanBuildings);
 				LOAD_VAR(Vars::Aimbot::Hitscan::WaitForHeadshot);
 				LOAD_VAR(Vars::Aimbot::Hitscan::WaitForCharge);
@@ -1089,7 +1093,7 @@ void CConfigManager::Load(const wchar_t *name)
 				LOAD_VAR(Vars::ESP::Players::IgnoreTeammates);
 				LOAD_VAR(Vars::ESP::Players::IgnoreCloaked);
 				LOAD_VAR(Vars::ESP::Players::Name);
-				LOAD_VAR(Vars::ESP::Players::NameC);
+				LOAD_VAR(Vars::ESP::Players::NameCustom);
 				LOAD_OTHER(Vars::ESP::Players::NameColor);
 				LOAD_VAR(Vars::ESP::Players::NameBox);
 				LOAD_VAR(Vars::ESP::Players::Uber);
@@ -1113,6 +1117,8 @@ void CConfigManager::Load(const wchar_t *name)
 				LOAD_VAR(Vars::ESP::Buildings::Active);
 				LOAD_VAR(Vars::ESP::Buildings::IgnoreTeammates);
 				LOAD_VAR(Vars::ESP::Buildings::Name);
+				SAVE_VAR(Vars::ESP::Buildings::NameCustom);
+				SAVE_OTHER(Vars::ESP::Buildings::NameColor);
 				LOAD_VAR(Vars::ESP::Buildings::NameBox);
 				LOAD_VAR(Vars::ESP::Buildings::Health);
 				LOAD_VAR(Vars::ESP::Buildings::Owner);
@@ -1176,6 +1182,8 @@ void CConfigManager::Load(const wchar_t *name)
 				LOAD_VAR(Vars::Chams::DME::WeaponsProxySkin);
 				LOAD_VAR(Vars::Chams::DME::HandsGlowAmount);
 				LOAD_VAR(Vars::Chams::DME::WeaponGlowAmount);
+				LOAD_VAR(Vars::Chams::DME::WeaponOverlayPulse);
+				LOAD_VAR(Vars::Chams::DME::HandsOverlayPulse);
 			}
 		}
 

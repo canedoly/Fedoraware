@@ -269,10 +269,20 @@ void CMenu::MenuAimbot()
 			SectionTitle("Hitscan");
 			WCombo("Sort method###HitscanSortMethod", &Vars::Aimbot::Hitscan::SortMethod.m_Var, { "FOV", "Distance" }); HelpMarker("Which method the aimbot uses to decide which target to aim at");
 			WCombo("Aim method###HitscanAimMethod", &Vars::Aimbot::Hitscan::AimMethod.m_Var, { "Plain", "Smooth", "Silent" }); HelpMarker("Which method the aimbot uses to aim at the target");
-			WCombo("Hitbox###HitscanHitbox", &Vars::Aimbot::Hitscan::AimHitbox.m_Var, { "Head", "Body", "Pelvis", "Auto"}); HelpMarker("Which hitbox the aimbot will target");
+			WCombo("Preferred Hitbox###HitscanHitbox", &Vars::Aimbot::Hitscan::AimHitbox.m_Var, { "Head", "Body", "Auto"}); // this could probably be removed entirely since it actually does nothing.
 			WCombo("Tapfire###HitscanTapfire", &Vars::Aimbot::Hitscan::TapFire.m_Var, { "Off", "Distance", "Always" }); HelpMarker("How/If the aimbot chooses to tapfire enemies.");
 			WSlider("Smooth factor###HitscanSmoothing", &Vars::Aimbot::Hitscan::SmoothingAmount.m_Var, 0, 20, "%d", ImGuiSliderFlags_AlwaysClamp); HelpMarker("Changes how smooth the aimbot will aim at the target");
-			MultiCombo({ "Body", "Head", "Buildings" }, { &Vars::Aimbot::Hitscan::ScanHitboxes.m_Var, &Vars::Aimbot::Hitscan::ScanHead.m_Var, &Vars::Aimbot::Hitscan::ScanBuildings.m_Var }, "Multipoint");
+			{
+				static std::vector flagNames{ "Head", "Body", "Pelvis", "Arms", "Legs"};
+				static std::vector flagValues{ 0x00000001, 0x00000004, 0x00000002, 0x00000008, 0x00000010}; // 1<<1 and 1<<2 are swapped because the enum for hitboxes is weird.
+				MultiFlags(flagNames, flagValues, &Vars::Aimbot::Hitscan::ScanHitboxes.m_Var, "Scan Hitboxes###AimbotHitboxScanning");
+			}
+			{
+				static std::vector flagNames{ "Head", "Body", "Pelvis", "Arms", "Legs" };
+				static std::vector flagValues{ 0x00000001, 0x00000004, 0x00000002, 0x00000008, 0x00000010 }; // 1<<1 and 1<<2 are swapped because the enum for hitboxes is weird.
+				MultiFlags(flagNames, flagValues, &Vars::Aimbot::Hitscan::MultiHitboxes.m_Var, "Multipoint Hitboxes###AimbotMultipointScanning");
+			}
+			MultiCombo({ "Buildings" }, { &Vars::Aimbot::Hitscan::ScanBuildings.m_Var }, "Multipoint");
 			HelpMarker("Choose what the aimbot should multipoint");
 			WToggle("Wait for headshot", &Vars::Aimbot::Hitscan::WaitForHeadshot.m_Var); HelpMarker("The aimbot will wait until it can headshot (if applicable)");
 			WToggle("Wait for charge", &Vars::Aimbot::Hitscan::WaitForCharge.m_Var); HelpMarker("The aimbot will wait until the rifle has charged long enough to kill in one shot");
@@ -419,8 +429,8 @@ void CMenu::MenuVisuals()
 				SectionTitle("Player ESP");
 				WToggle("Player ESP###EnablePlayerESP", &Vars::ESP::Players::Active.m_Var); HelpMarker("Will draw useful information/indicators on players");
 				WToggle("Name ESP###PlayerNameESP", &Vars::ESP::Players::Name.m_Var); HelpMarker("Will draw the players name");
-				WToggle("Custom Name Color", &Vars::ESP::Players::NameC.m_Var); HelpMarker("Custom color for name esp");
-				if (Vars::ESP::Players::NameC.m_Var)
+				WToggle("Custom Name Color", &Vars::ESP::Players::NameCustom.m_Var); HelpMarker("Custom color for name esp");
+				if (Vars::ESP::Players::NameCustom.m_Var)
 				{
 					ColorPickerL("Name ESP Color", Vars::ESP::Players::NameColor);
 				}
@@ -623,6 +633,7 @@ void CMenu::MenuVisuals()
 				WCombo("Weapon Glow", &Vars::Chams::DME::WeaponGlowOverlay.m_Var, dmeGlowMaterial);
 				ColorPickerL("Weapon glow colour", Colors::WeaponOverlay);
 				MultiCombo({ "Hands", "Hands overlay", "Weapon", "Weapon overlay" }, { &Vars::Chams::DME::HandsRainbow.m_Var, &Vars::Chams::DME::HandsOverlayRainbow.m_Var, &Vars::Chams::DME::WeaponRainbow.m_Var, &Vars::Chams::DME::WeaponOverlayRainbow.m_Var }, "Rainbow DME###RainbowDMEChams");
+				MultiCombo({ "Hand Overlay", "Weapon Overlay" }, { &Vars::Chams::DME::HandsOverlayPulse.m_Var, &Vars::Chams::DME::WeaponOverlayPulse.m_Var }, "Pulse Overlay###PulseDMEOverlay");
 				HelpMarker("Rainbow DME chams");
 				WSlider("Hands glow amount", &Vars::Chams::DME::HandsGlowAmount.m_Var, 150, 1, "%.0f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput);
 				WSlider("Weapon glow amount", &Vars::Chams::DME::WeaponGlowAmount.m_Var, 150, 1, "%.0f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput);
@@ -688,6 +699,11 @@ void CMenu::MenuVisuals()
 				WToggle("Building ESP###BuildinGESPSwioifas", &Vars::ESP::Buildings::Active.m_Var); HelpMarker("Will draw useful information/indicators on buildings");
 				WToggle("Ignore team buildings###BuildingESPIgnoreTeammates", &Vars::ESP::Buildings::IgnoreTeammates.m_Var); HelpMarker("Whether or not to draw ESP on your teams buildings");
 				WToggle("Name ESP###BuildingNameESP", &Vars::ESP::Buildings::Name.m_Var); HelpMarker("Will draw the players name");
+				WToggle("Custom Name Color", &Vars::ESP::Buildings::NameCustom.m_Var); HelpMarker("Custom color for name esp");
+				if (Vars::ESP::Buildings::NameCustom.m_Var)
+				{
+					ColorPickerL("Name ESP Color", Vars::ESP::Buildings::NameColor);
+				}
 				WToggle("Name ESP box###BuildingNameESPBox", &Vars::ESP::Buildings::NameBox.m_Var); HelpMarker("Will draw a box around the buildings name to make it stand out");
 				WToggle("Health bar###Buildinghelathbar", &Vars::ESP::Buildings::HealthBar.m_Var); HelpMarker("Will draw a bar visualizing how much health the building has");
 				WToggle("Health text###buildinghealth", &Vars::ESP::Buildings::Health.m_Var); HelpMarker("Will draw the building's health, as well as its max health");

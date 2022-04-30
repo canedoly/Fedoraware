@@ -14,6 +14,7 @@
 #include "../../Features/CritHack/CritHack.h"
 #include "../../Features/Fedworking/Fedworking.h"
 #include "../../Features/Resolver/Resolver.h"
+#include "../../Features/AntiHack/CheaterDetection/CheaterDetection.h"
 
 #include "../../Features/Vars.h"
 #include "../../Features/PlayerResource/PlayerResource.h"
@@ -62,6 +63,7 @@ static void UpdateAntiAFK(CUserCmd* pCmd)
 	}
 }
 
+//	TODO: make this p
 void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
 	static Vec3 vStartOrigin = {};
@@ -69,7 +71,7 @@ void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 	static int nShiftTick = 0;
 	if (pLocal && pLocal->IsAlive())
 	{
-		if (g_GlobalInfo.m_bShouldShift && g_GlobalInfo.m_nShifted > 0 && Vars::Misc::CL_Move::AntiWarp.m_Var && pLocal->GetVecVelocity().Length2D() > 10.f)
+		if (g_GlobalInfo.m_bShouldShift && g_GlobalInfo.m_nShifted > 0 && Vars::Misc::CL_Move::AntiWarp.m_Var && pLocal->GetVecVelocity().Length2D() > 10.f && pLocal->IsOnGround())
 		{
 			if (vStartOrigin.IsZero())
 			{
@@ -331,21 +333,6 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 		g_Interfaces.Engine->ClientCmd_Unrestricted("tf_party_chat \"FED@MA==\"");
 	}
 
-	//	TODO: make this p
-	/*auto AntiWarp = [](CUserCmd* cmd) -> void
-	{
-		if (g_GlobalInfo.m_bShouldShift && g_GlobalInfo.m_nShifted)
-		{
-			cmd->sidemove = (- (cmd->sidemove) * (static_cast<float>(g_GlobalInfo.m_nShifted) / Vars::Misc::CL_Move::DTTicks.m_Var)) * 0.95f;
-			cmd->forwardmove = (-(cmd->forwardmove) * (static_cast<float>(g_GlobalInfo.m_nShifted) / Vars::Misc::CL_Move::DTTicks.m_Var)) * 0.95f;
-		}
-	};
-
-	if (!Vars::Misc::CL_Move::AntiWarp.m_Var)
-	{
-		AntiWarp(pCmd);
-	}*/
-
 	if (const auto& pLocal = g_EntityCache.m_pLocal)
 	{
 		if (Vars::Misc::TauntSlide.m_Var)
@@ -364,6 +351,8 @@ bool __stdcall ClientModeHook::CreateMove::Hook(float input_sample_frametime, CU
 		}
 
 		if (Vars::Visuals::DebugInfo.m_Var) {
+			g_BadActors.OnTick();
+
 			static float cycledelta = 0.f;
 			if (!*pSendPacket) {
 				pLocal->m_bClientSideAnimation() = false;

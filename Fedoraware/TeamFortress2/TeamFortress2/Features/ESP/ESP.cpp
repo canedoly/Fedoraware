@@ -1,4 +1,5 @@
 #include "ESP.h"
+#include "../AntiHack/CheaterDetection/CheaterDetection.h"
 #include "../Vars.h"
 
 bool CESP::ShouldRun()
@@ -308,7 +309,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						g_Draw.Rect(middle - wideth / 2 - 5, y - offset - 2, wideth + 10, 2, LineColor);
 						offset -= 1;
 					}
-					if (Vars::ESP::Players::NameC.m_Var)
+					if (Vars::ESP::Players::NameCustom.m_Var)
 					{
 						g_Draw.String(FONT_NAME, middle, y - offset, Vars::ESP::Players::NameColor, ALIGN_CENTERHORIZONTAL,
 							Utils::ConvertUtf8ToWide(pi.name).data());
@@ -318,6 +319,12 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						g_Draw.String(FONT_NAME, middle, y - offset, DrawColor, ALIGN_CENTERHORIZONTAL,
 							Utils::ConvertUtf8ToWide(pi.name).data());
 					}
+				}
+
+				if (Vars::Visuals::DebugInfo.m_Var && g_BadActors.markedcheaters[pi.friendsID])
+				{
+					g_Draw.String(FONT, nTextX, y + nTextOffset, { 255,0,0,255 }, ALIGN_DEFAULT, "CHEATER");
+					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 				}
 
 				if (Vars::ESP::Players::GUID.m_Var)
