@@ -282,6 +282,14 @@ void CHooks::Init()
 			fn dwA = reinterpret_cast<fn>(g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC 30 8D 4D F8"));
 			Func.Hook(dwA, Hook);
 		}
+
+		// SendNetMsg
+		{
+			using namespace SendNetMsg;
+
+			fn SendNetMsg = reinterpret_cast<fn>(g_Pattern.Find(L"engine.dll", L"55 8B EC 56 8B F1 8D 8E ? ? ? ? E8 ? ? ? ? 85 C0 75"));
+			Func.Hook(SendNetMsg, Hook);
+		}
 	}
 
 	//EndSceneHook::Init();

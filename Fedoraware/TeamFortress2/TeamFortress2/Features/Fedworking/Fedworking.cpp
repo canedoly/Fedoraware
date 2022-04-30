@@ -1,5 +1,8 @@
 #include "Fedworking.h"
 #include "../../Utils/Base64/Base64.hpp"
+#include "NullNexus/NullNexus.hpp"
+
+static NullNexus fedNexus;
 
 enum MessageType {
 	None,
@@ -108,13 +111,17 @@ void CFedworking::SendESP(CBaseEntity* pPlayer)
 
 void CFedworking::SendMessage(const std::string& pData)
 {
+	if (!Vars::Misc::PartyNetworking.m_Var) { return; }
+
 	const std::string encMsg = Base64::Encode(pData);
+	// Party Networking
 	if (encMsg.size() <= 253) {
 		std::string cmd = "tf_party_chat \"FED@";
 		cmd.append(encMsg);
 		cmd.append("\"");
 		g_Interfaces.Engine->ClientCmd_Unrestricted(cmd.c_str());
-	} else {
+	}
+	else {
 		ConsoleLog("Failed to send message! The message was too long.");
 	}
 }
@@ -162,4 +169,132 @@ void CFedworking::ConsoleLog(const std::string& pMessage)
 	consoleMsg.append(pMessage);
 	consoleMsg.append("\n");
 	g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, consoleMsg.c_str());
+}
+
+bool CFedworking::SendChatMessage(const std::string& message, const std::string& channel)
+{
+	if (Vars::Fedworking::Enabled.m_Var)
+	{
+		return fedNexus.SendChat(message, channel);
+	}
+	return false;
+}
+
+void CFedworking::UpdateServer()
+{
+	if (!Vars::Fedworking::Enabled.m_Var) { return; }
+
+	NullNexus::UserSettings userSettings = fedNexus.GetSettings();
+	userSettings.Username = g_SteamInterfaces.Friends002->GetPersonaName();
+
+	INetChannel* netChannel = g_Interfaces.Engine->GetNetChannelInfo();
+	if (netChannel)
+	{
+		const netadr_t address = netChannel->GetRemoteAddress();
+		if (!address.IsReservedAdr())
+		{
+			PlayerInfo_t pInfo{ };
+			if (g_Interfaces.Engine->GetPlayerInfo(g_Interfaces.Engine->GetLocalPlayer(), &pInfo))
+			{
+				MD5Value_t result{ };
+				std::string steamIDHash = std::to_string(pInfo.friendsID) + pInfo.name;
+				MD5_ProcessSingleBuffer(steamIDHash.c_str(), strlen(steamIDHash.c_str()), result);
+				std::stringstream ss;
+				ss << std::hex;
+				for (const auto iBits : result.bits)
+				{
+					ss << std::setw(2) << std::setfill('0') << static_cast<int>(iBits);
+				}
+				steamIDHash = ss.str();
+				userSettings.GameServer = { true, address.ToString(true), std::to_string(address.port), steamIDHash, 1 };
+				fedNexus.ChangeData(userSettings);
+				return;
+			}
+		}
+	}
+
+	userSettings.GameServer = { false };
+	fedNexus.ChangeData(userSettings);
+}
+
+void OnChatMessage(const std::string& username, const std::string& msg, int color = 0xFF9340)
+{
+	if (username.size() > 32 || msg.size() > 128)
+	{
+		g_Fedworking.ConsoleLog("Received message or username was too long.");
+		return;
+	}
+
+	#ifdef _DEBUG
+		std::stringstream ssConsole;
+		ssConsole << "[Fedworking] Message received! User: '" << username << "', Message: '" << msg << "'" << std::endl;
+		g_Interfaces.CVars->ConsoleColorPrintf({ 225, 177, 44, 255 }, ssConsole.str().c_str());
+	#endif
+
+	std::stringstream ssMessage;
+	ssMessage << "\x04[Fedworking] \x05" << username << "\x01: \x03" << msg;
+	g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
+}
+
+void OnAuthedPlayers(const std::vector<std::string>& steamIDs)
+{
+	if (!g_Interfaces.Engine->IsInGame()) { return; }
+
+	if (Vars::Fedworking::Enabled.m_Var)
+	{
+		for (int i = 0; i <= g_Interfaces.Engine->GetMaxClients(); i++)
+		{
+			PlayerInfo_t pInfo{ };
+			if (g_Interfaces.Engine->GetPlayerInfo(i, &pInfo))
+			{
+				if (pInfo.friendsID == 0) { continue; }
+
+				MD5Value_t result{ };
+				std::string steamIDHash = std::to_string(pInfo.friendsID) + pInfo.name;
+				MD5_ProcessSingleBuffer(steamIDHash.c_str(), strlen(steamIDHash.c_str()), result);
+
+				std::stringstream sidStream;
+				sidStream << std::hex;
+				for (const auto bit : result.bits)
+				{
+					sidStream << std::setw(2) << std::setfill('0') << static_cast<int>(bit);
+				}
+
+				steamIDHash = sidStream.str();
+				for (const auto& sid : steamIDs)
+				{
+					if (sid == steamIDHash && std::find(g_Fedworking.NexusUsers.begin(), g_Fedworking.NexusUsers.end(), pInfo.friendsID) == g_Fedworking.NexusUsers.end())
+					{
+						std::stringstream ssMessage;
+						ssMessage << "\x04[FedNexus] \x05" << pInfo.name << " is a FedNexus user!";
+						g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, ssMessage.str().c_str());
+						g_Fedworking.NexusUsers.push_back(pInfo.friendsID);
+					}
+				}
+			}
+		}
+	}
+}
+
+void CFedworking::Init()
+{
+	// Initialize FedNexus
+	fedNexus.SetHandlerChat(OnChatMessage);
+	fedNexus.SetHandlerAuthedplayers(OnAuthedPlayers);
+
+	if (Vars::Fedworking::Enabled.m_Var)
+	{
+		Connect();
+	}
+}
+
+void CFedworking::Connect()
+{
+	UpdateServer();
+	fedNexus.Connect("localhost", "3000", "/api/v1/client", true);
+}
+
+void CFedworking::Disconnect()
+{
+	fedNexus.Disconnect();
 }

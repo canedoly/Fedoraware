@@ -3,15 +3,20 @@
 
 class CFedworking
 {
-private:
-	void ConsoleLog(const std::string& pMessage);
-
 public:
+	void ConsoleLog(const std::string& pMessage);
 	void HandleMessage(const char* pMessage);
 	void SendMarker(const Vec3& pPos, int pPlayerIdx);
 	void SendESP(CBaseEntity* pPlayer);
 	void SendMessage(const std::string& pData);
+	bool SendChatMessage(const std::string& message, const std::string& channel = "public");
+	void UpdateServer();
+	void Init();
+	void Connect();
+	void Disconnect();
 	void Run();
+
+	std::vector<int> NexusUsers;
 };
 
 inline CFedworking g_Fedworking;

@@ -8,6 +8,7 @@
 #include "Features/Camera/CameraWindow.h"
 #include "Features/Misc/Misc.h"
 #include "Features/Vars.h"
+#include "Features/Fedworking/Fedworking.h"
 
 #include "Features/Menu/Menu.h"
 
@@ -65,7 +66,6 @@ void Loaded()
 {
 	g_Interfaces.CVars->ConsoleColorPrintf({ 255, 193, 75, 255 }, _("Fedoraware (homemade) Loaded!\n"));
 	g_Interfaces.Engine->ClientCmd_Unrestricted("play vo/items/wheatley_sapper/wheatley_sapper_attached14.mp3");
-
 }
 
 void Initialize()
@@ -79,6 +79,7 @@ void Initialize()
 	g_CameraWindow.Init();
 	g_Hooks.Init();
 	g_ConVars.Init();
+	g_Fedworking.Init();
 
 	InitRichPresence();
 }
@@ -92,6 +93,7 @@ void Uninitialize()
 
 	Sleep(100);
 
+	g_Fedworking.Disconnect();
 	g_Events.Destroy();
 	g_Hooks.Release();
 

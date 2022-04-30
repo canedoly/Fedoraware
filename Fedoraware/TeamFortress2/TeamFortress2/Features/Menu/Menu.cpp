@@ -4,6 +4,7 @@
 #include "../Camera/CameraWindow.h"
 #include "../AttributeChanger/AttributeChanger.h"
 #include "../Misc/Misc.h"
+#include "../Fedworking/Fedworking.h"
 #include "Playerlist/Playerlist.h"
 
 #include "ImGui/imgui_impl_win32.h"
@@ -1600,6 +1601,7 @@ void CMenu::MenuMisc()
 			SectionTitle("Chat");
 			WToggle("Chat Censor", &Vars::Misc::ChatCensor.m_Var); HelpMarker("Clears the chat when someone accuses your");
 			WCombo("Chat spam", &Vars::Misc::ChatSpam.m_Var, { "Off", "Fedoraware", "Lmaobox", "Cathook" });
+			WToggle("Party crasher", &Vars::Misc::PartyCrasher.m_Var); HelpMarker("Annoy your friends by crashing their game");
 
 			SectionTitle("Exploits");
 			WToggle("Anti Autobalance", &Vars::Misc::AntiAutobal.m_Var); HelpMarker("Prevents auto balance by reconnecting to the server");
@@ -1612,9 +1614,21 @@ void CMenu::MenuMisc()
 				WSlider("Target ping", &Vars::Misc::PingTarget.m_Var, 0, 200); HelpMarker("Target ping that should be reached");
 			}
 
-			SectionTitle("Party Networking");
-			WToggle("Enable", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
-			WToggle("Party crasher", &Vars::Misc::PartyCrasher.m_Var); HelpMarker("Annoy your friends by crashing their game");
+			SectionTitle("Fedworking");
+			if (WToggle("Enable", &Vars::Fedworking::Enabled.m_Var))
+			{
+				if (Vars::Fedworking::Enabled.m_Var)
+				{
+					g_Fedworking.Connect();
+				} else
+				{
+					g_Fedworking.Disconnect();
+				}
+			}
+			HelpMarker("Enables networking between users (Chat, Identification)");
+
+			// Legacy
+			WToggle("Party Networking", &Vars::Misc::PartyNetworking.m_Var); HelpMarker("Enables party networking between Fedoraware users");
 			InputKeybind("Party marker", Vars::Misc::PartyMarker, true);  HelpMarker("Sends a marker to other Fedoraware users in your party");
 			WToggle("Party ESP", &Vars::Misc::PartyESP.m_Var); HelpMarker("Sends player locations to your party members");
 		} EndChild();
@@ -1839,6 +1853,7 @@ void CMenu::DebugMenu()
 	if (Begin("Debug", &ShowDebugMenu, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
 	{
 		const auto& pLocal = g_EntityCache.m_pLocal;
+
 		// Particle tester
 		if (CollapsingHeader("Particles"))
 		{
@@ -1848,6 +1863,22 @@ void CMenu::DebugMenu()
 			if (Button("Dispatch") && pLocal != nullptr)
 			{
 				Particles::DispatchParticleEffect(particleName.c_str(), pLocal->GetAbsOrigin(), { });
+			}
+		}
+
+		if (CollapsingHeader("Fedworking"))
+		{
+			static std::string chatMessage = "Test";
+
+			InputText("Message", &chatMessage);
+			if (Button("Send chat message"))
+			{
+				g_Fedworking.SendChatMessage(chatMessage);
+			}
+			SameLine();
+			if (Button("Update Server"))
+			{
+				g_Fedworking.UpdateServer();
 			}
 		}
 

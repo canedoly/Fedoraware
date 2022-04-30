@@ -49,4 +49,11 @@ namespace EngineHook
 		using fn = void(__cdecl*)(IConVar*);
 		void __cdecl Hook(IConVar* pConvar);
 	}
+
+	namespace SendNetMsg
+	{
+		inline SEOHook::Func Func;
+		using fn = bool(__fastcall*)(void*, void*, INetMessage&, bool, bool);
+		bool __fastcall Hook(void* ecx, void* edx, INetMessage& msg, bool bForceReliable, bool bVoice);
+	}
 }
