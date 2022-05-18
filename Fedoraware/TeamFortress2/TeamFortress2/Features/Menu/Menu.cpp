@@ -305,6 +305,7 @@ void CMenu::MenuAimbot()
 				WCombo("Hitbox###ProjectileHitbox", &Vars::Aimbot::Projectile::AimPosition.m_Var, { "Head", "Body", "Feet", "Auto"});
 			}
 			WToggle("Feet aim on ground", &Vars::Aimbot::Projectile::FeetAimIfOnGround.m_Var); HelpMarker("Will aim at feet if target is on the ground");
+			WToggle("Wait for hit", &Vars::Aimbot::Projectile::WaitForHit.m_Var); HelpMarker("Will avoid shooting until the last shot hits");
 			//WToggle("Custom huntsman Z-Adjust", &Vars::Aimbot::Projectile::ManualZAdjust.m_Var); HelpMarker("Enables the ability to adjust the Z-Position for huntsman");
 			//if (Vars::Aimbot::Projectile::ManualZAdjust.m_Var)
 			//{
@@ -320,7 +321,6 @@ void CMenu::MenuAimbot()
 			WToggle("Range check", &Vars::Aimbot::Melee::RangeCheck.m_Var); HelpMarker("Only aim at target if within melee range");
 			WToggle("Swing prediction", &Vars::Aimbot::Melee::PredictSwing.m_Var); HelpMarker("Aimbot will attack preemptively, predicting you will be in range of the target");
 			WToggle("Whip teammates", &Vars::Aimbot::Melee::WhipTeam.m_Var); HelpMarker("Aimbot will target teammates if holding the Disciplinary Action");
-			WToggle("Wait for hit", &Vars::Aimbot::Projectile::WaitForHit.m_Var); HelpMarker("Will avoid shooting until the last shot hits");
 
 		} EndChild();
 
@@ -1111,7 +1111,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.m_Var, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.m_Var, { "Off", "Default", "Nitro", "Rijin" }); HelpMarker("Which style to do the bar style");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.m_Var, { "Off", "Default", "Deadflag", "Rijin" }); HelpMarker("Which style to do the bar style");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
 				if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
@@ -1121,7 +1121,7 @@ void CMenu::MenuVisuals()
 					ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
 					WSlider("DT Bar width###dtBWidthNitro", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 100, 1000);
 				}
-				else
+				else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 1)
 				{
 					WSlider("DT Bar height###dtBHeight", &Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var, 1, 30);
 					ColorPickerL("DT charged right", Colors::DTBarIndicatorsCharged.endColour);
