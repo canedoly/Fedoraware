@@ -153,7 +153,36 @@ void __stdcall EngineVGuiHook::Paint::Hook(int mode)
 								                    m_Var, color1, color2, true);
 							}
 
-							// Rijin DT Bar
+							// Text (Deadflag)
+							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
+							{
+								if (g_GlobalInfo.m_nShifted == 0)
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 55, 40, 255}, ALIGN_REVERSE,
+									              L"(0/%i) No Ticks!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+								else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nWaitForShift || ratio < 1))
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 126, 0, 255}, ALIGN_REVERSE,
+									              L"(%i/%i) Recharging!", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+								else if (!g_GlobalInfo.m_nWaitForShift || ratio != 1)
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									              nY - (yscale / 2 + 48) - 10 + yoff, {66, 255, 0, 255}, ALIGN_REVERSE,
+									              L"(%i/%i) Ready!", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+								else
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 46, 46, 255}, ALIGN_REVERSE,
+									              L"(%i/%i) Waiting!", g_GlobalInfo.m_nWaitForShift, DT_WAIT_CALLS);
+								}
+							}
+
+							// Rijin V2 DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
 							{
 								g_DTBar.Run();
