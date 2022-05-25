@@ -241,7 +241,7 @@ void CAntiAim::Run(CUserCmd* pCmd, bool* pSendPacket) {
 				}
 			case 9:
 				{
-					lastRealAngle = Vars::AntiHack::YawOffset;
+					lastRealAngle = Vars::AntiHack::AntiAim::YawOffset;
 					pCmd->viewangles.y = lastRealAngle;
 					break;
 				}
@@ -329,7 +329,7 @@ void CAntiAim::Run(CUserCmd* pCmd, bool* pSendPacket) {
 				}
 			case 9:
 				{
-					lastFakeAngle = Vars::AntiHack::YawOffsetF;
+					lastFakeAngle = Vars::AntiHack::AntiAim::YawOffsetF;
 					pCmd->viewangles.y = lastFakeAngle;
 					break;
 				}
