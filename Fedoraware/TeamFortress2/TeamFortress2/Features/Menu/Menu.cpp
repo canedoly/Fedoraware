@@ -1479,7 +1479,7 @@ void CMenu::MenuHvH()
 			SectionTitle("Tickbase Exploits");
 			WToggle("Doubletap", &Vars::Misc::CL_Move::Enabled.m_Var); HelpMarker("Shifts ticks when shooting for a rapid-fire effect");
 			ColorPickerL("DT bar outline colour", Colors::DtOutline);
-			ColorPickerL("Rijin backgroung colour", Vars::Misc::CL_Move::RijinBG);
+			//ColorPickerL("Rijin background colour", Vars::Misc::CL_Move::RijinBG);
 			InputKeybind("Recharge key", Vars::Misc::CL_Move::RechargeKey); HelpMarker("Recharges ticks for shifting");
 			InputKeybind("Teleport key", Vars::Misc::CL_Move::TeleportKey); HelpMarker("Shifts ticks to warp");
 			if (Vars::Misc::CL_Move::DTMode.m_Var == 0 || Vars::Misc::CL_Move::DTMode.m_Var == 2)
@@ -1548,7 +1548,7 @@ void CMenu::MenuHvH()
 			}
 			if (Vars::AntiHack::AntiAim::YawFake.m_Var == 9);
 			{
-				WSlider("Yaw Offset Fake", &Vars::AntiHack::AntiAim::YawOffsetF.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate real yaw");
+				WSlider("Yaw Offset Fake", &Vars::AntiHack::AntiAim::YawOffsetF.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate fake yaw");
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.m_Var); HelpMarker("Enables Anti-aim resolver in the playerlist");
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.m_Var, &Vars::AntiHack::AntiAim::legjitter.m_Var, &Vars::AntiHack::AntiAim::invalidshootpitch.m_Var, &Vars::AntiHack::AntiAim::AntiBackstab.m_Var }, "Misc.");
