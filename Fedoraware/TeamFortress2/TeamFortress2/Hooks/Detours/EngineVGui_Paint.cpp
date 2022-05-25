@@ -129,7 +129,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							if (g_GlobalInfo.m_nWaitForShift)
 							{
 								color1 = Colors::DTBarIndicatorsCharging.startColour;
-								color2 = Colors::DTBarIndicatorsCharging.endColour;
+								color2 = Colors::DTBarIndicatorsCharging.endColour; 
 							}
 							else
 							{
@@ -149,7 +149,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								g_Draw.Rect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
 													Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var + 2,
-													{ 50, 50, 50, 210 });
+													Vars::Misc::CL_Move::RijinBG.m_Var);
 								g_Draw.GradientRect(dtOffset, (g_ScreenSize.h / 2) + 50, dtOffset + barWidth,
 													(g_ScreenSize.h / 2) + 50 + Vars::Misc::CL_Move::DtbarOutlineHeight.
 													m_Var, color1, color2, true);

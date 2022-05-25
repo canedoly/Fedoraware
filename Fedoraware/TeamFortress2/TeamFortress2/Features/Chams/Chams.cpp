@@ -285,7 +285,6 @@ void CChams::RenderPlayers(CBaseEntity* pLocal, IMatRenderContext* pRenderContex
 			}
 		}
 
-		I::ModelRender->ForcedMaterialOverride(nullptr);
 		DrawModel(Player);
 
 		if (Vars::Chams::Players::Wearables.m_Var)

@@ -624,6 +624,7 @@ namespace Vars
 			inline CVar<int> DTMode{ 0, L"DT Mode" }; // 0 - On Key, 1 - Always DT, 2 - Disable on key, 3 - Disabled
 			inline CVar<int> DtbarOutlineHeight{ 5, L"Dt default bar height" };
 			inline CVar<int> DtbarOutlineWidth{ 4, L"Dt default bar width" };
+			inline Color_t RijinBG{ 60,50,40,175 };
 			inline CVar<int> DTTicks{ 21, L"Ticks for DT" };
 			inline CVar<int> DTWaitCalls{ 26, L"DT Wait Calls"};
 			inline CVar<int> DTBarScaleY{ 12, L"DT Indicator Height" };

@@ -1479,6 +1479,7 @@ void CMenu::MenuHvH()
 			SectionTitle("Tickbase Exploits");
 			WToggle("Doubletap", &Vars::Misc::CL_Move::Enabled.m_Var); HelpMarker("Shifts ticks when shooting for a rapid-fire effect");
 			ColorPickerL("DT bar outline colour", Colors::DtOutline);
+			ColorPickerL("Rijin backgroung colour", Vars::Misc::CL_Move::RijinBG);
 			InputKeybind("Recharge key", Vars::Misc::CL_Move::RechargeKey); HelpMarker("Recharges ticks for shifting");
 			InputKeybind("Teleport key", Vars::Misc::CL_Move::TeleportKey); HelpMarker("Shifts ticks to warp");
 			if (Vars::Misc::CL_Move::DTMode.m_Var == 0 || Vars::Misc::CL_Move::DTMode.m_Var == 2)
