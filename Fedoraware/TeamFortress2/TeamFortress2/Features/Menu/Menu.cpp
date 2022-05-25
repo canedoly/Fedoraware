@@ -255,6 +255,7 @@ void CMenu::MenuAimbot()
 			MultiCombo({ "Indicators", "Avoid Random", "Always Melee" }, {&Vars::CritHack::indicators.m_Var, &Vars::CritHack::avoidrandom.m_Var, &Vars::CritHack::AlwaysMelee.m_Var }, "Misc###CrithackMiscOptions");
 			HelpMarker("Misc options for crithack");
 			InputKeybind("Crit key", Vars::CritHack::CritKey); HelpMarker("Will try to force crits when the key is held");
+			WSlider("Crit loops", &Vars::CritHack::CritLoops.m_Var, 15, 4096, "%d"); HelpMarker("How many loops (Best is 1k or 4096)");
 
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.m_Var); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");
@@ -309,6 +310,7 @@ void CMenu::MenuAimbot()
 			WToggle("Feet aim on ground", &Vars::Aimbot::Projectile::FeetAimIfOnGround.m_Var); HelpMarker("Will aim at feet if target is on the ground");
 			WToggle("Splash prediction", &Vars::Aimbot::Projectile::SplashPrediction.m_Var); HelpMarker("Tries to deal splash damage if an enemy isn't visible");
 			WToggle("Viewmodel flipper", &Vars::Misc::ViewmodelFlip.m_Var); HelpMarker("Automatically flips your viewmodel if it's beneficial");
+			//WToggle("Wait for hit", &Vars::Aimbot::Projectile::WaitForHit.m_Var); HelpMarker("Will avoid shooting until the last shot hits");
 			//WToggle("Custom huntsman Z-Adjust", &Vars::Aimbot::Projectile::ManualZAdjust.m_Var); HelpMarker("Enables the ability to adjust the Z-Position for huntsman");
 			//if (Vars::Aimbot::Projectile::ManualZAdjust.m_Var)
 			//{
@@ -324,7 +326,6 @@ void CMenu::MenuAimbot()
 			WToggle("Range check", &Vars::Aimbot::Melee::RangeCheck.m_Var); HelpMarker("Only aim at target if within melee range");
 			WToggle("Swing prediction", &Vars::Aimbot::Melee::PredictSwing.m_Var); HelpMarker("Aimbot will attack preemptively, predicting you will be in range of the target");
 			WToggle("Whip teammates", &Vars::Aimbot::Melee::WhipTeam.m_Var); HelpMarker("Aimbot will target teammates if holding the Disciplinary Action");
-			WToggle("Wait for hit", &Vars::Aimbot::Projectile::WaitForHit.m_Var); HelpMarker("Will avoid shooting until the last shot hits");
 
 		} EndChild();
 
@@ -1490,6 +1491,7 @@ void CMenu::MenuHvH()
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.m_Var, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.m_Var, 1, 24, "%d"); HelpMarker("How many ticks to shift");
+			WSlider("DT Wait Calls", &Vars::Misc::CL_Move::DTWaitCalls.m_Var, 1, 26, "%d"); HelpMarker("How many wait calls until DT is ready");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.m_Var); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.m_Var)
 			{

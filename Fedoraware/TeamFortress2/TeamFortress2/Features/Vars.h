@@ -56,6 +56,7 @@ namespace Vars
 		inline CVar<bool> avoidrandom{ true };
 		inline CVar<bool> AlwaysMelee{ true };
 		inline CVar<int> CritKey{ VK_SHIFT, L"Crit Key" };
+		inline CVar<int> Critloops{ 16, L"Crit Loops"};
 	}
 
 	namespace Backtrack
@@ -151,7 +152,7 @@ namespace Vars
 	{
 		namespace Global
 		{
-			inline CVar<bool> Active{ true, L"Active" };
+			inline CVar<bool> Active{ false, L"Active" };
 			inline CVar<int> TriggerKey{ VK_XBUTTON2, L"Trigger Key" };
 			inline CVar<bool> IgnoreInvlunerable{ true, L"Ignore Invulnerable" };
 			inline CVar<bool> IgnoreCloaked{ false, L"Ignore Cloaked" };
@@ -222,11 +223,11 @@ namespace Vars
 			inline CVar<int> IgnoreTeammates{ 2, L"Ignore Teammates" };	//0 - OFF, 1 - All, 2 - Keep Friends
 			inline CVar<int> IgnoreCloaked{ 2, L"Ignore Cloaked" };	//0 - OFF, 1 - All, 2 - Enemies Only
 			inline CVar<bool> Name{ true, L"Name" };
-			inline CVar<bool> NameCustom{ false, L"Name Color" };
+			inline CVar<bool> NameCustom{ true, L"Name Color" };
 			inline Color_t NameColor{ 255,255,255,255 };
 			inline CVar<bool> NameBox{ false, L"Name box" };
-			inline CVar<int> Uber{ 2, L"Uber" }; //0 - Off, 1 - Text, 2 - Bar
-			inline CVar<int> Class{ 1, L"Class" }; // 0 - Off, 1 - Icon, 2 - Text, 3 - Both
+			inline CVar<int> Uber{ 0, L"Uber" }; //0 - Off, 1 - Text, 2 - Bar
+			inline CVar<int> Class{ 0, L"Class" }; // 0 - Off, 1 - Icon, 2 - Text, 3 - Both
 			inline CVar<bool> WeaponIcon{ false, L"weapon icon" };
 			inline CVar<bool> Health{ false, L"Health" };
 			inline CVar<bool> Cond{ true, L"Cond" };
@@ -320,7 +321,7 @@ namespace Vars
 
 		namespace DME
 		{
-			inline CVar<bool> Active{ true, L"Active" };
+			inline CVar<bool> Active{ false, L"Active" };
 
 			inline CVar<int> Hands{ 0, L"Hands" }; //0 - Original, 1 - Shaded, 2 - Shiny, 3 - Flat, 4 - WF-Shaded, 5 - WF-Shiny, 6 - WF-Flat
 			inline CVar<int> HandsGlowOverlay{ 0, L"Hands Glow" }; // 0 - Off,  1 - Fresnel Glow, 2 - Wireframe Glow
@@ -426,10 +427,10 @@ namespace Vars
 	{
 		inline CVar<bool> RemoveDisguises{ true, L"Remove Disguises" };
 		inline CVar<bool> RemoveTaunts{ false, L"Remove Taunts" };
-		inline CVar<int> FieldOfView{ 130, L"Field of View" };
-		inline CVar<int> AimFOVAlpha{ 10, L"Aim FOV Alpha" };
+		inline CVar<int> FieldOfView{ 0, L"Field of View" };
+		inline CVar<int> AimFOVAlpha{ 0, L"Aim FOV Alpha" };
 		inline CVar<bool> RemoveScope{ true, L"Remove Scope" };
-		inline CVar<bool> RemoveMOTD{ false, L"Remove MOTD" };
+		inline CVar<bool> RemoveMOTD{ true, L"Remove MOTD" };
 		inline CVar<bool> RemoveScreenEffects{ true };
 		inline CVar<bool> PreventForcedAngles{ true };
 		inline CVar<bool> ScopeLines{ false, L"Scope lines" };
@@ -624,6 +625,7 @@ namespace Vars
 			inline CVar<int> DtbarOutlineHeight{ 5, L"Dt default bar height" };
 			inline CVar<int> DtbarOutlineWidth{ 4, L"Dt default bar width" };
 			inline CVar<int> DTTicks{ 21, L"Ticks for DT" };
+			inline CVar<int> DTWaitCalls{ 26, L"DT Wait Calls"};
 			inline CVar<int> DTBarScaleY{ 12, L"DT Indicator Height" };
 			inline CVar<int> DTBarScaleX{ 100, L"DT Indicator Widht" };
 			inline CVar<int> DTBarY{ 60,L"DT Offset Y" };
@@ -650,7 +652,7 @@ namespace Vars
 
 		namespace Discord
 		{
-			inline CVar<bool>EnableRPC{ true, L"Enable Discord RPC" };
+			inline CVar<bool>EnableRPC{ false, L"Enable Discord RPC" };
 			inline CVar<bool>IncludeClass{ true, L"Include class" };
 			inline CVar<bool>IncludeMap{ true, L"Include map name" };
 			inline CVar<bool>IncludeTimestamp{ true, L"Include timestamp" };
@@ -659,12 +661,12 @@ namespace Vars
 
 		namespace Steam
 		{
-			inline CVar<bool>EnableRPC{ true, L"Enable Steam RPC" };
+			inline CVar<bool>EnableRPC{ false, L"Enable Steam RPC" };
 			inline CVar<int>MatchGroup{ 0, L"Match group" }; // 0 - Special Event; 1 - MvM Mann Up; 2 - Competitive; 3 - Casual; 4 - MvM Boot Camp;
 			inline CVar<bool>OverrideMenu{ false, L"Override when in main menu" }; // Override matchgroup when in main menu
 			inline CVar<int>MapText{ 1, L"Map Text" }; // 0 - Fedoraware; 1 - CUM.clab; 2 - Meowhook.club; 3 - rathook.cc; 4 - NNitro.tf; 5 - custom;
 			inline CVar<int>GroupSize{ 1337, L"Player group size" };
-			inline CVar<std::string> CustomText = { "M-FeD is gay", L"Custom Text" };
+			inline CVar<std::string> CustomText = { "Mati jest gej", L"Custom Text" };
 		}
 	}
 
