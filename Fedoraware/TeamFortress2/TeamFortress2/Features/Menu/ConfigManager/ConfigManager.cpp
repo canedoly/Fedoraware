@@ -742,7 +742,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Misc::CL_Move::FakelagKey); // { 0x52, L"Recharge Key" }; //R
 				SAVE_VAR(Vars::Misc::CL_Move::FakelagValue); // { 0x52, L"Recharge Key" }; //R
 				SAVE_VAR(Vars::Misc::CL_Move::DTTicks);
-				SAVE_VAR(Vars::Misc::CL_MOVE::DTWaitCalls);
+				SAVE_VAR(Vars::Misc::CL_Move::DTWaitCalls);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekKey);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekDistance);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekFree);
@@ -1463,7 +1463,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Misc::CL_Move::FakelagKey); // { 0x52, L"Recharge Key" }; //R
 				LOAD_VAR(Vars::Misc::CL_Move::FakelagValue); // { 0x52, L"Recharge Key" }; //R
 				LOAD_VAR(Vars::Misc::CL_Move::DTTicks);
-				LOAD_VAR(Vars::Misc::CL_MOVE::DTWaitCalls);
+				LOAD_VAR(Vars::Misc::CL_Move::DTWaitCalls);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekKey);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekDistance);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekFree);

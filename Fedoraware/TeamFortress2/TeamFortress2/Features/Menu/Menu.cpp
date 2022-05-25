@@ -255,7 +255,7 @@ void CMenu::MenuAimbot()
 			MultiCombo({ "Indicators", "Avoid Random", "Always Melee" }, {&Vars::CritHack::indicators.m_Var, &Vars::CritHack::avoidrandom.m_Var, &Vars::CritHack::AlwaysMelee.m_Var }, "Misc###CrithackMiscOptions");
 			HelpMarker("Misc options for crithack");
 			InputKeybind("Crit key", Vars::CritHack::CritKey); HelpMarker("Will try to force crits when the key is held");
-			WSlider("Crit loops", &Vars::CritHack::CritLoops.m_Var, 15, 4096, "%d"); HelpMarker("How many loops (Best is 1k or 4096)");
+			WSlider("Crit loops", &Vars::CritHack::CritLoops.m_Var, 15, 4096, "%d", ImGuiSliderFlags_AlwaysClamp); HelpMarker("How many loops, Recommended is 4096)");
 
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.m_Var); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");

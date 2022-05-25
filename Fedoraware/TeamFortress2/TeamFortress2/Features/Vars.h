@@ -56,7 +56,7 @@ namespace Vars
 		inline CVar<bool> avoidrandom{ true };
 		inline CVar<bool> AlwaysMelee{ true };
 		inline CVar<int> CritKey{ VK_SHIFT, L"Crit Key" };
-		inline CVar<int> Critloops{ 16, L"Crit Loops"};
+		inline CVar<int> CritLoops{ 16, L"Crit Loops"};
 	}
 
 	namespace Backtrack
