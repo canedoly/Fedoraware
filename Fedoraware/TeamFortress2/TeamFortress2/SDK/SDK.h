@@ -296,7 +296,7 @@ namespace Utils
 		if (pEntity->IsPlayer())
 		{
 			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-				out = GetTeamColor;
+				out = GetEntityDrawColor;
 
 			else if (g_EntityCache.IsFriend(pEntity->GetIndex()) || pEntity == g_EntityCache.m_pLocal)
 				out = Colors::Friend;
@@ -312,9 +312,9 @@ namespace Utils
 		}
 
 		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = GetTeamColor;
+			out = ;
 
-		return out;
+		return out = GetEntityDrawColor;
 	}
 
 	__inline const char* GetClassByIndex(const int nClass)
