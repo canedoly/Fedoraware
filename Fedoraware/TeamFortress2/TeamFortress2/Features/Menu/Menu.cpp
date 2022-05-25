@@ -1532,8 +1532,8 @@ void CMenu::MenuHvH()
 			WToggle("Enable Anti-aim", &Vars::AntiHack::AntiAim::Active.m_Var);
 			InputKeybind("Anti-aim Key", Vars::AntiHack::AntiAim::ToggleKey); HelpMarker("The key to toggle anti aim");
 			WCombo("Pitch", &Vars::AntiHack::AntiAim::Pitch.m_Var, { "None", "Zero", "Up", "Down", "Fake up", "Fake down", "Random" }); HelpMarker("Which way to look up/down");
-			WCombo("Real yaw", &Vars::AntiHack::AntiAim::YawReal.m_Var, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt" }); HelpMarker("Which way to look horizontally");
-			WCombo("Fake yaw", &Vars::AntiHack::AntiAim::YawFake.m_Var, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt" }); HelpMarker("Which way to appear to look horizontally");
+			WCombo("Real yaw", &Vars::AntiHack::AntiAim::YawReal.m_Var, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt", "Custom" }); HelpMarker("Which way to look horizontally");
+			WCombo("Fake yaw", &Vars::AntiHack::AntiAim::YawFake.m_Var, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt", "Custom" }); HelpMarker("Which way to appear to look horizontally");
 			if (Vars::AntiHack::AntiAim::YawFake.m_Var == 6 || Vars::AntiHack::AntiAim::YawReal.m_Var == 6)
 			{
 				WSlider("Spin Speed", &Vars::AntiHack::AntiAim::SpinSpeed.m_Var, -30.f, 30.f, "%.1f", 0); HelpMarker("You spin me right 'round, baby, right 'round");
@@ -1541,6 +1541,14 @@ void CMenu::MenuHvH()
 			if (Vars::AntiHack::AntiAim::Pitch.m_Var == 6 || Vars::AntiHack::AntiAim::YawFake.m_Var == 5 || Vars::AntiHack::AntiAim::YawReal.m_Var == 5)
 			{
 				WSlider("Random Interval", &Vars::AntiHack::AntiAim::RandInterval.m_Var, 0, 100, "%d"); HelpMarker("How often the random Anti-Aim should update");
+			}
+			if (Vars::AntiHack::AntiAim::YawReal.m_Var == 9);
+			{
+				WSlider("Yaw Offset Real", &Vars::AntiHack::AntiAim::YawOffset.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate real yaw");
+			}
+			if (Vars::AntiHack::AntiAim::YawFake.m_Var == 9);
+			{
+				WSlider("Yaw Offset Fake", &Vars::AntiHack::AntiAim::YawOffsetF.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate real yaw");
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.m_Var); HelpMarker("Enables Anti-aim resolver in the playerlist");
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.m_Var, &Vars::AntiHack::AntiAim::legjitter.m_Var, &Vars::AntiHack::AntiAim::invalidshootpitch.m_Var, &Vars::AntiHack::AntiAim::AntiBackstab.m_Var }, "Misc.");
