@@ -147,7 +147,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								tickWidth = (g_GlobalInfo.m_nShifted * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
 								barWidth = g_Draw.EaseIn(barWidth, tickWidth, 0.9f);
 
-								g_Draw.OutlinedRect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
+								g_Draw.Rect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
 													Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var + 2,
 													{ 50, 50, 50, 210 });
 								g_Draw.GradientRect(dtOffset, (g_ScreenSize.h / 2) + 50, dtOffset + barWidth,
