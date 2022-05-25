@@ -32,7 +32,7 @@ bool CCritHack::ShouldCrit()
 }
 
 /* Returns the next crit command number */
-int CCritHack::NextCritTick(const CUserCmd* pCmd, int loops = (Vars::CritHack::Critloops.m_Var))
+int CCritHack::NextCritTick(const CUserCmd* pCmd, int loops = (Vars::CritHack::CritLoops.m_Var))
 {
 	static int previousWeapon = 0;
 	static int previousCrit = 0;
