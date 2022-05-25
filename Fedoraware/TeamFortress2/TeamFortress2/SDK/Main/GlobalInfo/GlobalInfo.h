@@ -23,7 +23,7 @@ struct GlobalInfo_t
 {
 	int m_nCurrentTargetIdx				= 0;
 	int m_nCurItemDefIndex              = 0;
-	int m_nWaitForShift                 = 0;
+	int m_nWaitForShift                 = Vars::Misc::CL_Move::DTWaitCalls;
 	int m_nShifted                      = 0;
 	int gNotifCounter = 0;
 	int vEyeAngDelay = 25	;

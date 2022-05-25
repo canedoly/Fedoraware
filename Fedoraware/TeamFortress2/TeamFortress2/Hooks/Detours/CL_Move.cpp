@@ -59,7 +59,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		g_GlobalInfo.m_bForceSendPacket = true; // force uninterrupted connection with server
 		g_GlobalInfo.m_nShifted++; // add ticks to tick counter
-		g_GlobalInfo.m_nWaitForShift = 67 - Vars::Misc::CL_Move::DTTicks.m_Var; // set wait condition (genius)
+		g_GlobalInfo.m_nWaitForShift = Vars::Misc::CL_Move::DTWaitCalls; // set wait condition (genius)
 		return; // this recharges
 	}
 	else if (rechargeKey.Down())
