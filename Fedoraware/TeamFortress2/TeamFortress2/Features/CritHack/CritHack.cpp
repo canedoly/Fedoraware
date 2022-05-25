@@ -115,6 +115,13 @@ void CCritHack::Draw()
 	const float bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
 	int currentY = (g_ScreenSize.h / 2) + 150;
 
+
+
+	if (AreRandomCritsEnabled())
+	{
+		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255}, ALIGN_CENTERHORIZONTAL, "Server disabled crits");
+	}
+
 	// Are we currently forcing crits?
 	if (ShouldCrit())
 	{
