@@ -1544,11 +1544,11 @@ void CMenu::MenuHvH()
 			}
 			if (Vars::AntiHack::AntiAim::YawReal.m_Var == 9);
 			{
-				WSlider("Yaw Offset Real", &Vars::AntiHack::AntiAim::YawOffset.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate real yaw");
+				WSlider("Yaw Offset Real", &Vars::AntiHack::AntiAim::YawOffset.m_Var, -180.f, 180.f, "%.1f"); HelpMarker("How many degrees you wanna rotate real yaw");
 			}
 			if (Vars::AntiHack::AntiAim::YawFake.m_Var == 9);
 			{
-				WSlider("Yaw Offset Fake", &Vars::AntiHack::AntiAim::YawOffsetF.m_Var, -180, 180, "%d"); HelpMarker("How many degrees you wanna rotate fake yaw");
+				WSlider("Yaw Offset Fake", &Vars::AntiHack::AntiAim::YawOffsetF.m_Var, -180.f, 180.f, "%.1f"); HelpMarker("How many degrees you wanna rotate fake yaw");
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.m_Var); HelpMarker("Enables Anti-aim resolver in the playerlist");
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.m_Var, &Vars::AntiHack::AntiAim::legjitter.m_Var, &Vars::AntiHack::AntiAim::invalidshootpitch.m_Var, &Vars::AntiHack::AntiAim::AntiBackstab.m_Var }, "Misc.");
