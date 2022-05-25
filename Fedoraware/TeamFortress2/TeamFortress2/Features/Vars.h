@@ -62,6 +62,7 @@ namespace Vars
 	{
 		inline CVar<bool> Enabled{ false, L"Backtrack master switch" };
 		inline CVar<bool> Aim{ false, L"Aims at last tick" };
+
 		namespace BtChams
 		{
 			inline CVar<bool> Enabled{ false, L"Backtrack chams" };
@@ -125,6 +126,7 @@ namespace Vars
 			inline CVar<int> AimPosition{ 2, L"Aim Position" };	//0 - Body,		1 - Feet,	2 - Auto
 			//inline CVar<float> AimFOV			{ 25.0f, L"Aim FOV" };
 			inline CVar<bool> FeetAimIfOnGround{ false, L"Aim at feet if target is on the ground." };
+			inline CVar<bool> SplashPrediction{ false, };
 			inline CVar<bool> MovementSimulation{ true, L"move sim" };
 			inline Color_t PredictionColor{ 255,255,255,255 };
 			inline CVar<bool> ManualZAdjust{ true, L"Toggle for manual z adjust on projectile prediction." };
@@ -440,7 +442,6 @@ namespace Vars
 		inline CVar<bool> OutOfFOVArrowsOutline{ false, L"balls" };
 		inline CVar<float> FovArrowsDist{ 0.15f, L"balls" };
 		inline CVar<int> SpectatorList{ 2, L"Spectator List" }; //0 - Off, 1 - Default, 2 - Classic, 3 - Classic Avatars
-		inline CVar<bool> DebugInfo{ false }; // trash
 
 		inline CVar<int> FreecamKey{ 0, L"Freecam Key" };
 		inline CVar<float> FreecamSpeed{ 10.f, L"Freecam Speed" };
@@ -589,6 +590,7 @@ namespace Vars
 		inline CVar<bool> PingReducer{ false, L"Ping reducer" };
 		inline CVar<int> PingTarget{ 0, L"Ping target" };
 		inline CVar<bool> ExtendFreeze{ false, L"Infinite Respawn" };
+		inline CVar<bool> ViewmodelFlip{ false };
 		inline CVar<int> AutoJoin{ false, L"Auto Join" };
 		inline CVar<bool> KillstreakWeapon{ false, L"Killstreak Weapon" };
 		inline CVar<bool> PartyNetworking{ false, L"Party Networking" };
@@ -744,6 +746,7 @@ namespace Vars
 	// Debug options - Don't save these!
 	namespace Debug
 	{
+		inline CVar<bool> DebugInfo{ false };
 		inline CVar<bool> DebugBool{ false };
 	}
 }

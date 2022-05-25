@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="AVX2|Win32">
+      <Configuration>AVX2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -30,6 +34,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AVX2|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -41,14 +52,26 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='AVX2|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='AVX2|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <TargetName>Fware($(Configuration))</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AVX2|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)Lib\x86</LibraryPath>
@@ -80,6 +103,28 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='AVX2|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -99,6 +144,7 @@
     <!-- <ClCompile Include="TeamFortress2\Features\Backtrack\Backtrack.cpp" /> -->
     <ClCompile Include="TeamFortress2\Features\Aimbot\MovementSimulation\MovementSimulation.cpp" />
     <ClCompile Include="TeamFortress2\Features\AntiHack\CheaterDetection\CheaterDetection.cpp" />
+    <ClCompile Include="TeamFortress2\Features\AntiHack\FakeLag\FakeLagHandler.cpp" />
     <ClCompile Include="TeamFortress2\Features\Backtrack\Backtrack.cpp" />
     <ClCompile Include="TeamFortress2\Features\Camera\CameraWindow.cpp" />
     <ClCompile Include="TeamFortress2\Features\CritHack\CritHack.cpp" />
@@ -186,6 +232,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\KeyValues_SetInt.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ModelRender_DrawModelExecute.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ModelRender_ForcedMaterialOverride.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\NetChannel_SendDatagram.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Panel_PaintTraverse.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Prediction_RunCommand.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\StudioRender_SetAlphaModulation.cpp" />
@@ -199,6 +246,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\ViewRender_RenderView.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\HookManager.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\MenuHook\MenuHook.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\PatchManager\PatchManager.cpp" />
     <ClCompile Include="TeamFortress2\SDK\Discord\src\connection_win.cpp" />
     <ClCompile Include="TeamFortress2\SDK\Discord\src\discord_register_win.cpp" />
     <ClCompile Include="TeamFortress2\SDK\Discord\src\discord_rpc.cpp" />
@@ -231,6 +279,7 @@
     <!-- <ClInclude Include="TeamFortress2\Features\Backtrack\Backtrack.h" /> -->
     <ClInclude Include="TeamFortress2\Features\Aimbot\MovementSimulation\MovementSimulation.h" />
     <ClInclude Include="TeamFortress2\Features\AntiHack\CheaterDetection\CheaterDetection.h" />
+    <ClInclude Include="TeamFortress2\Features\AntiHack\FakeLag\FakeLagHandler.h" />
     <ClInclude Include="TeamFortress2\Features\Backtrack\Backtrack.h" />
     <ClInclude Include="TeamFortress2\Features\Camera\CameraWindow.h" />
     <ClInclude Include="TeamFortress2\Features\CritHack\CritHack.h" />
@@ -295,6 +344,7 @@
     <ClInclude Include="TeamFortress2\Hooks\IsLocalPlayerUsingVisionFilterFlags\IsLocalPlayerUsingVisionFilterFlags.h" />
     <ClInclude Include="TeamFortress2\Hooks\HookManager.h" />
     <ClInclude Include="TeamFortress2\Hooks\MenuHook\MenuHook.h" />
+    <ClInclude Include="TeamFortress2\Hooks\PatchManager\PatchManager.h" />
     <ClInclude Include="TeamFortress2\Hooks\Ragdoll\Ragdoll.h" />
     <ClInclude Include="TeamFortress2\Hooks\RegionSelector\RegionSelector.h" />
     <ClInclude Include="TeamFortress2\Hooks\Scoreboard\Scoreboard.h" />
@@ -739,6 +789,7 @@
     <ClInclude Include="TeamFortress2\SDK\NetVars\NetVars.h" />
     <ClInclude Include="TeamFortress2\SDK\SDK.h" />
     <ClInclude Include="TeamFortress2\Utils\Base64\Base64.hpp" />
+    <ClInclude Include="TeamFortress2\Utils\BytePatch\BytePatch.hpp" />
     <ClInclude Include="TeamFortress2\Utils\Color\Color.h" />
     <ClInclude Include="TeamFortress2\Utils\CRC\CRC.h" />
     <ClInclude Include="TeamFortress2\Utils\Events\Events.h" />

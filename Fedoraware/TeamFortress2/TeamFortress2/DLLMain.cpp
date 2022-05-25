@@ -1,4 +1,5 @@
 #include "Hooks/HookManager.h"
+#include "Hooks/PatchManager/PatchManager.h"
 
 #include "Features/Glow/Glow.h"
 #include "Features/Chams/Chams.h"
@@ -14,7 +15,6 @@
 #include "Features/Menu/../AttributeChanger/AttributeChanger.h"
 
 #include "SDK/Includes/Enums.h"
-
 #include "Utils/Events/Events.h"
 
 #include "SDK/Discord/include/discord_rpc.h"
@@ -59,9 +59,14 @@ void UpdateRichPresence()
 
 void Loaded()
 {
-	I::CVars->ConsoleColorPrintf({ 255, 193, 75, 255 }, _("Fedoraware (homemade) Loaded!\n"));
+	I::CVars->ConsoleColorPrintf({ 255, 193, 75, 255 }, _("Fedoraware Loaded!\n"));
 	I::Engine->ClientCmd_Unrestricted("play vo/items/wheatley_sapper/wheatley_sapper_attached14.mp3");
 
+	const int dxLevel = I::CVars->FindVar("mat_dxlevel")->GetInt();
+	if (dxLevel < 90)
+	{
+		MessageBoxA(nullptr, _("Your DirectX version is too low!\nPlease use at dxlevel 90 or higher"), _("dxlevel too low"), MB_OK | MB_ICONWARNING);
+	}
 }
 
 void Initialize()
@@ -75,6 +80,7 @@ void Initialize()
 	g_CameraWindow.Init();
 	g_HookManager.Init();
 	g_ConVars.Init();
+	g_PatchManager.Init();
 
 	InitRichPresence();
 }
@@ -90,6 +96,7 @@ void Uninitialize()
 
 	g_Events.Destroy();
 	g_HookManager.Release();
+	g_PatchManager.Restore();
 
 	ShutdownRichPresence();
 
