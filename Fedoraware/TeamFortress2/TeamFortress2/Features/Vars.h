@@ -56,7 +56,7 @@ namespace Vars
 		inline CVar<bool> avoidrandom{ true };
 		inline CVar<bool> AlwaysMelee{ true };
 		inline CVar<int> CritKey{ VK_SHIFT, L"Crit Key" };
-		inline CVar<int> CritLoops{ 16, L"Crit Loops"};
+		inline CVar<int> CritLoops{ 375, L"Crit Loops"}; //375 because you don't lose almost any fps and it works on streaming weapons decently
 	}
 
 	namespace Backtrack
