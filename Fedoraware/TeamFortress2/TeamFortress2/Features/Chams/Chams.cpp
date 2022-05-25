@@ -263,7 +263,6 @@ void CChams::RenderPlayers(CBaseEntity* pLocal, IMatRenderContext* pRenderContex
 		}
 		else if (chams.drawMaterial == 6)
 		{
-			I::ModelRender->ForcedMaterialOverride(chamsMaterial);
 			if (foundselfillumtint)
 			{
 				fresnelSelfillumtint->SetVecValue(Color::TOFLOAT(chams.fresnelBase.r),
@@ -286,6 +285,7 @@ void CChams::RenderPlayers(CBaseEntity* pLocal, IMatRenderContext* pRenderContex
 			}
 		}
 
+		I::ModelRender->ForcedMaterialOverride(nullptr);
 		DrawModel(Player);
 
 		if (Vars::Chams::Players::Wearables.m_Var)
