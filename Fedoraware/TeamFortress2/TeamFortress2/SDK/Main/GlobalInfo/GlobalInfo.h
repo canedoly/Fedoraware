@@ -2,7 +2,7 @@
 
 #include "../BaseEntity/BaseEntity.h"
 
-#define DT_WAIT_CALLS (Vars::Misc::CL_MOVE::DTWaitCalls.m_Var);
+#define DT_WAIT_CALLS 0;
 
 struct VelFixRecord {
 	Vec3 m_vecOrigin;
@@ -23,7 +23,7 @@ struct GlobalInfo_t
 {
 	int m_nCurrentTargetIdx				= 0;
 	int m_nCurItemDefIndex              = 0;
-	int m_nWaitForShift                 = (Vars::Misc::CL_MOVE::DTWaitCalls.m_Var);
+	int m_nWaitForShift                 = 0;
 	int m_nShifted                      = 0;
 	int gNotifCounter = 0;
 	int vEyeAngDelay = 25	;
