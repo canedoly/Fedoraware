@@ -39,6 +39,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	// Clear tick shift queue
 	if (g_GlobalInfo.m_nShifted && !g_GlobalInfo.m_bRecharging && g_GlobalInfo.tickShiftQueue > 0)
 	{
+		int DTWaitCalls = Vars::Misc::CL_Move::DTWaitCalls.m_Var;
 		while (g_GlobalInfo.tickShiftQueue > 0 && g_GlobalInfo.m_nShifted > 0)
 		{
 			oClMove(accumulated_extra_samples, (g_GlobalInfo.tickShiftQueue == 1));
@@ -59,7 +60,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		g_GlobalInfo.m_bForceSendPacket = true; // force uninterrupted connection with server
 		g_GlobalInfo.m_nShifted++; // add ticks to tick counter
-		g_GlobalInfo.m_nWaitForShift = Vars::Misc::CL_Move::DTWaitCalls; // set wait condition (genius)
+		g_GlobalInfo.m_nWaitForShift = Vars::Misc::CL_Move::DTWaitCalls.m_Var; // set wait condition (genius)
 		return; // this recharges
 	}
 	else if (rechargeKey.Down())
