@@ -296,7 +296,7 @@ namespace Utils
 		if (pEntity->IsPlayer())
 		{
 			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-				out = drawColor;
+				out = Colors::Local;
 
 			else if (g_EntityCache.IsFriend(pEntity->GetIndex()) || pEntity == g_EntityCache.m_pLocal)
 				out = Colors::Friend;
@@ -312,7 +312,7 @@ namespace Utils
 		}
 
 		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = drawColor;
+			out = Colors::Target;
 
 		return out;
 	}
