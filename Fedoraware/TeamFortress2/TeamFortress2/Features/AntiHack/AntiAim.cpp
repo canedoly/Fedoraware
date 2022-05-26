@@ -247,8 +247,8 @@ void CAntiAim::Run(CUserCmd* pCmd, bool* pSendPacket) {
 				}			
 			case 10: // this is being tested
 				{
-					YawOffset = Vars::AntiHack::AntiAim::YawOffset.m_Var;
-					pCmd->viewangles.y = YawOffset;
+					//YawOffset = Vars::AntiHack::AntiAim::YawOffset.m_Var;
+					pCmd->viewangles.y = Vars::AntiHack::AntiAim::YawOffset.m_Var;
 					break;
 				}
 			default:
@@ -341,8 +341,8 @@ void CAntiAim::Run(CUserCmd* pCmd, bool* pSendPacket) {
 				}
 			case 10: // this is being tested
 				{
-					YawOffsetF = Vars::AntiHack::AntiAim::YawOffsetF.m_Var;
-					pCmd->viewangles.y = YawOffsetF;
+					//YawOffsetF = Vars::AntiHack::AntiAim::YawOffsetF.m_Var;
+					pCmd->viewangles.y = Vars::AntiHack::AntiAim::YawOffset.m_Var;
 					break;
 				}
 			default:
