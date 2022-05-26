@@ -117,18 +117,20 @@ void CCritHack::Draw()
 
 
 
-	if (AreRandomCritsEnabled())
+	if (!AreRandomCritsEnabled())
 	{
 		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255}, ALIGN_CENTERHORIZONTAL, "Server disabled crits");
 	}
-
-	// Are we currently forcing crits?
-	if (ShouldCrit())
+	else
 	{
-		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
-	}
+		// Are we currently forcing crits?
+		if (ShouldCrit())
+		{
+			g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
+		}
 
-	const float bucketCap = I::CVars->FindVar("tf_weapon_criticals_bucket_cap")->GetFloat();
-	const auto bucketText = tfm::format("Bucket: %s / %s", static_cast<int>(bucket), bucketCap);
-	g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketText.c_str());
+		const float bucketCap = I::CVars->FindVar("tf_weapon_criticals_bucket_cap")->GetFloat();
+		const auto bucketText = tfm::format("Bucket: %s / %s", static_cast<int>(bucket), bucketCap);
+		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketText.c_str());
+	}
 }

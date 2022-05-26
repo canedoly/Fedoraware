@@ -780,6 +780,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::AntiHack::AntiAim::Pitch);
 				SAVE_VAR(Vars::AntiHack::AntiAim::YawReal);
 				SAVE_VAR(Vars::AntiHack::AntiAim::YawFake);
+				SAVE_VAR(Vars::AntiHack::AntiAim::StaticOffset);
+				SAVE_VAR(Vars::AntiHack::AntiAim::StaticOffsetF);
 				SAVE_VAR(Vars::AntiHack::AntiAim::YawOffset);
 				SAVE_VAR(Vars::AntiHack::AntiAim::YawOffsetF);
 				SAVE_VAR(Vars::AntiHack::AntiAim::SpinSpeed);
@@ -1503,6 +1505,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::AntiHack::AntiAim::Pitch);
 				LOAD_VAR(Vars::AntiHack::AntiAim::YawReal);
 				LOAD_VAR(Vars::AntiHack::AntiAim::YawFake);
+				LOAD_VAR(Vars::AntiHack::AntiAim::StaticOffset);
+				LOAD_VAR(Vars::AntiHack::AntiAim::StaticOffsetF);
 				LOAD_VAR(Vars::AntiHack::AntiAim::YawOffset);
 				LOAD_VAR(Vars::AntiHack::AntiAim::YawOffsetF);
 				LOAD_VAR(Vars::AntiHack::AntiAim::SpinSpeed);

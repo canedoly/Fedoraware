@@ -431,7 +431,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 			g_CritHack.Draw();
 			g_Radar.Run();
 
-			if (Vars::AntiHack::AntiAim::Active.m_Var)
+			if (Vars::AntiHack::AntiAim::Active.m_Var && pLocal->IsAlive())//better than drawing it everytime when aa is enabled
 			{
 				if (const auto& pLocal = g_EntityCache.m_pLocal)
 				{

@@ -30,7 +30,6 @@ void CChams::Init()
 		kv->SetString("$selfillumfresnelminmaxexp", "[0.5 0.5 0]");
 		kv->SetString("$selfillumtint", "[0 0 0]");
 		kv->SetString("$envmaptint", "[0 1 0]");
-		kv->SetString("$additive", "1");
 		m_pMatFresnel = I::MatSystem->Create("m_pMatFresnel", kv);
 	}
 
