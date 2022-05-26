@@ -680,8 +680,8 @@ namespace Vars
 			inline CVar<int> Pitch{ 0, L"Pitch" };		//0 - None, 1 - Zero, 2 - Up, 3 - Down, 4 - Fake Up, 5 - Fake Down
 			inline CVar<int> YawReal{ 0, L"Yaw Real" };	//0 - None, 1 - Forward, 2 - Left, 3 - Right, 4 - Backwards
 			inline CVar<int> YawFake{ 0, L"Yaw Fake" };	//0 - None, 1 - Forward, 2 - Left, 3 - Right, 4 - Backwards
-			inline CVar<float> StaticOffset{ 90, L"Real Yaw Offset"};
-			inline CVar<float> StaticOffsetF{ 0, L"Fake Yaw Offset"};
+			inline CVar<float> StaticOffset{ 90, L"Real Static Offset"};
+			inline CVar<float> StaticOffsetF{ 0, L"Fake Static Offset"};
 			inline CVar<float> YawOffset{ 90, L"Real Yaw Offset"};
 			inline CVar<float> YawOffsetF{ 0, L"Fake Yaw Offset"};
 			inline CVar<float> SpinSpeed{ 15.f, L"Spin Speed" };
