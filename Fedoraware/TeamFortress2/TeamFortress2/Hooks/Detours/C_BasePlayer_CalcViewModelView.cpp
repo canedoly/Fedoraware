@@ -28,7 +28,7 @@ MAKE_HOOK(C_BasePlayer_CalcViewModelView, g_Pattern.Find(L"client.dll", L"55 8B 
 		else if (!Vars::Visuals::AimbotViewmodel.m_Var)
 		{
 		//Func.Original<fn>()(ecx, edx, owner, eyePosition, eyeAngles);
-		Hook.Original<FN>()(ecx, edx, pOwner, vNewEyePosition, vEyeAngles);
+		Hook.Original<FN>()(ecx, edx, pOwner, vEyePosition, vEyeAngles);
 		}	
 	}
 	//VM Offsets
