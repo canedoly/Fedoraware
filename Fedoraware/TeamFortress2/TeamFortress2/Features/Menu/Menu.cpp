@@ -13,7 +13,6 @@
 
 #include "Components.hpp"
 #include "ConfigManager/ConfigManager.h"
-#include "Blur/Blur.h"
 
 constexpr int MENU_KEY = VK_INSERT;
 
@@ -260,6 +259,7 @@ void CMenu::MenuAimbot()
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.m_Var); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");
 			WToggle("Aimbot aims last tick", &Vars::Backtrack::Aim.m_Var); HelpMarker("Aimbot aims at the last tick if visible");
+			WSlider("Latency###BTLatency", &Vars::Backtrack::Latency.m_Var, 0.f, 1000.f, "%.f", ImGuiSliderFlags_AlwaysClamp);
 		} EndChild();
 
 		/* Column 2 */
@@ -1709,7 +1709,6 @@ void CMenu::SettingsWindow()
 	{
 		if (ColorPicker("Menu accent", Vars::Menu::Colors::MenuAccent)) { LoadStyle(); } SameLine(); Text("Menu accent");
 		if (Checkbox("Alternative Design", &Vars::Menu::ModernDesign)) { LoadStyle(); }
-		Checkbox("Blur background", &Vars::Menu::BlurBackground);
 
 		Dummy({ 0, 5 });
 		static std::string selected;
@@ -1969,11 +1968,6 @@ void CMenu::Render(IDirect3DDevice9* pDevice)
 
 	if (g_Menu.IsOpen)
 	{
-		if (Vars::Menu::BlurBackground)
-		{
-			g_Blur.DrawBackgroundBlur(ImGui::GetBackgroundDrawList(), pDevice);
-		}
-
 		ImGui::PushFont(Verdana);
 		DrawMenu();
 		DrawCameraWindow();
