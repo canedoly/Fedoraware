@@ -1128,7 +1128,7 @@ void CMenu::MenuVisuals()
 					ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
 					WSlider("DT Bar width###dtBWidthNitro", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 100, 1000);
 				}
-				else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3 || Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
+				else if ( Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
 				{
 					//WSlider("DT Height", &Vars::Misc::CL_Move::DTBarScaleY.m_Var, 1, 200);
 					//WSlider("DT Width", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 1, 200);
