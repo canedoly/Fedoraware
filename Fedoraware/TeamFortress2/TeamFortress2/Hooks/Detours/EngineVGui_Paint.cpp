@@ -174,10 +174,10 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								}
 
 
-								g_Draw.CornerRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
+								g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
 											8, { 17, 24, 26, 255 });
 
-								g_Draw.CornerRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
+								g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
 													((g_ScreenSize.c - (80 / 2) + xoff) + (80 * ratio)),
 													(nY - (80 / 2) + (yoff + 20) + 80), { color5 }, TRUE);
 
