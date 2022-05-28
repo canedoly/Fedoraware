@@ -3,6 +3,43 @@
 #include "../../Backtrack/Backtrack.h"
 #include "../../PlayerResource/PlayerResource.h"
 
+static float LerpTime()
+{
+	static ConVar* updaterate = I::CVars->FindVar("cl_updaterate");
+	static ConVar* minupdate = I::CVars->FindVar("sv_minupdaterate");
+	static ConVar* maxupdate = I::CVars->FindVar("sv_maxupdaterate");
+	static ConVar* lerp = I::CVars->FindVar("cl_interp");
+	static ConVar* cmin = I::CVars->FindVar("sv_client_min_interp_ratio");
+	static ConVar* cmax = I::CVars->FindVar("sv_client_max_interp_ratio");
+	static ConVar* ratio = I::CVars->FindVar("cl_interp_ratio");
+
+	const float interpValue = lerp->GetFloat();
+	const float maxUpdateValue = maxupdate->GetFloat();
+	int updateRateValue = updaterate->GetInt();
+	float interpRatioValue = ratio->GetFloat();
+	const int svMaxUpdateRate = maxupdate->GetInt();
+	const int svMinUpdateRate = minupdate->GetInt();
+	const float minRatioValue = cmin->GetFloat();
+	const float maxRatioValue = cmax->GetFloat();
+
+	if (svMaxUpdateRate && svMinUpdateRate)
+	{
+		updateRateValue = static_cast<int>(maxUpdateValue);
+	}
+
+	if (interpRatioValue == 0)
+	{
+		interpRatioValue = 1.0f;
+	}
+
+	if (cmin && cmax && cmin->GetFloat() != 1)
+	{
+		interpRatioValue = std::clamp(interpRatioValue, minRatioValue, maxRatioValue);
+	}
+
+	return std::max(interpValue, interpRatioValue / static_cast<float>(updateRateValue));
+}
+
 bool IsHitboxValid(int nHitbox, int index)
 {
 	switch (nHitbox)
