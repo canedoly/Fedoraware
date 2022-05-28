@@ -149,7 +149,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								g_Draw.Rect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
 													Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var + 2,
-													{ 100, 90, 90, 150}); //yes the values will be hardcoded
+													{ 40, 40, 40, 180}); //yes the values will be hardcoded
 								g_Draw.GradientRect(dtOffset, (g_ScreenSize.h / 2) + 50, dtOffset + barWidth,
 													(g_ScreenSize.h / 2) + 50 + Vars::Misc::CL_Move::DtbarOutlineHeight.
 													m_Var, color1, color2, true);
