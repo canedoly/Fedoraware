@@ -25,10 +25,10 @@ MAKE_HOOK(C_BasePlayer_CalcViewModelView, g_Pattern.Find(L"client.dll", L"55 8B 
 			// looks hot ty senator for the idea
 			else { vEyeAngles = I::Engine->GetViewAngles(); }
 		}
-		else if (!Vars::Visuals::AimbotViewmodel.m_Var)
+		else if (!Vars::Visuals::AimbotViewmodel.m_Var && pLocal->IsAlive())
 		{
 		//Func.Original<fn>()(ecx, edx, owner, eyePosition, eyeAngles);
-		Hook.Original<FN>()(ecx, edx, pOwner, vEyePosition, vEyeAngles);
+		Hook.Original<FN>()(ecx, edx, owner, eyePosition, eyeAngles);
 		}	
 	}
 	//VM Offsets
