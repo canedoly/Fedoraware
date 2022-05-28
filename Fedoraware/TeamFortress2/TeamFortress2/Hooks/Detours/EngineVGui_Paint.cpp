@@ -168,15 +168,18 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
 								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; //  12  height
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
-								color3 = Colors::DTBarNitroIndicator;
+								static Color_t color5;
+								{
+									color5 = Colors::DTBarNitroIndicator;
+								}
 
 
-								g_Draw.RoundedRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
+								g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
 											8, { 17, 24, 26, 255 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
+								g_Draw.RoundedRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
 													((g_ScreenSize.c - (80 / 2) + xoff) + (80 * ratio)),
-													(nY - (yscale / 2) + (yoff + 20) + yscale), { color3 }, TRUE);
+													(nY - (80 / 2) + (yoff + 20) + 80), { color5 }, TRUE);
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
