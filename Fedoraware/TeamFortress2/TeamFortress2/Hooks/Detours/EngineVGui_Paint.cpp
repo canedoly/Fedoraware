@@ -137,7 +137,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								color2 = Colors::DTBarIndicatorsCharged.endColour;
 							}
 
-							// Rijin DT Bar
+							// Rijin V1 DT Bar
 							if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 1)
 							{
 								const auto maxWidth = static_cast<float>(Vars::Misc::CL_Move::DTTicks.m_Var * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
@@ -202,7 +202,6 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
     									              L"(%i/%i) Waiting!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
     								}
 								*/
-							}
 
 							// Rijin DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
