@@ -137,7 +137,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								color2 = Colors::DTBarIndicatorsCharged.endColour;
 							}
 
-							// Default DT Bar
+							// Rijin DT Bar
 							if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 1)
 							{
 								const auto maxWidth = static_cast<float>(Vars::Misc::CL_Move::DTTicks.m_Var * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
@@ -149,10 +149,59 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								g_Draw.Rect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
 													Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var + 2,
-													{ 60, 50, 40, 175}); //yes the values will be hardcoded
+													{ 100, 90, 90, 150}); //yes the values will be hardcoded
 								g_Draw.GradientRect(dtOffset, (g_ScreenSize.h / 2) + 50, dtOffset + barWidth,
 													(g_ScreenSize.h / 2) + 50 + Vars::Misc::CL_Move::DtbarOutlineHeight.
 													m_Var, color1, color2, true);
+							}
+
+							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2) //nitro style
+							{
+								if (g_GlobalInfo.m_nShifted == 0)
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+								else if (g_GlobalInfo.m_bRecharging)
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+								else if (g_GlobalInfo.m_nShifted == Vars::Misc::CL_Move::DTTicks.m_Var)
+								{
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+							}
+								/*
+    								if (g_GlobalInfo.m_nShifted == 0) // no charge no money
+    								{
+    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 55, 40, 255}, ALIGN_REVERSE,
+    									              L"(0/%i) No Ticks!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    								}
+    								else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nWaitForShift || ratio < 1)) // charging 
+    								{
+    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 126, 0, 255}, ALIGN_REVERSE,
+    									              L"(%i/%i) Recharging!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    								}
+    								else if (!g_GlobalInfo.m_nWaitForShift || ratio != 1) // activates when ready
+    								{
+    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    									              nY - (yscale / 2 + 48) - 10 + yoff, {66, 255, 0, 255}, ALIGN_REVERSE,
+    									              L"(%i/%i) Ready!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    								}
+    								else // activates when waiting blah blah blahg
+    								{
+    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 46, 46, 255}, ALIGN_REVERSE,
+    									              L"(%i/%i) Waiting!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    								}
+								*/
 							}
 
 							// Rijin DT Bar
