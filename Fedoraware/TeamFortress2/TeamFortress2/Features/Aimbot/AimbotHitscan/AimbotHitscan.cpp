@@ -835,7 +835,7 @@ void CAimbotHitscan::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserC
 
 		if (Vars::Misc::DisableInterpolation.m_Var && target.m_TargetType == ETargetType::PLAYER && bIsAttacking)
 		{
-			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() +
+			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() + LerpTime() +
 				std::max(g_ConVars.cl_interp->GetFloat(), g_ConVars.cl_interp_ratio->GetFloat() / g_ConVars.
 					cl_updaterate->GetFloat()));
 		}
