@@ -157,10 +157,27 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2) //nitro style
 							{
-								const int xoff = Vars::Misc::CL_Move::DTBarX.m_Var; // width offset 
-								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // height offset
-								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; // height
-								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var;
+								const float rratio = (static_cast<float>(g_GlobalInfo.m_nShifted) / static_cast<float>(
+								Vars::Misc::CL_Move::DTTicks.m_Var));
+								static float ratio = 0.f;
+								ratio = g_Draw.EaseIn(ratio, rratio, 0.9f);
+
+								if (ratio > 1.f) { ratio = 1.f; }
+								else if (ratio < 0.f) { ratio = 0.f; }
+								const int xoff = Vars::Misc::CL_Move::DTBarX.m_Var; // -20  width offset 
+								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
+								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; //  12  height
+								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
+								color3 = Colors::DTBarNitroIndicator;
+
+
+								g_Draw.RoundedRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
+											8, { 17, 24, 26, 255 });
+
+								g_Draw.GradientRect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
+													((g_ScreenSize.c - (80 / 2) + xoff) + (80 * ratio)),
+													(nY - (yscale / 2) + (yoff + 20) + yscale), { color3 }, TRUE);
+
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
@@ -173,7 +190,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
-								else if (g_GlobalInfo.m_nShifted == Vars::Misc::CL_Move::DTTicks.m_Var)
+								else if (g_GlobalInfo.m_nShifted > 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,

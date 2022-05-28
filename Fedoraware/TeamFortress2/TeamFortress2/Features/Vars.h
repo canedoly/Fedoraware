@@ -625,21 +625,21 @@ namespace Vars
 			inline CVar<int> DtbarOutlineHeight{ 5, L"Dt default bar height" };
 			inline CVar<int> DtbarOutlineWidth{ 4, L"Dt default bar width" };
 			//inline Color_t RijinBG{ 60,50,40,175 };
-			inline CVar<int> DTTicks{ 21, L"Ticks for DT" };
-			inline CVar<int> DTWaitCalls{ 26, L"DT Wait Calls"};
+			inline CVar<int> DTTicks{ 20, L"Ticks for DT" };
+			inline CVar<int> DTWaitCalls{ 0, L"DT Wait Calls"};
 			inline CVar<int> DTBarScaleY{ 12, L"DT Indicator Height" };
 			inline CVar<int> DTBarScaleX{ 100, L"DT Indicator Widht" };
-			inline CVar<int> DTBarY{ 60,L"DT Offset Y" };
-			inline CVar<int> DTBarX{ 0,L"DT Offset X" };
+			inline CVar<int> DTBarY{ 180,L"DT Offset Y" };
+			inline CVar<int> DTBarX{ -20,L"DT Offset X" };
 			inline CVar<bool> WaitForDT{ true, L"Wait for DT" };
-			inline CVar<bool> Fakelag{ true, L"Fakelag" };
+			inline CVar<bool> Fakelag{ false, L"Fakelag" };
 			inline CVar<int> FakelagMode{ 0, L"Fakelag Mode" }; // 0 - plain, 1 - random, 2 - vel based
 			inline CVar<int> FakelagMin{ 1, L"Fakelag Min" }; //	only show when FakelagMode=2
 			inline CVar<int> FakelagMax{ 22, L"Fakelag Max" };
 			inline CVar<bool> FakelagIndicator{ true, L"Fakelag Indicator" };
-			inline CVar<bool> FakelagOnKey{ true, L"Fakelag On Key" }; // dont show when fakelagmode=2|3
+			inline CVar<bool> FakelagOnKey{ false, L"Fakelag On Key" }; // dont show when fakelagmode=2|3
 			inline CVar<int> FakelagKey{ 0x54, L"Fakelag Key" }; //T
-			inline CVar<int> FakelagValue{ 1, L"Fakelag value" }; // dont show when fakelagmode=2
+			inline CVar<int> FakelagValue{ 13, L"Fakelag value" }; // dont show when fakelagmode=2
 			inline CVar<int> AutoPeekKey{ false, L"Autopeek Key" };
 			inline CVar<float> AutoPeekDistance{ 200.f, L"Auto Peek distance" };
 			inline CVar<bool> AutoPeekFree{ false, L"Autopeek free move" };

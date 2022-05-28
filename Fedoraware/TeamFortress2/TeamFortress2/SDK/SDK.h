@@ -112,6 +112,7 @@ namespace Colors
 {
 	inline Color_t White =						{ 255, 255, 255, 255 };
 	inline Color_t OutlineESP =					{ 0, 0, 0, 255 };
+	inline Color_t DTBarNitroIndicator = 		{ 240, 125, 30, 255};
 	inline Gradient_t DTBarIndicatorsCharged = { {106, 255, 131, 180}, {106, 255, 250, 180} };
 	inline Gradient_t DTBarIndicatorsCharging = { {255, 192, 81, 180}, {255, 134, 81, 180} };
 	inline Gradient_t ChokedBar =				{ { 47, 39, 0, 255 }, { 255, 210, 0, 255 } };
