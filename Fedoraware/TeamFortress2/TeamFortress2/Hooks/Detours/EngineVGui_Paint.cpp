@@ -157,6 +157,10 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2) //nitro style
 							{
+								const int xoff = Vars::Misc::CL_Move::DTBarX.m_Var; // width offset 
+								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // height offset
+								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; // height
+								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var;
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
@@ -176,32 +180,32 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 							}
-								/*
-    								if (g_GlobalInfo.m_nShifted == 0) // no charge no money
-    								{
-    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 55, 40, 255}, ALIGN_REVERSE,
-    									              L"(0/%i) No Ticks!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    								}
-    								else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nWaitForShift || ratio < 1)) // charging 
-    								{
-    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 126, 0, 255}, ALIGN_REVERSE,
-    									              L"(%i/%i) Recharging!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    								}
-    								else if (!g_GlobalInfo.m_nWaitForShift || ratio != 1) // activates when ready
-    								{
-    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    									              nY - (yscale / 2 + 48) - 10 + yoff, {66, 255, 0, 255}, ALIGN_REVERSE,
-    									              L"(%i/%i) Ready!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    								}
-    								else // activates when waiting blah blah blahg
-    								{
-    									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 46, 46, 255}, ALIGN_REVERSE,
-    									              L"(%i/%i) Waiting!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    								}
-								*/
+							/*
+    							if (g_GlobalInfo.m_nShifted == 0) // no charge no money
+    							{
+    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    								              nY - (yscale / 2 + 48) - 10 + yoff, {255, 55, 40, 255}, ALIGN_REVERSE,
+    								              L"(0/%i) No Ticks!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    							}
+    							else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nWaitForShift || ratio < 1)) // charging 
+    							{
+    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 126, 0, 255}, ALIGN_REVERSE,
+									              L"(%i/%i) Recharging!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+								}
+    							else if (!g_GlobalInfo.m_nWaitForShift || ratio != 1) // activates when ready
+    							{
+    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    								              nY - (yscale / 2 + 48) - 10 + yoff, {66, 255, 0, 255}, ALIGN_REVERSE,
+    								              L"(%i/%i) Ready!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    							}
+    							else // activates when waiting blah blah blahg
+								{
+    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+    								              nY - (yscale / 2 + 48) - 10 + yoff, {255, 46, 46, 255}, ALIGN_REVERSE,
+    								              L"(%i/%i) Waiting!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+    							}
+							*/
 
 							// Rijin DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
