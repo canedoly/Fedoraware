@@ -159,7 +159,8 @@ Chams_t FetchChams(CBaseEntity* pEntity)
 	}
 	return Vars::Chams::Buildings::Enemy;
 }
-Chams_t FetchChams(CBaseObject* pBuilding) {
+Chams_t FetchChams(CBaseObject* pBuilding) 
+{
 	if (const auto pEntity = pBuilding->GetOwner())
 	{
 		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && Vars::Chams::Buildings::Target.chamsActive) {
