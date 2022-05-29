@@ -630,8 +630,8 @@ namespace Vars
 			inline CVar<int> DTWaitCalls{ 0, L"DT Wait Calls"};
 			inline CVar<int> DTBarScaleY{ 12, L"DT Indicator Height" };
 			inline CVar<int> DTBarScaleX{ 100, L"DT Indicator Widht" };
-			inline CVar<int> DTBarY{ 180,L"DT Offset Y" };
-			inline CVar<int> DTBarX{ -20,L"DT Offset X" };
+			inline CVar<int> DTBarY{ 100,L"DT Offset Y" };
+			inline CVar<int> DTBarX{ 0,L"DT Offset X" };
 			inline CVar<bool> WaitForDT{ true, L"Wait for DT" };
 			inline CVar<bool> Fakelag{ false, L"Fakelag" };
 			inline CVar<int> FakelagMode{ 0, L"Fakelag Mode" }; // 0 - plain, 1 - random, 2 - vel based
