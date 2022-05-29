@@ -562,7 +562,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Players::Team.customMaterial);
 					}
 					break;
-				}*/
+				}
 				case 4:
 				{
 					// Target
@@ -835,7 +835,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Team.customMaterial);
 					}
 					break;
-				}*/
+				}
 				case 4:
 				{
 					// Target

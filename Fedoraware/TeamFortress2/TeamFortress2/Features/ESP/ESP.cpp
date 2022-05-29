@@ -361,7 +361,9 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				// Cheater detection ESP testing stuff to have cheater above name
 				if (g_BadActors.markedcheaters[pi.friendsID] && Vars::ESP::Players::CheaterDetection.m_Var)
 				{
-					g_Draw.String(FONT_NAME, middle, (y * 2) - offset, {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "cheater");
+					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					g_Draw.String(FONT_NAME, middle, (y * 2) - offset,
+					{255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "cheater");
 				}
 				//if (g_BadActors.markedcheaters[pi.friendsID] && Vars::ESP::Players::CheaterDetection.m_Var)
 				//{

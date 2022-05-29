@@ -129,7 +129,8 @@ void CChams::Render()
 	}
 }
 
-Chams_t FetchChams(CBaseEntity* pEntity) {
+Chams_t FetchChams(CBaseEntity* pEntity) 
+{
 	if (pEntity)
 	{
 		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && Vars::Chams::Players::Target.chamsActive) {
@@ -141,21 +142,20 @@ Chams_t FetchChams(CBaseEntity* pEntity) {
 		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Players::Friend.chamsActive) {
 			return Vars::Chams::Players::Friend;
 		}
-		if (pEntity->GetTeamNum == 2)
+		if (pEntity->GetTeamNum() == 2)
 		{
 			return Vars::Chams::Players::Enemy;
 		}
-		if (pEntity->GetTeamNum == 3)
+		if (pEntity->GetTeamNum() == 3)
 		{
-			return Vars::Chams::Players::textAntialiasMode;
+			return Vars::Chams::Players::Team;
 		}
 		/*if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Players::Enemy;
 		}
 		if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Players::Team;
-		*/
-		}
+		}*/
 	}
 	return Vars::Chams::Buildings::Enemy;
 }
