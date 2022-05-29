@@ -803,6 +803,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 
 			SAVE_OTHER(Colors::OutlineESP);
 			SAVE_OTHER(Colors::DTBarNitroIndicator);
+			SAVE_OTHER(Colors::DTBarNitroIndicatorEnd);
 			SAVE_OTHER(Colors::DTBarIndicatorsCharged);
 			SAVE_OTHER(Colors::DTBarIndicatorsCharging);
 			SAVE_OTHER(Colors::ChokedBar);
@@ -1529,6 +1530,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 
 			LOAD_OTHER(Colors::OutlineESP);
 			LOAD_OTHER(Colors::DTBarNitroIndicator);
+			LOAD_OTHER(Colors::DTBarNitroIndicatorEnd);
 			LOAD_OTHER(Colors::DTBarIndicatorsCharged);
 			LOAD_OTHER(Colors::DTBarIndicatorsCharging);
 			LOAD_OTHER(Colors::ChokedBar);

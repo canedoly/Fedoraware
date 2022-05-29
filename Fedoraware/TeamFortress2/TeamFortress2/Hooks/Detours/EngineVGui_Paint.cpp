@@ -168,17 +168,22 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
 								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; //  12  height
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
-								static Color_t color5;
+								static Color_t colorN1, colorN2;
 								{
-									color5 = Colors::DTBarNitroIndicator;
+									colorN1 = Colors::DTBarNitroIndicator;
+									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
 
-								g_Draw.Rect(g_ScreenSize.c - (80 / 2 + 2) + xoff, nY - (8 / 2 + 2) + (yoff + 20), 80 + 2,
+								g_Draw.Rect(g_ScreenSize.c - (80 / 2 + 2) + xoff, nY - (8 / 2 + 2) + (yoff + 5), 80 + 2,
 											8 + 2, { 17, 24, 26, 255 });
 
-								g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
-											8, { 17, 24, 26, 255 });
+								g_Draw.GradientRect(g_ScreenSize.c - ((xscale - 20) / 2) + xoff, nY - ((yscale - 4) / 2) + (yoff + 5),
+													((g_ScreenSize.c - ((xscale - 20) / 2) + xoff) + ((xscale - 20) * ratio)),
+													(nY - ((yscale - 4) / 2) + yoff + (yscale - 4)), { colorN1 }, { colorN2 }, TRUE);
+
+								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
+								//			8, { 17, 24, 26, 255 });
 								
 
 								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),

@@ -1134,7 +1134,8 @@ void CMenu::MenuVisuals()
 					//WSlider("DT Width", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 1, 200);
 					WSlider("DT Height Offset", &Vars::Misc::CL_Move::DTBarY.m_Var, -200, 200);
 					WSlider("DT Width Offset", &Vars::Misc::CL_Move::DTBarX.m_Var, -200, 200);
-					ColorPickerL("DT Nitro bar colour", Colors::DTBarNitroIndicator);
+					ColorPickerL("DT Nitro bar colour left", Colors::DTBarNitroIndicator, 1);
+					ColorPickerL("DT Nitro bar colour right", Colors::DTBarNitroIndicatorEnd);
 				}
 				else
 				{
