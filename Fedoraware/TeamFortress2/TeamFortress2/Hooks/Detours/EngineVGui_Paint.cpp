@@ -301,7 +301,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								}
 							}
 
-							if (Vars::Misc::CL_Move::DTBarStyle == 4)
+							if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 4)
 							{
 								const int xoff = Vars::Misc::CL_Move::DTBarX.m_Var; // -20  width offset 
 								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
