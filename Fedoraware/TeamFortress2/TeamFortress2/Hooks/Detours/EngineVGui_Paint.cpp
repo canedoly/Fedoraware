@@ -178,12 +178,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 2) + xoff, nY - (yscale / 2 + 2) + (yoff - 15), (xscale + 2),
 											(yscale + 2), { 17, 24, 26, 170 });
 
-								//g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15), (xscale / 2) + (xscale / 2 * ratio),
-								//			yscale, { colorN1 });
-
-								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15),
-													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale / 2 * ratio)),
-													(nY - (yscale / 2) + yoff + yscale), { colorN1 }, { colorN2 }, TRUE);
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15), (xscale / 2) + (xscale / 2 * ratio),
+											yscale, { colorN1 });
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
