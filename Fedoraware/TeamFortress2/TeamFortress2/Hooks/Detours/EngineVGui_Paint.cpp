@@ -175,27 +175,27 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
-								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 2) + xoff, nY - (yscale / 2 + 2) + (yoff - 15), (xscale + 2),
-											(yscale + 2), { 17, 24, 26, 170 });
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 30), (xscale + 1),
+											(yscale - 2), { 17, 24, 26, 170 });
 
-								g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15), (xscale / 2) + (xscale / 2 * ratio),
-											yscale, { colorN1 });
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 30), (xscale / 2) + (xscale / 2 * ratio),
+											(yscale - 2), { colorN1 });
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + -20 + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
 												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + xoff + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + -20 + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_DEFAULT,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + -20 + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_DEFAULT,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
