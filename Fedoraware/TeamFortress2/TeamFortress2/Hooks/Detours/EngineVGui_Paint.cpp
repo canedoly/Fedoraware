@@ -74,8 +74,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero())
 				{
-					//if (Vars::Visuals::MoveSimLine.m_Var && g_GlobalInfo.m_bAttacking())
-					if (g_GlobalInfo.m_bAttacking)
+					if (Vars::Visuals::MoveSimLine.m_Var)
 					{
 						for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 						{
@@ -142,7 +141,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							// Rijin V1 DT Bar
 							if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 1)
 							{
-								const auto maxWidth = static_cast<float>(22 * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
+								const auto maxWidth = static_cast<float>(Vars::Misc::CL_Move::DTTicks.m_Var * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
 								const float dtOffset = g_ScreenSize.c - (maxWidth / 2);
 								static float tickWidth = 0.f;
 								static float barWidth = 0.f;
@@ -176,27 +175,15 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
-								// TODO: REPLACE ALL + 2 WITH + 1
-								g_Draw.Rect(g_ScreenSize.c - (110 / 2 + 1) + xoff, nY - (10 / 2 + 1) + (yoff + 5), 110 + 1,
-											10 + 1, { 17, 24, 26, 255 });
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 2) + xoff, nY - (yscale / 2 + 2) + (yoff - 15), (xscale + 2),
+											(yscale + 2), { 17, 24, 26, 255 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (110 / 2) + xoff, nY - (10 / 2) + (yoff + 5),
-													((g_ScreenSize.c - (110 / 2) + xoff) + (110 * ratio)),
-													(nY - (10 / 2) + yoff + 10), { colorN1 }, { colorN2 }, TRUE);
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15), (xscale / 2),
+											yscale, { 17, 24, 26, 255 });
 
-								//g_Draw.GradientRect(g_ScreenSize.c - ((xscale - 21) / 2) + xoff, nY - ((yscale - 5) / 2) + (yoff + 5),
-								//					((g_ScreenSize.c - ((xscale - 20) / 2) + xoff) + ((xscale - 20) * ratio)),
-								//					(nY - ((yscale - 4) / 2) + yoff + (yscale - 4)), { colorN1 }, { colorN2 }, TRUE);
-
-								// DON'T TALK ABOUT THESE COMMENTS ITS MY OWN CODE AND I WILL CLEAN UP LATER IF IT WORKS
-
-								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
-								//			8, { 17, 24, 26, 255 });
-								
-
-								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
-								//					((g_ScreenSize.c - (80 / 2) + xoff) + (80 * ratio)),
-								//					(nY - (80 / 2) + (yoff + 20) + 80), { color5 }, TRUE);
+								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 15),
+													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale / 2 * ratio)),
+													(nY - (yscale / 2) + yoff + yscale), { color1 }, { color2 }, TRUE);
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
@@ -213,38 +200,30 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_DEFAULT,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
-							}
-							/*
-    							if (g_GlobalInfo.m_nShifted == 0) // no charge no money
-    							{
-    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    								              nY - (yscale / 2 + 48) - 10 + yoff, {255, 55, 40, 255}, ALIGN_REVERSE,
-    								              L"(0/%i) No Ticks!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    							}
-    							else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nWaitForShift || ratio < 1)) // charging 
-    							{
-    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-									              nY - (yscale / 2 + 48) - 10 + yoff, {255, 126, 0, 255}, ALIGN_REVERSE,
-									              L"(%i/%i) Recharging!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-								}
-    							else if (!g_GlobalInfo.m_nWaitForShift || ratio != 1) // activates when ready
-    							{
-    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    								              nY - (yscale / 2 + 48) - 10 + yoff, {66, 255, 0, 255}, ALIGN_REVERSE,
-    								              L"(%i/%i) Ready!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    							}
-    							else // activates when waiting blah blah blahg
-								{
-    								g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-    								              nY - (yscale / 2 + 48) - 10 + yoff, {255, 46, 46, 255}, ALIGN_REVERSE,
-    								              L"(%i/%i) Waiting!", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
-    							}
-							*/
+								//g_Draw.GradientRect(g_ScreenSize.c - (100 / 2) + xoff, nY - (10 / 2) + (yoff + 5),
+								//					((g_ScreenSize.c - (100 / 2) + xoff) + (100 * ratio)),
+								//					(nY - (10 / 2) + yoff + 10), { colorN1 }, { colorN2 }, TRUE);
 
-							// Rijin DT Bar
+								//g_Draw.GradientRect(g_ScreenSize.c - ((xscale - 21) / 2) + xoff, nY - ((yscale - 5) / 2) + (yoff + 5),
+								//					((g_ScreenSize.c - ((xscale - 20) / 2) + xoff) + ((xscale - 20) * ratio)),
+								//					(nY - ((yscale - 4) / 2) + yoff + (yscale - 4)), { colorN1 }, { colorN2 }, TRUE);
+
+								// DON'T TALK ABOUT THESE COMMENTS ITS MY OWN CODE AND I WILL CLEAN UP LATER IF IT WORKS
+
+								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
+								//			8, { 17, 24, 26, 255 });
+								
+
+								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20),
+								//					((g_ScreenSize.c - (80 / 2) + xoff) + (80 * ratio)),
+								//					(nY - (80 / 2) + (yoff + 20) + 80), { color5 }, TRUE);
+
+							}
+
+							// Rijin V2 DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
 							{
 								g_DTBar.Run();
