@@ -615,6 +615,7 @@ namespace Vars
 			inline CVar<bool> NotInAir{ true, L"Dont DT in air" };
 			inline CVar<int> TeleportKey{ 0x52, L"Teleport Key" }; //R
 			inline CVar<int> TeleportMode{ 0 };
+			inline CVar<int> WarpSpeed{	2, L"Warp Speed" };
 			inline CVar<int> RechargeKey{ 0x48, L"Recharge Key" }; //H
 			inline CVar<int> DoubletapKey{ 0x56, L"Doubletap Key" }; //V
 			inline CVar<int> DTBarStyle{ 3, L"Doubletap bar style" };

@@ -1118,7 +1118,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.m_Var, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.m_Var, { "Off", "Default", "Nitro", "Rijin" }); HelpMarker("Which style to do the bar style");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.m_Var, { "Off", "Default", "Nitro", "Rijin", "Text" }); HelpMarker("Which style to do the bar style");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
 				if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 3)
@@ -1128,7 +1128,7 @@ void CMenu::MenuVisuals()
 					ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
 					WSlider("DT Bar width###dtBWidthNitro", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 100, 1000);
 				}
-				else if ( Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
+				else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
 				{
 					//WSlider("DT Height", &Vars::Misc::CL_Move::DTBarScaleY.m_Var, 1, 200);
 					//WSlider("DT Width", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 1, 200);
@@ -1137,7 +1137,12 @@ void CMenu::MenuVisuals()
 					ColorPickerL("DT Nitro bar colour left", Colors::DTBarNitroIndicator, 1);
 					ColorPickerL("DT Nitro bar colour right", Colors::DTBarNitroIndicatorEnd);
 				}
-				else
+				else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 4)
+				{
+					WSlider("DT Height Offset", &Vars::Misc::CL_Move::DTBarY.m_Var, -200, 200);
+					WSlider("DT Width Offset", &Vars::Misc::CL_Move::DTBarX.m_Var, -200, 200);
+				}
+				else 
 				{
 					WSlider("DT Bar height###dtBHeight", &Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var, 1, 30);
 					ColorPickerL("DT charged right", Colors::DTBarIndicatorsCharged.endColour);
@@ -1496,7 +1501,11 @@ void CMenu::MenuHvH()
 				InputKeybind("Doubletap key", Vars::Misc::CL_Move::DoubletapKey); HelpMarker("Only doubletap when the key is pressed. Leave as (None) for always active.");
 			}
 
-			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.m_Var, { "Plain", "Smooth" }); HelpMarker("How the teleport should be done");
+			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.m_Var, { "Plain", "Custom" }); HelpMarker("How the teleport should be done");
+			if (Vars::Misc::CL_Move::TeleportMode.m_Var == 1)
+			{
+				WSlider("Warp Speed", &Vars::Misc::CL_Move::WarpSpeed.m_Var, 1, 24, "%d"); HelpMarker("How many ticks to warp");
+			}
 			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne" }, { &Vars::Misc::CL_Move::RechargeWhileDead.m_Var, &Vars::Misc::CL_Move::AutoRecharge.m_Var, &Vars::Misc::CL_Move::WaitForDT.m_Var, &Vars::Misc::CL_Move::AntiWarp.m_Var, &Vars::Misc::CL_Move::NotInAir.m_Var }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.m_Var, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
