@@ -278,7 +278,7 @@ namespace Vars
 	{
 		namespace Main
 		{
-			inline CVar<bool> Active{ true , L"Active" };
+			inline CVar<bool> Active{ true ,Enemy L"Active" };
 		}
 
 		namespace Players
@@ -291,8 +291,10 @@ namespace Vars
 			// {ignorez, material, overlay type (0 = off), active}
 			inline Chams_t Local{};
 			inline Chams_t Friend{};
-			inline Chams_t Enemy{};
-			inline Chams_t Team{};
+			inline Chams_t RedChams{};
+			inline Chams_t BlueChams{};
+			//inline Chams_t Enemy{};
+			//inline Chams_t Team{};
 			inline Chams_t Target{};
 		}
 
@@ -300,8 +302,10 @@ namespace Vars
 		{
 			inline Chams_t Local{};
 			inline Chams_t Friend{};
-			inline Chams_t Enemy{};
-			inline Chams_t Team{};
+			inline Chams_t RedChams{};
+			inline Chams_t BlueChams{};
+			//inline Chams_t Enemy{};
+			//inline Chams_t Team{};
 			inline Chams_t Target{};
 
 			inline CVar<bool> Active{ true, L"Active" };

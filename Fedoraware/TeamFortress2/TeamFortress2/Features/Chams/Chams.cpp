@@ -141,11 +141,20 @@ Chams_t FetchChams(CBaseEntity* pEntity) {
 		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Players::Friend.chamsActive) {
 			return Vars::Chams::Players::Friend;
 		}
-		if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
+		if (pEntity->GetTeamNum == 2)
+		{
+			return Vars::Chams::Players::RedChams;
+		}
+		if (pEntity->GetTeamNum == 3)
+		{
+			return Vars::Chams::Players::BlueChams;
+		}
+		/*if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Players::Enemy;
 		}
 		if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Players::Team;
+		*/
 		}
 	}
 	return Vars::Chams::Buildings::Enemy;
@@ -162,12 +171,20 @@ Chams_t FetchChams(CBaseObject* pBuilding) {
 		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Buildings::Friend.chamsActive) {
 			return Vars::Chams::Buildings::Friend;
 		}
-		if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
+		if (pEntity->GetTeamNum == 2)
+		{
+			return Vars::Chams::Buildings::RedChams;
+		}
+		if (pEntity->GetTeamNum == 3)
+		{
+			return Vars::Chams::Buildings::BlueChams;
+		}
+		/*if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Buildings::Enemy;
 		}
 		if (pEntity->GetTeamNum() == g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Buildings::Team;
-		}
+		*/
 	}
 	return Vars::Chams::Buildings::Enemy;
 }
