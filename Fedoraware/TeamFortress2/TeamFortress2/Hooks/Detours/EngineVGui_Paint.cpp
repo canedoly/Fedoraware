@@ -78,7 +78,6 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 					{
 						for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 						{
-							static Timer updateTimer{ };
 							Vec3 vScreenpast, vScreenfuture;
 							if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
 							{
@@ -86,10 +85,6 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								{
 									g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
 												{ Vars::Aimbot::Projectile::PredictionColor });
-									if (updateTimer.Run (30 * 100))
-									{
-										return false;
-									}
 								}
 								
 							}
