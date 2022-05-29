@@ -143,11 +143,11 @@ Chams_t FetchChams(CBaseEntity* pEntity) {
 		}
 		if (pEntity->GetTeamNum == 2)
 		{
-			return Vars::Chams::Players::RedChams;
+			return Vars::Chams::Players::Enemy;
 		}
 		if (pEntity->GetTeamNum == 3)
 		{
-			return Vars::Chams::Players::BlueChams;
+			return Vars::Chams::Players::textAntialiasMode;
 		}
 		/*if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Players::Enemy;
@@ -173,11 +173,11 @@ Chams_t FetchChams(CBaseObject* pBuilding) {
 		}
 		if (pEntity->GetTeamNum == 2)
 		{
-			return Vars::Chams::Buildings::RedChams;
+			return Vars::Chams::Buildings::Enemy;
 		}
 		if (pEntity->GetTeamNum == 3)
 		{
-			return Vars::Chams::Buildings::BlueChams;
+			return Vars::Chams::Buildings::Team;
 		}
 		/*if (pEntity->GetTeamNum() != g_EntityCache.m_pLocal->GetTeamNum()) {
 			return Vars::Chams::Buildings::Enemy;

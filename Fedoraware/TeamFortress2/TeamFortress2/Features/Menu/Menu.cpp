@@ -514,7 +514,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Players::Friend.customMaterial);
 					}
 					break;
-				}
+				}/*
 				case 2:
 				{
 					// Enemies
@@ -538,7 +538,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Players::BlueChams.customMaterial);
 					}
 					break;
-				}/*
+				}*/
 				case 2:
 				{
 					// Enemies
@@ -787,7 +787,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::Friend.customMaterial);
 					}
 					break;
-				}
+				}/*
 				case 2:
 				{
 					// RedChams
@@ -811,7 +811,7 @@ void CMenu::MenuVisuals()
 						MaterialCombo("Custom Material", &Vars::Chams::Buildings::BlueChams.customMaterial);
 					}
 					break;
-				}/*
+				}*/
 				case 2:
 				{
 					// Enemy
