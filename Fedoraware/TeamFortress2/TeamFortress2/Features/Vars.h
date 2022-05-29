@@ -278,7 +278,7 @@ namespace Vars
 	{
 		namespace Main
 		{
-			inline CVar<bool> Active{ true ,Enemy L"Active" };
+			inline CVar<bool> Active{ true, L"Active" };
 		}
 
 		namespace Players
