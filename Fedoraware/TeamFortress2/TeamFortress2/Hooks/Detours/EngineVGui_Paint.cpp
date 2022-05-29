@@ -144,7 +144,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const float dtOffset = g_ScreenSize.c - (maxWidth / 2);
 								static float tickWidth = 0.f;
 								static float barWidth = 0.f;
-								tickWidth = (g_GlobalInfo.m_nShifted * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
+								tickWidth = (22 * Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var);
 								barWidth = g_Draw.EaseIn(barWidth, tickWidth, 0.9f);
 
 								g_Draw.Rect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
@@ -174,13 +174,19 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
-
-								g_Draw.Rect(g_ScreenSize.c - (80 / 2 + 2) + xoff, nY - (8 / 2 + 2) + (yoff + 5), 80 + 2,
+								// TODO: REPLACE ALL + 2 WITH + 1
+								g_Draw.Rect(g_ScreenSize.c - (90 / 2 + 2) + xoff, nY - (8 / 2 + 2) + (yoff + 5), 80 + 2,
 											8 + 2, { 17, 24, 26, 255 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - ((xscale - 20) / 2) + xoff, nY - ((yscale - 4) / 2) + (yoff + 5),
-													((g_ScreenSize.c - ((xscale - 20) / 2) + xoff) + ((xscale - 20) * ratio)),
-													(nY - ((yscale - 4) / 2) + yoff + (yscale - 4)), { colorN1 }, { colorN2 }, TRUE);
+								g_Draw.GradientRect(g_ScreenSize.c - (90 / 2) + xoff, nY - (8 / 2) + (yoff + 5),
+													((g_ScreenSize.c - (90 / 2) + xoff) + (90 * ratio)),
+													(nY - (8 / 2) + yoff + 8), { colorN1 }, { colorN2 }, TRUE);
+
+								//g_Draw.GradientRect(g_ScreenSize.c - ((xscale - 21) / 2) + xoff, nY - ((yscale - 5) / 2) + (yoff + 5),
+								//					((g_ScreenSize.c - ((xscale - 20) / 2) + xoff) + ((xscale - 20) * ratio)),
+								//					(nY - ((yscale - 4) / 2) + yoff + (yscale - 4)), { colorN1 }, { colorN2 }, TRUE);
+
+								// DON'T TALK ABOUT THESE COMMENTS ITS MY OWN CODE AND I WILL CLEAN UP LATER IF IT WORKS
 
 								//g_Draw.Rect(g_ScreenSize.c - (80 / 2) + xoff, nY - (8 / 2) + (yoff + 20), 80,
 								//			8, { 17, 24, 26, 255 });
