@@ -175,12 +175,12 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
-								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 30), (xscale + 1),
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 40), (xscale + 1),
 											(yscale - 2), { 17, 24, 26, 170 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 30),
+								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 40),
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
-													(nY - (yscale / 2) + yoff), { colorN1 }, { colorN2 }, TRUE);
+													(nY - (yscale / 2) + (yoff - 40)), { colorN1 }, { colorN2 }, TRUE);
 
 
 								if (g_GlobalInfo.m_nShifted == 0)

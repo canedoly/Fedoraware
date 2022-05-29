@@ -312,8 +312,8 @@ namespace Utils
 				out = Colors::Invuln;
 		}
 
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = Colors::Enemy;
+		//if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
+		//	out = Colors::Enemy;
 
 		return out;
 	}
