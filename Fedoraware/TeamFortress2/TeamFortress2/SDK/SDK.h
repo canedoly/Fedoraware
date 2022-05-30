@@ -296,8 +296,16 @@ namespace Utils
 
 		if (pEntity->IsPlayer())
 		{
-			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-				out = Colors::rTeam;
+			if (g_EntityCache.m_pLocal->GetTeamNum() == 2)
+			{
+				out = Colors::TeamRed;
+			}
+			else if (g_EntityCache.m_pLocal->GetTeamNum() == 3)
+			{
+				out = Colors::TeamBlu;
+			}
+			//if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
+			//	out = Colors::rTeam;
 
 			else if (g_EntityCache.IsFriend(pEntity->GetIndex()) || pEntity == g_EntityCache.m_pLocal)
 				out = Colors::Friend;
