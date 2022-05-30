@@ -88,8 +88,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							{
 								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 								{
-									g_Draw.GradientLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-												{ colorP1, colorP2 });
+									g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+												colorP1, colorP2);
 								}
 								
 							}
