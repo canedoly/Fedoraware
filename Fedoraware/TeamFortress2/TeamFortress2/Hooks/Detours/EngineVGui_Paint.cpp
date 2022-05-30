@@ -81,7 +81,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							static Color_t colorP1, colorP2;
 							{
 								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
-								colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
+								//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
 							}
 							Vec3 vScreenpast, vScreenfuture;
 							if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
@@ -89,7 +89,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 								{
 									g_Draw.GradientLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-												colorP1, colorP2);//idk if it would work lmao
+														colorP1);//idk if it would work lmao
 								}
 								
 							}
@@ -185,8 +185,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 											(yscale - 2), { 17, 24, 26, 170 });
 
 								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 40),
-													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale / 2 * ratio)),
-													(nY - (yscale / 2) + (yoff - 30)), { colorN1 }, { colorN2 }, TRUE);
+													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio - 1)),
+													(nY - (yscale / 2 - 3) + (yoff - 30)), { colorN1 }, { colorN2 }, TRUE);
 
 
 								if (g_GlobalInfo.m_nShifted == 0)
