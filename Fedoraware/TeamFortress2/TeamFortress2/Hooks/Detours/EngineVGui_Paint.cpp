@@ -78,13 +78,18 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 					{
 						for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 						{
+							static Color_t colorP1, colorP2;
+							{
+								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
+								colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
+							}
 							Vec3 vScreenpast, vScreenfuture;
 							if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
 							{
 								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 								{
 									g_Draw.GradientLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-												{ Vars::Aimbot::Projectile::PredictionColor.startColour, Vars::Aimbot::Projectile::PredictionColor.endColour });
+												{ colorP1, colorP2 });
 								}
 								
 							}
