@@ -85,7 +85,8 @@ namespace Vars
 			inline CVar<bool> AutoShoot{ true, L"Auto Shoot" };
 			inline CVar<bool> AimPlayers{ true, L"Aim Players" };
 			inline CVar<bool> AimBuildings{ true, L"Aim Buildings" };
-			inline CVar<bool> AimStickies{ true };
+			inline CVar<bool> AimStickies{ true }; 
+			inline CVar<bool> HighlightAim{ false, L"Highlight aim target"};
 			inline CVar<bool> IgnoreInvlunerable{ true, L"Ignore Invulnerable" };
 			inline CVar<bool> IgnoreCloaked{ false, L"Ignore Cloaked" };
 			inline CVar<bool> IgnoreFriends{ true, L"Ignore Friends" };

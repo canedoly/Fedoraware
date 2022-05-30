@@ -238,6 +238,7 @@ void CMenu::MenuAimbot()
 			SectionTitle("Global");
 
 			WToggle("Aimbot", &Vars::Aimbot::Global::Active.m_Var); HelpMarker("Aimbot master switch");
+			WToggle("Highlight aim target", &Vars::Aimbot::Global::Highlight.m_Var); HelpMarker("Highlight aim target");
 			ColorPickerL("Target", Colors::Target);
 			InputKeybind("Aimbot key", Vars::Aimbot::Global::AimKey); HelpMarker("The key to enable aimbot");
 			WSlider("Aimbot FoV####AimbotFoV", &Vars::Aimbot::Global::AimFOV.m_Var, 0.f, 180.f, "%.f", ImGuiSliderFlags_AlwaysClamp);

@@ -89,7 +89,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 								{
 									g_Draw.GradientLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-												colorP1, colorP2);
+												colorP1, colorP2);//idk if it would work lmao
 								}
 								
 							}
@@ -112,6 +112,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									vProjAimEnd.x,
 									vProjAimEnd.y,
 									{ 255, 255, 255, 255 } //Set this to a var if u wantto idc
+														   // no.
 								);
 							}
 						}
@@ -274,20 +275,20 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 48) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 48) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 48) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}	
 							}
