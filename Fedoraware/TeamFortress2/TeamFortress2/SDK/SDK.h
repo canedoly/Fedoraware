@@ -319,6 +319,7 @@ namespace Utils
 			else if (!pEntity->IsVulnerable())
 				out = Colors::Invuln;
 		}
+
 		if (Vars::Aimbot::Global::HighlightAim.m_Var)
 		{
 			if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)

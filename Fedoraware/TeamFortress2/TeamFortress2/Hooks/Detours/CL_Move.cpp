@@ -1,6 +1,7 @@
 #include "../Hooks.h"
 
 #include "../../Features/Misc/Misc.h"
+#include "../../Main/ConVars/ConVars.h"
 
 MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? ? 02 0F 8C ? ? 00 00 E8 ? ? ? 00 84 C0"), void, __cdecl,
 		  float accumulated_extra_samples, bool bFinalTick)
@@ -56,7 +57,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		g_GlobalInfo.m_bRecharging = true;
 		g_GlobalInfo.tickShiftQueue = 0;
 	}
-	else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nShifted < sv_maxusrcmdprocessticks->GetInt()))
+	else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nShifted < g_ConVars.sv_maxusrcmdprocessticks->GetInt()))
 	{
 		g_GlobalInfo.m_bForceSendPacket = true; // force uninterrupted connection with server
 		g_GlobalInfo.m_nShifted++; // add ticks to tick counter
