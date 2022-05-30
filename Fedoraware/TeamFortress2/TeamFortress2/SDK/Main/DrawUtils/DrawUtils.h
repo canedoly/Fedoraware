@@ -53,7 +53,7 @@ struct Draw_t
 	void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
 	void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const wchar_t* str, ...);
 	void Line(int x, int y, int x1, int y1, const Color_t& clr);
-	void GradientLine(int x, int y, int x1, int y1, const Color_t& top_clr, const Color_t& bottom_clr);
+	void GradientLine(int x, int y, int x1, int y1, const Color_t& top_clr, const Color_t& bottom_clr, bool horizontal);
 	void DrawTexturedPolygon(int count, Vertex_t* vertices, const Color_t& clr);
 	void DrawFilledTriangle(std::array<Vec2, 3> points, const Color_t& clr);
 	void DrawOutlinedTriangle(std::array<Vec2, 3> points, const Color_t& clr);
