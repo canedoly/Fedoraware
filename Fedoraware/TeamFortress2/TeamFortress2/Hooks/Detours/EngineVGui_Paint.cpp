@@ -83,8 +83,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							{
 								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 								{
-									g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-												{ Vars::Aimbot::Projectile::PredictionColor });
+									g_Draw.GradientLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+												{ Vars::Aimbot::Projectile::PredictionColor.startColour, Vars::Aimbot::Projectile::PredictionColor.endColour });
 								}
 								
 							}
@@ -179,27 +179,27 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 											(yscale - 2), { 17, 24, 26, 170 });
 
 								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 40),
-													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
-													(nY - (yscale / 2) + (yoff - 40)), { colorN1 }, { colorN2 }, TRUE);
+													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale / 2 * ratio)),
+													(nY - (yscale / 2) + (yoff - 30)), { colorN1 }, { colorN2 }, TRUE);
 
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks 0/24", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks %i/24", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks %i/24", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 							}
 							// Rijin V2 DT Bar
@@ -269,19 +269,19 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 48) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
 												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 20) + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 48) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 48) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTER,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}	

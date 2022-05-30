@@ -144,6 +144,19 @@ void Draw_t::Line(int x, int y, int x1, int y1, const Color_t& clr)
 	I::Surface->DrawLine(x, y, x1, y1);
 }
 
+void Draw_t::GradientLine(int x, int y, int x1, int y1, const Color_t& top_clr, const Color_t& bottom_clr)
+{
+	I::Surface->SetDrawColor(top_clr.r, top_clr.g, top_clr.b, top_clr.a);
+	I::Surface->DrawLine(x, y, x1, y1);
+	I::Surface->SetDrawColor(bottom_clr.r, bottom_clr.g, bottom_clr.b, bottom_clr.a);
+	I::Surface->DrawLine(x, y, x1, y1);
+	//I::Surface->SetDrawColor(top_clr.r, top_clr.g, top_clr.b, top_clr.a);
+	//I::Surface->DrawFilledRectFade(x, y, x1, y1, 255, 255, horizontal);
+	//I::Surface->SetDrawColor(bottom_clr.r, bottom_clr.g, bottom_clr.b, bottom_clr.a);
+	//I::Surface->DrawFilledRectFade(x, y, x1, y1, 0, 255, horizontal);
+}
+
+
 void Draw_t::DrawTexturedPolygon(int count, Vertex_t* vertices, const Color_t& clr)
 {
 	static int iTexture = I::Surface->CreateNewTextureID(true);

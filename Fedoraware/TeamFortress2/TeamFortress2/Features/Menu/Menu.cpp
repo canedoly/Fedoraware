@@ -297,7 +297,8 @@ void CMenu::MenuAimbot()
 			SectionTitle("Projectile");
 			WToggle("Performance mode", &Vars::Aimbot::Projectile::PerformanceMode.m_Var); HelpMarker("Only target enemy closest to the crosshair");
 			WToggle("Movement simulation", &Vars::Aimbot::Projectile::MovementSimulation.m_Var); HelpMarker("Uses game functions to predict where the player will be");
-			ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
+			ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor.startColour);
+			ColorPickerL("Prediction Line color", Vars::Aimbot::Projectile::PredictionColor.endColour, 1);
 			if (Vars::Aimbot::Projectile::MovementSimulation.m_Var)
 			{
 				WSlider("Prediction Time", &Vars::Aimbot::Projectile::predTime.m_Var, 0.1f, 10.f, "%.1f");

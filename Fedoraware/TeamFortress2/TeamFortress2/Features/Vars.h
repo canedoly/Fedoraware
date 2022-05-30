@@ -129,7 +129,7 @@ namespace Vars
 			inline CVar<bool> FeetAimIfOnGround{ false, L"Aim at feet if target is on the ground." };
 			inline CVar<bool> SplashPrediction{ false, };
 			inline CVar<bool> MovementSimulation{ true, L"move sim" };
-			inline Color_t PredictionColor{ 255,255,255,255 };
+			inline Color_t PredictionColor{ 255,255,255,255, 255,255,255,255 };
 			inline CVar<bool> ManualZAdjust{ true, L"Toggle for manual z adjust on projectile prediction." };
 			inline CVar<float> ZAdjustAmount{ 5.5f, L"Z Adjust factor." };
 			inline CVar<float> predTime{ 2.0f, L"Prediction TIme" };
