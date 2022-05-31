@@ -320,11 +320,11 @@ namespace Utils
 				out = Colors::Invuln;
 		}
 
-		if (Vars::Aimbot::Global::HighlightAim.m_Var)
-		{
-			if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-			out = Colors::Target;
-		}
+		//if (Vars::Aimbot::Global::HighlightAim.m_Var)
+		//{
+		//	if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
+		//	out = Colors::Target;
+		//}
 		//if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
 		//	out = Colors::Enemy;
 
