@@ -8,6 +8,7 @@
 #include "Features/Camera/CameraWindow.h"
 #include "Features/Misc/Misc.h"
 #include "Features/Vars.h"
+#include "Features/CritHack/CritHack.h"
 
 #include "Features/Menu/Menu.h"
 
@@ -80,6 +81,7 @@ void Initialize()
 	g_CameraWindow.Init();
 	g_HookManager.Init();
 	g_ConVars.Init();
+	g_CritHack.Init();
 	g_PatchManager.Init();
 
 	InitRichPresence();

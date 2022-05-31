@@ -20,8 +20,8 @@ public: //Netvars
 		M_DYNVARGET(NextSecondaryAttack, float, this, _("DT_BaseCombatWeapon"), _("LocalActiveWeaponData"), _("m_flNextSecondaryAttack"))
 		M_DYNVARGET(NextPrimaryAttack, float, this, _("DT_BaseCombatWeapon"), _("LocalActiveWeaponData"), _("m_flNextPrimaryAttack"))
 		M_DYNVARGET(ChargeResistType, int, this, _("DT_WeaponMedigun"), _("m_nChargeResistType"))
-		//M_DYNVARGET(LastCritCheckTime, float, this, _("DT_TFWeaponBase"), _("LocalActiveTFWeaponData"), _("m_flLastCritCheckTime"))
-		//M_DYNVARGET(ObservedCritChance, float, this, _("DT_TFWeaponBase"), _("LocalActiveTFWeaponData"), _("m_flObservedCritChance"))
+		M_DYNVARGET(LastCritCheckTime, float, this, _("DT_TFWeaponBase"), _("LocalActiveTFWeaponData"), _("m_flLastCritCheckTime"))
+		M_DYNVARGET(ObservedCritChance, float, this, _("DT_TFWeaponBase"), _("LocalActiveTFWeaponData"), _("m_flObservedCritChance"))
 
 		M_OFFSETGET(UberCharge, float, 0xC6C) //DT_WeaponMedigun -> NonLocalTFWeaponMedigundata -> m_flChargeLevel
 		//M_OFFSETGET(HealingTarget, int, 0xC48) //DT_WeaponMedigun -> m_hHealingTarget
@@ -29,18 +29,18 @@ public: //Netvars
 
 			// pretty srue these are all wrong but i have no idea how to do the thing to find out what they are
 		// you add 1c idiot
-		/*
-				*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
-		*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
-		*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
-		*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
-		*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
-		*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
-		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
-		*//*
+		
+		//		*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
+		//*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
+		//*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
+		//*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
+		//*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
+		//*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
+		//*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
+		//*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
+		//*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
+		//*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
+		
 		M_OFFSETGET(CritBucket, float, 0xA54)
 		M_OFFSETGET(WeaponSeed, int, 0xB58)
 		M_OFFSETGET(Unknown1, int, 0xB4C)
@@ -52,7 +52,7 @@ public: //Netvars
 		M_OFFSETGET(ObservedCritChance, int, 0xC18)
 		M_OFFSETGET(Unknown7, bool, 0xB34)
 		M_OFFSETGET(WeaponMode, bool, 0xB20)
-		M_OFFSETGET(WeaponDataa, bool, 0xB2C)*/
+		M_OFFSETGET(WeaponDataa, bool, 0xB2C)
 
 
 public: //Virtuals
@@ -62,7 +62,7 @@ public: //Virtuals
 		M_VIRTUALGET(FinishReload, void, this, void(__thiscall*)(void*), 275)
 		M_VIRTUALGET(BulletSpread, Vec3&, this, Vec3& (__thiscall*)(void*), 286)
 
-public: //Everything else, lol
+public: //smack that ass
 	__inline float GetSmackTime() {
 		//credits to KGB
 		static auto dwOffset = g_NetVars.get_offset("DT_TFWeaponBase", "m_nInspectStage") + 0x1C;
@@ -85,6 +85,11 @@ public: //Everything else, lol
 			}
 		}
 		return true;
+	}
+	
+	__inline float ObservedCritChance()
+	{
+		DYNVAR_RETURN(float, this, "DT_TFWeaponBase", "LocalActiveTFWeaponData", "m_flObservedCritChance");
 	}
 
 	__inline CAttributeList* GetAttributeList() {
