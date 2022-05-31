@@ -1,7 +1,6 @@
+// lets paste old crithack lul
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
-
-// i hate crithack
 
 /* Returns whether random crits are enabled on the server */
 bool CCritHack::AreRandomCritsEnabled()
