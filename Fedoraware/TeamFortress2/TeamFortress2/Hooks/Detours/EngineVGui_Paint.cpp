@@ -164,8 +164,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2) //nitro style
 							{
-								const float rratio = (static_cast<float>(g_GlobalInfo.m_nShifted) / static_cast<float>(
-								Vars::Misc::CL_Move::DTTicks.m_Var));
+								const float rratio = (static_cast<float>(g_GlobalInfo.m_nShifted) / 24);
 								static float ratio = 0.f;
 								ratio = g_Draw.EaseIn(ratio, rratio, 0.9f);
 
@@ -175,6 +174,11 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
 								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; //  12  height
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
+								//const int maxTicks = sv_maxusrcmdprocessticks->GetInt()
+								static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
+								const float maxTicksValue = maxTicks->GetFloat();
+								// TODO: Write an algorithm for this
+
 								static Color_t colorN1, colorN2;
 								{
 									colorN1 = Colors::DTBarNitroIndicator;
@@ -184,7 +188,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 40), (xscale + 1),
 											(yscale - 2), { 17, 24, 26, 170 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 40),
+								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2 - 3) + (yoff - 40),
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio - 1)),
 													(nY - (yscale / 2 - 3) + (yoff - 30)), { colorN1 }, { colorN2 }, TRUE);
 
@@ -193,19 +197,19 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks 0/24", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, maxTicksValue);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks %i/24", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, maxTicksValue);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 20) + xscale),
 												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
-												  L"Ticks %i/24", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
+												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, maxTicksValue);
 								}
 							}
 							// Rijin V2 DT Bar
