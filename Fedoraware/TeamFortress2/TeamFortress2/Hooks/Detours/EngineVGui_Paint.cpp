@@ -188,21 +188,21 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 40), (xscale + 1),
 											(yscale - 2), { 17, 24, 26, 170 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2 - 3) + (yoff - 40),
+								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 39),
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio - 1)),
-													(nY - (yscale / 2 - 3) + (yoff - 30)), { colorN1 }, { colorN2 }, TRUE);
+													(nY - (yscale / 2) + (yoff - 39)), { colorN1 }, { colorN2 }, TRUE);
 
 
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks 0/24", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + xoff + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/24", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
