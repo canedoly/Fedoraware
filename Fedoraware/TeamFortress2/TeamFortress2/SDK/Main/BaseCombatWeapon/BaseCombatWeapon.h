@@ -86,11 +86,6 @@ public: //smack that ass
 		}
 		return true;
 	}
-	
-	__inline float ObservedCritChance()
-	{
-		DYNVAR_RETURN(float, this, "DT_TFWeaponBase", "LocalActiveTFWeaponData", "m_flObservedCritChance");
-	}
 
 	__inline CAttributeList* GetAttributeList() {
 		static auto dwOff = g_NetVars.get_offset(_("DT_EconEntity"), _("m_AttributeManager"), _("m_AttributeList"));
