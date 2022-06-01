@@ -77,7 +77,7 @@ std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
 
 bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
 {
-	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
+	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
 	if (damage) {
 		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
 			bucket += static_cast<float>(AddedPerShot);
