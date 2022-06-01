@@ -41,7 +41,7 @@ public: //Netvars
 		//*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
 		//*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
 		
-		M_OFFSETGET(CritBucket, float, 0xA54)
+		/*M_OFFSETGET(CritBucket, float, 0xA54)
 		M_OFFSETGET(WeaponSeed, int, 0xB58)
 		M_OFFSETGET(Unknown1, int, 0xB4C)
 		M_OFFSETGET(Unknown2, int, 0xB50)
@@ -52,7 +52,7 @@ public: //Netvars
 		M_OFFSETGET(ObservedCritChance, int, 0xC18)
 		M_OFFSETGET(Unknown7, bool, 0xB34)
 		M_OFFSETGET(WeaponMode, bool, 0xB20)
-		M_OFFSETGET(WeaponDataa, bool, 0xB2C)
+		M_OFFSETGET(WeaponDataa, bool, 0xB2C)*/
 
 
 public: //Virtuals
