@@ -736,6 +736,10 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Misc::CL_Move::DTBarScaleY);
 				SAVE_VAR(Vars::Misc::CL_Move::DTBarX);
 				SAVE_VAR(Vars::Misc::CL_Move::DTBarY);
+				SAVE_VAR(Vars::Misc::CL_Move::DTNitroBarScaleX);
+				SAVE_VAR(Vars::Misc::CL_Move::DTNitroBarScaleY);
+				SAVE_VAR(Vars::Misc::CL_Move::DTNitroBarX);
+				SAVE_VAR(Vars::Misc::CL_Move::DTNitroBarY);
 				SAVE_VAR(Vars::Misc::CL_Move::Fakelag); // { 0x52, L"Recharge Key" }; //R
 				SAVE_VAR(Vars::Misc::CL_Move::FakelagIndicator);
 				SAVE_VAR(Vars::Misc::CL_Move::FakelagMin);
@@ -808,6 +812,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_OTHER(Colors::DTBarNitroIndicatorEnd);
 			SAVE_OTHER(Colors::DTBarIndicatorsCharged);
 			SAVE_OTHER(Colors::DTBarIndicatorsCharging);
+			SAVE_OTHER(Colors::DTRijinIndicatorsCharged);
+			SAVE_OTHER(Colors::DTRijinIndicatorsCharging);
 			SAVE_OTHER(Colors::ChokedBar);
 			SAVE_OTHER(Colors::GradientHealthBar);
 			SAVE_OTHER(Colors::OverhealHealthBar);
@@ -1465,6 +1471,10 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Misc::CL_Move::DTBarScaleY);
 				LOAD_VAR(Vars::Misc::CL_Move::DTBarX);
 				LOAD_VAR(Vars::Misc::CL_Move::DTBarY);
+				LOAD_VAR(Vars::Misc::CL_Move::DTNitroBarScaleX);
+				LOAD_VAR(Vars::Misc::CL_Move::DTNitroBarScaleY);
+				LOAD_VAR(Vars::Misc::CL_Move::DTNitroBarX);
+				LOAD_VAR(Vars::Misc::CL_Move::DTNitroBarY);
 				LOAD_VAR(Vars::Misc::CL_Move::Fakelag); // { 0x52, L"Recharge Key" }; //R
 				LOAD_VAR(Vars::Misc::CL_Move::FakelagIndicator);
 				LOAD_VAR(Vars::Misc::CL_Move::FakelagMin);
@@ -1537,6 +1547,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_OTHER(Colors::DTBarNitroIndicatorEnd);
 			LOAD_OTHER(Colors::DTBarIndicatorsCharged);
 			LOAD_OTHER(Colors::DTBarIndicatorsCharging);
+			LOAD_OTHER(Colors::DTRijinIndicatorsCharged);
+			LOAD_OTHER(Colors::DTRijinIndicatorsCharging);
 			LOAD_OTHER(Colors::ChokedBar);
 			LOAD_OTHER(Colors::GradientHealthBar);
 			LOAD_OTHER(Colors::OverhealHealthBar);

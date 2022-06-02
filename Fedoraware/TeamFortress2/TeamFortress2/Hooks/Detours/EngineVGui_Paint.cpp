@@ -132,7 +132,21 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							const int nY = (g_ScreenSize.h / 2) + 20;
 
 							static Color_t color1, color2;
+							static Color_t colorR1, colorR2;
 
+							// rijin v1 bar color
+							if (g_GlobalInfo.m_nWaitForShift)
+							{
+								colorR1 = Colors::DTRijinIndicatorsCharging.startColour;
+								colorR2 = Colors::DTRijinIndicatorsCharging.endColour;
+							}
+							else
+							{
+								colorR1 = Colors::DTRijinIndicatorsCharged
+								colorR2 = Colors::DTRijinIndicatorsCharged
+							}
+
+							//rijin v2 bar color
 							if (g_GlobalInfo.m_nWaitForShift)
 							{
 								color1 = Colors::DTBarIndicatorsCharging.startColour;
@@ -159,7 +173,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 													{ 40, 40, 40, 180}); //yes the values will be hardcoded
 								g_Draw.GradientRect(dtOffset, (g_ScreenSize.h / 2) + 50, dtOffset + barWidth,
 													(g_ScreenSize.h / 2) + 50 + Vars::Misc::CL_Move::DtbarOutlineHeight.
-													m_Var, color1, color2, true);
+													m_Var, colorR1, colorR2, true);
 							}
 
 							else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2) //nitro style
@@ -170,14 +184,12 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								if (ratio > 1.f) { ratio = 1.f; }
 								else if (ratio < 0.f) { ratio = 0.f; }
-								const int xoff = Vars::Misc::CL_Move::DTBarX.m_Var; // -20  width offset 
-								const int yoff = Vars::Misc::CL_Move::DTBarY.m_Var; // 180  height offset
-								const int yscale = Vars::Misc::CL_Move::DTBarScaleY.m_Var; //  12  height
-								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
-								//const int maxTicks = sv_maxusrcmdprocessticks->GetInt()
+								const int xoff = Vars::Misc::CL_Move::DTNitroBarX.m_Var; // -20  width offset 
+								const int yoff = Vars::Misc::CL_Move::DTNitroBarY.m_Var; // 180  height offset
+								const int yscale = Vars::Misc::CL_Move::DTNitroBarScaleY.m_Var; //  12  height
+								const int xscale = Vars::Misc::CL_Move::DTNitroBarScaleX.m_Var; //  100
 								static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
 								const float maxTicksValue = maxTicks->GetFloat();
-								// TODO: Write an algorithm for this
 
 								static Color_t colorN1, colorN2;
 								{

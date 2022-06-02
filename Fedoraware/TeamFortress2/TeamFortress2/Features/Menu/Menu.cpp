@@ -1180,10 +1180,10 @@ void CMenu::MenuVisuals()
 				}
 				else if (Vars::Misc::CL_Move::DTBarStyle.m_Var == 2)
 				{
-					//WSlider("DT Height", &Vars::Misc::CL_Move::DTBarScaleY.m_Var, 1, 200);
-					//WSlider("DT Width", &Vars::Misc::CL_Move::DTBarScaleX.m_Var, 1, 200);
-					WSlider("DT Height Offset", &Vars::Misc::CL_Move::DTBarY.m_Var, -200, 200);
-					WSlider("DT Width Offset", &Vars::Misc::CL_Move::DTBarX.m_Var, -200, 200);
+					WSlider("DT Height", &Vars::Misc::CL_Move::DTNitroBarScaleY.m_Var, 1, 200);
+					WSlider("DT Width", &Vars::Misc::CL_Move::DTNitroBarScaleX.m_Var, 1, 200);
+					WSlider("DT Height Offset", &Vars::Misc::CL_Move::DTNitroBarY.m_Var, -200, 200);
+					WSlider("DT Width Offset", &Vars::Misc::CL_Move::DTNitroBarX.m_Var, -200, 200);
 					ColorPickerL("DT Nitro bar colour left", Colors::DTBarNitroIndicator, 1);
 					ColorPickerL("DT Nitro bar colour right", Colors::DTBarNitroIndicatorEnd);
 				}
@@ -1195,8 +1195,8 @@ void CMenu::MenuVisuals()
 				else 
 				{
 					WSlider("DT Bar height###dtBHeight", &Vars::Misc::CL_Move::DtbarOutlineHeight.m_Var, 1, 30);
-					ColorPickerL("DT charged right", Colors::DTBarIndicatorsCharged.endColour);
-					ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
+					ColorPickerL("DT charged right", Colors::DTRijinIndicatorsCharged.endColour);
+					ColorPickerL("DT charged left", Colors::DTRijinIndicatorsCharged.startColour, 1);
 					WSlider("DT Bar width###dtBWidth", &Vars::Misc::CL_Move::DtbarOutlineWidth.m_Var, 1, 30);
 				}
 
