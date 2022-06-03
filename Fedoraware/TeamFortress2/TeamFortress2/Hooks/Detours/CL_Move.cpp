@@ -59,7 +59,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		g_GlobalInfo.m_bRecharging = true;
 		g_GlobalInfo.tickShiftQueue = 0;
 	}
-	else if (g_GlobalInfo.m_bRecharging && g_GlobalInfo.m_nShifted < 23)// note, change it later to maxTicks
+	else if (g_GlobalInfo.m_bRecharging && (g_GlobalInfo.m_nShifted < Vars::Misc::CL_Move::DTTicks.m_Var))// note, change it later to maxTicks
 	{
 		g_GlobalInfo.m_bForceSendPacket = true; // force uninterrupted connection with server
 		g_GlobalInfo.m_nShifted++; // add ticks to tick counter
