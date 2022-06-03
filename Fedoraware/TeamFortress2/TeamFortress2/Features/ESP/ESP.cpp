@@ -276,7 +276,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			if (Vars::ESP::Players::Health.m_Var)
 			{
 				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
-				              ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+				              ALIGN_DEFAULT, L"%d HP", nHealth, nMaxHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -458,11 +458,11 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				auto flHealth = static_cast<float>(nHealth);
 				auto flMaxHealth = static_cast<float>(nMaxHealth);
 
-				Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
+				Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : HealthColor;
 
 				if (!Player->IsVulnerable())
 				{
-					clr = {Colors::Invuln, Colors::Invuln};
+					clr = Colors::Invuln;
 				}
 
 				if (flHealth > flMaxHealth)
@@ -471,7 +471,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 
 				float ratio = flHealth / flMaxHealth;
-				g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
+				g_Draw.OutlinedBar(x - 2 - 2, y + h, 2, h, ratio, clr, Colors::OutlineESP, false);
 
 				x += 1;
 			}

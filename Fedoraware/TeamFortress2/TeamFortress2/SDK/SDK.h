@@ -297,15 +297,12 @@ namespace Utils
 		PlayerInfo_t info{}; I::Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
 
 		if (pEntity->IsPlayer())
-		{
-			if (g_EntityCache.m_pLocal->GetTeamNum() == 2)
-			{
+		{	
+			if (g_EntityCache.m_pLocal->GetIndex() == 2)
 				out = Colors::TeamRed;
-			}
-			else if (g_EntityCache.m_pLocal->GetTeamNum() == 3)
-			{
+
+			else if (g_EntityCache.m_pLocal->GetIndex() == 3)
 				out = Colors::TeamBlu;
-			}
 			//if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
 			//	out = Colors::rTeam;
 
@@ -321,16 +318,14 @@ namespace Utils
 			else if (!pEntity->IsVulnerable())
 				out = Colors::Invuln;
 		}
+		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && Vars::Aimbot::Global::HighlightAim.m_Var)
+			out = Colors::Enemy;
 
-		//if (Vars::Aimbot::Global::HighlightAim.m_Var)
-		//{
-		//	if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-		//	out = Colors::Target;
-		//}
-		//if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-		//	out = Colors::Enemy;
+		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && !Vars::Aimbot::Global::HighlightAim.m_Var) //scuffed way of doing this
+			out = Colors::Target;
 
 		return out;
+
 	}
 
 	__inline const char* GetClassByIndex(const int nClass)

@@ -238,7 +238,7 @@ void CMenu::MenuAimbot()
 			SectionTitle("Global");
 
 			WToggle("Aimbot", &Vars::Aimbot::Global::Active.m_Var); HelpMarker("Aimbot master switch");
-			//WToggle("Highlight aim target", &Vars::Aimbot::Global::HighlightAim.m_Var); HelpMarker("Highlight aim target");
+			WToggle("Highlight aim target", &Vars::Aimbot::Global::HighlightAim.m_Var); HelpMarker("Highlight aim target");
 			ColorPickerL("Target", Colors::Target);
 			InputKeybind("Aimbot key", Vars::Aimbot::Global::AimKey); HelpMarker("The key to enable aimbot");
 			WSlider("Aimbot FoV####AimbotFoV", &Vars::Aimbot::Global::AimFOV.m_Var, 0.f, 180.f, "%.f", ImGuiSliderFlags_AlwaysClamp);
@@ -449,8 +449,8 @@ void CMenu::MenuVisuals()
 				WToggle("Weapon icons", &Vars::ESP::Players::WeaponIcon.m_Var); HelpMarker("Shows an icon for the weapon that the player has currently equipped");
 				ColorPickerL("Invulnerable colour", Colors::WeaponIcon);
 				WToggle("Health bar###ESPPlayerHealthBar", &Vars::ESP::Players::HealthBar.m_Var); HelpMarker("Will draw a bar visualizing how much health the player has");
-				ColorPickerL("Health Bar Top", Colors::GradientHealthBar.startColour);
-				ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
+				//ColorPickerL("Health Bar Top", Colors::GradientHealthBar.startColour);
+				//ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
 				WToggle("Health text###ESPPlayerHealthText", &Vars::ESP::Players::Health.m_Var); HelpMarker("Will draw the players health, as well as their max health");
 				WToggle("Condition", &Vars::ESP::Players::Cond.m_Var); HelpMarker("Will draw what conditions the player is under");
 				ColorPickerL("Condition colour", Colors::Cond);
