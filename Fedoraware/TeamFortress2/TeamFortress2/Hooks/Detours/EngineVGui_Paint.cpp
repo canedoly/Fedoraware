@@ -142,8 +142,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							}
 							else
 							{
-								colorR1 = Colors::DTRijinIndicatorsCharged
-								colorR2 = Colors::DTRijinIndicatorsCharged
+								colorR1 = Colors::DTRijinIndicatorsCharged.startColour;
+								colorR2 = Colors::DTRijinIndicatorsCharged.endColour;
 							}
 
 							//rijin v2 bar color
