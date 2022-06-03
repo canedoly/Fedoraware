@@ -54,6 +54,7 @@
 #include "DirectX/DirectX.h"
 #include "../Features/Vars.h"
 
+
 #define TICK_INTERVAL		( I::GlobalVars->interval_per_tick )
 #define TIME_TO_TICKS( dt )	( static_cast<int>( 0.5f + static_cast<float>(dt) / TICK_INTERVAL ) )
 #ifndef TICKS_TO_TIME

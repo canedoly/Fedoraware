@@ -458,7 +458,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				auto flHealth = static_cast<float>(nHealth);
 				auto flMaxHealth = static_cast<float>(nMaxHealth);
 
-				Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : HealthColor;
+				Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : GetHealthColor;
 
 				if (!Player->IsVulnerable())
 				{
@@ -471,7 +471,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 
 				float ratio = flHealth / flMaxHealth;
-				g_Draw.OutlinedBar(x - 2 - 2, y + h, 2, h, ratio, clr, Colors::OutlineESP, false);
+				g_Draw.OutlinedRect(x - 2 - 2, y + h, 2, h, ratio, clr, Colors::OutlineESP, false);
 
 				x += 1;
 			}
