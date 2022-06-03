@@ -319,11 +319,8 @@ namespace Utils
 			else if (!pEntity->IsVulnerable())
 				out = Colors::Invuln;
 		}
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && Vars::Aimbot::Global::HighlightAim.m_Var)
+		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
 			out = Colors::Enemy;
-
-		if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && !Vars::Aimbot::Global::HighlightAim.m_Var) //scuffed way of doing this
-			out = Colors::Target;
 
 		return out;
 

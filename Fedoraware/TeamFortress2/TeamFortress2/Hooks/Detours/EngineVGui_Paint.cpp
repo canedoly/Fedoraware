@@ -200,9 +200,9 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								g_Draw.Rect(g_ScreenSize.c - (xscale / 2 + 1) + xoff, nY - (yscale / 2 + 1) + (yoff - 40), (xscale + 1),
 											(yscale - 2), { 17, 24, 26, 170 });
 
-								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 39),
-													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio - 1)),
-													(nY - (yscale / 2) + (yoff - 39)), { colorN1 }, { colorN2 }, TRUE);
+								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + (yoff - 40),
+													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
+													(nY - (yscale / 2) + (yoff - 40)), { colorN1 }, { colorN2 }, TRUE);
 
 
 								if (g_GlobalInfo.m_nShifted == 0)
@@ -526,9 +526,9 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 			g_CritHack.Draw();
 			g_Radar.Run();
 
-			if (Vars::AntiHack::AntiAim::Active.m_Var)
+			if (const auto& pLocal = g_EntityCache.m_pLocal)
 			{
-				if (const auto& pLocal = g_EntityCache.m_pLocal)
+				if (Vars::AntiHack::AntiAim::Active.m_Var && pLocal->IsAlive())
 				{
 					static constexpr Color_t realColour = { 0, 255,0, 255 };
 					static constexpr Color_t fakeColour = { 255, 0, 0, 255 };
