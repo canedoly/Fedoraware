@@ -308,11 +308,11 @@ namespace Utils
 			else if (g_GlobalInfo.IsIgnored(info.friendsID))
 				out = Colors::Ignored;
 
-			else if (pEntity->IsCloaked())
-				out = Colors::Cloak;
+			//else if (pEntity->IsCloaked())
+			//	out = Colors::Cloak;
 
-			else if (!pEntity->IsVulnerable())
-				out = Colors::Invuln;
+			//else if (!pEntity->IsVulnerable())
+			//	out = Colors::Invuln;
 		}
 
 		//if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)

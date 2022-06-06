@@ -10,7 +10,7 @@ MAKE_HOOK(C_BasePlayer_CalcViewModelView, g_Pattern.Find(L"client.dll", L"55 8B 
 		{
 			if (pLocal->IsAlive() && !g_GlobalInfo.m_vAimPos.IsZero())
 			{
-				if (g_GlobalInfo.m_CurWeaponType == EWeaponType::PROJECTILE)
+				if (g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE)
 				{
 					vEyeAngles = Math::CalcAngle(vEyePosition, g_GlobalInfo.m_vPredictedPos);
 				}
@@ -19,11 +19,11 @@ MAKE_HOOK(C_BasePlayer_CalcViewModelView, g_Pattern.Find(L"client.dll", L"55 8B 
 					vEyeAngles = Math::CalcAngle(vEyePosition, g_GlobalInfo.m_vAimPos);
 				}
 				m_vEyeAngDelayed = vEyeAngles;
-				g_GlobalInfo.m_vEyeAngDelay = 0;
+				g_GlobalInfo.vEyeAngDelay = 0;
 			}
 			else if (pLocal->IsAlive())
 			{
-				if (g_GlobalInfo.m_vEyeAngDelay < 32) { vEyeAngles = m_vEyeAngDelayed; }
+				if (g_GlobalInfo.vEyeAngDelay < 32) { vEyeAngles = m_vEyeAngDelayed; }
 				// looks hot ty senator for the idea
 				else { vEyeAngles = I::Engine->GetViewAngles(); }
 			}
