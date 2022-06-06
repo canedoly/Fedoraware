@@ -9,13 +9,10 @@ Color_t out = GetTeamColor(pEntity->GetTeamNum(), enableOtherColors);
 
 
 if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx && Vars::Aimbot::Global::HighlightAim.m_Var)
-{
 	out = Colors::Enemy;
-}
+
 else (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
-{
 	out = Colors::Target;
-}
 
 namespace SandvichAimbot
 {
