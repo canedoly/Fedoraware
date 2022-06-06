@@ -1352,7 +1352,7 @@ void CMenu::MenuVisuals()
 				WToggle("Medal flip", &Vars::Misc::MedalFlip.m_Var); HelpMarker("Medal go spinny spinny weeeeeee");
 				WCombo("Precipitation", &Vars::Visuals::Rain.m_Var, { "Off", "Rain", "Snow" });
 
-				SectionTitle("Custom fog");
+				/*SectionTitle("Custom fog");
 				if (WToggle("Custom fog", &Vars::Visuals::Fog::CustomFog.m_Var))
 				{
 					if (static auto fog_enable = I::CVars->FindVar("fog_enable"); fog_enable)
@@ -1367,7 +1367,7 @@ void CMenu::MenuVisuals()
 					{
 						fog_override->SetValue(Vars::Visuals::Fog::CustomFog.m_Var);
 					}
-				}
+				}*/
 
 				if (WSlider("Fog density", &Vars::Visuals::Fog::FogDensity.m_Var, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
