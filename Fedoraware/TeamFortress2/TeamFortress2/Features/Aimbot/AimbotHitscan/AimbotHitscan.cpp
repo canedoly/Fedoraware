@@ -392,7 +392,7 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapo
 	{
 	case ETargetType::PLAYER:
 		{
-			if (Vars::Backtrack::Enabled.m_Var && Vars::Backtrack::Aim.m_Var && Vars::Aimbot::Hitscan::AimMethod.m_Var != 1 && (g_GlobalInfo.m_nShifted() > 0))
+			if (Vars::Backtrack::Enabled.m_Var && Vars::Backtrack::Aim.m_Var && Vars::Aimbot::Hitscan::AimMethod.m_Var != 1 && (g_GlobalInfo.m_nShifted > 0))
 			{
 				Vec3 hitboxPos;
 				if (!g_Backtrack.Record[target.m_pEntity->GetIndex()].empty())
