@@ -260,10 +260,10 @@ void CCritHack::Draw()
 	int currentY = (g_ScreenSize.h / 2) + 150;
 
 	// Are we currently forcing crits?
-	if (GetAsyncKeyState(Vars::CritHack::CritKey.m_Var) & 0x8000)
-	{
-		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
-	}
+	//if (GetAsyncKeyState(Vars::CritHack::CritKey.m_Var) & 0x8000)
+	//{
+	//	g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
+	//}
 
 	if (pWeapon->GetSlot() != SLOT_MELEE)
 	{
