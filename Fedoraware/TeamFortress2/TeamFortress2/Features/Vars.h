@@ -80,6 +80,7 @@ namespace Vars
 		namespace Global
 		{
 			inline CVar<bool> Active{ true, L"Active" };
+			inline CVar<bool> RunOnFire{ false, L"Run On Fire"};
 			inline CVar<int> AimKey{ VK_XBUTTON1, L"Aim Key" };
 			inline CVar<float> AimFOV{ 15.0f, L"Aim FOV" };
 			inline CVar<bool> AutoShoot{ true, L"Auto Shoot" };

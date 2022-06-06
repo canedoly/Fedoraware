@@ -216,6 +216,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			//Global
 			{
 				SAVE_VAR(Vars::Aimbot::Global::Active);
+				SAVE_VAR(Vars::Aimbot::Global::RunOnFire);
 				SAVE_VAR(Vars::Aimbot::Global::HighlightAim);
 				SAVE_VAR(Vars::Aimbot::Global::AimKey);
 				SAVE_VAR(Vars::Aimbot::Global::AimFOV);
@@ -951,6 +952,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			//Global
 			{
 				LOAD_VAR(Vars::Aimbot::Global::Active);
+				LOAD_VAR(Vars::Aimbot::Global::RunOnFire);
 				LOAD_VAR(Vars::Aimbot::Global::HighlightAim);
 				LOAD_VAR(Vars::Aimbot::Global::AimKey);
 				LOAD_VAR(Vars::Aimbot::Global::AimFOV);
