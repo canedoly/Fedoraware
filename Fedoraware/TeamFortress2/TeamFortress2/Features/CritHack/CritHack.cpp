@@ -269,20 +269,20 @@ void CCritHack::Draw()
 	{
 		if (canCrit)
 		{
-			const auto bucketText = tfm::format("Bucket: %s / %s", static_cast<int>(bucket), static_cast<int>(tf_weapon_criticals_bucket_cap->GetFloat()));
-			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketText.c_str());
+			//const auto bucketText = tfm::format("Bucket: %s / %s", static_cast<int>(bucket), static_cast<int>(tf_weapon_criticals_bucket_cap->GetFloat()));
+			//g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketText.c_str());
 
 			const int withdrawAmount = GetWithdrawAmount(pWeapon);
 			const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
-			const auto critText = tfm::format("Crits Avaiable: %s", potentialCrits);
-			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+			const auto critText = tfm::format("%s crits", potentialCrits);
+			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 14, 204, 0, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		} else
 		{
-			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 195, 50, 20, 255 }, ALIGN_CENTERHORIZONTAL, "CRIT BANNED");
+			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 199, 4, 4, 255 }, ALIGN_CENTERHORIZONTAL, "CRIT BANNED");
 
 			auto [observed, needed] = GetCritMultInfo(pWeapon);
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
-			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+			g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, { 248, 255, 51, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		}
 	}
 

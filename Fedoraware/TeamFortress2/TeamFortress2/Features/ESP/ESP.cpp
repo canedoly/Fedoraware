@@ -455,15 +455,14 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			{
 				x -= 1;
 
-				//auto flHealth = static_cast<float>(nHealth);
-				//auto flMaxHealth = static_cast<float>(nMaxHealth);
-				Color_t healthColor = Utils::GetHealthColor(nHealth, nMaxHealth);
+				auto flHealth = static_cast<float>(nHealth);
+				auto flMaxHealth = static_cast<float>(nMaxHealth);
 
-				Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : GetHealthColor;
+				Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
 
 				if (!Player->IsVulnerable())
 				{
-					clr = Colors::Invuln;
+					clr = {Colors::Invuln, Colors::Invuln};
 				}
 
 				if (flHealth > flMaxHealth)
@@ -472,7 +471,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 
 				float ratio = flHealth / flMaxHealth;
-				g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr, Colors::OutlineESP, false);
+				g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
 
 				x += 1;
 			}
