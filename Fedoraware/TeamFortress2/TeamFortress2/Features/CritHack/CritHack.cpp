@@ -257,7 +257,7 @@ void CCritHack::Draw()
 	}
 
 	const float bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
-	int currentY = (g_ScreenSize.h / 2) + 150;
+	int currentY = (g_ScreenSize.h / 2) + 100;
 
 	// Are we currently forcing crits?
 	//if (GetAsyncKeyState(Vars::CritHack::CritKey.m_Var) & 0x8000)
