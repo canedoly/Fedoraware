@@ -298,14 +298,9 @@ namespace Utils
 		PlayerInfo_t info{}; I::Engine->GetPlayerInfo(pEntity->GetIndex(), &info);
 
 		if (pEntity->IsPlayer())
-		{	
-			if (g_EntityCache.m_pLocal->GetIndex() == 2)
-				out = Colors::TeamRed;
-
-			else if (g_EntityCache.m_pLocal->GetIndex() == 3)
-				out = Colors::TeamBlu;
-			//if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
-			//	out = Colors::rTeam;
+		{
+			if (g_EntityCache.m_pLocal->GetIndex() == pEntity->GetIndex())
+				out = Colors::rTeam;
 
 			else if (g_EntityCache.IsFriend(pEntity->GetIndex()) || pEntity == g_EntityCache.m_pLocal)
 				out = Colors::Friend;
@@ -319,11 +314,11 @@ namespace Utils
 			else if (!pEntity->IsVulnerable())
 				out = Colors::Invuln;
 		}
+
 		//if (pEntity->GetIndex() == g_GlobalInfo.m_nCurrentTargetIdx)
 		//	out = Colors::Enemy;
-		//
-		return out;
 
+		return out;
 	}
 
 	__inline const char* GetClassByIndex(const int nClass)
