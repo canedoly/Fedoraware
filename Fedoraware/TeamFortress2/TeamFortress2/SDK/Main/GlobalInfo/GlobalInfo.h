@@ -26,7 +26,7 @@ struct GlobalInfo_t
 	int m_nWaitForShift                 = 0;
 	int m_nShifted                      = 0;
 	int gNotifCounter = 0;
-	int vEyeAngDelay = 10	;
+	int vEyeAngDelay = 3	;
 	bool m_bWeaponCanHeadShot			= false;
 	bool m_bWeaponCanAttack				= false;
 	bool m_bWeaponCanSecondaryAttack	= false;

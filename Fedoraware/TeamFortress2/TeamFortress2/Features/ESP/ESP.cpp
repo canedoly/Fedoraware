@@ -364,11 +364,11 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
 					g_Draw.String(FONT_NAME, middle, (y * 2) - offset, {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "cheater");
 				}
-				//if (g_BadActors.markedcheaters[pi.friendsID] && Vars::ESP::Players::CheaterDetection.m_Var)
-				//{
-				//	g_Draw.String(FONT, nTextX, y + nTextOffset, {255, 0, 0, 255}, ALIGN_DEFAULT, "CHEATER");
-				//	nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-				//}
+				if (g_BadActors.markedcheaters[pi.friendsID] && Vars::ESP::Players::CheaterDetection.m_Var)
+				{
+					g_Draw.String(FONT, nTextX, y + nTextOffset, {255, 0, 0, 255}, ALIGN_DEFAULT, "CHEATER");
+					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+				}
 
 				// GUID ESP
 				if (Vars::ESP::Players::GUID.m_Var)
