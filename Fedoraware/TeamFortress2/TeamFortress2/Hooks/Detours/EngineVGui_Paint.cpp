@@ -185,7 +185,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								if (ratio > 1.f) { ratio = 1.f; }
 								else if (ratio < 0.f) { ratio = 0.f; }
 								const int xoff = Vars::Misc::CL_Move::DTNitroBarX.m_Var; // -20  width offset 
-								const int yoff = Vars::Misc::CL_Move::DTNitroBarY.m_Var; // 180  height offset
+								const int yoff = Vars::Misc::CL_Move::DTNitroBarY.m_Var; // 180  height offset // TODO say if 179 is higher or lower than 180
 								const int yscale = Vars::Misc::CL_Move::DTNitroBarScaleY.m_Var; //  12  height
 								const int xscale = Vars::Misc::CL_Move::DTNitroBarScaleX.m_Var; //  100
 								static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
