@@ -127,6 +127,7 @@ namespace Vars
 			inline CVar<bool> ManualZAdjust{ true, L"Toggle for manual z adjust on projectile prediction." };
 			inline CVar<float> ZAdjustAmount{ 5.5f, L"Z Adjust factor." };
 			inline CVar<float> predTime{ 2.0f, L"Prediction TIme" };
+			inline CVar<bool> WaitForHit{ false, L"Will wait for the time the projectile is predicted to take to hit the target before attempting to shoot again." };
 		}
 
 		namespace Melee
@@ -274,13 +275,18 @@ namespace Vars
 			inline CVar<bool> Active{ true, L"Active" };
 			inline CVar<bool> Wearables{ true, L"Render Wearables" };
 			inline CVar<bool> Weapons{ true, L"Render Weapons" };
+			inline CVar<int> Material{ 3, L"Material" }; //0 - None, 1 - Shaded, 2 - Shiny, 3 - Flat
+			inline CVar<bool> IgnoreZ{ false , L"IgnoreZ" };
+			inline CVar<bool> GlowOverlay { false , L"Glow overlay" };
 
 			// {ignorez, material, overlay type (0 = off), active}
-			inline Chams_t Local{};
-			inline Chams_t Friend{};
-			inline Chams_t Enemy{};
-			inline Chams_t Team{};
-			inline Chams_t Target{};
+			inline Chams_t Local	{};
+			inline Chams_t Friend	{};
+			inline Chams_t Enemy	{};
+			inline Chams_t Team		{};
+			inline Chams_t Target	{};
+			inline Chams_t Weapon	{};
+			inline Chams_t Arms		{};
 		}
 
 		namespace Buildings
@@ -415,7 +421,7 @@ namespace Vars
 		inline CVar<int> FieldOfView{ 110, L"Field of View" };
 		inline CVar<int> AimFOVAlpha{ 10, L"Aim FOV Alpha" };
 		inline CVar<bool> RemoveScope{ true, L"Remove Scope" };
-		inline CVar<bool> RemoveMOTD{ true, L"Remove MOTD" };
+		inline CVar<bool> RemoveMOTD{ false, L"Remove MOTD" };
 		inline CVar<bool> ScopeLines{ false, L"Scope lines" };
 		inline CVar<bool> PickupTimers{ false, L"Pickup Timers" };
 		inline CVar<bool> RemoveZoom{ true, L"Remove Zoom" };

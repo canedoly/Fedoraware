@@ -172,12 +172,11 @@ void DrawFakeAngles(CBaseEntity* pEntity, const DrawModelState_t& pState, const 
 					default: return nullptr;
 					}
 					}());
-				if (bMatWasForced) {
-					g_Interfaces.RenderView->SetColorModulation(
-						Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.r),
-						Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.g),
-						Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.b));
-				}
+
+				g_Interfaces.RenderView->SetColorModulation(
+					Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.r),
+					Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.g),
+					Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.b));
 
 				g_Interfaces.RenderView->SetBlend(Color::TOFLOAT(Vars::Misc::CL_Move::FLGChams::FakelagColor.a)); // this is so much better than having a seperate alpha slider lmao
 
@@ -198,28 +197,22 @@ void DrawFakeAngles(CBaseEntity* pEntity, const DrawModelState_t& pState, const 
 	}
 }
 
-void __stdcall ModelRenderHook::DrawModelExecute::Hook(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo,
-                                                       matrix3x4* pBoneToWorld) {
+void __stdcall ModelRenderHook::DrawModelExecute::Hook(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo, matrix3x4* pBoneToWorld) {
 	CBaseEntity* pEntity = g_Interfaces.EntityList->GetClientEntity(pInfo.m_nEntIndex);
 
 	DrawBT(pEntity, pState, pInfo, pBoneToWorld);
 	DrawFakeAngles(pEntity, pState, pInfo);
 
-	if ((g_Chams.HasDrawn(pEntity) || g_Glow.HasDrawn(pEntity)) && !g_Glow.m_bDrawingGlow) { return; }
 
-	if (g_DMEChams.Render(pState, pInfo, pBoneToWorld)) { return; }
+	if (!g_Glow.m_bRendering)
+		if (g_DMEChams.Render(pState, pInfo, pBoneToWorld)) { return; }
 
+	if (g_Glow.HasDrawn(pEntity) && !g_Glow.m_bDrawingGlow) { return; }
 
 	Table.Original<fn>(index)(g_Interfaces.ModelRender, pState, pInfo, pBoneToWorld);
-
-
 }
 
 void __stdcall ModelRenderHook::ForcedMaterialOverride::Hook(IMaterial* mat, EOverrideType type) {
-	if (!g_DMEChams.m_bRendering) {
-		if (g_Glow.m_bRendering && !g_Glow.IsGlowMaterial(mat) || g_Chams.m_bRendering && !g_Chams.
-			IsChamsMaterial(mat)) { return; }
-	}
-
+	if (g_Glow.m_bRendering && !g_Glow.IsGlowMaterial(mat)) { return; }
 	Table.Original<fn>(index)(g_Interfaces.ModelRender, mat, type);
 }

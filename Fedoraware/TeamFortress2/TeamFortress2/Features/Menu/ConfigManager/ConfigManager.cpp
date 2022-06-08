@@ -6,6 +6,7 @@
 #include "../../Vars.h"
 #include "../../../SDK/SDK.h"
 #include "../../Misc/Misc.h"
+#include "../../../Utils/Base64/Base64.hpp"
 
 #define SAVE_VAR(x) Save(_(L#x), x.m_Var)
 #define LOAD_VAR(x) Load(_(L#x), x.m_Var)
@@ -72,28 +73,18 @@ void CConfigManager::Save(const wchar_t *name, Color_t val)
 	sprintf_s(buffer, "%ls: %d %d %d %d", name, val.r, val.g, val.b, val.a);
 	m_Write << buffer << "\n";
 }
-
 void CConfigManager::Save(const wchar_t* name, Gradient_t val)
 {
 	char buffer[64];
 	sprintf_s(buffer, "%ls: %d %d %d %d %d %d %d %d", name, val.startColour.r, val.startColour.g, val.startColour.b, val.startColour.a, val.endColour.r, val.endColour.g, val.endColour.b, val.endColour.a);
 	m_Write << buffer << "\n";
 }
-
-void CConfigManager::Save(const wchar_t* name, Vec3 val)
+void CConfigManager::Save(const wchar_t* name, Chams_t val)
 {
-	char buffer[64];
-	sprintf_s(buffer, "%ls: %f %f %f", name, val.x, val.y, val.z);
+	char buffer[128];
+	sprintf_s(buffer, "%ls: %d %d %d %d %d %d %d %d %d %d", name, val.showObstructed, val.drawMaterial, val.overlayType, val.chamsActive, val.overlayColor.r, val.overlayColor.g, val.overlayColor.b, val.fresnelBaseColor.r, val.fresnelBaseColor.g, val.fresnelBaseColor.b);
 	m_Write << buffer << "\n";
 }
-
-void CConfigManager::Save(const wchar_t *name, Chams_t val)
-{
-	char buffer[64];
-	sprintf_s(buffer, "%ls: %d %d %d %d %d %d %d", name, val.showObstructed, val.drawMaterial, val.overlayType, val.chamsActive, val.fresnelBase.r, val.fresnelBase.g, val.fresnelBase.b);
-	m_Write << buffer << "\n";
-}
-
 void CConfigManager::Load(const wchar_t* name, std::string& val)
 {
 	std::wstring line = {};
@@ -155,25 +146,25 @@ void CConfigManager::Load(const wchar_t* name, Gradient_t& val)
 	}
 }
 
-void CConfigManager::Load(const wchar_t* name, Vec3& val)
-{
-	std::wstring line = {};
-
-	if (Find(name, line)) {
-		float x = 0.f, y = 0.f, z = 0.f;
-		swscanf_s(line.c_str(), L"%*ls %f %f %f", &x, &y, &z);
-		val = { x, y, z };
-	}
-}
+//void CConfigManager::Load(const wchar_t* name, Vec3& val)
+//{
+//	std::wstring line = {};
+//
+//	if (Find(name, line)) {
+//		float x = 0.f, y = 0.f, z = 0.f;
+//		swscanf_s(line.c_str(), L"%*ls %f %f %f", &x, &y, &z);
+//		val = { x, y, z };
+//	}
+//}
 
 void CConfigManager::Load(const wchar_t* name, Chams_t& val)
 {
 	std::wstring line = {};
 
 	if (Find(name, line)) {
-		int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0;
-		swscanf_s(line.c_str(), L"%*ls %d %d %d %d %d %d %d", &a, &b, &c, &d, &e, &f, &g);
-		val = { static_cast<bool>(a), static_cast<int>(b), static_cast<int>(c), static_cast<bool>(d), {static_cast<byte>(e), static_cast<byte>(f), static_cast<byte>(g), 255} };
+		int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0;
+		swscanf_s(line.c_str(), L"%*ls %d %d %d %d %d %d %d %d %d %d", &a, &b, &c, &d, &e, &f, &g, &h, &i, &j);
+		val = { static_cast<bool>(a), static_cast<int>(b), static_cast<int>(c), static_cast<bool>(d), {static_cast<byte>(e), static_cast<byte>(f), static_cast<byte>(g), 255}, {static_cast<byte>(h), static_cast<byte>(i), static_cast<byte>(j), 255} };
 	}
 }
 
@@ -182,10 +173,19 @@ CConfigManager::CConfigManager()
 	m_sConfigPath = std::filesystem::current_path().wstring() + _(L"\\FedFigs");
 
 	if (!std::filesystem::exists(m_sConfigPath))
+	{
 		std::filesystem::create_directory(m_sConfigPath);
+	}
 
 	if (!std::filesystem::exists(m_sConfigPath + _(L"\\FedCore")))
+	{
 		std::filesystem::create_directory(m_sConfigPath + _(L"\\FedCore"));
+	}
+
+	if (!std::filesystem::exists(m_sConfigPath + _(L"\\Materials")))
+	{
+		std::filesystem::create_directory(m_sConfigPath + _(L"\\Materials"));
+	}
 }
 
 void CConfigManager::Save(const wchar_t *name)
@@ -577,7 +577,7 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_VAR(Vars::Visuals::AimbotViewmodel);
 			SAVE_VAR(Vars::Visuals::ViewmodelSway);
 			SAVE_VAR(Vars::Visuals::MoveSimLine);
-			SAVE_OTHER(Vars::Visuals::VMOffsets);
+			//SAVE_OTHER(Vars::Visuals::VMOffsets);
 			SAVE_VAR(Vars::Visuals::VMRoll);
 			SAVE_VAR(Vars::Visuals::OutOfFOVArrows);
 			SAVE_VAR(Vars::Visuals::ArrowLength);
@@ -809,6 +809,17 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_OTHER(Colors::HitboxFace);
 			SAVE_OTHER(Colors::HitboxEdge);
 			
+
+			SAVE_OTHER(Vars::Chams::Players::Local);
+			SAVE_OTHER(Vars::Chams::Players::Enemy);
+			SAVE_OTHER(Vars::Chams::Players::Team);
+			SAVE_OTHER(Vars::Chams::Players::Friend);
+			SAVE_OTHER(Vars::Chams::Players::Target);
+			SAVE_OTHER(Vars::Chams::Players::Arms);
+			SAVE_OTHER(Vars::Chams::Players::Weapon);
+
+			/*SAVE_OTHER(g_Radar.m_nRadarX);
+			SAVE_OTHER(g_Radar.m_nRadarY);*/
 			SAVE_OTHER(Vars::Skybox::SkyboxNum);
 			SAVE_STRING(Vars::Skybox::SkyboxName);
 
@@ -1278,7 +1289,7 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_VAR(Vars::Visuals::AimbotViewmodel);
 			LOAD_VAR(Vars::Visuals::ViewmodelSway);
 			LOAD_VAR(Vars::Visuals::MoveSimLine);
-			LOAD_OTHER(Vars::Visuals::VMOffsets);
+			//LOAD_OTHER(Vars::Visuals::VMOffsets);
 			LOAD_VAR(Vars::Visuals::VMRoll);
 			LOAD_VAR(Vars::Visuals::OutOfFOVArrows);
 			LOAD_VAR(Vars::Visuals::ArrowLength);
@@ -1514,6 +1525,16 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_OTHER(Vars::Chams::Players::Friend);
 			LOAD_OTHER(Vars::Chams::Players::Target);
 
+			LOAD_OTHER(Vars::Chams::Players::Local);
+			LOAD_OTHER(Vars::Chams::Players::Enemy);
+			LOAD_OTHER(Vars::Chams::Players::Team);
+			LOAD_OTHER(Vars::Chams::Players::Friend);
+			LOAD_OTHER(Vars::Chams::Players::Target);
+			LOAD_OTHER(Vars::Chams::Players::Arms);
+			LOAD_OTHER(Vars::Chams::Players::Weapon);
+
+			//LOAD_OTHER(g_Radar.m_nRadarX);
+			//LOAD_OTHER(g_Radar.m_nRadarY);
 			LOAD_OTHER(Vars::Chams::Buildings::Local);
 			LOAD_OTHER(Vars::Chams::Buildings::Enemy);
 			LOAD_OTHER(Vars::Chams::Buildings::Team);
