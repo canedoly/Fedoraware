@@ -1126,6 +1126,8 @@ void CMenu::MenuVisuals()
 				}
 				WToggle("Pickup Timers", &Vars::Visuals::PickupTimers.m_Var); HelpMarker("Displays the respawn time of health and ammopacks");
 				WToggle("Draw Hitboxes", &Vars::Aimbot::Global::showHitboxes.m_Var); HelpMarker("Shows client hitboxes for enemies once they are attacked (not bbox)");
+				WToggle("Debug info", &Vars::Debug::DebugInfo.m_Var); HelpMarker("For debugging purposes only");
+				WTogle("Fakelag movement" &Vars::Visuals::LagMove.m_Var); HelpMarker("Something to do with cycle animation");
 				ColorPickerL("Hitbox matrix face colour", Colors::HitboxFace);
 				ColorPickerL("Hitbox matrix edge colour", Colors::HitboxEdge, 1);
 				WToggle("Clear Hitboxes", &Vars::Aimbot::Global::clearPreviousHitbox.m_Var); HelpMarker("Removes previous drawn hitboxes to mitigate clutter");

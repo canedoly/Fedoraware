@@ -609,6 +609,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Visuals::BulletTracerRainbow);
 			SAVE_VAR(Vars::Visuals::AimbotViewmodel);
 			SAVE_VAR(Vars::Visuals::ViewmodelSway);
+			SAVE_VAR(Vars::Visuals::LagMove);
 			SAVE_VAR(Vars::Visuals::MoveSimLine);
 			SAVE_OTHER(Vars::Visuals::VMOffsets);
 			SAVE_VAR(Vars::Visuals::VMRoll);
@@ -1347,6 +1348,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Visuals::BulletTracerRainbow);
 			LOAD_VAR(Vars::Visuals::AimbotViewmodel);
 			LOAD_VAR(Vars::Visuals::ViewmodelSway);
+			SAVE_VAR(Vars::Visuals::LagMove);
 			LOAD_VAR(Vars::Visuals::MoveSimLine);
 			LOAD_OTHER(Vars::Visuals::VMOffsets);
 			LOAD_VAR(Vars::Visuals::VMRoll);

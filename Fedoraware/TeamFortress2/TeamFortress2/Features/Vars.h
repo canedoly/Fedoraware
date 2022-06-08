@@ -446,6 +446,7 @@ namespace Vars
 		inline CVar<bool> CrosshairAimPos{ true, L"Crosshair At Aim Pos" };
 		inline CVar<bool> ChatInfoText{ false, L"Show Class Changes" };
 		inline CVar<bool> ChatInfoChat{ false, L"Show Class Changes" };
+		inline CVar<bool> LagMove{ false, L"Fakelag movement"};
 		inline CVar<bool> OutOfFOVArrowsOutline{ false, L"balls" };
 		inline CVar<float> FovArrowsDist{ 0.15f, L"balls" };
 		inline CVar<int> SpectatorList{ 2, L"Spectator List" }; //0 - Off, 1 - Default, 2 - Classic, 3 - Classic Avatars
@@ -719,31 +720,31 @@ namespace Vars
 	{
 		namespace FONT_ESP
 		{
-			inline std::string szName = "Tahoma";
+			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 12, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
 		}
 		namespace FONT_ESP_NAME
 		{
-			inline std::string szName = "Tahoma";
-			inline CVar<int> nTall = { 14, L"nTall" };
+			inline std::string szName = "Verdana";
+			inline CVar<int> nTall = { 12, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
 		}
 		namespace FONT_ESP_COND
 		{
-			inline std::string szName = "Tahoma";
+			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 10, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
 		}
 		namespace FONT_ESP_PICKUPS
 		{
-			inline std::string szName = "Tahoma";
+			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 13, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
 		}
 		namespace FONT_MENU
 		{

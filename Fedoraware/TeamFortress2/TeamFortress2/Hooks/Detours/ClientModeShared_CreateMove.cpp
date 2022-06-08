@@ -261,7 +261,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 			}
 		}
 
-		if (Vars::Debug::DebugInfo.m_Var)
+		if (Vars::Debug::DebugInfo.m_Var || Vars::Visuals::LagMove.m_Var) //this change is bad
 		{
 
 			static float cycledelta = 0.f;
