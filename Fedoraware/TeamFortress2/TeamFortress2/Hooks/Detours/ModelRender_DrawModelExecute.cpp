@@ -148,6 +148,49 @@ void DrawBT(void* ecx, void* edx, CBaseEntity* pEntity, const DrawModelState_t& 
 	}
 }
 
+/* bool CFakeAngleMatrixHelper::Create(CBaseEntity *pPlayer, float flPitch, float flYawOffset, matrix3x4_t *pMatrixOut)
+{
+	if (!pPlayer || pPlayer->deadflag())
+		return false;
+ 
+	auto pAnimState = pPlayer->GetAnimState();
+ 
+	if (!pAnimState)
+		return false;
+
+	float flOldFrameTime = I::GlobalVars->frametime;
+	int nOldSequence = pPlayer->m_nSequence();
+	float flOldCycle = pPlayer->m_flCycle();
+	auto pOldPoseParams = pPlayer->m_flPoseParameter();
+	char pOldAnimState[sizeof(CMultiPlayerAnimState)] = {};
+
+	memcpy(pOldAnimState, pAnimState, sizeof(CMultiPlayerAnimState));
+    
+	auto Restore = [&]()
+	{
+		I::GlobalVars->frametime = flOldFrameTime;
+		pPlayer->m_nSequence() = nOldSequence;
+		pPlayer->m_flCycle() = flOldCycle;
+		pPlayer->m_flPoseParameter() = pOldPoseParams;
+		memcpy(pAnimState, pOldAnimState, sizeof(CMultiPlayerAnimState));
+	};
+	
+	I::GlobalVars->frametime = 0.0f;
+ 
+	pAnimState->m_flCurrentFeetYaw = pAnimState->m_flCurrentFeetYaw + flYawOffset;
+	pAnimState->m_flGoalFeetYaw = pAnimState->m_flGoalFeetYaw + flYawOffset;
+	pAnimState->Update(pAnimState->m_flEyeYaw + flYawOffset, flPitch);
+	
+	if (!pPlayer->SetupBones(pMatrixOut, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime)) {
+		Restore();
+		return false;
+	}
+ 
+	Restore();
+ 
+	return true;
+} */
+
 void DrawFakeAngles(void* ecx, void* edx, CBaseEntity* pEntity, const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo)
 {
 	auto OriginalFn = Hooks::ModelRender_DrawModelExecute::Hook.Original<Hooks::ModelRender_DrawModelExecute::FN>();
