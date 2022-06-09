@@ -723,28 +723,28 @@ namespace Vars
 			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 12, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
 		}
 		namespace FONT_ESP_NAME
 		{
 			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 12, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
 		}
 		namespace FONT_ESP_COND
 		{
 			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 10, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
 		}
 		namespace FONT_ESP_PICKUPS
 		{
 			inline std::string szName = "Verdana";
 			inline CVar<int> nTall = { 13, L"nTall" };
 			inline CVar<int> nWeight = { 800, L"nWeight" };
-			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, FONTFLAG_DROPSHADOW, L"nFlags" };
+			inline CVar<int> nFlags = { FONTFLAG_ANTIALIAS, L"nFlags" };
 		}
 		namespace FONT_MENU
 		{
