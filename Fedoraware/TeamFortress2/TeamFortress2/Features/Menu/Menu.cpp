@@ -300,9 +300,10 @@ void CMenu::MenuAimbot()
 			WToggle("Performance mode", &Vars::Aimbot::Projectile::PerformanceMode.m_Var); HelpMarker("Only target enemy closest to the crosshair");
 			WToggle("Movement simulation", &Vars::Aimbot::Projectile::MovementSimulation.m_Var); HelpMarker("Uses game functions to predict where the player will be");
 			ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor.startColour);
-			ColorPickerL("Prediction Line color", Vars::Aimbot::Projectile::PredictionColor.endColour, 1);
+			//ColorPickerL("Prediction Line color", Vars::Aimbot::Projectile::PredictionColor.endColour, 1);
 			if (Vars::Aimbot::Projectile::MovementSimulation.m_Var)
 			{
+				WToggle("Line on fire", &Vars::Aimbot::Projectile::DrawSimLine.m_Var); HelpMarker("Will only draw the line if attacking");
 				WSlider("Prediction Time", &Vars::Aimbot::Projectile::predTime.m_Var, 0.1f, 10.f, "%.1f");
 			}
 			{
@@ -1116,6 +1117,7 @@ void CMenu::MenuVisuals()
 				}
 				if (Vars::Visuals::BulletTracer.m_Var)
 				{
+					WToggle("Projectile only", &Vars::Visuals::BulletProjectile.m_Var); HelpMarker("Will only draw the bullet tracer if the weapon is a projectile");
 					WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.m_Var); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				}
 				if (Vars::Visuals::RemoveScope.m_Var)
