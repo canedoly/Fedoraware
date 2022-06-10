@@ -72,26 +72,49 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				//This could use alot of improvement, but still subjectively better than a flying rec
 				//Credits to JAGNEmk aka me x)
 
-				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero())
+				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero() && Vars::Visuals::MoveSimLine.m_Var)
 				{
-					if (Vars::Visuals::MoveSimLine.m_Var)
 					{
-						for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
+						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking())
 						{
-							static Color_t colorP1, colorP2;
+							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
-								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
-								//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
-							}
-							Vec3 vScreenpast, vScreenfuture;
-							if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
-							{
-								if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
+								static Color_t colorP1, colorP2;
 								{
-									g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-														colorP1);//idk if it would work lmao
+									colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
+									//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
 								}
-								
+								Vec3 vScreenpast, vScreenfuture;
+								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
+								{
+									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
+									{
+										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+															colorP1, 4);//idk if it would work lmao
+									}
+
+								}
+							}
+						}
+						else
+						{
+							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
+							{
+								static Color_t colorP1, colorP2;
+								{
+									colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
+									//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
+								}
+								Vec3 vScreenpast, vScreenfuture;
+								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
+								{
+									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
+									{
+										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+															colorP1);//idk if it would work lmao
+									}
+
+								}
 							}
 						}
 					}
