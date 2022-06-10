@@ -131,7 +131,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 														   Colors::BulletTracer.a, true, 3);
 			}
 
-			else if (Vars::Visuals::BulletProjectile.m_Var && !g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE) // if the weapon type isn't projectile
+			else if ((Vars::Visuals::BulletProjectile.m_Var && g_GlobalInfo.m_WeaponType != EWeaponType::PROJECTILE) // if the weapon type isn't projectile
 			{
 
 			}
