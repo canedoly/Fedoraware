@@ -75,7 +75,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero() && Vars::Visuals::MoveSimLine.m_Var)
 				{
 					{
-						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking())
+						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking)
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
