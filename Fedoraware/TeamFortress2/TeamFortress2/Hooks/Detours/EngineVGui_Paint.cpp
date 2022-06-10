@@ -185,11 +185,11 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								if (ratio > 1.f) { ratio = 1.f; }
 								else if (ratio < 0.f) { ratio = 0.f; }
 								const int xoff = Vars::Misc::CL_Move::DTNitroBarX.m_Var; // -20  width offset 
-								const int yoff = Vars::Misc::CL_Move::DTNitroBarY.m_Var; // 180  height offset // TODO say if 179 is higher or lower than 180
+								const int yoff = Vars::Misc::CL_Move::DTNitroBarY.m_Var; // 180  height offset
 								const int yscale = Vars::Misc::CL_Move::DTNitroBarScaleY.m_Var; //  12  height
 								const int xscale = Vars::Misc::CL_Move::DTNitroBarScaleX.m_Var; //  100
-								static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
-								const float maxTicksValue = maxTicks->GetFloat();
+								//static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
+								//const float maxTicksValue = maxTicks->GetFloat();
 
 								static Color_t colorN1, colorN2;
 								{
@@ -197,31 +197,32 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									colorN2 = Colors::DTBarNitroIndicatorEnd;
 								}
 
-								g_Draw.Rect(g_ScreenSize.c - ((xscale + 1) / 2) + xoff, nY - ((yscale + 1) / 2) + yoff, (xscale + 1),
+								g_Draw.Rect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + yoff, xscale,
 											(yscale - 2), { 17, 24, 26, 170 });
 
 								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + yoff,
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
 													(nY - (yscale / 2) + yoff + yscale), { colorN1 }, { colorN2 }, TRUE);
-								//g_Draw.OutlinedRect(g_ScreenSize.c - (xscale / 2 + 1) + xoff,
-								//					nY - (yscale / 2 + 1) + yoff, (xscale + 2), (yscale + 2),
-								//					Colors::DtOutline);
+
+								g_Draw.OutlinedRect(g_ScreenSize.c - (xscale / 2 + 1) + xoff,
+													nY - (yscale / 2 + 1) + yoff, (xscale + 2), (yscale + 2),
+													{ 17, 24, 26, 170});
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale /2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 							}
@@ -292,20 +293,20 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int xscale = Vars::Misc::CL_Move::DTBarScaleX.m_Var; //  100
 								if (g_GlobalInfo.m_nShifted == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks 0/%i", Vars::Misc::CL_Move::DTTicks.m_Var, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_bRecharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}
 								else if (g_GlobalInfo.m_nShifted > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 28) + xscale),
-												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_REVERSE,
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+												  nY - (yscale / 2 + 48) - 10 + yoff, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL,
 												  L"Ticks %i/%i", g_GlobalInfo.m_nShifted, Vars::Misc::CL_Move::DTTicks.m_Var);
 								}	
 							}
@@ -313,10 +314,12 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 					}
 				}
 
-				// Build Date
-				if (g_Menu.IsOpen)
+				// fedoraware
+				if (!I::Engine->IsInGame())
 				{
-					g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.m_Var, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
+					//g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.m_Var, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
+					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, ALIGN_CENTERHORIZONTAL, "Fedoraware");
+					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 210, ALIGN_CENTERHORIZONTAL, _(__DATE__));
 				}
 
 				// Debug info
