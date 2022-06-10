@@ -238,9 +238,16 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 {
 	auto pNetChannel = I::Engine->GetNetChannelInfo();
 
-	g_GlobalInfo.predBeforeLines.clear();
-	g_GlobalInfo.predFutureLines.clear(); // clear here to stop them from drawing on non move-simmed entities
+	if (Vars::Aimbot::Projectile::DrawSimLine.m_Var)
+	{
 
+	}
+	else
+	{
+		g_GlobalInfo.predBeforeLines.clear();
+		g_GlobalInfo.predFutureLines.clear();
+	}
+	
 	if (!pNetChannel)
 	{
 		return false;

@@ -87,8 +87,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								{
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
-										//g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-										//					colorP1, true, 4);//idk if it would work lmao
+										g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+															{255,255,255,255}, true, 4);//idk if it would work lmao
 										I::DebugOverlay->AddLineOverlayAlpha(vScreenpast, vScreenfuture, colorP1.r, colorP1.g, colorP1.b,
 															colorP1.a, true, 3);
 									}
@@ -96,7 +96,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								}
 							}
 						}
-						/* else
+						/* else if (!Vars::Aimbot::Projectile::DrawSimLine.m_Var)
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
