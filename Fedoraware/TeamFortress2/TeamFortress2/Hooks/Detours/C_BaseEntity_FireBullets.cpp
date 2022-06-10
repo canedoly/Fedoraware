@@ -120,7 +120,11 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 				I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 														   Colors::BulletTracer.a, true, 3);
 			}
-			else {
+			else
+			{
+
+			}
+			else if (!Vars::Visuals::BulletProjectile.m_Var){
 			const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.m_Var ? Utils::Rainbow() : Colors::BulletTracer;
 
 			I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
