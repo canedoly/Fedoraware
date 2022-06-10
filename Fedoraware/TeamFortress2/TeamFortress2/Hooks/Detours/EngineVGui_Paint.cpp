@@ -319,8 +319,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				if (!I::Engine->IsInGame())
 				{
 					//g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.m_Var, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
-					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, ALIGN_CENTERHORIZONTAL, "Fedoraware");
-					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 210, ALIGN_CENTERHORIZONTAL, _(__DATE__));
+					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, "Fedoraware");
+					g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 210, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, _(__DATE__));
 				}
 
 				// Debug info
