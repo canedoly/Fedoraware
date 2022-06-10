@@ -90,7 +90,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
 										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															colorP1, true, 4);//idk if it would work lmao
+															colorP1, 4);//idk if it would work lmao
 									}
 
 								}
