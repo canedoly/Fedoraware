@@ -190,6 +190,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const int xscale = Vars::Misc::CL_Move::DTNitroBarScaleX.m_Var; //  100
 								//static ConVar* maxTicks = I::CVars->FindVar("sv_maxusrcmdprocessticks");
 								//const float maxTicksValue = maxTicks->GetFloat();
+								//const float percent = ((g_GlobalInfo.m_nShifted * 100%) / Vars::Misc::CL_Move::DTTicks.m_Var) for lithium's dt
 
 								static Color_t colorN1, colorN2;
 								{
