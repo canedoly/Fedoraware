@@ -72,25 +72,25 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				//This could use alot of improvement, but still subjectively better than a flying rec
 				//Credits to JAGNEmk aka me x)
 
-				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero() && Vars::Visuals::MoveSimLine.m_Var)
+				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero() && Vars::Visuals::MoveSimLine.m_Var) // if move sim var and line are active
 				{
 					{
-						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking)
+						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking) // draw only if var for attack only is enabled and only during attacking
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
-								static Color_t colorP1, colorP2;
-								{
-									colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
-									//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
-								}
+								static Color_t colorP1; // the color function
+								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour; // the color
+
 								Vec3 vScreenpast, vScreenfuture;
 								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
 								{
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
-										g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															colorP1, true, 4);//idk if it would work lmao
+										//g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+										//					colorP1, true, 4);//idk if it would work lmao
+										I::DebugOverlay->AddLineOverlayAlpha(vScreenpast, vScreenfuture, colorP1.r, colorP1.g, colorP1.b,
+															colorP1.a, true, 3) // can debugoverlay line bend?
 									}
 
 								}
@@ -100,18 +100,16 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
-								static Color_t colorP1, colorP2;
-								{
-									colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
-									//colorP2 = Vars::Aimbot::Projectile::PredictionColor.endColour;
-								}
+								static Color_t colorP1;
+								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
+
 								Vec3 vScreenpast, vScreenfuture;
 								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
 								{
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
 										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															colorP1);//idk if it would work lmao
+															colorP1);
 									}
 
 								}

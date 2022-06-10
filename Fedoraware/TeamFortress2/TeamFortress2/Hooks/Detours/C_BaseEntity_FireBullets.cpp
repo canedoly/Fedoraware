@@ -112,24 +112,30 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		const int iAttachment = pWeapon->LookupAttachment(_("muzzle"));
 		pWeapon->GetAttachment(iAttachment, trace.vStartPos);
 
-		if (Vars::Visuals::BulletTracer.m_Var)
+		if (Vars::Visuals::BulletTracer.m_Var) // the main var
 		{
-			if (Vars::Visuals::BulletProjectile.m_Var && g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE) {
+			if (Vars::Visuals::BulletProjectile.m_Var && g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE) // if the var for projectile only is enabled and weapon type is projectile
+			{
 				const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.m_Var ? Utils::Rainbow() : Colors::BulletTracer;
 
 				I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 														   Colors::BulletTracer.a, true, 3);
 			}
-			else
-			{
 
-			}
-			else if (!Vars::Visuals::BulletProjectile.m_Var){
+
+			else if (!Vars::Visuals::BulletProjectile.m_Var) // if the var is disabled
+			{
 			const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.m_Var ? Utils::Rainbow() : Colors::BulletTracer;
 
 			I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 														   Colors::BulletTracer.a, true, 3);
 			}
+
+			else if (Vars::Visuals::BulletProjectile.m_Var && !g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE) // if the weapon type isn't projectile
+			{
+
+			}
+
 		}
 		if (!pLocal->IsInValidTeam())
 		{
