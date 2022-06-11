@@ -80,8 +80,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	oClMove(accumulated_extra_samples,
 			(g_GlobalInfo.m_bShouldShift && !g_GlobalInfo.m_nWaitForShift) ? true : bFinalTick);
 
-	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
-	if (tpKey.Down() && Vars::Misc::CL_Move::TeleportMode.Value == 1 && g_GlobalInfo.m_nShifted > 0)
+	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.m_Var };
+	if (tpKey.Down() && Vars::Misc::CL_Move::TeleportMode.m_Var == 1 && g_GlobalInfo.m_nShifted > 0)
 	{
 		oClMove(0, false);
 		g_GlobalInfo.m_nShifted--;
