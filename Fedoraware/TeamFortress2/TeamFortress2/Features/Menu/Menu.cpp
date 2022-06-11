@@ -303,7 +303,7 @@ void CMenu::MenuAimbot()
 			//ColorPickerL("Prediction Line color", Vars::Aimbot::Projectile::PredictionColor.endColour, 1);
 			if (Vars::Aimbot::Projectile::MovementSimulation.m_Var)
 			{
-				WToggle("Line on fire", &Vars::Aimbot::Projectile::DrawSimLine.m_Var); HelpMarker("Will only draw the line if attacking");
+				WToggle("Draw during attack", &Vars::Aimbot::Projectile::DrawSimLine.m_Var); HelpMarker("Will only draw the line if attacking");
 				WSlider("Prediction Time", &Vars::Aimbot::Projectile::predTime.m_Var, 0.1f, 10.f, "%.1f");
 			}
 			{
@@ -1119,6 +1119,7 @@ void CMenu::MenuVisuals()
 				{
 					WToggle("Projectile only", &Vars::Visuals::BulletProjectile.m_Var); HelpMarker("Will only draw the bullet tracer if the weapon is a projectile");
 					WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.m_Var); HelpMarker("Bullet tracer color will be dictated by a changing color");
+					WToggle("Clear bullet tracers", &Vars::Visuals::ClearPrevious.m_Var); HelpMarker("Will clear previous bullet tracers");
 				}
 				if (Vars::Visuals::RemoveScope.m_Var)
 				{

@@ -79,18 +79,19 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
-								static Color_t colorP1; // the color function
-								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour; // the color
+								static Color_t scolor; // the color function
+								scolor = Vars::Aimbot::Projectile::PredictionColor.startColour; // the color
 
 								Vec3 vScreenpast, vScreenfuture;
 								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
 								{
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
-										g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															colorP1, true, 4);//idk if it would work lmao
-										I::DebugOverlay->AddLineOverlayAlpha(vScreenpast, vScreenfuture, colorP1.r, colorP1.g, colorP1.b,
-															colorP1.a, true, 3);
+										I::DebugOverlay->AddLineOverlay(vScreenpast, vScreenfuture, scolor.r, scolor.g, scolor.b, true, 3);
+										I::DebugOverlay->AddSimulationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+															scolor.r, scolor.g, scolor.b, true, 3)
+										//g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+										//					scolor, true, 4);//idk if it would work lmao
 									}
 
 								}
@@ -100,8 +101,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
-								static Color_t colorP1;
-								colorP1 = Vars::Aimbot::Projectile::PredictionColor.startColour;
+								static Color_t scolor;
+								scolor = Vars::Aimbot::Projectile::PredictionColor.startColour;
 
 								Vec3 vScreenpast, vScreenfuture;
 								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
@@ -109,7 +110,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
 										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															colorP1);
+															scolor);
 									}
 
 								}

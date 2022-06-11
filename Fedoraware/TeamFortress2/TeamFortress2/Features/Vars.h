@@ -488,6 +488,7 @@ namespace Vars
 		inline CVar<bool> SkyModulation{ true, L"Skybox modulation" };
 		inline CVar<bool> BulletTracer{ false, L"Bullet tracers" };
 		inline CVar<bool> BulletProjectile{ false, L"Bullet Projectile" };
+		inline CVar<bool> ClearPrevious{ false, L"Clear Previous"};
 		inline CVar<bool> AimbotViewmodel{ true, L"AimbotVM" };
 		inline CVar<bool> ViewmodelSway{ false, L"AimbotVM" };
 		inline CVar<bool> MoveSimLine{ true, L"Movement Simulation Line" };
