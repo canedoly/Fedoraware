@@ -125,7 +125,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 				if (bulletProj = true)
 				{
 					I::DebugOverlay->ClearAllOverlays();
-					bulletProj = false
+					bulletProj = false;
 				}
 				
 			}
