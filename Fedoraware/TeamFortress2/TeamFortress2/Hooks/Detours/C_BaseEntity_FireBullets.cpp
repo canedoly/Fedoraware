@@ -116,10 +116,18 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		{
 			if (Vars::Visuals::BulletProjectile.m_Var && g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE)
 			{
+				static bool bulletProj = false;
 				const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.m_Var ? Utils::Rainbow() : Colors::BulletTracer;
-
+				bulletProj = true;
 				I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 														   Colors::BulletTracer.a, true, 3);
+				bulletProj = false;
+				if (bulletProj = true)
+				{
+					I::DebugOverlay->ClearAllOverlays();
+					bulletProj = false
+				}
+				
 			}
 
 
