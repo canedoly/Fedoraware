@@ -209,11 +209,6 @@ void CMisc::Teleport(const CUserCmd* pCmd)
 			// Plain teleport
 			g_GlobalInfo.tickShiftQueue = g_GlobalInfo.m_nShifted;
 		}
-		else if (Vars::Misc::CL_Move::TeleportMode.m_Var == 1 && pCmd->command_number % 3 == 0 && g_GlobalInfo.tickShiftQueue == 0)
-		{
-			// Custom teleport
-			g_GlobalInfo.tickShiftQueue = (Vars::Misc::CL_Move::WarpSpeed.m_Var);
-		}
 	}
 }
 
