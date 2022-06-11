@@ -157,6 +157,114 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 
 			//C.A.P.P.E.R
 			case 2:
+				Particles::ParticleTracer(team == 2 ? "bullet_tracer_raygun_red" : "bullet_tracer_raygun_blue", trace.vStartPos, trace.vEndPos, 
+										   pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Short circuit
+			case 3:
+				Particles::ParticleTracer(team == 2 ? "dxhr_lightningball_hit_zap_red" : "dxhr_lightningball_hit_zap_blue",
+										  trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Merasmus ZAP
+			case 4:
+				Particles::ParticleTracer("merasmus_zap", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Merasmus ZAP Beam 2
+			case 5:
+				Particles::ParticleTracer("merasmus_zap_beam02", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment,
+										  true);
+				break;
+
+			case 6:
+				Particles::ParticleTracer(team == 2 ? "bullet_bignasty_tracer01_blue" : "bullet_bignasty_tracer01_red",
+					   trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			case 7:
+				Particles::ParticleTracer("tfc_sniper_distortion_trail", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(),
+										  iAttachment, true);
+				break;
+
+			case 8: // black_ink, demo'd: https://youtu.be/Ba0lcMOfm9w 
+				Particles::ParticleTracer("merasmus_zap_beam01", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment,
+										  true);
+				break;
+
+			case 9:
+				// custom particle tracer, def not pasted from deathpole or anything. list @ dump_particlemanifest or @ https://github.com/tf2cheater2013/particles.txt
+				Particles::ParticleTracer(Vars::Visuals::ParticleName.c_str(), trace.vStartPos, trace.vEndPos, pLocal->GetIndex(),
+										  iAttachment, true);
+				break;
+		}
+
+		// critting bullet tracers (nitro inspired me)
+		switch (Vars::Visuals::CritTracer.m_Var && pLocal->IsCritBoosted())
+		{
+			case 1:
+				Particles::ParticleTracer(team == 2 ? "dxhr_sniper_rail_red" : "dxhr_sniper_rail_blue", trace.vStartPos, trace.vEndPos,
+										  pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//C.A.P.P.E.R
+			case 2:
+				Particles::ParticleTracer(team == 2 ? "bullet_tracer_raygun_red_crit" : "bullet_tracer_raygun_blue_crit", trace.vStartPos, trace.vEndPos, 
+										   pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Short circuit
+			case 3:
+				Particles::ParticleTracer(team == 2 ? "dxhr_lightningball_hit_zap_red" : "dxhr_lightningball_hit_zap_blue",
+										  trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Merasmus ZAP
+			case 4:
+				Particles::ParticleTracer("merasmus_zap", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//Merasmus ZAP Beam 2
+			case 5:
+				Particles::ParticleTracer("merasmus_zap_beam02", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment,
+										  true);
+				break;
+
+			case 6:
+				Particles::ParticleTracer(team == 2 ? "bullet_bignasty_tracer01_red_crit" : "bullet_bignasty_tracer01_blue_crit",
+					   trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			case 7:
+				Particles::ParticleTracer("tfc_sniper_distortion_trail", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(),
+										  iAttachment, true);
+				break;
+
+			case 8: // black_ink, demo'd: https://youtu.be/Ba0lcMOfm9w 
+				Particles::ParticleTracer("merasmus_zap_beam01", trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment,
+										  true);
+				break;
+
+			case 9:
+				// custom particle tracer, def not pasted from deathpole or anything. list @ dump_particlemanifest or @ https://github.com/tf2cheater2013/particles.txt
+				Particles::ParticleTracer(Vars::Visuals::ParticleName.c_str(), trace.vStartPos, trace.vEndPos, pLocal->GetIndex(),
+										  iAttachment, true);
+				break;
+		}
+
+
+
+/* 		switch (Vars::Visuals::ParticleTracer.m_Var)
+		{
+		//Machina
+			case 1:
+				Particles::ParticleTracer(team == 2 ? "dxhr_sniper_rail_red" : "dxhr_sniper_rail_blue", trace.vStartPos, trace.vEndPos,
+										  pLocal->GetIndex(), iAttachment, true);
+				break;
+
+			//C.A.P.P.E.R
+			case 2:
 				pLocal->IsCritBoosted()
 					? (Particles::ParticleTracer(team == 2 ? "bullet_tracer_raygun_red_crit" : "bullet_tracer_raygun_blue_crit",
 					   trace.vStartPos, trace.vEndPos, pLocal->GetIndex(), iAttachment, true))
@@ -205,7 +313,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 				Particles::ParticleTracer(Vars::Visuals::ParticleName.c_str(), trace.vStartPos, trace.vEndPos, pLocal->GetIndex(),
 										  iAttachment, true);
 				break;
-		}
+		} */
 
 		if (Vars::Visuals::Beans::Active.m_Var)
 		{

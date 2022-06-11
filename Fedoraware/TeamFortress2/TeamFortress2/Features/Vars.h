@@ -493,7 +493,9 @@ namespace Vars
 		inline CVar<bool> ViewmodelSway{ false, L"AimbotVM" };
 		inline CVar<bool> MoveSimLine{ true, L"Movement Simulation Line" };
 		inline CVar<int> ParticleTracer{ 2, L"Particle tracers" };
-		inline std::string ParticleName = "merasmus_zap_beam01"; // dont save this as a var its pointless
+		inline CVar<int> CritTracer{ 4, L"Crit Tracers" };
+		inline std::string ParticleName = "merasmus_zap_beam01";
+		inline std::string CritName = "dxhr_sniper_rail";
 		namespace Beans
 		{
 			inline CVar<bool> Active{ false };
