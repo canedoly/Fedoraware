@@ -89,7 +89,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									{
 										I::DebugOverlay->AddLineOverlay(vScreenpast, vScreenfuture, scolor.r, scolor.g, scolor.b, true, 3);
 										I::DebugOverlay->AddSimulationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															scolor.r, scolor.g, scolor.b, true, 3)
+															scolor.r, scolor.g, scolor.b, true, 3);
 										//g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
 										//					scolor, true, 4);//idk if it would work lmao
 									}
