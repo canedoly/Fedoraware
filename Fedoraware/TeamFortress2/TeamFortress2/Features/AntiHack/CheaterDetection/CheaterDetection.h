@@ -28,4 +28,4 @@ public:
 	void OnTick();
 };
 
-inline CheaterDetection g_BadActors; // funny name f&ck you
+inline CheaterDetection g_BadActors;
