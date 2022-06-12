@@ -238,15 +238,8 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 {
 	auto pNetChannel = I::Engine->GetNetChannelInfo();
 
-	if (Vars::Aimbot::Projectile::DrawSimLine.m_Var)
-	{
-
-	}
-	else
-	{
-		g_GlobalInfo.predBeforeLines.clear();
-		g_GlobalInfo.predFutureLines.clear();
-	}
+	g_GlobalInfo.predBeforeLines.clear();
+	g_GlobalInfo.predFutureLines.clear();
 	
 	if (!pNetChannel)
 	{

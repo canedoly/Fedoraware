@@ -131,7 +131,6 @@ namespace Vars
 			inline CVar<bool> FeetAimIfOnGround{ false, L"Aim at feet if target is on the ground." };
 			inline CVar<bool> SplashPrediction{ false, };
 			inline CVar<bool> MovementSimulation{ true, L"move sim" };
-			inline CVar<bool> DrawSimLine{ false, L"Draw sim line"};
 			inline Gradient_t PredictionColor{ {255,255,255,255}, {255,255,255,255} };
 			inline CVar<bool> ManualZAdjust{ true, L"Toggle for manual z adjust on projectile prediction." };
 			inline CVar<float> ZAdjustAmount{ 5.5f, L"Z Adjust factor." };
@@ -488,12 +487,12 @@ namespace Vars
 		inline CVar<bool> SkyModulation{ true, L"Skybox modulation" };
 		inline CVar<bool> BulletTracer{ false, L"Bullet tracers" };
 		inline CVar<bool> BulletProjectile{ false, L"Bullet Projectile" };
-		inline CVar<bool> ClearPrevious{ false, L"Clear Previous"};
+		//inline CVar<bool> ClearPrevious{ false, L"Clear Previous"};
 		inline CVar<bool> AimbotViewmodel{ true, L"AimbotVM" };
 		inline CVar<bool> ViewmodelSway{ false, L"AimbotVM" };
 		inline CVar<bool> MoveSimLine{ true, L"Movement Simulation Line" };
 		inline CVar<int> ParticleTracer{ 2, L"Particle tracers" };
-		inline CVar<int> CritTracer{ 4, L"Crit Tracers" };
+		inline CVar<int> CritTracer{ 4, L"Crit Tracers" }; // i need a better check to see if we're critting
 		inline std::string ParticleName = "merasmus_zap_beam01";
 		inline std::string CritName = "dxhr_sniper_rail";
 		namespace Beans

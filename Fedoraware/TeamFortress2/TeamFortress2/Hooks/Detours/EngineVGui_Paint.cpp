@@ -75,7 +75,6 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				if (Vars::Aimbot::Projectile::MovementSimulation.m_Var && !g_GlobalInfo.m_vPredictedPos.IsZero() && Vars::Visuals::MoveSimLine.m_Var) // if move sim var and line are active
 				{
 					{
-						if (Vars::Aimbot::Projectile::DrawSimLine.m_Var && g_GlobalInfo.m_bAttacking) // draw only if var for attack only is enabled and only during attacking
 						{
 							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
 							{
@@ -87,30 +86,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								{
 									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
 									{
-										I::DebugOverlay->AddLineOverlay(vScreenpast, vScreenfuture, scolor.r, scolor.g, scolor.b, true, 3);
-										I::DebugOverlay->AddSimulationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															scolor.r, scolor.g, scolor.b, true, 3);
-										//g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-										//					scolor, true, 4);//idk if it would work lmao
-									}
-
-								}
-							}
-						}
-						else if (!Vars::Aimbot::Projectile::DrawSimLine.m_Var)
-						{
-							for (size_t i = 0; i < g_GlobalInfo.predFutureLines.size(); i++)
-							{
-								static Color_t scolor;
-								scolor = Vars::Aimbot::Projectile::PredictionColor.startColour;
-
-								Vec3 vScreenpast, vScreenfuture;
-								if (Utils::W2S(g_GlobalInfo.predBeforeLines.at(i), vScreenpast))
-								{
-									if (Utils::W2S(g_GlobalInfo.predFutureLines.at(i), vScreenfuture))
-									{
-										g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-															scolor);
+										g_Draw.DurationLine(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+															scolor, true, 4); //idk if it would work lmao
 									}
 
 								}

@@ -116,12 +116,10 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		{
 			if (Vars::Visuals::BulletProjectile.m_Var && g_GlobalInfo.m_WeaponType == EWeaponType::PROJECTILE)
 			{
-				if (Vars::Visuals::ClearPrevious.m_Var) { I::DebugOverlay->ClearAllOverlays(); }
 				const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.m_Var ? Utils::Rainbow() : Colors::BulletTracer;
 
 				I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 														   Colors::BulletTracer.a, true, 3);
-				
 			}
 
 
@@ -199,7 +197,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 				break;
 		}
 
-		// critting bullet tracers (nitro inspired me)
+		// critting bullet tracers (nitro inspired me) pls is there a better check if the bullets we fire are crits
 		switch (Vars::Visuals::CritTracer.m_Var && pLocal->IsCritBoosted())
 		{
 			case 1:

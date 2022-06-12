@@ -240,7 +240,7 @@ void CMenu::MenuAimbot()
 			WToggle("Aimbot", &Vars::Aimbot::Global::Active.m_Var); HelpMarker("Aimbot master switch");
 			WToggle("Run on fire", &Vars::Aimbot::Global::RunOnFire.m_Var); HelpMarker("Will only aim while firing");
 			//WToggle("Highlight aim target", &Vars::Aimbot::Global::HighlightAim.m_Var); HelpMarker("Highlight aim target");
-			ColorPickerL("Target", Colors::Target);
+			//ColorPickerL("Target", Colors::Target);
 			InputKeybind("Aimbot key", Vars::Aimbot::Global::AimKey); HelpMarker("The key to enable aimbot");
 			WSlider("Aimbot FoV####AimbotFoV", &Vars::Aimbot::Global::AimFOV.m_Var, 0.f, 180.f, "%.f", ImGuiSliderFlags_AlwaysClamp);
 			ColorPickerL("Aimbot FOV circle", Colors::FOVCircle);
@@ -303,7 +303,7 @@ void CMenu::MenuAimbot()
 			//ColorPickerL("Prediction Line color", Vars::Aimbot::Projectile::PredictionColor.endColour, 1);
 			if (Vars::Aimbot::Projectile::MovementSimulation.m_Var)
 			{
-				WToggle("Draw during attack", &Vars::Aimbot::Projectile::DrawSimLine.m_Var); HelpMarker("Will only draw the line if attacking");
+				//WToggle("Draw during attack", &Vars::Aimbot::Projectile::DrawSimLine.m_Var); HelpMarker("Will only draw the line if attacking");
 				WSlider("Prediction Time", &Vars::Aimbot::Projectile::predTime.m_Var, 0.1f, 10.f, "%.1f");
 			}
 			{
@@ -1124,7 +1124,6 @@ void CMenu::MenuVisuals()
 				{
 					WToggle("Projectile only", &Vars::Visuals::BulletProjectile.m_Var); HelpMarker("Will only draw the bullet tracer if the weapon is a projectile");
 					WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.m_Var); HelpMarker("Bullet tracer color will be dictated by a changing color");
-					WToggle("Clear bullet tracers", &Vars::Visuals::ClearPrevious.m_Var); HelpMarker("Will clear previous bullet tracers");
 				}
 				if (Vars::Visuals::RemoveScope.m_Var)
 				{
@@ -1133,9 +1132,9 @@ void CMenu::MenuVisuals()
 					ColorPickerL("Outer line color", Colors::NoscopeLines2, 1);
 				}
 				WToggle("Pickup Timers", &Vars::Visuals::PickupTimers.m_Var); HelpMarker("Displays the respawn time of health and ammopacks");
-				WToggle("Draw Hitboxes", &Vars::Aimbot::Global::showHitboxes.m_Var); HelpMarker("Shows client hitboxes for enemies once they are attacked (not bbox)");
 				WToggle("Debug info", &Vars::Debug::DebugInfo.m_Var); HelpMarker("For debugging purposes only");
 				WToggle("Fakelag movement", &Vars::Visuals::LagMove.m_Var); HelpMarker("Something to do with cycle animation");
+				WToggle("Draw Hitboxes", &Vars::Aimbot::Global::showHitboxes.m_Var); HelpMarker("Shows client hitboxes for enemies once they are attacked (not bbox)");
 				ColorPickerL("Hitbox matrix face colour", Colors::HitboxFace);
 				ColorPickerL("Hitbox matrix edge colour", Colors::HitboxEdge, 1);
 				WToggle("Clear Hitboxes", &Vars::Aimbot::Global::clearPreviousHitbox.m_Var); HelpMarker("Removes previous drawn hitboxes to mitigate clutter");
