@@ -1561,11 +1561,11 @@ void CMenu::MenuHvH()
 				InputKeybind("Doubletap key", Vars::Misc::CL_Move::DoubletapKey); HelpMarker("Only doubletap when the key is pressed. Leave as (None) for always active.");
 			}
 
-			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.m_Var, { "Plain", "Custom" }); HelpMarker("How the teleport should be done");
-			if (Vars::Misc::CL_Move::TeleportMode.m_Var == 1)
-			{
-				WSlider("Warp Speed", &Vars::Misc::CL_Move::WarpSpeed.m_Var, 1, 24, "%d"); HelpMarker("How many ticks to warp");
-			}
+			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.m_Var, { "Plain", "Smooth" }); HelpMarker("How the teleport should be done");
+			//if (Vars::Misc::CL_Move::TeleportMode.m_Var == 1)
+			//{
+			//	WSlider("Warp Speed", &Vars::Misc::CL_Move::WarpSpeed.m_Var, 1, 24, "%d"); HelpMarker("How many ticks to warp");
+			//}
 			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne" }, { &Vars::Misc::CL_Move::RechargeWhileDead.m_Var, &Vars::Misc::CL_Move::AutoRecharge.m_Var, &Vars::Misc::CL_Move::WaitForDT.m_Var, &Vars::Misc::CL_Move::AntiWarp.m_Var, &Vars::Misc::CL_Move::NotInAir.m_Var }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.m_Var, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
