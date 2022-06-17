@@ -158,6 +158,41 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 													Value, color1, color2, true);
 							}
 
+							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 2)
+							{
+								static Color_t colorG1, colorG2;
+								colorG1 = { 140, 215, 255, 255 };
+								colorG2 = { 255, 255, 255, 255 };
+								const float dtOffset2 = g_ScreenSize.c - 24;
+								static float tickWidth = 0.f;
+								static float barWidth = 0.f;
+
+								g_Draw.Rect(dtOffset2, (g_ScreenSize.h / 2) + 49, 98,
+													7, { 59, 59, 59, 255});
+								g_Draw.OutlinedRect(dtOffset2 + 1, (g_ScreenSize.h / 2) + 50, 99,
+													8, { 45, 45, 45, 255});
+								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + dtOffset2 + barWidth,
+													(g_ScreenSize.h / 2) + 49 + 7,
+													colorG1, colorG2, true);
+
+								if (G::ShiftedTicks == 0)
+								{
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {190,0,0,255}, ALIGN_CENTERHORIZONTAL,
+												  L"(RapidFire) Too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+								}
+								else if (G::Recharging)
+								{
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {200,115,20,255}, ALIGN_CENTERHORIZONTAL,
+												  L"(RapidFire) Wait %i", G::WaitForShift);
+								}
+								else if (G::ShiftedTicks > 0)
+								{
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {15,180,0,255}, ALIGN_CENTERHORIZONTAL,
+												  L"(RapidFire) Ready", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+								}
+								
+							}
+
 							// Rijin DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 3)
 							{
