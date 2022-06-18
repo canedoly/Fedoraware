@@ -66,7 +66,9 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				{
 					if (!I::Engine->IsInGame())
 					{
-						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Utils::Rainbow(), EStringAlign::ALIGN_CENTERHORIZONTAL, "Happy pride month!!!!!!");
+						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Colors::White, ALIGN_CENTERHORIZONTAL, "Fedoraware");
+						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 190, Colors::White, ALIGN_CENTERHORIZONTAL, _(__DATE__));
+						//g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Utils::Rainbow(), EStringAlign::ALIGN_CENTERHORIZONTAL, "Happy pride month!!!!!!");
 					}
 					return;
 				}
@@ -168,12 +170,13 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								static float barWidth = 0.f;
 
 								g_Draw.Rect(dtOffset2, (g_ScreenSize.h / 2) + 49, 98,
-													7, { 59, 59, 59, 255});
+											7, { 59, 59, 59, 255});
+
 								g_Draw.OutlinedRect(dtOffset2 + 1, (g_ScreenSize.h / 2) + 50, 99,
-													8, { 45, 45, 45, 255});
-								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + dtOffset2 + barWidth,
-													(g_ScreenSize.h / 2) + 49 + 7,
-													colorG1, colorG2, true);
+											8, { 45, 45, 45, 255});
+
+								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + 49, dtOffset2 + barWidth,
+											(g_ScreenSize.h / 2) + 49 + 7, colorG1, colorG2, true);
 
 								if (G::ShiftedTicks == 0)
 								{
@@ -223,30 +226,30 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								g_Draw.GradientRect(g_ScreenSize.c - (xscale / 2) + xoff, nY - (yscale / 2) + yoff,
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
 													(nY - (yscale / 2) + yoff + yscale), { color1 }, { color2 }, TRUE);
-								g_Draw.String(FONT_INDICATORS, g_ScreenSize.c - (xscale / 2 + 1) + xoff,
+								g_Draw.String(FONT_INDICATORS, g_ScreenSize.c - (xscale / 2 + 1) + (xoff - 1),
 											  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 255, 255, 255 }, ALIGN_DEFAULT,
 											  _(L"CHARGE"));
 								if (G::ShiftedTicks == 0) // no charge no money
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 1) + xscale),
 												  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 55, 40, 255 }, ALIGN_REVERSE,
 												  _(L"NO CHARGE"));
 								}
 								else if (G::Recharging && (G::WaitForShift || ratio < 1)) // charging 
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 1) + xscale),
 												  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 126, 0, 255 }, ALIGN_REVERSE,
 												  _(L"CHARGING"));
 								}
 								else if (!G::WaitForShift && ratio == 1) // activates when ready
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 1) + xscale),
 												  nY - (yscale / 2 + 1) - 10 + yoff, { 66, 255, 0, 255 }, ALIGN_REVERSE,
 												  _(L"READY"));
 								}
 								else // activates when waiting blah blah blahg
 								{
-									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
+									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + (xoff - 1) + xscale),
 												  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 46, 46, 255 }, ALIGN_REVERSE,
 												  _(L"DT IMPOSSIBLE"));
 								}
