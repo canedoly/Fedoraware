@@ -63,39 +63,48 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 	// Prepare for a recharge (Is a recharge queued?)
 	
-	if (rechargeKey.Down() && !G::IsChoking)
-	{
-
-		G::Recharging = true;
-		G::TickShiftQueue = 0;
-	}
-	else
-	{
-		G::Recharging = false;
-	}
-
-	// // Recharge ticks
-	// else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	// i've wanted to make it only recharge ticks as long the recharge key is being pressed down
+	// if (rechargeKey.Down() && !G::IsChoking)
 	// {
-	// 	G::ForceSendPacket = true; // force uninterrupted connection with server
-	// 	G::ShiftedTicks++; // add ticks to tick counter
-	// 	G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
-	// 	return; // this recharges
-	// }
 
-	// Queue a recharge if the recharge key was pressed
-	// else if (rechargeKey.Down() && !G::RechargeQueued && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
-	// {
-	// 	// queue recharge
-	// 	G::ForceSendPacket = true;
-	// 	G::RechargeQueued = true;
+	// 	G::Recharging = true;
+	// 	G::TickShiftQueue = 0;
 	// }
-
-	// We're unable to recharge
 	// else
 	// {
 	// 	G::Recharging = false;
 	// }
+
+	if (G::RechargeQueued && !G::IsChoking)
+	{
+		// probably perfect method of waiting to ensure we don't mess with fakelag
+		G::RechargeQueued = false; // see relevant code @clientmodehook
+		G::Recharging = true;
+		G::TickShiftQueue = 0;
+	}
+
+	// Recharge ticks
+	else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		G::ForceSendPacket = true; // force uninterrupted connection with server
+		G::ShiftedTicks++; // add ticks to tick counter
+		G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+		return; // this recharges
+	}
+
+	// Queue a recharge if the recharge key was pressed
+	else if (rechargeKey.Down() && !G::RechargeQueued && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		// queue recharge
+		G::ForceSendPacket = true;
+		G::RechargeQueued = true;
+	}
+
+	// We're unable to recharge
+	else
+	{
+		G::Recharging = false;
+	}
 
 	oClMove(accumulated_extra_samples, (G::ShouldShift && !G::WaitForShift) ? true : bFinalTick);
 

@@ -913,17 +913,6 @@ void CAimbotProjectile::Aim(CUserCmd* pCmd, CBaseCombatWeapon* pWeapon, Vec3& vA
 		}
 
 	case 1:
-		if (Vars::Aimbot::Global::RunOnFire.Value)
-		{
-			if (G::IsAttacking)
-			{
-				// Silent
-				Utils::FixMovement(pCmd, vAngle);
-				pCmd->viewangles = vAngle;
-				break;
-			}
-		}
-		else
 		{
 			// Silent
 			Utils::FixMovement(pCmd, vAngle);
@@ -1173,7 +1162,7 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 					if (bIsAttacking)
 					{
 						Aim(pCmd, pWeapon, target.m_vAngleTo);
-						G::SilentTime = false;
+						//G::SilentTime = true;
 					}
 				}
 			}

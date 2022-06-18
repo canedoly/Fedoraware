@@ -221,17 +221,6 @@ void CAimbotMelee::Aim(CUserCmd* pCmd, Vec3& vAngle)
 		}
 
 	case 2:
-		if (Vars::Aimbot::Global::RunOnFire.Value)
-		{
-			if (G::IsAttacking)
-			{
-				// Silent
-				Utils::FixMovement(pCmd, vAngle);
-				pCmd->viewangles = vAngle;
-				break;
-			}
-		}
-		else
 		{
 			// Silent
 			Utils::FixMovement(pCmd, vAngle);
