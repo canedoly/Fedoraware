@@ -64,10 +64,13 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 			{
 				if (I::EngineVGui->IsGameUIVisible())
 				{
-					if (!I::Engine->IsInGame())
+					//if (!I::Engine->IsInGame() && F::Menu.IsOpen)
+					if (F::Menu.IsOpen)
 					{
-						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Colors::White, ALIGN_CENTERHORIZONTAL, "Fedoraware");
-						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 190, Colors::White, ALIGN_CENTERHORIZONTAL, _(__DATE__));
+						//testing something like text in lithium is white, beta is blue
+						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Colors::White, ALIGN_CENTERHORIZONTAL, "Fedora");
+						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c + 10, 200, {30,135,255,255}, ALIGN_CENTERHORIZONTAL, "Ware");
+						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 210, Colors::White, ALIGN_CENTERHORIZONTAL, _(__DATE__));
 						//g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 200, Utils::Rainbow(), EStringAlign::ALIGN_CENTERHORIZONTAL, "Happy pride month!!!!!!");
 					}
 					return;
@@ -169,29 +172,29 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								static float tickWidth = 0.f;
 								static float barWidth = 0.f;
 
-								g_Draw.Rect(dtOffset2, (g_ScreenSize.h / 2) + 49, 98,
+								g_Draw.Rect(dtOffset2, (g_ScreenSize.h / 2) + 50, 98,
 											7, { 59, 59, 59, 255});
 
-								g_Draw.OutlinedRect(dtOffset2 + 1, (g_ScreenSize.h / 2) + 50, 99,
+								g_Draw.OutlinedRect(dtOffset2 + 1, (g_ScreenSize.h / 2) + 49, 99,
 											8, { 45, 45, 45, 255});
 
-								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + 49, dtOffset2 + barWidth,
-											(g_ScreenSize.h / 2) + 49 + 7, colorG1, colorG2, true);
+								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + 50, dtOffset2 + barWidth,
+											(g_ScreenSize.h / 2) + 50 + 7, colorG1, colorG2, true);
 
 								if (G::ShiftedTicks == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {190,0,0,255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {190,0,0,255}, ALIGN_CENTERHORIZONTAL,
 												  L"(RapidFire) Too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else if (G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {200,115,20,255}, ALIGN_CENTERHORIZONTAL,
-												  L"(RapidFire) Wait %i", G::WaitForShift);
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {200,115,20,255}, ALIGN_CENTERHORIZONTAL,
+												  L"(RapidFire) Wait", G::WaitForShift);
 								}
 								else if (G::ShiftedTicks > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, dtOffset2 - 10, {15,180,0,255}, ALIGN_CENTERHORIZONTAL,
-												  L"(RapidFire) Ready", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {15,180,0,255}, ALIGN_CENTERHORIZONTAL,
+												  L"(RapidFire) Ready %i / %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								
 							}
@@ -259,10 +262,10 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 				}
 
 				// Build Date
-				if (F::Menu.IsOpen)
-				{
-					g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.Value, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
-				}
+				// if (F::Menu.IsOpen)
+				// {
+				// 	g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.Value, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
+				// }
 
 				// Debug info
 				if (Vars::Debug::DebugInfo.Value)

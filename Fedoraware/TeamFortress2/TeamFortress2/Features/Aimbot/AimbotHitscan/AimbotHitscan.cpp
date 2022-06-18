@@ -1,6 +1,8 @@
 #include "AimbotHitscan.h"
 #include "../../Vars.h"
 #include "../../Backtrack/Backtrack.h"
+#include "../../Backtrack/Backtrack.cpp"
+// for lerptime(), apparently it makes hitting fakelagging players easier
 
 bool IsHitboxValid(int nHitbox, int index)
 {
@@ -845,7 +847,7 @@ void CAimbotHitscan::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserC
 
 		if (Vars::Misc::DisableInterpolation.Value && target.m_TargetType == ETargetType::PLAYER && bIsAttacking)
 		{
-			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() +
+			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() + LerpTime() +
 				std::max(g_ConVars.cl_interp->GetFloat(), g_ConVars.cl_interp_ratio->GetFloat() / g_ConVars.
 					cl_updaterate->GetFloat()));
 		}
