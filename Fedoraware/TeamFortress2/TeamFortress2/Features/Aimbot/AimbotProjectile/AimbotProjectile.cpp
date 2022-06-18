@@ -892,14 +892,38 @@ void CAimbotProjectile::Aim(CUserCmd* pCmd, CBaseCombatWeapon* pWeapon, Vec3& vA
 	switch (Vars::Aimbot::Projectile::AimMethod.Value)
 	{
 	case 0:
+		if (Vars::Aimbot::Global::RunOnFire.Value)
 		{
-			// Plain
-			pCmd->viewangles = vAngle;
-			I::Engine->SetViewAngles(pCmd->viewangles);
-			break;
+			if (G::IsAttacking)
+			{
+				// Plain
+				pCmd->viewangles = vAngle;
+				I::Engine->SetViewAngles(pCmd->viewangles);
+				break;
+			}
+		}
+		else
+		{
+			{
+				// Plain
+				pCmd->viewangles = vAngle;
+				I::Engine->SetViewAngles(pCmd->viewangles);
+				break;
+			}
 		}
 
 	case 1:
+		if (Vars::Aimbot::Global::RunOnFire.Value)
+		{
+			if (G::IsAttacking)
+			{
+				// Silent
+				Utils::FixMovement(pCmd, vAngle);
+				pCmd->viewangles = vAngle;
+				break;
+			}
+		}
+		else
 		{
 			// Silent
 			Utils::FixMovement(pCmd, vAngle);
@@ -1136,12 +1160,23 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 
 		if (Vars::Aimbot::Projectile::AimMethod.Value == 1)
 		{
-			if (m_bIsFlameThrower)
+			if (Vars::Aimbot::Projectile::ClientSilent.Value)
 			{
-				G::ProjectileSilentActive = true;
-				Aim(pCmd, pWeapon, target.m_vAngleTo);
-			}
+				if (m_bIsFlameThrower)
+				{
+					G::ProjectileSilentActive = true;
+					Aim(pCmd, pWeapon, target.m_vAngleTo);
+				}
 
+				else
+				{
+					if (bIsAttacking)
+					{
+						Aim(pCmd, pWeapon, target.m_vAngleTo);
+						G::SilentTime = false;
+					}
+				}
+			}
 			else
 			{
 				if (bIsAttacking)

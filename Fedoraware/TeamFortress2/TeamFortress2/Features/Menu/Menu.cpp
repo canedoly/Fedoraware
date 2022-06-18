@@ -259,6 +259,7 @@ void CMenu::MenuAimbot()
 			SectionTitle("Global");
 
 			WToggle("Aimbot", &Vars::Aimbot::Global::Active.Value); HelpMarker("Aimbot master switch");
+			WToggle("Run on fire", &Vars::Aimbot::Global::RunOnFire.Value); HelpMarker("Will only aim if attacking (disable if low fps)");
 			ColorPickerL("Target", Colors::Target);
 			InputKeybind("Aimbot key", Vars::Aimbot::Global::AimKey); HelpMarker("The key to enable aimbot");
 			WSlider("Aimbot FoV####AimbotFoV", &Vars::Aimbot::Global::AimFOV.Value, 0.f, 180.f, "%.f", ImGuiSliderFlags_AlwaysClamp);
@@ -320,6 +321,7 @@ void CMenu::MenuAimbot()
 		if (TableColumnChild("AimbotCol3"))
 		{
 			SectionTitle("Projectile");
+			WToggle("Client side silent", &Vars::Aimbot::Projectile::ClientSilent.Value); HelpMarker("Wil work like silent on hitscan");
 			WSlider("Prediction Time", &Vars::Aimbot::Projectile::predTime.Value, 0.1f, 10.f, "%.1f");
 			ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
 			{

@@ -493,6 +493,16 @@ void CAimbotHitscan::Aim(CUserCmd* pCmd, Vec3& vAngle)
 	switch (nAimMethod)
 	{
 	case 0: //Plain
+		if (Vars::Aimbot::Global::RunOnFire.Value)
+		{
+			if (G::IsAttacking)
+			{
+			pCmd->viewangles = vAngle;
+			I::Engine->SetViewAngles(pCmd->viewangles);
+			break;
+			}
+		}
+		else
 		{
 			pCmd->viewangles = vAngle;
 			I::Engine->SetViewAngles(pCmd->viewangles);
@@ -540,7 +550,15 @@ void CAimbotHitscan::Aim(CUserCmd* pCmd, Vec3& vAngle)
 
 				vAngle.y -= 180.f;
 			}
-			if (G::IsAttacking)
+			if (Vars::Aimbot::Global::RunOnFire.Value)
+			{
+				if (G::IsAttacking)
+				{
+					Utils::FixMovement(pCmd, vAngle);
+					pCmd->viewangles = vAngle;
+				}
+			}
+			else
 			{
 				Utils::FixMovement(pCmd, vAngle);
 				pCmd->viewangles = vAngle;

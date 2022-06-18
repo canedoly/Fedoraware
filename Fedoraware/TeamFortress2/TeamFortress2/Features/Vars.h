@@ -78,6 +78,7 @@ namespace Vars
 		namespace Global
 		{
 			inline CVar<bool> Active{true};
+			inline CVar<bool> RunOnFire{true};
 			inline CVar<int> AimKey{VK_XBUTTON1};
 			inline CVar<float> AimFOV{15.0f};
 			inline CVar<bool> AutoShoot{true};
@@ -128,6 +129,7 @@ namespace Vars
 			inline Color_t PredictionColor{255, 255, 255, 255};
 			inline CVar<float> predTime{2.0f};
 			inline CVar<bool> NoSpread{ false };
+			inline CVar<bool> ClientSilent{false};
 		}
 
 		namespace Melee

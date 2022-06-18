@@ -187,6 +187,16 @@ void CAimbotMelee::Aim(CUserCmd* pCmd, Vec3& vAngle)
 	switch (Vars::Aimbot::Melee::AimMethod.Value)
 	{
 	case 0:
+		if (Vars::Aimbot::Global::RunOnFire.Value)
+		{
+			if (G::IsAttacking)
+			{
+			pCmd->viewangles = vAngle;
+			I::Engine->SetViewAngles(pCmd->viewangles);
+			break;
+			}
+		}
+		else
 		{
 			pCmd->viewangles = vAngle;
 			I::Engine->SetViewAngles(pCmd->viewangles);
@@ -211,7 +221,19 @@ void CAimbotMelee::Aim(CUserCmd* pCmd, Vec3& vAngle)
 		}
 
 	case 2:
+		if (Vars::Aimbot::Global::RunOnFire.Value)
 		{
+			if (G::IsAttacking)
+			{
+				// Silent
+				Utils::FixMovement(pCmd, vAngle);
+				pCmd->viewangles = vAngle;
+				break;
+			}
+		}
+		else
+		{
+			// Silent
 			Utils::FixMovement(pCmd, vAngle);
 			pCmd->viewangles = vAngle;
 			break;
@@ -304,10 +326,21 @@ void CAimbotMelee::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd
 
 		if (Vars::Aimbot::Melee::AimMethod.Value == 2)
 		{
-			if (bIsAttacking)
+			if (Vars::Aimbot::Projectile::ClientSilent.Value)
 			{
-				Aim(pCmd, target.m_vAngleTo);
-				G::SilentTime = true;
+				if (bIsAttacking)
+				{
+					Aim(pCmd, target.m_vAngleTo);
+					//G::SilentTime = true;
+				}
+			}
+			else
+			{
+				if (bIsAttacking)
+				{
+					Aim(pCmd, target.m_vAngleTo);
+					G::SilentTime = true;
+				}
 			}
 		}
 

@@ -228,6 +228,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			//Global
 			{
 				SAVE_VAR(Vars::Aimbot::Global::Active);
+				SAVE_VAR(Vars::Aimbot::Global::RunOnFire);
 				SAVE_VAR(Vars::Aimbot::Global::AimKey);
 				SAVE_VAR(Vars::Aimbot::Global::AimFOV);
 				SAVE_VAR(Vars::Aimbot::Global::AutoShoot);
@@ -299,6 +300,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Aimbot::Projectile::ScanPoints);
 				SAVE_VAR(Vars::Aimbot::Projectile::ScanScale);
 				SAVE_VAR(Vars::Aimbot::Projectile::NoSpread);
+				SAVE_VAR(Vars::Aimbot::Projectile::ClientSilent);
 				//SAVE_VAR(Vars::Aimbot::Projectile::AimFOV);
 			}
 
@@ -950,6 +952,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			//Global
 			{
 				LOAD_VAR(Vars::Aimbot::Global::Active);
+				LOAD_VAR(Vars::Aimbot::Global::RunOnFire);
 				LOAD_VAR(Vars::Aimbot::Global::AimKey);
 				LOAD_VAR(Vars::Aimbot::Global::AimFOV);
 				LOAD_VAR(Vars::Aimbot::Global::AutoShoot);
@@ -1022,6 +1025,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Aimbot::Projectile::ScanPoints);
 				LOAD_VAR(Vars::Aimbot::Projectile::ScanScale);
 				LOAD_VAR(Vars::Aimbot::Projectile::NoSpread);
+				LOAD_VAR(Vars::Aimbot::Projectile::ClientSilent);
 				//LOAD_VAR(Vars::Aimbot::Projectile::AimFOV);
 			}
 
