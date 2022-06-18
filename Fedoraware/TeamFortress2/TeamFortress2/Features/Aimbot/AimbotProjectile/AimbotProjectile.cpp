@@ -1149,22 +1149,10 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 
 		if (Vars::Aimbot::Projectile::AimMethod.Value == 1)
 		{
-			if (Vars::Aimbot::Projectile::ClientSilent.Value)
+			if (m_bIsFlameThrower)
 			{
-				if (m_bIsFlameThrower)
-				{
-					G::ProjectileSilentActive = true;
-					Aim(pCmd, pWeapon, target.m_vAngleTo);
-				}
-
-				else
-				{
-					if (bIsAttacking)
-					{
-						Aim(pCmd, pWeapon, target.m_vAngleTo);
-						//G::SilentTime = true;
-					}
-				}
+				G::ProjectileSilentActive = true;
+				Aim(pCmd, pWeapon, target.m_vAngleTo);
 			}
 			else
 			{

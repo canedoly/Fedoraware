@@ -171,6 +171,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const float dtOffset2 = g_ScreenSize.c - 24;
 								static float tickWidth = 0.f;
 								static float barWidth = 0.f;
+								tickWidth = (G::ShiftedTicks * 7);
+								barWidth = g_Draw.EaseIn(barWidth, tickWidth, 0.9f);
 
 								g_Draw.Rect(dtOffset2, (g_ScreenSize.h / 2) + 50, 98,
 											7, { 59, 59, 59, 255});
@@ -179,21 +181,22 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 											8, { 45, 45, 45, 255});
 
 								g_Draw.GradientRect(dtOffset2, (g_ScreenSize.h / 2) + 50, dtOffset2 + barWidth,
-											(g_ScreenSize.h / 2) + 50 + 7, colorG1, colorG2, true);
+											(g_ScreenSize.h / 2) + 50 + 7, 
+											colorG1, colorG2, true);
 
 								if (G::ShiftedTicks == 0)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {190,0,0,255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 - 69), {190,0,0,255}, ALIGN_CENTERHORIZONTAL,
 												  L"(RapidFire) Too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else if (G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {200,115,20,255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 - 69), {200,115,20,255}, ALIGN_CENTERHORIZONTAL,
 												  L"(RapidFire) Wait", G::WaitForShift);
 								}
 								else if (G::ShiftedTicks > 0)
 								{
-									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 / 2), {15,180,0,255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, (dtOffset2 - 69), {15,180,0,255}, ALIGN_CENTERHORIZONTAL,
 												  L"(RapidFire) Ready %i / %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								
@@ -230,30 +233,30 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 													((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
 													(nY - (yscale / 2) + yoff + yscale), { color1 }, { color2 }, TRUE);
 								g_Draw.String(FONT_INDICATORS, g_ScreenSize.c - (xscale / 2 + 1) + xoff,
-											  nY - (yscale / 2 + 1) - 10 + (yoff + 1), { 255, 255, 255, 255 }, ALIGN_DEFAULT,
+											  nY - (yscale / 2 + 1) - 10 + (yoff - 1), { 255, 255, 255, 255 }, ALIGN_DEFAULT,
 											  _(L"CHARGE"));
 								if (G::ShiftedTicks == 0) // no charge no money
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 1) - 10 + (yoff + 1), { 255, 55, 40, 255 }, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 1) - 10 + (yoff - 1), { 255, 55, 40, 255 }, ALIGN_REVERSE,
 												  _(L"NO CHARGE"));
 								}
 								else if (G::Recharging && (G::WaitForShift || ratio < 1)) // charging 
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 1) - 10 + (yoff + 1), { 255, 126, 0, 255 }, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 1) - 10 + (yoff - 1), { 255, 126, 0, 255 }, ALIGN_REVERSE,
 												  _(L"CHARGING"));
 								}
 								else if (!G::WaitForShift && ratio == 1) // activates when ready
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 1) - 10 + (yoff + 1), { 66, 255, 0, 255 }, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 1) - 10 + (yoff - 1), { 66, 255, 0, 255 }, ALIGN_REVERSE,
 												  _(L"READY"));
 								}
 								else // activates when waiting blah blah blahg
 								{
 									g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-												  nY - (yscale / 2 + 1) - 10 + (yoff + 1), { 255, 46, 46, 255 }, ALIGN_REVERSE,
+												  nY - (yscale / 2 + 1) - 10 + (yoff - 1), { 255, 46, 46, 255 }, ALIGN_REVERSE,
 												  _(L"DT IMPOSSIBLE"));
 								}
 							}

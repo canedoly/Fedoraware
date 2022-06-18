@@ -315,21 +315,10 @@ void CAimbotMelee::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd
 
 		if (Vars::Aimbot::Melee::AimMethod.Value == 2)
 		{
-			if (Vars::Aimbot::Projectile::ClientSilent.Value)
+			if (bIsAttacking)
 			{
-				if (bIsAttacking)
-				{
-					Aim(pCmd, target.m_vAngleTo);
-					//G::SilentTime = true;
-				}
-			}
-			else
-			{
-				if (bIsAttacking)
-				{
-					Aim(pCmd, target.m_vAngleTo);
-					G::SilentTime = true;
-				}
+				Aim(pCmd, target.m_vAngleTo);
+				G::SilentTime = true;
 			}
 		}
 
