@@ -1,6 +1,7 @@
 #include "AutoStab.h"
 
 #include "../../Vars.h"
+#include "../../Backtrack/Backtrack.h"
 
 bool CAutoStab::CanBackstab(const Vec3& vSrc, const Vec3& vDst, Vec3 vWSCDelta)
 {
@@ -53,6 +54,34 @@ bool CAutoStab::TraceMelee(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, cons
 		if (pEntityOut && !*pEntityOut)
 			*pEntityOut = Trace.entity;
 
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Aim.Value && Vars::Aimbot::Hitscan::AimMethod.Value != 1)
+			{
+				Vec3 hitboxPos;
+				if (!F::Backtrack.Record[target.m_pEntity->GetIndex()].empty())
+				{
+					auto& lastTick = F::Backtrack.Record[target.m_pEntity->GetIndex()].back();
+					if (const auto& pHdr = lastTick.HDR)
+					{
+						if (const auto& pSet = pHdr->GetHitboxSet(lastTick.HitboxSet))
+						{
+							if (const auto& pBox = pSet->hitbox(target.m_nAimedHitbox))
+							{
+								const Vec3 vPos = (pBox->bbmin + pBox->bbmax) * 0.5f;
+								Vec3 vOut;
+								Math::VectorTransform(vPos, reinterpret_cast<matrix3x4*>(&lastTick.BoneMatrix)[pBox->bone], vOut);
+								hitboxPos = vOut;
+							}
+						}
+					}
+
+
+					if (Utils::VisPos(pLocal, target.m_pEntity, pLocal->GetShootPos(), hitboxPos))
+					{
+						target.m_vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), hitboxPos);
+						return true;
+					}
+				}
+			}
 		return true;
 	}
 
