@@ -75,6 +75,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		// probably perfect method of waiting to ensure we don't mess with fakelag
 		G::RechargeQueued = false; // see relevant code @clientmodehook
 		G::Recharging = true;
+		G::Waiting = true;
 		G::TickShiftQueue = 0;
 	}
 
@@ -83,15 +84,13 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
-		G::Waiting = true;
 		return; // this recharges
 	}
 	
-	else if (G::Waiting && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
+	else if (G::Waiting)
 	{
 		G::WaitForShift = 26;
 		//G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
-		G::Waiting = false;
 	}
 
 	// Queue a recharge if the recharge key was pressed
@@ -106,6 +105,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	else
 	{
 		G::Recharging = false;
+		G::Waiting = false;
 	}
 
 	oClMove(accumulated_extra_samples, (G::ShouldShift && !G::WaitForShift) ? true : bFinalTick);
