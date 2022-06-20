@@ -276,15 +276,15 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(Recharging) %i/%i", G::ShiftedTicks, MaxTicksValue);
 								}
-								else if (G::Waiting)
-								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
-												L"(RapidFire) wait %i / %i", G::WaitForShift, DT_WAIT_CALLS);
-								}
 								else if (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value)
 								{
 									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+								}
+								else
+								{
+									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+												L"(RapidFire) wait %i / %i", G::WaitForShift, DT_WAIT_CALLS);
 								}
 							}
 						}

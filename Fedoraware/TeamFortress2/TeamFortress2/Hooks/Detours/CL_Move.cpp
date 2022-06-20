@@ -164,7 +164,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		{
 			while (G::ShiftedTicks > 0)
 			{
-				oClMove(0, (G::ShiftedTicks == 1));
+				oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
 				G::ShiftedTicks--;
 				//G::m_bForceSendPacket = true;
 			}
