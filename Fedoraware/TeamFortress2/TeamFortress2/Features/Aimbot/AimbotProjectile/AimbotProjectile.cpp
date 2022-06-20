@@ -643,6 +643,7 @@ Vec3 CAimbotProjectile::GetAimPosBuilding(CBaseEntity* pLocal, CBaseEntity* pEnt
 bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, const Vec3& vPredictedPos, Solution_t& out, const ProjectileInfo_t& projInfo,
                                           const Predictor_t& predictor)
 {
+	Vec3 hullSize = { 3.8f, 3.8f, 3.8f };
 	Vec3 vVisCheck = pLocal->GetEyePosition();
 	const Vec3 predictedViewAngles = {-RAD2DEG(out.m_flPitch), RAD2DEG(out.m_flYaw), 0.0f};
 	CGameTrace trace = {};
@@ -673,6 +674,8 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 		}
 		case TF_WEAPON_COMPOUND_BOW:
 		{
+			hullSize = { 1.f, 1.f, 1.f };
+
 			const Vec3 vecOffset(23.5f, 12.0f, -3.0f); //tf_weapon_grapplinghook.cpp @L355 ??
 			Utils::GetProjectileFireSetup(pLocal, predictedViewAngles, vecOffset, &vVisCheck);
 			break;
@@ -694,12 +697,23 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 		case TF_WEAPON_STICKBOMB:
 		case TF_WEAPON_STICKY_BALL_LAUNCHER:
 		{
+
+			hullSize = { 8.f, 8.f, 8.f };
+
 			auto vecAngle = Vec3(), vecForward = Vec3(), vecRight = Vec3(), vecUp = Vec3();
-			Math::AngleVectors({ -RAD2DEG(out.m_flPitch), RAD2DEG(out.m_flYaw), 0.0f }, &vecForward,
-				&vecRight, &vecUp);
+			Math::AngleVectors({ -RAD2DEG(out.m_flPitch), RAD2DEG(out.m_flYaw), 0.0f }, &vecForward, &vecRight, &vecUp);
 			const Vec3 vecVelocity = ((vecForward * projInfo.m_flVelocity) - (vecUp * 200.0f));
 			Math::VectorAngles(vecVelocity, vecAngle);
 			out.m_flPitch = -DEG2RAD(vecAngle.x);
+
+			// see relevant code @tf_weaponbase_gun.cpp L684
+			float fRight = g_ConVars.cl_flipviewmodels->GetInt() ? -8.f : 8.f;
+			vVisCheck += vecForward * 16.0f + vecRight * fRight + vecUp * -6.0f;
+
+			Utils::TraceHull(pLocal->GetEyePosition(), vVisCheck, hullSize, hullSize * -1.f, MASK_SHOT_HULL, &traceFilter, &trace);
+			if (trace.DidHit()) {
+				return false;
+			}
 
 			break;
 		}
@@ -710,7 +724,8 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 	//	TODO: find the actual hull size of projectiles
 	//	maybe - https://www.unknowncheats.me/forum/team-fortress-2-a/475502-weapons-projectile-min-max-collideables.html
 	//	UTIL_SetSize( this, -Vector( 1.0f, 1.0f, 1.0f ), Vector( 1.0f, 1.0f, 1.0f ) ); @tf_projectile_base.cpp L117
-	Utils::TraceHull(vVisCheck, vPredictedPos, Vec3(-3.8f, -3.8f, -3.8f), Vec3(3.8f, 3.8f, 3.8f), MASK_SHOT_HULL, &traceFilter, &trace);
+	//	UTIL_TraceHull( vecEye, vecSrc, -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, &traceFilter, &trace ); @tf_weaponbase_gun.cpp L696 pills
+	Utils::TraceHull(vVisCheck, vPredictedPos, hullSize, hullSize * -1.f, MASK_SHOT_HULL, &traceFilter, &trace);
 
 	return !trace.DidHit();
 }
