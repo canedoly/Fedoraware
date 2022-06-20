@@ -11,6 +11,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
+	static ConVar* MaxTicks = g_ConVars.FindVar("sv_maxusrcmdprocessticks");
+	const float MaxTicksValue = MaxTicks->GetFloat();
 
 
 	if (!Vars::Misc::CL_Move::Enabled.Value)	// return the normal CL_Move if we don't want to manipulate it.
@@ -19,11 +21,11 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicks.Value)	//	get rid of ticks we aren't going to use.
-	{
-		G::ShiftedTicks --;
-		oClMove(accumulated_extra_samples, (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value));
-	}
+	// while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicks.Value)	//	get rid of ticks we aren't going to use.
+	// {
+	// 	G::ShiftedTicks --;
+	// 	oClMove(accumulated_extra_samples, (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value));
+	// }
 
 	// pSpeedhack
 	if (Vars::Misc::CL_Move::SEnabled.Value)
@@ -77,12 +79,19 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	}
 
 	// Recharge ticks
-	else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	else if (G::Recharging && (G::ShiftedTicks < 24))
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
-		G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+		G::Waiting = true;
 		return; // this recharges
+	}
+	
+	else if (G::Waiting && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		G::WaitForShift = 26;
+		//G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+		G::Waiting = false;
 	}
 
 	// Queue a recharge if the recharge key was pressed

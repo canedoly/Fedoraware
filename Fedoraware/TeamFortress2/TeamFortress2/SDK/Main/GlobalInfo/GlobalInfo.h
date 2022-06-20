@@ -42,6 +42,7 @@ namespace G
 	inline int WaitForShift = 0;
 	inline int ShiftedTicks = 0; // Amount of ticks that are shifted
 	inline bool ShouldShift = false; // Should we shift now?
+	inline bool Waiting = false; // Are we currently waiting for dt?
 	inline bool Recharging = false; // Are we currently recharging?
 	inline bool RechargeQueued = false; // Queues a recharge
 	inline int TickShiftQueue = 0; // Ticks that shouls be shifted
