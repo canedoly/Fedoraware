@@ -1,5 +1,10 @@
 #include "CheaterDetection.h"
 
+void conLogDetection(const char* text) {
+	I::CVars->ConsoleColorPrintf({ 204, 0, 255, 255 }, "[CheaterDetection] ");
+	I::CVars->ConsoleColorPrintf({ 255, 255, 255, 255 }, text);
+}
+
 bool CCheaterDetection::ShouldScan(int nIndex, int friendsID, CBaseEntity* pSuspect)
 {
 	if (g_EntityCache.IsFriend(nIndex) || G::IsIgnored(friendsID) || MarkedCheaters[friendsID]) { return false; } // dont rescan this player if we know they are cheating, a friend, or ignored
@@ -10,11 +15,24 @@ bool CCheaterDetection::ShouldScan(int nIndex, int friendsID, CBaseEntity* pSusp
 
 bool CCheaterDetection::IsSteamNameDifferent(PlayerInfo_t pInfo)
 {
+	const CSteamID SteamID = CSteamID(static_cast<uint64>(pInfo.friendsID + 0x0110000100000000));
+
 	// this can be falsely triggered by a person being nicknamed without being our steam friend (pending friend) or changing their steam name since joining the game
-	if (const char* steamName = g_SteamInterfaces.Friends015->GetFriendPersonaName(CSteamID(static_cast<uint64>(pInfo.friendsID + 0x0110000100000000))))
+	if (const char* steamName = g_SteamInterfaces.Friends015->GetFriendPersonaName(SteamID))
 	{
 		if (strcmp(pInfo.name, steamName) != 0)
 		{
+			for (int personaNum = 0; personaNum <= 5; personaNum++) {
+				if (const char* historicalName = g_SteamInterfaces.Friends015->GetFriendPersonaNameHistory(SteamID, personaNum)) {
+					if (strcmp(pInfo.name, historicalName) == 0) {
+						return false;
+					}
+				}
+				else {
+					break;
+				}
+			}
+			conLogDetection(tfm::format("%s was detected as name changing (%s => %s).\n", pInfo.name, pInfo.name, steamName).c_str());
 			return true;
 		}
 	}
@@ -42,14 +60,39 @@ bool CCheaterDetection::IsTickCountManipulated(int currentTickCount)
 {
 	const int delta = I::GlobalVars->tickcount - currentTickCount;
 	// delta should be 1 however it can be different me thinks (from looking it only gets to about 3 at its worst, maybe this is different with packet loss?)
-	if (abs(delta) > 14) { return true; } // lets be honest if their tickcount changes by more than 14 they are probably cheating.
+	if (abs(delta) > 20) { return true; } // who knew players lagged that much
 	return false;
+}
+
+bool CCheaterDetection::IsBhopping(CBaseEntity* pSuspect, PlayerData pData)
+{
+	const bool onGround = pSuspect->m_fFlags() & FL_ONGROUND;
+	bool doReport = false;
+	if (onGround) {
+		pData.GroundTicks++;
+	}
+	else {
+		if (pData.GroundTicks == 1) {
+			pData.BHopSuspicion++;
+		}
+		pData.GroundTicks = 0;
+	}
+
+	if (pData.BHopSuspicion >= 5) {
+		doReport = true;
+		pData.BHopSuspicion = 0;
+	}
+	else if (pData.GroundTicks) {
+		pData.BHopSuspicion = 0;
+	}
+
+	return doReport;
 }
 
 void CCheaterDetection::OnTick()
 {
 	const auto pLocal = g_EntityCache.GetLocal();
-	if (!pLocal || !I::Engine->IsConnected() || !Vars::ESP::Players::CheaterDetection.Value)
+	if (!pLocal || !I::Engine->IsConnected())
 	{
 		return;
 	}
@@ -75,7 +118,6 @@ void CCheaterDetection::OnTick()
 		if (!pSuspect) { continue; }
 		int index = pSuspect->GetIndex();
 
-
 		PlayerInfo_t pi{ };
 		if (I::Engine->GetPlayerInfo(index, &pi) && !pi.fakeplayer)
 		{
@@ -83,26 +125,30 @@ void CCheaterDetection::OnTick()
 
 			if (index == pLocal->GetIndex() || !ShouldScan(index, friendsID, pSuspect)) { continue; }
 
-			if (!UserData[friendsID].Detections.SteamName)
+			PlayerData userData = UserData[friendsID];
+
+			if (userData.Detections.SteamName)
 			{
-				UserData[friendsID].Detections.SteamName = true; // to prevent false positives and needless rescanning, set this to true after the first scan.
-				Strikes[friendsID] += IsSteamNameDifferent(pi) ? 1 : 0; // add a strike to this player if they are manipulating their in game name.
+				userData.Detections.SteamName = true; // to prevent false positives and needless rescanning, set this to true after the first scan.
+				Strikes[friendsID] += IsSteamNameDifferent(pi) ? 5 : 0; // add 5 strikes to this player if they are manipulating their in game name.
 			}
 
-			if (!UserData[friendsID].Detections.InvalidPitch)
+			if (userData.Detections.InvalidPitch)
 			{
 				if (IsPitchInvalid(pSuspect))
 				{
-					UserData[friendsID].Detections.InvalidPitch = true;
+					conLogDetection(tfm::format("%s was detected for sending an OOB pitch.\n", pi.name).c_str());
+					userData.Detections.InvalidPitch = true;
 					Strikes[friendsID] += 5; // because this cannot be falsely triggered, anyone detected by it should be marked as a cheater instantly 
 				}
 			}
 
-			if (!UserData[friendsID].Detections.InvalidText)
+			if (!userData.Detections.InvalidText)
 			{
 				if (IllegalChar[index])
 				{
-					UserData[friendsID].Detections.InvalidText = true;
+					conLogDetection(tfm::format("%s was detected as sending an illegal character.\n", pi.name).c_str());
+					userData.Detections.InvalidText = true;
 					Strikes[friendsID] += 5;
 					IllegalChar[index] = false;
 				}
@@ -114,20 +160,27 @@ void CCheaterDetection::OnTick()
 			{
 				if (IsTickCountManipulated(currenttickcount))
 				{
-					if (UserData[friendsID].AreTicksSafe)
+					if (userData.AreTicksSafe)
 					{
-						Strikes[friendsID] += 1;
-						UserData[friendsID].AreTicksSafe = false;
+						conLogDetection(tfm::format("%s was detected as shifting their tickbase.\n", pi.name).c_str());
+						Strikes[friendsID]++;
+						userData.AreTicksSafe = false;
 					}
 				}
 				else
 				{
-					UserData[friendsID].AreTicksSafe = true;
+					userData.AreTicksSafe = true;
 				}
+			}
+
+			if (IsBhopping(pSuspect, userData)) {
+				conLogDetection(tfm::format("%s was detected as bhopping.\n", pi.name).c_str());
+				Strikes[friendsID]++;
 			}
 
 			if (Strikes[friendsID] > 4)
 			{
+				conLogDetection(tfm::format("%s was marked as a cheater.\n", pi.name).c_str());
 				MarkedCheaters[friendsID] = true;
 				G::PlayerPriority[friendsID].Mode = 4; // Set priority to "Cheater"
 			}
