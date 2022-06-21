@@ -12,7 +12,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
 	static ConVar* MaxTicks = g_ConVars.FindVar("sv_maxusrcmdprocessticks");
-	const float MaxTicksValue = MaxTicks->GetFloat();
+
+	//const float MaxTicksValue = MaxTicks->GetInt();
 
 
 	if (!Vars::Misc::CL_Move::Enabled.Value)	// return the normal CL_Move if we don't want to manipulate it.
@@ -84,6 +85,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
 		G::Waiting = true;
+		G::WaitForShift = 26;
 		return; // this recharges
 	}
 	
@@ -164,7 +166,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		{
 			while (G::ShiftedTicks > 0)
 			{
-				oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
+				oClMove(accumulated_extra_samples, G::ShiftedTicks == 1);
 				G::ShiftedTicks--;
 				//G::m_bForceSendPacket = true;
 			}

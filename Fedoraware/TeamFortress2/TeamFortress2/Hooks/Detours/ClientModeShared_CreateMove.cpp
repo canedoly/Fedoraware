@@ -182,7 +182,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 
 		if (Vars::Misc::CL_Move::RechargeWhileDead.Value)
 		{
-			if (!pLocal->IsAlive() && G::ShiftedTicks)
+			if (!pLocal->IsAlive() && !G::ShiftedTicks)
 			{
 				G::Recharging = true;
 			}
@@ -190,7 +190,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 
 		if (Vars::Misc::CL_Move::AutoRecharge.Value)
 		{
-			if (G::ShiftedTicks && !G::ShouldShift)
+			if (!G::ShiftedTicks && !G::ShouldShift)
 			{
 				if (pLocal->GetVecVelocity().Length2D() < 5.0f && !(pCmd->buttons == 0))
 				{
