@@ -250,9 +250,9 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								static float tickWidth = 0.f;
 								static float barWidth = 0.f;
 								static ConVar* MaxTicks = g_ConVars.FindVar("sv_maxusrcmdprocessticks");
-								const float MaxTicksValue = MaxTicks->GetFloat();
+								const float MaxTicksValue = MaxTicks->GetInt();
 								tickWidth = (G::ShiftedTicks * Vars::Misc::CL_Move::DtbarOutlineWidth.Value);
-								barWidth = g_Draw.EaseIn(barWidth, tickWidth, 0.9f);
+								barWidth = g_Draw.EaseIn(barWidth, tickWidth, 0.95f);
 
 								g_Draw.OutlinedRect(dtOffset - 1, (g_ScreenSize.h / 2) + 49, maxWidth + 2,
 													Vars::Misc::CL_Move::DtbarOutlineHeight.Value + 2,
@@ -268,23 +268,23 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 20, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else if (G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 20, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(Recharging) %i/%i", G::ShiftedTicks, MaxTicksValue);
 								}
 								else if (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value)
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 20, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset - 10), (g_ScreenSize.h / 2) + 30, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
-												L"(RapidFire) wait %i / %i", G::WaitForShift, DT_WAIT_CALLS);
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 20, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+												L"(RapidFire) wait ", G::WaitForShift, DT_WAIT_CALLS);
 								}
 							}
 						}
