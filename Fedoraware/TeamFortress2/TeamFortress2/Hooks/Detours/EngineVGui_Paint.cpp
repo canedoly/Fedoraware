@@ -272,7 +272,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								else if (G::Recharging)
 								{
 									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
-												L"(Recharging) %i/%i", G::ShiftedTicks, eMaxTicks->GetInt());
+												L"(Recharging) %i/%i", G::ShiftedTicks, MaxTicks->GetInt());
 								}
 								else if (!G::WaitForShift && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
 								{
