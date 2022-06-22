@@ -22,7 +22,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	// while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicks.Value)	//	get rid of ticks we aren't going to use.
+	// while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicks.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
 	// {
 	// 	G::ShiftedTicks --;
 	// 	oClMove(accumulated_extra_samples, (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value));
@@ -164,11 +164,20 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 			// 2 - Disable on key 
 			(Vars::Misc::CL_Move::DTMode.Value == 2 && !GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.Value)))
 		{
+			int ticksShifted = 0;
+
 			while (G::ShiftedTicks > 0)
 			{
+				ticksShifted++;
 				oClMove(accumulated_extra_samples, G::ShiftedTicks == 1);
 				G::ShiftedTicks--;
 				//G::m_bForceSendPacket = true;
+
+				if (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) {
+					G::ShouldShift = false; // this is retarded and should be done differently
+					G::WaitForShift = DT_WAIT_CALLS;
+					break;
+				}
 			}
 
 			I::Engine->FireEvents();
