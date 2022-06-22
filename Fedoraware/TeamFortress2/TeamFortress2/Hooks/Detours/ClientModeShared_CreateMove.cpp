@@ -40,6 +40,16 @@ void UpdateRichPresence()
 	F::Misc.SteamRPC();
 }
 
+void stopMovement(CUserCmd* pCmd) {
+	CBaseEntity* pLocal = g_EntityCache.GetLocal();
+	if (pLocal) {
+		const float direction = Math::VelocityToAngles(pLocal->m_vecVelocity()).y;
+		pCmd->viewangles.y = direction;
+		pCmd->viewangles.x = 90;
+		pCmd->sidemove = 0; pCmd->forwardmove = 0;
+	}
+}
+
 //	TODO: make this p
 //	Accelerate ( wishdir, wishspeed, sv_accelerate.GetFloat() );
 //	accelspeed = accel * gpGlobals->frametime * wishspeed * player->m_surfaceFriction;
@@ -56,7 +66,6 @@ void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 	static Vec3 currentPos{};
 	static Vec3 vStartVel = {};
 	static int nShiftTick = 0;
-	static float scale = 0.018f;//
 	if (pLocal && pLocal->IsAlive() && !pLocal->IsTaunting() && !pLocal->IsStunned())
 	{
 		if (G::ShouldShift && G::ShiftedTicks > 0 && Vars::Misc::CL_Move::AntiWarp.Value && pLocal->GetMoveType() == MOVETYPE_WALK)
@@ -65,10 +74,16 @@ void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 			{
 				vStartOrigin = pLocal->GetVecOrigin();
 				vStartVel = pLocal->GetVecVelocity();
-				predEndPoint = vStartOrigin + (vStartVel * TICKS_TO_TIME(Vars::Misc::CL_Move::DTTicks.Value));
+				predEndPoint = vStartOrigin + vStartVel;
+				nShiftTick++;
+				return;
+			}
+			if (nShiftTick == 1) {
+				G::ShouldStop = true;
+				nShiftTick++;
 			}
 			currentPos = pLocal->GetVecOrigin();
-			Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (float)((scale*vStartVel.Length2D()) / (Vars::Misc::CL_Move::DTTicks.Value)));
+			Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (1 / (Vars::Misc::CL_Move::DTTicks.Value)));
 			nShiftTick++;
 		}
 		else
@@ -349,6 +364,11 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 		G::ForceChokePacket = false;
 	} // check after force send to prevent timing out possibly
 
+	if (G::ShouldStop || (G::RechargeQueued || G::Recharging && Vars::Misc::CL_Move::StopMovement.Value)) {
+		G::ShouldStop = false;
+		stopMovement(pCmd);
+		return false;
+	}
 
 	if (G::SilentTime ||
 		G::AAActive ||
