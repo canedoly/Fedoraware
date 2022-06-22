@@ -1,6 +1,42 @@
 #include "AimbotHitscan.h"
 #include "../../Vars.h"
 #include "../../Backtrack/Backtrack.h"
+static float LerpTime()
+{
+	static ConVar* updaterate = g_ConVars.FindVar("cl_updaterate");
+	static ConVar* minupdate = g_ConVars.FindVar("sv_minupdaterate");
+	static ConVar* maxupdate = g_ConVars.FindVar("sv_maxupdaterate");
+	static ConVar* lerp = g_ConVars.FindVar("cl_interp");
+	static ConVar* cmin = g_ConVars.FindVar("sv_client_min_interp_ratio");
+	static ConVar* cmax = g_ConVars.FindVar("sv_client_max_interp_ratio");
+	static ConVar* ratio = g_ConVars.FindVar("cl_interp_ratio");
+
+	const float interpValue = lerp->GetFloat();
+	const float maxUpdateValue = maxupdate->GetFloat();
+	int updateRateValue = updaterate->GetInt();
+	float interpRatioValue = ratio->GetFloat();
+	const int svMaxUpdateRate = maxupdate->GetInt();
+	const int svMinUpdateRate = minupdate->GetInt();
+	const float minRatioValue = cmin->GetFloat();
+	const float maxRatioValue = cmax->GetFloat();
+
+	if (svMaxUpdateRate && svMinUpdateRate)
+	{
+		updateRateValue = static_cast<int>(maxUpdateValue);
+	}
+
+	if (interpRatioValue == 0)
+	{
+		interpRatioValue = 1.0f;
+	}
+
+	if (cmin && cmax && cmin->GetFloat() != 1)
+	{
+		interpRatioValue = std::clamp(interpRatioValue, minRatioValue, maxRatioValue);
+	}
+
+	return std::max(interpValue, interpRatioValue / static_cast<float>(updateRateValue));
+}
 
 bool IsHitboxValid(int nHitbox, int index)
 {
@@ -361,7 +397,7 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapo
 	{
 	case ETargetType::PLAYER:
 		{
-			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Aim.Value && Vars::Aimbot::Hitscan::AimMethod.Value != 1)
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Aim.Value && Vars::Aimbot::Hitscan::AimMethod.Value != 1 && (G::ShiftedTicks == 0))
 			{
 				Vec3 hitboxPos;
 				if (!F::Backtrack.Record[target.m_pEntity->GetIndex()].empty())
@@ -867,7 +903,7 @@ void CAimbotHitscan::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserC
 
 		if (Vars::Misc::DisableInterpolation.Value && target.m_TargetType == ETargetType::PLAYER && bIsAttacking)
 		{
-			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() +
+			pCmd->tick_count = TIME_TO_TICKS(target.m_pEntity->GetSimulationTime() + LerpTime() +
 				std::max(g_ConVars.cl_interp->GetFloat(), g_ConVars.cl_interp_ratio->GetFloat() / g_ConVars.
 					cl_updaterate->GetFloat()));
 		}
