@@ -1369,6 +1369,8 @@ void CMenu::MenuHvH()
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, 24, "%d"); HelpMarker("How many ticks to shift");
+			WSlider("Ticks to recharge", &Vars::Misc::CL_Move::DTTicksCharge.Value, 1, 24, "%d"); HelpMarker("How many ticks to recharge");
+			WSlider("Tikcs to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 0, 26, "%"); HelpMarker("How many ticks before you can doubletap");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{

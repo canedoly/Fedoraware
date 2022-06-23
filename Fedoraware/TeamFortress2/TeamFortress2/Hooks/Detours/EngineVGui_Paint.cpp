@@ -266,23 +266,24 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 
 								if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 50, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									//void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else if (G::Recharging)
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
-												L"(Recharging) %i/%i", G::ShiftedTicks, MaxTicks->GetInt());
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+												L"(Recharging) %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicksCharge.Value);
 								}
 								else if (!G::WaitForShift && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 50, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 10), (g_ScreenSize.h / 2) - 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
-												L"(RapidFire) wait ", G::WaitForShift, DT_WAIT_CALLS);
+									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+												L"(RapidFire) wait %i/%i", G::WaitForShift, Vars::Misc::CL_Move::DTWaitCalls.Value);
 								}
 							}
 						}

@@ -633,7 +633,9 @@ namespace Vars
 			inline CVar<int> DTMode{0}; // 0 - On Key, 1 - Always DT, 2 - Disable on key, 3 - Disabled
 			inline CVar<int> DtbarOutlineHeight{5};
 			inline CVar<int> DtbarOutlineWidth{4};
-			inline CVar<int> DTTicks{21};
+			inline CVar<int> DTTicks{20};
+			inline CVar<int> DTTicksCharge{22};
+			inline CVar<int> DTWaitCalls{26};
 			inline CVar<int> DTBarScaleY{12};
 			inline CVar<int> DTBarScaleX{100};
 			inline CVar<int> DTBarY{60};

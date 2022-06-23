@@ -22,11 +22,11 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	// while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicks.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
-	// {
-	// 	G::ShiftedTicks --;
-	// 	oClMove(accumulated_extra_samples, (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value));
-	// }
+	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
+	{
+		G::ShiftedTicks --;
+		oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
+	}
 
 	// pSpeedhack
 	if (Vars::Misc::CL_Move::SEnabled.Value)
@@ -42,11 +42,11 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		}
 	}
 
-	static bool streaming = false;
 	// Teleport
-	if ((tpKey.Down() || streaming) && G::ShiftedTicks > 0 && !G::Recharging && !G::RechargeQueued)
+	if (tpKey.Down() && G::ShiftedTicks > 0 && !G::Recharging && !G::RechargeQueued)
 	{
-		switch (Vars::Misc::CL_Move::TeleportMode.Value) {
+		switch (Vars::Misc::CL_Move::TeleportMode.Value) 
+		{
 		case 0: {	// plain
 			while (G::ShiftedTicks > 0) {
 				oClMove(0, G::ShiftedTicks == 1);
@@ -54,17 +54,10 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 			}
 			break;
 		}
-		case 1: {	// smooth
-			streaming = true;
-			static int wishSpeed = 2;
-			int speed = 0;
-			while (speed < wishSpeed && G::ShiftedTicks) {
-				oClMove(0, G::ShiftedTicks == 1);
-				G::ShiftedTicks--;
-				speed++;
-			}
-			streaming = G::ShiftedTicks;
-			break;
+		case 1:
+		{	// smooth
+			oClMove(0, false);
+			G::ShiftedTicks--;
 		}
 		}
 		return;
@@ -80,12 +73,12 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	}
 
 	// Recharge ticks
-	else if (G::Recharging && (G::ShiftedTicks < 24))
+	else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicksCharge.Value))
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
 		G::Waiting = true;
-		G::WaitForShift = 26;
+		G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
 		return; // this recharges
 	}
 	
@@ -97,7 +90,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	}
 
 	// Queue a recharge if the recharge key was pressed
-	else if (rechargeKey.Down() && !G::RechargeQueued && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	else if (rechargeKey.Down() && !G::RechargeQueued)
 	{
 		// queue recharge
 		G::ForceSendPacket = true;
