@@ -635,6 +635,7 @@ namespace Vars
 			inline CVar<int> DtbarOutlineWidth{4};
 			inline CVar<int> DTTicks{20};
 			inline CVar<bool> CustomDTCharge{false};
+			inline CVar<bool> ShiftOnce{false};
 			inline CVar<bool> ChargeOnlyAmount{false};
 			inline CVar<int> DTTicksCharge{22};
 			inline CVar<int> DTWaitCalls{26};

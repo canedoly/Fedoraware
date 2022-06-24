@@ -296,9 +296,10 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								//void OutlinedRect(int x, int y, int w, int h, const Color_t& clr);
 								//void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
 								const float xPosition = (g_ScreenSize.c - 100);
-								const float yPosition = (g_ScreenSize.h - 100);
+								const float yPosition = (g_ScreenSize.h - 20);
 								
-								g_Draw.Rect(xPosition, yPosition, 120, 100, { 60, 60, 60, 255});
+								g_Draw.Rect(xPosition, yPosition, 160, 60, { 60, 60, 60, 255});
+								g_Draw.String(FONT_INDICATORS, xPosition, yPosition, { 80, 80, 80, 255} ALIGN_CENTERHORIZONTAL L"DT (%i)", G::ShiftedTicks);
 							}
 						}
 					}

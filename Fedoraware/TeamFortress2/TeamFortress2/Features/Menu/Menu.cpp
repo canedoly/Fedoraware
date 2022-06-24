@@ -1373,9 +1373,10 @@ void CMenu::MenuHvH()
 			if (Vars::Misc::CL_Move::CustomDTCharge.Value)
 			{
 				WSlider("Ticks to recharge", &Vars::Misc::CL_Move::DTTicksCharge.Value, 1, 24, "%d"); HelpMarker("How many ticks to recharge");
+				WSlider("Ticks to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 1, 26, "%d"); HelpMarker("How many ticks before you can doubletap");
 				WToggle("Shift only desired amount", &Vars::Misc::CL_Move::ChargeOnlyAmount.Value); HelpMarker("Only shift the ticks you want for example dtticks is 20 shift only 20's");
+				//WToggle("Shift Once", &Vars::Misc::CL_Move::ShiftOnce.Value); HelpMarker("Will only shift once the amount of ticks selected");
 			}
-			WSlider("Ticks to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 1, 26, "%"); HelpMarker("How many ticks before you can doubletap");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{

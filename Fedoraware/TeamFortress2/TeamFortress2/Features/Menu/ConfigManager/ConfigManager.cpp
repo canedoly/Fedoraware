@@ -762,6 +762,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Misc::CL_Move::DTTicksCharge);
 				SAVE_VAR(Vars::Misc::CL_Move::ChargeOnlyAmount);
 				SAVE_VAR(Vars::Misc::CL_Move::DTWaitCalls);
+				SAVE_VAR(Vars::Misc::CL_Move::ShiftOnce);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekKey);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekDistance);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoPeekFree);
@@ -1493,6 +1494,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Misc::CL_Move::DTTicksCharge);
 				LOAD_VAR(Vars::Misc::CL_Move::ChargeOnlyAmount);
 				LOAD_VAR(Vars::Misc::CL_Move::DTWaitCalls);
+				LOAD_VAR(Vars::Misc::CL_Move::ShiftOnce);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekKey);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekDistance);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoPeekFree);

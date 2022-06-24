@@ -22,7 +22,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value && Vars::Misc::CL_Move::ChargeOnlyAmount.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
+	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value && Vars::Misc::CL_Move::CustomDTCharge.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
 	{
 		G::ShiftedTicks --;
 		oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
@@ -47,18 +47,19 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		switch (Vars::Misc::CL_Move::TeleportMode.Value) 
 		{
-		case 0: {	// plain
-			while (G::ShiftedTicks > 0) {
-				oClMove(0, G::ShiftedTicks == 1);
-				G::ShiftedTicks--;
+			case 0: {	// plain
+				while (G::ShiftedTicks > 0) {
+					oClMove(0, G::ShiftedTicks == 1);
+					G::ShiftedTicks--;
 			}
 			break;
-		}
-		case 1:
-		{	// smooth
-			oClMove(0, false);
-			G::ShiftedTicks--;
-		}
+			}
+			case 1:
+			{	// smooth
+				oClMove(0, false);
+				G::ShiftedTicks--;
+			}
+
 		}
 		return;
 	}
@@ -78,16 +79,20 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
 		G::Waiting = true;
-		G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+		if (Vars::Misc::CL_Move::CustomDTCharge.Value)
+		{
+			G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+		}
+		G::WaitForShift = 26;
 		return; // this recharges
 	}
 	
-	else if (G::Waiting && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
-	{
-		G::WaitForShift = 26;
-		//G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
-		G::Waiting = false;
-	}
+	// else if (G::Waiting && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
+	// {
+	// 	G::WaitForShift = 26;
+	// 	//G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+	// 	G::Waiting = false;
+	// }
 
 	// Queue a recharge if the recharge key was pressed
 	else if (rechargeKey.Down() && !G::RechargeQueued)
@@ -173,13 +178,13 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 				if (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) {
 					G::ShouldShift = false; // this is retarded and should be done differently
-					G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+					G::WaitForShift = 26;
 					break;
 				}
 			}
 
 			I::Engine->FireEvents();
-			G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+			G::WaitForShift = 26;
 		}
 		G::ShouldShift = false;
 	}
