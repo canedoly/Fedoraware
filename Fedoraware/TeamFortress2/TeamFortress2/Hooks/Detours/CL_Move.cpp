@@ -22,7 +22,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value && Vars::Misc::CL_Move::CustomDTCharge.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
+	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value && Vars::Misc::CL_Move::ChargeOnlyAmount.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
 	{
 		G::ShiftedTicks --;
 		oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
