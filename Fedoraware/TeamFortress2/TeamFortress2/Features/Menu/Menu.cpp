@@ -1365,7 +1365,7 @@ void CMenu::MenuHvH()
 			}
 
 			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.Value, { "Plain", "Smooth" }); HelpMarker("How the teleport should be done");
-			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag"}, {&Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value}, "Options");
+			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag", "Stop Recharge Movement" }, {&Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value, &Vars::Misc::CL_Move::StopMovement.Value }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, 24, "%d"); HelpMarker("How many ticks to shift");
@@ -1551,6 +1551,8 @@ void CMenu::MenuMisc()
 				I::Engine->ClientCmd_Unrestricted("status");
 			if (Button("Ping", ImVec2(btnWidth, 20)))
 				I::Engine->ClientCmd_Unrestricted("ping");
+			if (Button("Pong", ImVec2(btnWidth, 20)))
+				F::Pong.IsOpen = !F::Pong.IsOpen;
 			if (Button("Retry", ImVec2(btnWidth, 20)))
 				I::Engine->ClientCmd_Unrestricted("retry");
 			if (Button("Exit", ImVec2(btnWidth, 20)))
@@ -1563,8 +1565,6 @@ void CMenu::MenuMisc()
 				I::Engine->ClientCmd_Unrestricted("demoui2");
 			if (Button("Itemtest", ImVec2(btnWidth, 20)))
 				I::Engine->ClientCmd_Unrestricted("itemtest");
-			if (Button("Pong", ImVec2(btnWidth, 20)))
-				F::Pong.IsOpen = !F::Pong.IsOpen;
 
 			if (Button("Unlock all achievements", ImVec2(btnWidth, 20)))
 			{
