@@ -299,7 +299,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								const float yPosition = (g_ScreenSize.h - 20);
 								
 								g_Draw.Rect(xPosition, yPosition, 160, 60, { 60, 60, 60, 255});
-								g_Draw.String(FONT_INDICATORS, xPosition, yPosition, { 80, 80, 80, 255} ALIGN_CENTERHORIZONTAL L"DT (%i)", G::ShiftedTicks);
+								g_Draw.String(FONT_INDICATORS, xPosition, yPosition, { 80, 80, 80, 255} ALIGN_CENTERHORIZONTAL, L"DT (%i)", G::ShiftedTicks);
 							}
 						}
 					}
