@@ -267,24 +267,37 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
 								{
 									//void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset - 20), (g_ScreenSize.h / 2) + 70, { 190, 0, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
-								else if (G::Recharging)
+								else if (G::Recharging && (G::ShiftedTicks != Vars::Misc::CL_Move::DTTicksCharge.Value))
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset - 20), (g_ScreenSize.h / 2) + 70, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(Recharging) %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicksCharge.Value);
 								}
 								else if (!G::WaitForShift && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset - 20), (g_ScreenSize.h / 2) + 70, { 15, 180, 0, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 								}
 								else
 								{
-									g_Draw.String(FONT_INDICATORS, (dtOffset + 20), (g_ScreenSize.h / 2) + 50, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
+									g_Draw.String(FONT_INDICATORS, (dtOffset - 20), (g_ScreenSize.h / 2) + 70, { 200, 115, 20, 255}, ALIGN_CENTERHORIZONTAL,
 												L"(RapidFire) wait %i/%i", G::WaitForShift, Vars::Misc::CL_Move::DTWaitCalls.Value);
 								}
+							}
+
+							// lbox dt bar (simple rectangle with outline based on menu accent yes yes and dt text)
+							// if antiwarp is on then DT (TICKS) or if its off then WARP + DT (TICKS)
+							// sounds simple, right? i've barely passed my class help
+							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 5)
+							{
+								//void Rect(int x, int y, int w, int h, const Color_t& clr);
+								//void OutlinedRect(int x, int y, int w, int h, const Color_t& clr);
+								//void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
+								const float xPosition = (g_ScreenSize.c - 100)
+								const float yPosition = (g_ScreenSize.h - 100)
+								g_Draw.Rect(xPosition, yPosition, 120, 100, { 60, 60, 60, 255});
 							}
 						}
 					}

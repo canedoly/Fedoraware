@@ -22,7 +22,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
-	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
+	while (G::ShiftedTicks > Vars::Misc::CL_Move::DTTicksCharge.Value && Vars::Misc::CL_Move::CustomDTCharge.Value)	//	get rid of ticks we aren't going to use. I'm gonna change it later to a var
 	{
 		G::ShiftedTicks --;
 		oClMove(accumulated_extra_samples, (G::ShiftedTicks == 1));
@@ -103,6 +103,11 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		G::Recharging = false;
 	}
 
+	if (Vars::Misc::CL_Move::ChargeOnlyAmount.Value && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		G::ShouldShift = false;
+	}
+
 	oClMove(accumulated_extra_samples, (G::ShouldShift && !G::WaitForShift) ? true : bFinalTick);
 
 	if (G::WaitForShift && Vars::Misc::CL_Move::WaitForDT.Value)
@@ -168,13 +173,13 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 				if (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) {
 					G::ShouldShift = false; // this is retarded and should be done differently
-					G::WaitForShift = DT_WAIT_CALLS;
+					G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
 					break;
 				}
 			}
 
 			I::Engine->FireEvents();
-			G::WaitForShift = DT_WAIT_CALLS;
+			G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
 		}
 		G::ShouldShift = false;
 	}

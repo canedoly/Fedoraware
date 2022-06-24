@@ -1074,7 +1074,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.Value, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "DeadFlag" }); HelpMarker("Which style to do the bar style");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "DeadFlag", "Lmaobox" }); HelpMarker("Which style to do the bar style");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
 				if (Vars::Misc::CL_Move::DTBarStyle.Value == 3)
@@ -1369,8 +1369,13 @@ void CMenu::MenuHvH()
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, 24, "%d"); HelpMarker("How many ticks to shift");
-			WSlider("Ticks to recharge", &Vars::Misc::CL_Move::DTTicksCharge.Value, 1, 24, "%d"); HelpMarker("How many ticks to recharge");
-			WSlider("Tikcs to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 0, 26, "%"); HelpMarker("How many ticks before you can doubletap");
+			WToggle("Custom Recharge", &Vars::Misc::CL_Move::CustomDTCharge.Value); HelpMarker("Set custom dt recharge ticks and other stuff");
+			if (Vars::Misc::CL_Move::CustomDTCharge.Value)
+			{
+				WSlider("Ticks to recharge", &Vars::Misc::CL_Move::DTTicksCharge.Value, 1, 24, "%d"); HelpMarker("How many ticks to recharge");
+				WToggle("Shift only desired amount", &Vars::Misc::CL_Move::ChargeOnlyAmount.Value); HelpMarker("Only shift the ticks you want for example dtticks is 20 shift only 20's");
+			}
+			WSlider("Ticks to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 1, 26, "%"); HelpMarker("How many ticks before you can doubletap");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{
