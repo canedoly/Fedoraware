@@ -390,14 +390,14 @@ void CGlowEffect::Render()
 
 		if (Vars::Glow::Main::Stencil.Value)
 		{
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, -1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, 0, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, -1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, 1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, 1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, 0, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, -1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
-			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, 1, w, h, 0.0f, 0.0f, w - 3, h - 3, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, -1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, 0, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, -1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, 1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, 1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, 0, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 1, -1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
+			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, 1, w + 1, h - 1, 0.0f, 0.0f, w - 1, h - 1, w, h);
 		}
 		else {
 			pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, 0, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
