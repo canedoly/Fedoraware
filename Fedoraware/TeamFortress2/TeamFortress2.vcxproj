@@ -196,6 +196,7 @@
     <ClCompile Include="TeamFortress2\Features\Auto\Auto.cpp" />
     <ClCompile Include="TeamFortress2\Features\Visuals\FakeAngleManager\FakeAng.cpp" />
     <ClCompile Include="TeamFortress2\Features\Visuals\Visuals.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\C_BaseAnimating_SetupBones.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\BaseClientDLL_DispatchUserMessage.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\BaseClientDLL_FrameStageNotify.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\BaseClientDLL_PostEntity.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\BaseClientDLL_ShutDown.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CanJoinParty.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CBackpackPanel_GetItemQualityForBorder.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\ClientState_ProcessFixAngle.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CEconNotification_HasNewItems_CEconNotification_HasNewItems.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CHudCrosshair_GetDrawPosition.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CInventoryManager_ShowItemsPickedUp.cpp" />
@@ -211,6 +213,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\ClientModeShared_OverideView.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ClientModeShared_ShouldDrawViewModel.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ClientModeShared_StartMessageMode.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\CNetChan_SendNetMsg.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CL_LoadWhitelist.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CL_Move.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CL_SendMove.cpp" />
@@ -242,6 +245,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\KeyValues_SetInt.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ModelRender_DrawModelExecute.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ModelRender_ForcedMaterialOverride.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\CBaseHudChat_ChatPrintf.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\NetChannel_SendDatagram.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\NotificationQueue_Add.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Panel_PaintTraverse.cpp" />

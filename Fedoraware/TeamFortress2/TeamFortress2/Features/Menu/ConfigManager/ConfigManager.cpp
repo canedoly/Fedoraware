@@ -684,6 +684,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 		{
 			SAVE_VAR(Vars::Misc::AccurateMovement);
 			SAVE_VAR(Vars::Misc::AutoJump);
+			SAVE_VAR(Vars::Misc::AutoVote);
 			SAVE_VAR(Vars::Misc::DuckJump);
 			SAVE_VAR(Vars::Misc::TauntSlide);
 			SAVE_VAR(Vars::Misc::TauntControl);
@@ -718,6 +719,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Misc::PartyESP);
 			SAVE_VAR(Vars::Misc::Roll);
 			SAVE_VAR(Vars::Misc::SoundBlock);
+			SAVE_VAR(Vars::Misc::ChatFlags);
 			SAVE_VAR(Vars::Misc::MedievalChat);
 			SAVE_VAR(Vars::Misc::AutoAcceptItemDrops);
 			SAVE_VAR(Vars::Menu::ShowDVD);
@@ -1416,6 +1418,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 		{
 			LOAD_VAR(Vars::Misc::AccurateMovement);
 			LOAD_VAR(Vars::Misc::AutoJump);
+			LOAD_VAR(Vars::Misc::AutoVote);
 			LOAD_VAR(Vars::Misc::DuckJump);
 			LOAD_VAR(Vars::Misc::TauntSlide);
 			LOAD_VAR(Vars::Misc::TauntControl);
@@ -1450,6 +1453,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Misc::PartyESP);
 			LOAD_VAR(Vars::Misc::Roll);
 			LOAD_VAR(Vars::Misc::SoundBlock);
+			LOAD_VAR(Vars::Misc::ChatFlags);
 			LOAD_VAR(Vars::Misc::MedievalChat);
 			LOAD_VAR(Vars::Misc::AutoAcceptItemDrops);
 			LOAD_VAR(Vars::Menu::ShowDVD);
