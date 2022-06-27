@@ -184,6 +184,24 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 													Value, color1, color2, true);
 							}
 
+							//ntiro dt bar
+							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 2)
+							{
+								// const float DrawAnimEnd = (static_cast<float>(G::ShiftedTicks) / 24)
+								// static float DrawAnim = 0.f;
+								// DrawAnim = g_Draw.EaseIn(ratio, rratio, 0.9f);
+								
+								//void Rect(int x, int y, int w, int h, const Color_t& clr);
+								static float DrawAnimEnd = 0.f;
+								static float DrawAnimStart = 0.f;
+								static float DrawAnim = 0.f;
+								DrawAnimEnd = (G::ShiftedTicks * 24)
+								DrawAnim = g_Draw.EaseIn(DrawAnimStart, DrawAnimEnd, 0.8f);
+
+								g_Draw.Rect(g_ScreenSize.c - 20, (g_ScreenSize.h / 2) + 49, (g_ScreenSize.c - 20) + DrawAnim, 
+								     		 9, Vars::Menu::Colors::MenuAccent);
+							}
+
 							// Rijin DT Bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 3)
 							{

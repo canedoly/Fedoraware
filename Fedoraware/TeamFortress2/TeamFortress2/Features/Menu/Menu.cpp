@@ -484,9 +484,12 @@ void CMenu::MenuVisuals()
 				WCombo("Class###PlayerIconClass", &Vars::ESP::Players::Class.Value, { "Off", "Icon", "Text", "Both" }); HelpMarker("Will draw the class the player is");
 				WToggle("Weapon icons", &Vars::ESP::Players::WeaponIcon.Value); HelpMarker("Shows an icon for the weapon that the player has currently equipped");
 				ColorPickerL("Invulnerable colour", Colors::WeaponIcon);
+				//WCombo("Health bar", &Vars::ESP::Players::HealthBar.Value, { "Disabled", "Gradient", "Old" });
 				WToggle("Health bar###ESPPlayerHealthBar", &Vars::ESP::Players::HealthBar.Value); HelpMarker("Will draw a bar visualizing how much health the player has");
 				ColorPickerL("Health Bar Top", Colors::GradientHealthBar.startColour);
 				ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
+				ColorPickerL("Overheal bar top", Colors::OverhealHealthBar.startColour, 3);
+				ColorPickerL("Overheal bar bottom",Colors::OverhealHealthBar.endColour, 4);
 				WCombo("Health Text###ESPPlayerHealthText", &Vars::ESP::Players::HealthText.Value, { "Off", "Default", "Bar" }); HelpMarker("Draws the player health as a text");
 				WToggle("Condition", &Vars::ESP::Players::Cond.Value); HelpMarker("Will draw what conditions the player is under");
 				ColorPickerL("Condition colour", Colors::Cond);

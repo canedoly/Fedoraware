@@ -13,6 +13,7 @@ bool CDTBar::ShouldRun()
 
 void CDTBar::Dragbar()
 {
+	//if (Vars::Misc::CL_Move::DTBarStyle.Value == 3)
 	int mousex, mousey;
 	I::Surface->GetCursorPos(mousex, mousey);
 
@@ -51,7 +52,7 @@ void CDTBar::Dragbar()
 		isDragging = false;
 		isMoving = false;
 	}
-}
+}	// i don't understand this code 
 
 void CDTBar::Run()
 {
