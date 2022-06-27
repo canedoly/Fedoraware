@@ -655,6 +655,9 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Visuals::damageLoggerChat);
 			SAVE_VAR(Vars::Visuals::damageLoggerConsole);
 			SAVE_VAR(Vars::Visuals::ParticleTracer);
+			SAVE_STRING(Vars::Visuals::ParticleName);
+			SAVE_VAR(Vars::Visuals::CritParticleTracer);
+			SAVE_STRING(Vars::Visuals::CritParticleName);
 			SAVE_VAR(Vars::Glow::Main::Stencil);
 			SAVE_VAR(Vars::Visuals::Vision);
 
@@ -1350,6 +1353,9 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Visuals::PropWireframe);
 			LOAD_VAR(Vars::Visuals::SkyboxChanger);
 			LOAD_VAR(Vars::Visuals::ParticleTracer);
+			LOAD_STRING(Vars::Visuals::ParticleName);
+			LOAD_VAR(Vars::Visuals::CritParticleTracer);
+			LOAD_STRING(Vars::Visuals::CritParticleName);
 			LOAD_VAR(Vars::Visuals::BulletTracer);
 			LOAD_VAR(Vars::Visuals::BulletTracerRainbow);
 			LOAD_VAR(Vars::Visuals::AimbotViewmodel);

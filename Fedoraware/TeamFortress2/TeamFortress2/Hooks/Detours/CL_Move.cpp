@@ -55,7 +55,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 			break;
 			}
 			case 1:
-			{	// smooth
+			{	 //smooth (its broken, and idk how to fix it)
 				oClMove(0, false);
 				G::ShiftedTicks--;
 			}		

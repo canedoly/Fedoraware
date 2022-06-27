@@ -187,19 +187,17 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 							//ntiro dt bar
 							else if (Vars::Misc::CL_Move::DTBarStyle.Value == 2)
 							{
-								// const float DrawAnimEnd = (static_cast<float>(G::ShiftedTicks) / 24)
-								// static float DrawAnim = 0.f;
-								// DrawAnim = g_Draw.EaseIn(ratio, rratio, 0.9f);
-								
-								//void Rect(int x, int y, int w, int h, const Color_t& clr);
-								static float DrawAnimEnd = 0.f;
-								static float DrawAnimStart = 0.f;
-								static float DrawAnim = 0.f;
-								DrawAnimEnd = (G::ShiftedTicks * 24);
-								DrawAnim = g_Draw.EaseIn(DrawAnimStart, DrawAnimEnd, 0.8f);
+								//TODO: MAKE ACTUAL POSTION & SIZE OFFSETS
 
-								g_Draw.Rect(g_ScreenSize.c - 20, (g_ScreenSize.h / 2) + 49, (g_ScreenSize.c - 20) + DrawAnim, 
-								     		 9, Vars::Menu::Colors::MenuAccent);
+								//static float DrawStart = 0.f; //this is kinda pointless
+								static float DrawEnd = 0.f;
+								
+								static float DrawAnim = 0.f;
+								DrawEnd = (G::ShiftedTicks * 24);
+								DrawAnim = g_Draw.EaseIn(DrawAnim, DrawEnd, 0.8f);
+
+								//g_Draw.Rect(g_ScreenSize.c - 20, (g_ScreenSize.h / 2) + 49, (g_ScreenSize.c - 20) + DrawAnim,  //draws massive white rectangle stretching to half monitor's width
+								//     		 9, Vars::Menu::Colors::MenuAccent); //menu accent doesn't seem to work, rip i'll figure out another way
 							}
 
 							// Rijin DT Bar
@@ -313,8 +311,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								//void Rect(int x, int y, int w, int h, const Color_t& clr);
 								//void OutlinedRect(int x, int y, int w, int h, const Color_t& clr);
 								//void String(const size_t& font_idx, int x, int y, const Color_t& clr, const EStringAlign& align, const char* str, ...);
-								const float xPosition = (g_ScreenSize.c + 100);
-								const float yPosition = (g_ScreenSize.h + 100);
+								const float xPosition = (g_ScreenSize.c - 50);
+								const float yPosition = (g_ScreenSize.h - 20);
 								
 								g_Draw.Rect(xPosition, yPosition, 160, 60, { 60, 60, 60, 255});
 								g_Draw.String(FONT_INDICATORS, xPosition, yPosition, { 80, 80, 80, 255}, ALIGN_CENTERHORIZONTAL,
@@ -330,7 +328,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 					g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.Value, { 116, 255, 48, 255 }, ALIGN_DEFAULT, _(__DATE__));
 				}
 
-				// Debug info
+				// Debug info (i love debug info)
 				if (Vars::Debug::DebugInfo.Value)
 				{
 					int yoffset = 20, xoffset = 10;

@@ -57,21 +57,21 @@ MAKE_HOOK(BaseClientDLL_FrameStageNotify, Utils::GetVFuncPtr(I::Client, 35), voi
 		{
 			F::AttributeChanger.Run();
 
-			if (Vars::Misc::DisableInterpolation.Value)
-			{
-				//TODO: improve this and turn it into a F::DisableInterp.Run();
-				static ConVar* cl_interp = g_ConVars.FindVar("cl_interp");
-				static ConVar* cl_interp_npcs = g_ConVars.FindVar("cl_interp_npcs");
-				static ConVar* cl_interp_ratio = g_ConVars.FindVar("cl_interp_ratio");
-				static ConVar* cl_interp_all = g_ConVars.FindVar("cl_interp_all");
-				static ConVar* cl_smooth = g_ConVars.FindVar("cl_smooth");
+			// i'll figure it out later
+			// {
+			// 	//TODO: improve this and turn it into a F::DisableInterp.Run();
+			// 	static ConVar* cl_interp = g_ConVars.FindVar("cl_interp");
+			// 	static ConVar* cl_interp_npcs = g_ConVars.FindVar("cl_interp_npcs");
+			// 	static ConVar* cl_interp_ratio = g_ConVars.FindVar("cl_interp_ratio");
+			// 	static ConVar* cl_interp_all = g_ConVars.FindVar("cl_interp_all");
+			// 	static ConVar* cl_smooth = g_ConVars.FindVar("cl_smooth");
 
-				cl_interp->SetValue(0);
-				cl_interp_npcs->SetValue(0);
-				cl_interp_ratio->SetValue(0);
-				cl_interp_all->SetValue(0);
-				cl_smooth->SetValue(0);
-			}
+			// 	cl_interp->SetValue(0);
+			// 	cl_interp_npcs->SetValue(0);
+			// 	cl_interp_ratio->SetValue(0);
+			// 	cl_interp_all->SetValue(0);
+			// 	cl_smooth->SetValue(0);
+			// }
 
 			break;
 		}

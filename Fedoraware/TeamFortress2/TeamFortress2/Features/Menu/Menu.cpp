@@ -1026,7 +1026,7 @@ void CMenu::MenuVisuals()
 				ColorPickerL("GUI Notif Outline", Colors::NotifOutline, 1);
 				ColorPickerL("GUI Notif Colour", Colors::NotifText, 2);
 				WSlider("GUI Notif Time", &Vars::Visuals::despawnTime.Value, 0.5f, 3.f, "%.1f");
-				WCombo("Particle tracer", &Vars::Visuals::ParticleTracer.Value, { "Off", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
+				WCombo("Particle tracer", &Vars::Visuals::ParticleTracer.Value, { "Disabled", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
 				static ConVar* drawtracers_firstperson = g_ConVars.FindVar("r_drawtracers_firstperson");
 				if (drawtracers_firstperson->GetInt() == 0 && Vars::Visuals::ParticleTracer.Value != 0)
 				{
@@ -1036,10 +1036,24 @@ void CMenu::MenuVisuals()
 				{
 					WInputText("Custom Tracer", &Vars::Visuals::ParticleName); HelpMarker("If you want to use a custom particle tracer");
 				}
+
+				WCombo("Crit Particle tracer", &Vars::Visuals::CritParticleTracer.Value, { "Disabled", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
+				static ConVar* drawtracers_firstperson = g_ConVars.FindVar("r_drawtracers_firstperson");
+				if (drawtracers_firstperson->GetInt() == 0 && Vars::Visuals::CritParticleTracer.Value != 0)
+				{
+					drawtracers_firstperson->SetValue(1);
+				}	
+
+				if (Vars::Visuals::CritParticleTracer.Value == 9)
+				{
+					WInputText("Custom Tracer", &Vars::Visuals::CritParticleName); HelpMarker("If you want to use a custom particle tracer");
+				}
+
 				if (Vars::Visuals::BulletTracer.Value)
 				{
 					WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				}
+				
 				if (Vars::Visuals::RemoveScope.Value)
 				{
 					WToggle("Noscope lines", &Vars::Visuals::ScopeLines.Value); HelpMarker("Will draw a custom overlay");
