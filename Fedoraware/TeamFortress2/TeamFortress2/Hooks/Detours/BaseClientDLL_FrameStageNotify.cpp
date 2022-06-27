@@ -64,8 +64,8 @@ MAKE_HOOK(BaseClientDLL_FrameStageNotify, Utils::GetVFuncPtr(I::Client, 35), voi
 				static ConVar* interp_npcs = g_ConVars.FindVar("cl_interp_npcs");
 				static ConVar* interp_ratio = g_ConVars.FindVar("cl_interp_ratio");
 				static ConVar* interp_all = g_ConVars.FindVar("cl_interp_all");
-				static ConVar* smooth = g_ConVars.FindVar("cl_smooth")
-				
+				static ConVar* smooth = g_ConVars.FindVar("cl_smooth");
+
 				cl_interp->SetValue(0);
 				cl_interp_npcs->SetValue(0);
 				cl_interp_ratio->SetValue(0);
