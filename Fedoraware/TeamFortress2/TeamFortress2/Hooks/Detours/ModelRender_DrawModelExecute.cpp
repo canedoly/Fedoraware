@@ -34,7 +34,7 @@ void DrawBT(void* ecx, void* edx, CBaseEntity* pEntity, const DrawModelState_t& 
 {
 	auto OriginalFn = Hooks::ModelRender_DrawModelExecute::Hook.Original<Hooks::ModelRender_DrawModelExecute::FN>();
 
-	if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::BtChams::Enabled.Value && !EWeaponType::Projectile)
+	if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::BtChams::Enabled.Value && EWeaponType != PROJECTILE)
 	{
 		if (pEntity && pEntity->GetClassID() == ETFClassID::CTFPlayer)
 		{

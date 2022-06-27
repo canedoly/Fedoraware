@@ -1027,6 +1027,11 @@ void CMenu::MenuVisuals()
 				ColorPickerL("GUI Notif Colour", Colors::NotifText, 2);
 				WSlider("GUI Notif Time", &Vars::Visuals::despawnTime.Value, 0.5f, 3.f, "%.1f");
 				WCombo("Particle tracer", &Vars::Visuals::ParticleTracer.Value, { "Off", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
+				if (r_drawtracers_firstperson->GetInt() == 0 && Vars::Visuals::ParticleTracer.Value != 0)
+				{
+					static ConVar* r_drawtracers_firstperson = g_ConVars.FindVar("r_drawtracers_firstperson");
+					r_drawtracers_firstperson->SetValue(1);
+				}	
 				if (Vars::Visuals::ParticleTracer.Value == 9)
 				{
 					WInputText("Custom Tracer", &Vars::Visuals::ParticleName); HelpMarker("If you want to use a custom particle tracer");
