@@ -129,7 +129,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		switch (Vars::Visuals::ParticleTracer.Value)
 		{
 			ConVar* r_drawtracers_firstperson = g_Interfaces.CVars->FindVar("r_drawtracers_firstperson");
-			if (r_drawtracers_firstperson->GetIng() == 0)
+			if (r_drawtracers_firstperson->GetInt() == 0)
 			{
 				r_drawtracers_firstperson->SetValue(1);
 			}
