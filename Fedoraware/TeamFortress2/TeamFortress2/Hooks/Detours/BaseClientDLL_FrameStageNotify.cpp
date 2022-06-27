@@ -59,12 +59,12 @@ MAKE_HOOK(BaseClientDLL_FrameStageNotify, Utils::GetVFuncPtr(I::Client, 35), voi
 
 			if (Vars::Misc::DisableInterpolation.Value)
 			{
-				ConVar* cl_interp = g_Interfaces.CVars->FindVar("cl_interp");
-				ConVar* cl_interp_npcs = g_Interfaces.CVars->FindVar("cl_interp_npcs");
-				ConVar* cl_interp_ratio = g_ConVars.FindVar("cl_interp_ratio");
-				ConVar* cl_interp_all = g_Interfaces.CVars->FindVar("cl_interp_all");
-				ConVar* cl_smooth = g_Interfaces.CVars->FindVar("cl_smooth");
-
+				//TODO: improve this
+				static ConVar* cl_interp = g_ConVars.FindVar("cl_interp");
+				static ConVar* interp_npcs = g_ConVars.FindVar("cl_interp_npcs");
+				static ConVar* interp_ratio = g_ConVars.FindVar("cl_interp_ratio");
+				static ConVar* interp_all = g_ConVars.FindVar("cl_interp_all");
+				static ConVar* smooth = g_ConVars.FindVar("cl_smooth")
 				cl_interp->SetValue(0);
 				cl_interp_npcs->SetValue(0);
 				cl_interp_ratio->SetValue(0);

@@ -195,7 +195,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								static float DrawAnimEnd = 0.f;
 								static float DrawAnimStart = 0.f;
 								static float DrawAnim = 0.f;
-								DrawAnimEnd = (G::ShiftedTicks * 24)
+								DrawAnimEnd = (G::ShiftedTicks * 24);
 								DrawAnim = g_Draw.EaseIn(DrawAnimStart, DrawAnimEnd, 0.8f);
 
 								g_Draw.Rect(g_ScreenSize.c - 20, (g_ScreenSize.h / 2) + 49, (g_ScreenSize.c - 20) + DrawAnim, 
