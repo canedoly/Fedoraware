@@ -128,8 +128,8 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		
 		
 		//if crit tracers
-		const auto bCrit = pEvent->GetBool("crit");
-		switch (Vars::Visuals::CritTracer.Value != 0 && bCrit)
+		const auto& pWeapon = g_EntityCache.GetWeapon();
+		switch (Vars::Visuals::CritParticleTracer.Value != 0 && pWeapon->CalcIsAttackCritical(kTrueFlag))
 		{
 		//Machina
 			case 1:
@@ -184,7 +184,6 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 
 		switch (Vars::Visuals::ParticleTracer.Value)
 		{
-			const auto bCrit = pEvent->GetBool("crit");
 		//Machina
 			case 1:
 				Particles::ParticleTracer(team == 2 ? "dxhr_sniper_rail_red" : "dxhr_sniper_rail_blue", trace.vStartPos, trace.vEndPos,
@@ -240,7 +239,6 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 
 		// switch (Vars::Visuals::ParticleTracer.Value)
 		// {
-		// 	const auto bCrit = pEvent->GetBool("crit");
 		// //Machina
 		// 	case 1:
 		// 		Particles::ParticleTracer(team == 2 ? "dxhr_sniper_rail_red" : "dxhr_sniper_rail_blue", trace.vStartPos, trace.vEndPos,
