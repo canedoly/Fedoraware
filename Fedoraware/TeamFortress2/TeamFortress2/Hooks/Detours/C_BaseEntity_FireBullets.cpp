@@ -129,7 +129,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"53 8B DC 83 
 		
 		//if crit tracers
 		const auto& pWeapon = g_EntityCache.GetWeapon();
-		switch (Vars::Visuals::CritParticleTracer.Value != 0 && pWeapon->CalcIsAttackCritical(kTrueFlag))
+		switch (Vars::Visuals::CritParticleTracer.Value != 0 && pWeapon->CalcIsAttackCritical(true))
 		{
 		//Machina
 			case 1:
