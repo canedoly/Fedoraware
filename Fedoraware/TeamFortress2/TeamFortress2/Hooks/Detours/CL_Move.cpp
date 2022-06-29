@@ -105,7 +105,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 			G::Recharging = false;
 		}
 	}
-	else if (Vars::Misc::CL_Move::RechargeMode.Value == 1)
+	else if (Vars::Misc::CL_Move::RechargeMode.Value == 1) //there's ways to improve this but idc
 	{
 		if (rechargeKey.Down() && !G::IsChoking)
 		{
