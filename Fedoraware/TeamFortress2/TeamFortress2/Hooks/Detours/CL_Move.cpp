@@ -64,51 +64,58 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return;
 	}
 
-	// Prepare for a recharge (Is a recharge queued?)
-	if (G::RechargeQueued && !G::IsChoking)
+	if (Vars::Misc::CL_Move::RechargeMode.Value == 0)
 	{
-		// probably perfect method of waiting to ensure we don't mess with fakelag
-		G::RechargeQueued = false; // see relevant code @clientmodehook
-		G::Recharging = true;
-		G::TickShiftQueue = 0;
-	}
-
-	// Recharge ticks
-	else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicksCharge.Value))
-	{
-		G::ForceSendPacket = true; // force uninterrupted connection with server
-		G::ShiftedTicks++; // add ticks to tick counter
-		G::Waiting = true;
-		if (Vars::Misc::CL_Move::CustomDTCharge.Value)
+		// Prepare for a recharge (Is a recharge queued?)
+		if (G::RechargeQueued && !G::IsChoking)
 		{
-			G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+			// probably perfect method of waiting to ensure we don't mess with fakelag
+			G::RechargeQueued = false; // see relevant code @clientmodehook
+			G::Recharging = true;
+			G::TickShiftQueue = 0;
 		}
+
+		// Recharge ticks
+		else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicksCharge.Value))
+		{
+			G::ForceSendPacket = true; // force uninterrupted connection with server
+			G::ShiftedTicks++; // add ticks to tick counter
+			G::Waiting = true;
+			if (Vars::Misc::CL_Move::CustomDTCharge.Value)
+			{
+				G::WaitForShift = Vars::Misc::CL_Move::DTWaitCalls.Value;
+			}
+			else
+			{
+				G::WaitForShift = 26;
+			}
+			return; // this recharges
+		}
+	
+		else if (rechargeKey.Down() && !G::RechargeQueued)
+		{
+			// queue recharge
+			G::ForceSendPacket = true;
+			G::RechargeQueued = true;
+		}
+
+		// We're unable to recharge
 		else
 		{
-			G::WaitForShift = 26;
+			G::Recharging = false;
 		}
-		return; // this recharges
 	}
-	
-	// else if (G::Waiting && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
-	// {
-	// 	G::WaitForShift = 26;
-	// 	//G::WaitForShift = 33 - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
-	// 	G::Waiting = false;
-	// }
-
-	// Queue a recharge if the recharge key was pressed
-	else if (rechargeKey.Down() && !G::RechargeQueued)
+	else if (Vars::Misc::CL_Move::RechargeMode.Value == 1)
 	{
-		// queue recharge
-		G::ForceSendPacket = true;
-		G::RechargeQueued = true;
-	}
-
-	// We're unable to recharge
-	else
-	{
-		G::Recharging = false;
+		if (rechargeKey.Down() && !G::IsChoking)
+		{
+			G::Recharging = true;
+		}
+		else if (G::Recharging)
+		{
+			G::ForceSendPacket = true; // force uninterrupted connection with server
+			G::ShiftedTicks++; // add ticks to tick counter
+		}
 	}
 
 	if (Vars::Misc::CL_Move::ChargeOnlyAmount.Value && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))

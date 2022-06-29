@@ -1388,11 +1388,13 @@ void CMenu::MenuHvH()
 			WCombo("Teleport Mode", &Vars::Misc::CL_Move::TeleportMode.Value, { "Plain", "Smooth" }); HelpMarker("How the teleport should be done");
 			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag", "Stop Recharge Movement" }, {&Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value, &Vars::Misc::CL_Move::StopMovement.Value }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
+			WCombo("Recharge mode", &Vars::Misc::CL_Move::RechargeMode.Value, { "Classic", "Modern"}); HelpMarker("Classic - recharges all ticks on press, Modern - only recharges as long as key is being pressed down");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, 24, "%d"); HelpMarker("How many ticks to shift");
 			WToggle("Custom Recharge", &Vars::Misc::CL_Move::CustomDTCharge.Value); HelpMarker("Set custom dt recharge ticks and other stuff");
 			if (Vars::Misc::CL_Move::CustomDTCharge.Value)
 			{
+				//todo: recode all of this bullshit, like what was i smoking while making this
 				WSlider("Ticks to recharge", &Vars::Misc::CL_Move::DTTicksCharge.Value, 1, 24, "%d"); HelpMarker("How many ticks to recharge");
 				WSlider("Ticks to wait", &Vars::Misc::CL_Move::DTWaitCalls.Value, 1, 26, "%d"); HelpMarker("How many ticks before you can doubletap");
 				WToggle("Shift only desired amount", &Vars::Misc::CL_Move::ChargeOnlyAmount.Value); HelpMarker("Only shift the ticks you want for example dtticks is 20 shift only 20's");

@@ -637,6 +637,7 @@ namespace Vars
 			inline CVar<bool> AutoRecharge{false}; //H
 			inline CVar<bool> AntiWarp{false}; //H
 			inline CVar<int> DTMode{0}; // 0 - On Key, 1 - Always DT, 2 - Disable on key, 3 - Disabled
+			inline CVar<int> RechargeMode{0}; // 0 classic, 1 modern
 			inline CVar<int> DtbarOutlineHeight{5};
 			inline CVar<int> DtbarOutlineWidth{4};
 			inline CVar<int> DTTicks{20};

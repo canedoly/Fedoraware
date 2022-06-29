@@ -751,6 +751,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Misc::CL_Move::AutoRecharge);
 				SAVE_VAR(Vars::Misc::CL_Move::AntiWarp);
 				SAVE_VAR(Vars::Misc::CL_Move::DTBarStyle);
+				SAVE_VAR(Vars::Misc::CL_Move::RechargeMode);
 				SAVE_VAR(Vars::Misc::CL_Move::DTMode);
 				SAVE_VAR(Vars::Misc::CL_Move::DtbarOutlineHeight);
 				SAVE_VAR(Vars::Misc::CL_Move::DtbarOutlineWidth);
@@ -1488,6 +1489,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Misc::CL_Move::AntiWarp);
 				LOAD_VAR(Vars::Misc::CL_Move::DoubletapKey); // { 0x52, L"Recharge Key" }; //R
 				LOAD_VAR(Vars::Misc::CL_Move::DTBarStyle);
+				LOAD_VAR(Vars::Misc::CL_Move::RechargeMode);
 				LOAD_VAR(Vars::Misc::CL_Move::DTMode);
 				LOAD_VAR(Vars::Misc::CL_Move::DtbarOutlineHeight);
 				LOAD_VAR(Vars::Misc::CL_Move::DtbarOutlineWidth);
