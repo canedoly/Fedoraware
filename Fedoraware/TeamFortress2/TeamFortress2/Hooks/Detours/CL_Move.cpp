@@ -116,6 +116,10 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 			G::ForceSendPacket = true; // force uninterrupted connection with server
 			G::ShiftedTicks++; // add ticks to tick counter
 		}
+		else if (!rechargeKey.Down())
+		{
+			G::Recharging = false;
+		}
 	}
 
 	if (Vars::Misc::CL_Move::ChargeOnlyAmount.Value && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
