@@ -197,7 +197,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 								DrawAnim = g_Draw.EaseIn(DrawAnim, DrawEnd, 0.8f);
 
 								g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, g_ScreenSize.h / 2, { 255, 255, 255, 255 },
-											 ALIGN_CENTERHORIZONTAL, L"Ticks %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicksCharge.Value)
+											 ALIGN_CENTERHORIZONTAL, L"Ticks %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicksCharge.Value);
 
 								//g_Draw.Rect(g_ScreenSize.c - 20, (g_ScreenSize.h / 2) + 49, (g_ScreenSize.c - 20) + DrawAnim,  //draws massive white rectangle stretching to half monitor's width
 								//     		 9, Vars::Menu::Colors::MenuAccent); //menu accent doesn't seem to work, rip i'll figure out another way
