@@ -470,7 +470,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 2, (y + h) - (ratio * h) - 15, nHealth > nMaxHealth ? Colors::Overheal : healthColor, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
+					g_Draw.String(FONT, x - 2, (y + h) - (ratio * h) - 15, Colors::White, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
 				}
 
 				x += 1;
