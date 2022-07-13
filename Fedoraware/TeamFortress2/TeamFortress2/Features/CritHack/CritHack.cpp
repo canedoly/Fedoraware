@@ -99,7 +99,7 @@ float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
 
 float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
 {
-	const auto& pLocal = g_EntityCache.m_pLocal;
+	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal) { return 0.f; }
 
 	const auto critMult = static_cast<float>(pLocal->GetCritMult());
@@ -228,7 +228,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 {
 	if (!IsEnabled()) { return; }
 
-	const auto& pWeapon = g_EntityCache.m_pLocalWeapon;
+	const auto& pWeapon = pLocal->GetActiveWeapon();
 	if (!pWeapon) { return; }
 
 	int nextCrit = NextCritTick(pCmd);
@@ -240,7 +240,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 			pCmd->command_number = nextCrit;
 			pCmd->random_seed = MD5_PseudoRandom(nextCrit) & MASK_SIGNED;
 		} 
-		else if (Vars::CritHack::avoidrandom.Value)
+		else if (Vars::CritHack::AvoidRandom.Value)
 		{
 			// Prevent crit
 			int tries = 0;
@@ -292,11 +292,10 @@ void CCritHack::Run(CUserCmd* pCmd)
 
 void CCritHack::Draw()
 {
-	if (!IsEnabled()) { return; }
-	if (!g_GlobalInfo.currentUserCmd) { return; }
-	if (!Vars::CritHack::indicators.Value) { return; }
+	if (!IsEnabled() || !G::CurrentUserCmd) { return; }
+	if (!Vars::CritHack::Indicators.Value) { return; }
 
-	const auto& pLocal = g_EntityCache.m_pLocal;
+	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal) { return; }
 	if (!pLocal->IsAlive()) { return; }
 
@@ -307,9 +306,9 @@ void CCritHack::Draw()
 	if (!canCrit) { ShotsUntilCrit = GetShotsUntilCrit(pWeapon); }
 
 	// This is dumb code pasted from cathook
-	if (!ShotsUntilCrit && AddedPerShot && (pWeapon->GetIndex() != LastWeapon || LastCritTick - g_GlobalInfo.currentUserCmd->command_number < 0 || (LastCritTick - g_GlobalInfo.currentUserCmd->command_number) * I::GlobalVars->interval_per_tick > 30))
+	if (!ShotsUntilCrit && AddedPerShot && (pWeapon->GetIndex() != LastWeapon || LastCritTick - G::CurrentUserCmd->command_number < 0 || (LastCritTick - G::CurrentUserCmd->command_number) * I::GlobalVars->interval_per_tick > 30))
 	{
-		LastCritTick = NextCritTick(g_GlobalInfo.currentUserCmd);
+		LastCritTick = NextCritTick(G::CurrentUserCmd);
 	}
 
 	const float bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);

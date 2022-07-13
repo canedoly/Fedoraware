@@ -5,6 +5,7 @@ class CCritHack {
 	bool AreRandomCritsEnabled();
 	bool IsEnabled();
 	float GetCritCap(CBaseCombatWeapon* pWeapon);
+	bool IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon);
 	std::pair<float, float> GetCritMultInfo(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawMult(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawAmount(CBaseCombatWeapon* pWeapon);
