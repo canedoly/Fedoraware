@@ -228,7 +228,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 {
 	if (!IsEnabled()) { return; }
 
-	const auto& pWeapon = pLocal->GetActiveWeapon();
+	const auto& pWeapon = g_EntityCache.GetWeapon();
 	if (!pWeapon) { return; }
 
 	int nextCrit = NextCritTick(pCmd);
