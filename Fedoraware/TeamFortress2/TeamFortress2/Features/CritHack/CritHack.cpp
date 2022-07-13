@@ -261,6 +261,8 @@ void CCritHack::Run(CUserCmd* pCmd)
 	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
 	{
 		const auto& weaponData = pWeapon->GetWeaponData();
+		// https://github.com/KaylinOwO/LMAOBOXToolboxLUA/blob/main/ToolboxModules/CritIndicator.lua
+		// const auto& weaponDMG = pWeapon->GetWeaponDamageStats(); // it doesn't exist in basecombatweapon
 		const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
 		int projectilesPerShot = weaponData.m_nBulletsPerShot;
 		if (projectilesPerShot >= 1)
