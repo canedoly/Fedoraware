@@ -385,11 +385,11 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, 800 - fontHeight - 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Ticks %d/22", G::ShiftedTicks);
-						g_Draw.RoundedBoxStatic(g_ScreenSize.c - 50, 800, 100, 12, 4, { 0,0,0,170 });
-						const int chargeWidth = Math::RemapValClamped(G::ShiftedTicks, 0, 22, 0, 96);
+						g_Draw.RoundedBoxStatic(g_ScreenSize.c - 50, 800, 110, 12, 5, { 0,0,0,170 });
+						const int chargeWidth = Math::RemapValClamped(G::ShiftedTicks, 0, 22, 0, 106);
 						if (G::ShiftedTicks)
 						{
-							g_Draw.RoundedBoxStatic(g_ScreenSize.c - 48, 802, chargeWidth, 8, 4, Vars::Menu::Colors::MenuAccent);
+							g_Draw.RoundedBoxStatic(g_ScreenSize.c - 48, 802, chargeWidth, 8, 5, Vars::Menu::Colors::MenuAccent);
 						}
 						break;
 					}
@@ -423,30 +423,30 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 											((g_ScreenSize.c - (xscale / 2) + xoff) + (xscale * ratio)),
 											(nY - (yscale / 2) + yoff + yscale), { color1 }, { color2 }, TRUE);
 						g_Draw.String(FONT_INDICATORS, g_ScreenSize.c - (xscale / 2 + 1) + xoff,
-									  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 255, 255, 255 }, ALIGN_DEFAULT,
+									  nY + 6 - (yscale / 2 + 1) - 10 + yoff, { 255, 255, 255, 255 }, ALIGN_DEFAULT,
 									  _(L"CHARGE"));
 						if (G::ShiftedTicks == 0) // no charge no money
 						{
 							g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-										  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 55, 40, 255 }, ALIGN_REVERSE,
+										  nY + 6 - (yscale / 2 + 1) - 10 + yoff, { 255, 55, 40, 255 }, ALIGN_REVERSE,
 										  _(L"NO CHARGE"));
 						}
 						else if (G::Recharging && (G::WaitForShift || ratio < 1)) // charging 
 						{
 							g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-										  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 126, 0, 255 }, ALIGN_REVERSE,
+										  nY + 6 - (yscale / 2 + 1) - 10 + yoff, { 255, 126, 0, 255 }, ALIGN_REVERSE,
 										  _(L"CHARGING"));
 						}
 						else if (!G::WaitForShift && ratio == 1) // activates when ready
 						{
 							g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-										  nY - (yscale / 2 + 1) - 10 + yoff, { 66, 255, 0, 255 }, ALIGN_REVERSE,
+										  nY + 6 - (yscale / 2 + 1) - 10 + yoff, { 66, 255, 0, 255 }, ALIGN_REVERSE,
 										  _(L"READY"));
 						}
 						else // activates when waiting blah blah blahg
 						{
 							g_Draw.String(FONT_INDICATORS, (g_ScreenSize.c - (xscale / 2) + xoff + xscale),
-										  nY - (yscale / 2 + 1) - 10 + yoff, { 255, 46, 46, 255 }, ALIGN_REVERSE,
+										  nY + 6 - (yscale / 2 + 1) - 10 + yoff, { 255, 46, 46, 255 }, ALIGN_REVERSE,
 										  _(L"DT IMPOSSIBLE"));
 						}
 						break;
