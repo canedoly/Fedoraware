@@ -42,6 +42,7 @@ void CMisc::RunLate(CUserCmd* pCmd)
 		FastStop(pCmd, pLocal);
 		AutoRocketJump(pCmd, pLocal);
 		AutoScoutJump(pCmd, pLocal);
+		FastAccel(pCmd, pLocal);
 	}
 }
 
@@ -347,9 +348,63 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldFlags)
 		// Duck Jump
 		if ((nOldFlags & ~FL_ONGROUND) && (Vars::Misc::DuckJump.Value || Vars::Misc::Followbot::Enabled.Value))
 		{
-			if (pLocal->IsAlive() && !pLocal->IsOnGround() && !pLocal->IsSwimming())
+			if (pLocal->IsAlive() && !pLocal->IsOnGround() && !pLocal->IsSwimming() && !pLocal->IsStunned())
 			{
 				pCmd->buttons |= IN_DUCK;
+			}
+		}
+	}
+}
+
+void CMisc::FastAccel(CUserCmd* pCmd, CBaseEntity* pLocal)
+{
+	static bool FlipVar = false;
+	FlipVar = !FlipVar;
+	
+	if (!FlipVar) {
+		return;
+	}
+
+	const bool ShouldAccel = pLocal->IsDucking() ? Vars::Misc::CrouchSpeed.Value : (Vars::Misc::FastAccel.Value || (G::ShouldShift && Vars::Misc::CL_Move::AntiWarp.Value));	//	G::ShouldShift means we can use it in antiwarp independantly of what our user wants.
+	if (!ShouldAccel) {
+		return;
+	}
+
+	if (G::Recharging || G::RechargeQueued || G::Frozen) {
+		return;
+	}
+
+	if (!pLocal->IsAlive() || pLocal->IsSwimming() || pLocal->IsInBumperKart() || pLocal->IsAGhost() || !pLocal->IsOnGround() || G::IsAttacking)
+	{
+		return;
+	}
+
+	const int maxSpeed = pLocal->GetMaxSpeed() * (pCmd->forwardmove < 0 ? .85f : .95f) - 1; //	get our max speed, then if we are going backwards, reduce it.
+	const float curSpeed = pLocal->GetVecVelocity().Length2D();
+
+	if (curSpeed > maxSpeed) {	
+		return;	//	no need to accelerate if we are moving at our max speed
+	}
+
+	if (pLocal->GetClassNum() == ETFClass::CLASS_HEAVY && pCmd->buttons & IN_ATTACK2 && pLocal->IsDucking()) {
+		return;
+	}
+
+	if (pCmd->buttons & (IN_MOVELEFT | IN_MOVERIGHT | IN_FORWARD | IN_BACK))
+	{
+		Vec3 vecMove(pCmd->forwardmove, pCmd->sidemove, 0.0f);
+		float flLength = vecMove.Length();
+		if (flLength > 0.0f)
+		{
+			Vec3 angMoveReverse;
+			Math::VectorAngles(vecMove * -1.f, angMoveReverse);
+			pCmd->forwardmove = -flLength;
+			pCmd->sidemove = 0.0f;
+			pCmd->viewangles.y = fmodf(pCmd->viewangles.y - angMoveReverse.y, 360.0f);	//	this doesn't have to be clamped inbetween 180 and -180 because the engine automatically fixes it.
+			pCmd->viewangles.z = 270.f;
+			G::RollExploiting = true;
+			if (Vars::Misc::FakeAccelAngle.Value && !G::AAActive) {
+				G::ForceChokePacket = true;
 			}
 		}
 	}
@@ -756,7 +811,7 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 			case 1: {
 				G::ShouldStop = true;
 				nShiftTick++;
-				return;
+				break;
 			}
 			default: {
 				nShiftTick++;

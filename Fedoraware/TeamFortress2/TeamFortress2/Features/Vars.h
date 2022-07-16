@@ -64,7 +64,8 @@ namespace Vars
 	{
 		inline CVar<bool> Enabled{ false };
 		inline CVar<bool> Aim{ false };
-		inline CVar<float> Latency{ 0.f };
+		inline CVar<bool> FakeLatency{ false };
+		inline CVar<float> Latency{ 200.f };
 
 		namespace BtChams
 		{
@@ -439,8 +440,11 @@ namespace Vars
 		inline CVar<int> FieldOfView{ 130 };
 		inline CVar<int> AimFOVAlpha{ 10 };
 		inline CVar<bool> RemoveScope{ false };
+		inline CVar<bool> RemoveRagdolls{ false };
 		inline CVar<bool> RemoveMOTD{ false };
 		inline CVar<bool> RemoveScreenEffects{ false };
+		inline CVar<bool> RemoveScreenOverlays{ false };
+		inline CVar<int> VisualOverlay{ false };
 		inline CVar<bool> PreventForcedAngles{ false };
 		inline CVar<bool> ScopeLines{ false };
 		inline CVar<bool> PickupTimers{ false };
@@ -596,7 +600,9 @@ namespace Vars
 		inline CVar<bool> AntiAFK{ false };
 		inline CVar<int> VotingOptions{ 0b000011 }; // 000011 {verbose, autovote, party, chat, console, text}
 		inline CVar<bool> CheatsBypass{ false };
-		inline CVar<int> Roll{ false };
+		inline CVar<bool> CrouchSpeed{ true };
+		inline CVar<bool> FastAccel{ true };
+		inline CVar<bool> FakeAccelAngle{ false };
 		inline CVar<bool> ChatCensor{ false };
 		inline CVar<bool> AntiAutobal{ false };
 		inline CVar<bool> RageRetry{ false };

@@ -63,6 +63,7 @@ struct Draw_t
 	void OutlinedGradientBar(int x, int y, int w, int h, float bwidthp, const Color_t& top_clr, const Color_t& bottom_clr, const Color_t& overlay_clr, bool horizontal);
 	void GradientRectA(int x, int y, int x1, int y1, const Color_t& top_clr, const Color_t& bottom_clr, bool horizontal);
 	void OutlinedCircle(int x, int y, float radius, int segments, const Color_t& clr);
+	void FilledCircle(const int x, const int y, const int radius, const int segments, const Color_t clr);
 	void CornerRect(int x, int y, int w, int h, int _x, int _y, const Color_t& color);
 	void Texture(int x, int y, int w, int h, const Color_t& clr, int nIndex);
 	CHudTexture* GetIcon(const char* szIcon, int eIconFormat = 0);
@@ -70,6 +71,7 @@ struct Draw_t
 	void DrawHudTexture(float x0, float y0, float s0, CHudTexture* texture, Color_t col0);
 	void DrawHudTextureByName(float x0, float y0, float s0, const char* textureName, Color_t col0);
 	void Avatar(const int x, const int y, const int w, const int h, const uint32 nFriendID);
+	void RoundedBoxStatic(const int x, const int y, const int w, const int h, const int radius, const Color_t& col);
 	float EaseOut(float start, float end, float speed);
 	float EaseIn(float start, float end, float speed);
 	float Linear(float start, float end, float speed);

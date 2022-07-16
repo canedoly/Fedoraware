@@ -255,6 +255,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			{
 				SAVE_VAR(Vars::Backtrack::Enabled);
 				SAVE_VAR(Vars::Backtrack::Aim);
+				SAVE_VAR(Vars::Backtrack::Latency);
+				SAVE_VAR(Vars::Backtrack::FakeLatency);
 				//Bt Chams
 				{
 					SAVE_VAR(Vars::Backtrack::BtChams::Enabled);
@@ -590,7 +592,10 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Visuals::FieldOfView);
 			SAVE_VAR(Vars::Visuals::AimFOVAlpha);
 			SAVE_VAR(Vars::Visuals::RemoveScope);
+			SAVE_VAR(Vars::Visuals::RemoveRagdolls);
 			SAVE_VAR(Vars::Visuals::RemoveScreenEffects);
+			SAVE_VAR(Vars::Visuals::VisualOverlay);
+			SAVE_VAR(Vars::Visuals::RemoveScreenOverlays);
 			SAVE_VAR(Vars::Visuals::PreventForcedAngles);
 			SAVE_VAR(Vars::Visuals::ScopeLines);
 			SAVE_VAR(Vars::Visuals::PickupTimers);
@@ -738,7 +743,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Misc::PartyNetworking);
 			SAVE_VAR(Vars::Misc::PartyMarker);
 			SAVE_VAR(Vars::Misc::PartyESP);
-			SAVE_VAR(Vars::Misc::Roll);
+			SAVE_VAR(Vars::Misc::CrouchSpeed);
+			SAVE_VAR(Vars::Misc::FastAccel);
 			SAVE_VAR(Vars::Misc::SoundBlock);
 			SAVE_VAR(Vars::Misc::ChatFlags);
 			SAVE_VAR(Vars::Misc::MedievalChat);
@@ -1010,6 +1016,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			{
 				LOAD_VAR(Vars::Backtrack::Enabled);
 				LOAD_VAR(Vars::Backtrack::Aim);
+				LOAD_VAR(Vars::Backtrack::Latency);
+				LOAD_VAR(Vars::Backtrack::FakeLatency);
 				//Bt Chams
 				{
 					LOAD_VAR(Vars::Backtrack::BtChams::Enabled);
@@ -1342,10 +1350,13 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Visuals::RemoveDisguises);
 			LOAD_VAR(Vars::Visuals::RemoveTaunts);
 			LOAD_VAR(Vars::Visuals::RemoveScreenEffects);
+			LOAD_VAR(Vars::Visuals::RemoveScreenOverlays);
+			LOAD_VAR(Vars::Visuals::VisualOverlay);
 			LOAD_VAR(Vars::Visuals::PreventForcedAngles);
 			LOAD_VAR(Vars::Visuals::FieldOfView);
 			LOAD_VAR(Vars::Visuals::AimFOVAlpha);
 			LOAD_VAR(Vars::Visuals::RemoveScope);
+			LOAD_VAR(Vars::Visuals::RemoveRagdolls);
 			LOAD_VAR(Vars::Visuals::PickupTimers);
 			LOAD_VAR(Vars::Visuals::ScopeLines);
 			LOAD_VAR(Vars::Visuals::RemoveZoom);
@@ -1493,7 +1504,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Misc::PartyNetworking);
 			LOAD_VAR(Vars::Misc::PartyMarker);
 			LOAD_VAR(Vars::Misc::PartyESP);
-			LOAD_VAR(Vars::Misc::Roll);
+			LOAD_VAR(Vars::Misc::CrouchSpeed);
+			LOAD_VAR(Vars::Misc::FastAccel);
 			LOAD_VAR(Vars::Misc::SoundBlock);
 			LOAD_VAR(Vars::Misc::ChatFlags);
 			LOAD_VAR(Vars::Misc::MedievalChat);

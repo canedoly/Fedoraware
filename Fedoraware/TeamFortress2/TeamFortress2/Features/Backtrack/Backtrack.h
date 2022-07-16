@@ -18,48 +18,48 @@ public:
 	}
 };
 
-using BoneMatrixes = struct {
+using BoneMatrixes = struct
+{
 	float BoneMatrix[128][3][4];
 };
 
-struct TickRecord {
-	TickRecord(const float flSimulationTime, const Vec3& headPos, const Vec3& absOrigin,
-		BoneMatrixes boneMatrix, model_t* model, studiohdr_t* hdr,
-		int hitboxSet) {
-		SimulationTime = flSimulationTime;
-		HeadPosition = headPos;
-		AbsOrigin = absOrigin;
-		BoneMatrix = boneMatrix;
-		Model = model;
-		HDR = hdr;
-		HitboxSet = hitboxSet;
-	}
-
+struct TickRecord
+{
 	float SimulationTime = -1;
-	Vec3 HeadPosition;
-	Vec3 AbsOrigin;
-	BoneMatrixes BoneMatrix;
-	model_t* Model;
-	studiohdr_t* HDR;
-	int  HitboxSet;
-	bool AimedAt = false;
+	Vec3 HeadPosition = { };
+	Vec3 AbsOrigin = { };
+	BoneMatrixes BoneMatrix{ };
+	model_t* Model = nullptr;
+	studiohdr_t* HDR = nullptr;
+	int  HitboxSet = 0;
+	Vec3 Mins = Vec3();
+	Vec3 Maxs = Vec3();
+	Vec3 WorldSpaceCenter = { };
+	Vec3 EyeAngles = { };
 };
 
-class CBacktrack {
-public:
-	bool IsGoodTick(int tick);
-	void Start(const CUserCmd* pCmd);
-	void Calculate(CUserCmd* pCmd);
-	void Run(CUserCmd* pCmd);
+class CBacktrack
+{
+	bool IsGoodTick(float simTime);
+	void UpdateRecords(const CUserCmd* pCmd);
 
-	// Latency
 	void UpdateDatagram();
 	float GetLatency();
-	void AdjustPing(INetChannel* netChannel);
 
-	std::vector<TickRecord> Record[64];
 	float LatencyRampup = 0.f;
+	int LastInSequence = 0;
 	std::deque<CIncomingSequence> Sequences;
+
+public:
+	void Run(const CUserCmd* pCmd);
+	void AdjustPing(INetChannel* netChannel);
+	void ResetLatency();
+
+	std::deque<TickRecord>* GetPlayerRecords(int iEntityIndex);
+	std::deque<TickRecord>* GetPlayerRecords(CBaseEntity* pEntity);
+
+	bool AllowLatency = false;
+	std::array<std::deque<TickRecord>, 64> Records;
 };
 
 ADD_FEATURE(CBacktrack, Backtrack)

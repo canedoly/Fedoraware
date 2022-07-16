@@ -280,7 +280,8 @@ void CMenu::MenuAimbot()
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.Value); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");
 			WToggle("Aimbot aims last tick", &Vars::Backtrack::Aim.Value); HelpMarker("Aimbot aims at the last tick if visible");
-			WSlider("Latency###BTLatency", &Vars::Backtrack::Latency.Value, 0.f, 1000.f, "%.f", ImGuiSliderFlags_AlwaysClamp);
+			WToggle("Fake latency", &Vars::Backtrack::FakeLatency.Value); HelpMarker("Fakes your latency to hit records further in the past");
+			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 200.f, 1000.f, "%.fms", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
 		} EndChild();
 
 		/* Column 2 */
@@ -322,7 +323,7 @@ void CMenu::MenuAimbot()
 		{
 			SectionTitle("Projectile");
 			WSlider("Prediction Time", &Vars::Aimbot::Projectile::PredictionTime.Value, 0.1f, 10.f, "%.1f");
-			ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
+		
 			{
 				WCombo("Sort method###ProjectileSortMethod", &Vars::Aimbot::Projectile::SortMethod.Value, { "FOV", "Distance" });
 				if (Vars::Aimbot::Projectile::SortMethod.Value == 1) {
@@ -620,6 +621,7 @@ void CMenu::MenuVisuals()
 				WToggle("Enemy only", &Vars::Backtrack::BtChams::EnemyOnly.Value); HelpMarker("You CAN backtrack your teammates. (Whip, medigun)");
 
 				static std::vector backtrackMaterial{
+					"Original",
 					"Shaded",
 					"Shiny",
 					"Flat",
@@ -1004,16 +1006,20 @@ void CMenu::MenuVisuals()
 				{
 					G::ShouldUpdateMaterialCache = true;
 				}
-				MultiCombo({ "Scope", "Zoom", "Disguises", "Taunts", "Interpolation", "View Punch", "MOTD", "Screen Effects", "Angle Forcing"}, {&Vars::Visuals::RemoveScope.Value, &Vars::Visuals::RemoveZoom.Value, &Vars::Visuals::RemoveDisguises.Value, &Vars::Visuals::RemoveTaunts.Value, &Vars::Misc::DisableInterpolation.Value, &Vars::Visuals::RemovePunch.Value, &Vars::Visuals::RemoveMOTD.Value, &Vars::Visuals::RemoveScreenEffects.Value, &Vars::Visuals::PreventForcedAngles.Value }, "Removals");
+				MultiCombo({ "Scope", "Zoom", "Disguises", "Taunts", "Interpolation", "View Punch", "MOTD", "Screen Effects", "Angle Forcing", "Ragdolls", "Screen Overlays"}, {&Vars::Visuals::RemoveScope.Value, &Vars::Visuals::RemoveZoom.Value, &Vars::Visuals::RemoveDisguises.Value, &Vars::Visuals::RemoveTaunts.Value, &Vars::Misc::DisableInterpolation.Value, &Vars::Visuals::RemovePunch.Value, &Vars::Visuals::RemoveMOTD.Value, &Vars::Visuals::RemoveScreenEffects.Value, &Vars::Visuals::PreventForcedAngles.Value, &Vars::Visuals::RemoveRagdolls.Value, &Vars::Visuals::RemoveScreenOverlays.Value}, "Removals");
 				HelpMarker("Select what you want to remove");
+				if (WCombo("Screen Overlay", &Vars::Visuals::VisualOverlay.Value, { "None", "Fire", "Jarate", "Bleed", "Stealth", "Dodge" })) {
+					I::ViewRender->SetScreenOverlayMaterial(nullptr);
+				}
 				WToggle("Crosshair aim position", &Vars::Visuals::CrosshairAimPos.Value);
 				WToggle("Box aim position", &Vars::Visuals::AimPosSquare.Value);
 				WToggle("Viewmodel aim position", &Vars::Visuals::AimbotViewmodel.Value);
 				WToggle("Bullet tracers", &Vars::Visuals::BulletTracer.Value);
+				ColorPickerL("Bullet tracer colour", Colors::BulletTracer);
 				WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 				WToggle("Movement simulation lines", &Vars::Visuals::MoveSimLine.Value);
-				ColorPickerL("Bullet tracer colour", Colors::BulletTracer);
+				ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
 				{
 					static std::vector flagNames{ "Text", "Console", "Chat", "Party", "Verbose"};
 					static std::vector flagValues{ 1, 2, 4, 8, 32 };
@@ -1374,8 +1380,8 @@ void CMenu::MenuHvH()
 			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag", "Stop Recharge Movement", "Safe Tick" }, { &Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value, &Vars::Misc::CL_Move::StopMovement.Value, &Vars::Misc::CL_Move::SafeTick.Value }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("DT Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
-			const int ticksMax = g_ConVars.sv_maxusrcmdprocessticks->GetInt();
-			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, ticksMax ? ticksMax : 24, "%d"); HelpMarker("How many ticks to shift");
+			const int ticksMax = g_ConVars.sv_maxusrcmdprocessticks->GetInt() - 2;
+			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, ticksMax ? ticksMax : 22, "%d"); HelpMarker("How many ticks to shift");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{
@@ -1469,7 +1475,12 @@ void CMenu::MenuMisc()
 			WToggle("Auto Vote", &Vars::Misc::AutoVote.Value); HelpMarker("Automatically votes yes/no depending on the target");
 			WToggle("Taunt slide", &Vars::Misc::TauntSlide.Value); HelpMarker("Allows you to input in taunts");
 			WToggle("Taunt control", &Vars::Misc::TauntControl.Value); HelpMarker("Gives full control if enabled with taunt slide");
-			WCombo("Crouch speed", &Vars::Misc::Roll.Value, { "Off", "Backwards", "Fake forward" }); HelpMarker("Allows you to go at normal walking speed when crouching (affects many things, use with caution)");
+			
+			WToggle("Fast Accel", &Vars::Misc::FastAccel.Value); HelpMarker("Makes you accelerate to full speed faster.");
+			WToggle("Crouch Speed", &Vars::Misc::CrouchSpeed.Value); HelpMarker("Allows you to move at full speed while crouched.");
+			if (&Vars::Misc::CrouchSpeed.Value || &Vars::Misc::FastAccel.Value) {
+				WToggle("Hide Real Angle", &Vars::Misc::FakeAccelAngle.Value); HelpMarker("Tries to stop your angle from updating while using crouch speed / fast accel (janky).");
+			}
 			WCombo("Pick Class", &Vars::Misc::AutoJoin.Value, { "Off", "Scout", "Soldier", "Pyro", "Demoman", "Heavy", "Engineer", "Medic", "Sniper", "Spy" }); HelpMarker("Automatically joins the given class");
 			WToggle("Rage retry", &Vars::Misc::RageRetry.Value); HelpMarker("Will automatically reconnect when your health is low");
 			if (Vars::Misc::RageRetry.Value)
@@ -1617,6 +1628,12 @@ void CMenu::SettingsWindow()
 		InputKeybind("Extra Menu key", Vars::Menu::MenuKey, true, true);
 
 		Dummy({ 0, 5 });
+
+		if (Button("Open configs folder", ImVec2(200, 0)))
+		{
+			ShellExecuteA(NULL, NULL, g_CFG.GetConfigPath().c_str(), NULL, NULL, SW_SHOWNORMAL);
+		}
+
 		static std::string selected;
 		int nConfig = 0;
 

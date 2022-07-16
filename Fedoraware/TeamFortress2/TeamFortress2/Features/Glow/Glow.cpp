@@ -2,6 +2,7 @@
 #include "../Vars.h"
 #include "../Chams/Chams.h"
 #include "../Chams/DMEChams.h"
+#include "../Visuals/Visuals.h"
 
 void CGlowEffect::DrawModel(CBaseEntity* pEntity, int nFlags, bool bIsDrawingModels)
 {
@@ -81,6 +82,7 @@ void CGlowEffect::Init()
 
 void CGlowEffect::Render()
 {
+
 	if (!m_vecGlowEntities.empty())
 		m_vecGlowEntities.clear();
 
@@ -88,8 +90,11 @@ void CGlowEffect::Render()
 		m_DrawnEntities.clear();
 
 	if (!Vars::Glow::Main::Active.Value)
+	{
+		F::Visuals.DrawMovesimLine();
 		return;
-
+	}
+	
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
 		int w = g_ScreenSize.w;
@@ -129,6 +134,8 @@ void CGlowEffect::Render()
 
 		I::RenderView->SetBlend(1.0f);
 		I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
+
+
 
 		if (Vars::Glow::Players::Active.Value)
 		{
@@ -230,10 +237,13 @@ void CGlowEffect::Render()
 			}
 		}
 
+		F::Visuals.DrawMovesimLine();
+
 		if (Vars::Glow::Buildings::Active.Value)
 		{
 			for (const auto& Building : g_EntityCache.GetGroup(EGroupType::BUILDINGS_ALL))
 			{
+				const auto& pBuilding = reinterpret_cast<CBaseObject*>(Building);
 				if (!Building->IsAlive())
 					continue;
 
@@ -251,7 +261,7 @@ void CGlowEffect::Render()
 					break;
 				}
 				case 1: {
-					DrawColor = Utils::GetHealthColor(Building->GetHealth(), Building->GetMaxHealth());
+					DrawColor = Utils::GetHealthColor(pBuilding->GetHealth(), pBuilding->GetMaxHealth());
 					break;
 				}
 				}
@@ -321,7 +331,7 @@ void CGlowEffect::Render()
 
 		StencilStateDisable.SetStencilState(pRenderContext);
 
-		if (m_vecGlowEntities.empty())
+		if (m_vecGlowEntities.empty() && G::PredLinesBackup.empty())
 			return;
 
 		I::ModelRender->ForcedMaterialOverride(m_pMatGlowColor);
@@ -341,6 +351,8 @@ void CGlowEffect::Render()
 				                                            Color::TOFLOAT(GlowEntity.m_Color.b));
 				DrawModel(GlowEntity.m_pEntity, STUDIO_RENDER | STUDIO_NOSHADOWS, false);
 			}
+
+			F::Visuals.DrawMovesimLine();
 
 			StencilStateDisable.SetStencilState(pRenderContext);
 		}

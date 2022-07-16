@@ -225,6 +225,22 @@ void Draw_t::OutlinedCircle(int x, int y, float radius, int segments, const Colo
 	}
 }
 
+void Draw_t::FilledCircle(const int x, const int y, const int radius, const int segments, const Color_t clr)
+{
+	CUtlVector<Vertex_t> vecVertixes;
+
+	const float flStep = (6.28318530718f / static_cast<float>(segments));
+
+	for (float n = 0.0f; n < 6.28318530718f; n += flStep)
+		vecVertixes.AddToTail(Vertex_t({ (static_cast<float>(radius) * cos(n) + x), (static_cast<float>(radius) * sinf(n) + y) }, { 0.0f, 0.0f }));
+
+	if (vecVertixes.Count() > 0)
+	{
+		I::Surface->SetDrawColor(clr.r, clr.g, clr.b, clr.a);
+		I::Surface->DrawTexturedPoly(segments, vecVertixes.Base());
+	}
+}
+
 void Draw_t::CornerRect(int x, int y, int w, int h, int _x, int _y, const Color_t& color)
 {
 	Line(x, y, x + (w / _x), y, color);
@@ -354,6 +370,29 @@ void Draw_t::Avatar(const int x, const int y, const int w, const int h, const ui
 			}
 		}
 	}
+}
+
+void Draw_t::RoundedBoxStatic(const int x, const int y, const int w, const int h, const int radius, const Color_t& col)
+{
+	Vertex_t roundsquare[64];
+
+	for (int i = 0; i < 4; i++)
+	{
+		int _x = x + ((i < 2) ? (w - radius) : radius);
+		int _y = y + ((i % 3) ? (h - radius) : radius);
+
+		float a = 90.f * i;
+
+		for (int j = 0; j < 16; j++)
+		{
+			float _a = DEG2RAD(a + j * 6.f);
+
+			roundsquare[(i * 16) + j] = Vertex_t(Vector2D(_x + radius * sin(_a), _y - radius * cos(_a)));
+		}
+	}
+
+	I::Surface->SetDrawColor(col.r, col.g, col.b, col.a);
+	I::Surface->DrawTexturedPoly(64, roundsquare);
 }
 
 

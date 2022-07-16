@@ -95,6 +95,10 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 			UpdateRichPresence();
 		}
 
+		if (const int MaxSpeed = pLocal->GetMaxSpeed()) {
+			G::Frozen = MaxSpeed == 1;
+		}
+
 		// Update Global Info
 		if (const auto& pWeapon = g_EntityCache.GetWeapon())
 		{
@@ -164,39 +168,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 		}
 	}
 
-	// Handle Roll Exploit
-	if (Vars::Misc::Roll.Value && pCmd->buttons & IN_DUCK)
-	{
-		Vec3 ang = vOldAngles;
-		float v = fOldForward;
-		static bool fake = false;
-
-		if (std::abs(v) > 0.0f)
-		{
-			ang.z = 90.0f;
-			pCmd->sidemove = 0.0f;
-
-			if ((pCmd->buttons & IN_FORWARD) && !(pCmd->buttons & IN_ATTACK))
-			{
-				if ((Vars::Misc::Roll.Value == 2 && !fake) || !(Vars::Misc::Roll.Value != 2))
-				{
-					ang.y = ang.y + 180.0f;
-				}
-				v = -1.0f * v;
-			}
-
-			G::RollExploiting = true;
-		}
-
-		if (Vars::Misc::Roll.Value == 2)
-		{
-			*pSendPacket = fake;
-			fake = !fake;
-		}
-		pCmd->forwardmove = v;
-		pCmd->viewangles = ang;
-	}
-
 	// Run Features
 	{
 		F::Misc.Run(pCmd);
@@ -206,8 +177,8 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 
 		F::EnginePrediction.Start(pCmd);
 		{
-			F::Aimbot.Run(pCmd);
 			F::Backtrack.Run(pCmd);
+			F::Aimbot.Run(pCmd);
 			F::Auto.Run(pCmd);
 			F::AntiAim.Run(pCmd, pSendPacket);
 			F::Misc.EdgeJump(pCmd, nOldFlags);
@@ -302,6 +273,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 
 	G::EyeAngDelay++; // Used for the return delay in the viewmodel aimbot
 	G::LastUserCmd = pCmd;
+
 	if (G::ForceSendPacket)
 	{
 		*pSendPacket = true;
@@ -316,18 +288,18 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientMode, 21), bo
 	// Stop movement if required
 	if (G::ShouldStop || (G::RechargeQueued || G::Recharging && Vars::Misc::CL_Move::StopMovement.Value))
 	{
-		G::ShouldStop = false;
+		//G::ShouldStop = false;	//	we still need to stop if we didn't stop...
 		Utils::StopMovement(pCmd, !G::ShouldShift);
-		if (!G::IsAttacking && !G::Recharging) {
+		if (!G::IsAttacking && !G::Recharging && !G::ShouldStop) {	//	only do this code if we DID actually stop.
 			*pSendPacket = false;	//	stop angle shit
 		}
 		return false;
 	}
 
-	// do this at the end just in case aimbot / triggerbot fired.
+	// do this at the end just in case aimbot / triggerbot fired.//
 	if (const auto& pWeapon = g_EntityCache.GetWeapon()) {
-		if (Utils::IsAttacking(pCmd, pWeapon) && Vars::Misc::CL_Move::SafeTick.Value) {
-			if (G::NextSafeTick >= I::GlobalVars->tickcount && G::ShouldShift && G::ShiftedTicks) {
+		if (pCmd->buttons & IN_ATTACK && Vars::Misc::CL_Move::SafeTick.Value) {
+			if (G::NextSafeTick > I::GlobalVars->tickcount && G::ShouldShift && G::ShiftedTicks) {
 				pCmd->buttons &= ~IN_ATTACK;
 			}
 			else {

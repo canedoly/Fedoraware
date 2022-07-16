@@ -3,11 +3,6 @@
 
 constexpr auto DT_WAIT_CALLS = 26;
 
-struct BoneCache {
-	matrix3x4* bones;
-	float time = 0.f;
-};
-
 struct VelFixRecord {
 	Vec3 m_vecOrigin;
 	int m_nFlags;
@@ -53,6 +48,7 @@ namespace G
 	inline bool RollExploiting = false; // Are we performing the roll exploit?
 	inline bool ShouldStop = false; // Stops our players movement, takes 1 tick.
 	inline bool UnloadWndProcHook = false;
+	inline bool Frozen = false;	//	angles & movement are frozen.
 
 	/* Double tap / Tick shift */
 	inline int WaitForShift = 0;
@@ -83,8 +79,8 @@ namespace G
 	/* Projectile prediction */
 	inline Vec3 PredictedPos = {};
 	inline Vec3 LinearPredLine = {};
-	inline std::vector<Vec3> PredBeforeLines;
-	inline std::vector<Vec3> PredFutureLines;
+	inline std::vector<Vec3> PredictionLines;
+	inline std::vector<Vec3> PredLinesBackup;
 
 	inline CUserCmd* CurrentUserCmd{nullptr}; // Unreliable! Only use this if you really have to.
 	inline CUserCmd* LastUserCmd{nullptr};
@@ -98,7 +94,6 @@ namespace G
 	inline std::unordered_map<int, int> ChokeMap; // Choked packets of players <Index, Amount>
 	inline bool DrawingStaticProps = false;
 	inline std::unordered_map<uint32_t, Priority> PlayerPriority; // Playerlist priorities <FriendsID, Priority>
-	inline std::unordered_map<void*, BoneCache> entBones; // bones cached from C_BaseAnimating_SetupBones (please use these instead of calling setupbones every 2 seconds :D)
 
 	inline bool ShouldAutoQueue = false;
 
