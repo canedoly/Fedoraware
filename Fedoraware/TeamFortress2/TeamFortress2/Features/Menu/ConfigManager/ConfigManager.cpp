@@ -1180,7 +1180,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::ESP::Players::IgnoreCloaked);
 				LOAD_VAR(Vars::ESP::Players::Name);
 				LOAD_VAR(Vars::ESP::Players::NameCustom);
-				LOAD_VAR(Vars::ESP::Players::NameColor);
+				LOAD_OTHER(Vars::ESP::Players::NameColor);
 				LOAD_VAR(Vars::ESP::Players::NameBox);
 				LOAD_VAR(Vars::ESP::Players::Uber);
 				LOAD_VAR(Vars::ESP::Players::Class);
