@@ -453,7 +453,14 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				auto flHealth = static_cast<float>(nHealth);
 				auto flMaxHealth = static_cast<float>(nMaxHealth);
 
-				Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
+				if (Vars::ESP::Players::HealthBarStyle.Value == 1)
+				{
+					Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
+				}
+				else if (Vars::ESP::Players::HealthBarStyle.Value == 2)
+				{
+					Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : HealthColor;
+				}
 
 				if (!Player->IsVulnerable())
 				{
@@ -466,7 +473,16 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 
 				float ratio = flHealth / flMaxHealth;
-				g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
+
+				if (Vars::ESP::Players::HealthBarStyle.Value == 1)
+				{
+					g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
+				}
+				
+				else if (Vars::ESP::Players::HealthBarStyle.Value == 2) // probably won't work but worth testing
+				{
+					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, clr, Colors::OutlineESP);
+				}
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{

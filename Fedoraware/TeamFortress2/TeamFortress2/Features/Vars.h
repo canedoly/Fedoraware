@@ -87,6 +87,7 @@ namespace Vars
 			inline CVar<float> AimFOV{ 15.0f };
 			inline CVar<bool> AutoShoot{ false };
 			inline CVar<bool> DontWaitForShot{ false };
+			inline CVar<bool> FlickatEnemies{ false};
 			inline CVar<bool> AimPlayers{ false };
 			inline CVar<bool> AimBuildings{ false };
 			inline CVar<bool> AimStickies{ false };
@@ -241,6 +242,7 @@ namespace Vars
 			inline CVar<bool> WeaponIcon{ false };
 			inline CVar<int> HealthText{ 0 }; // 0 - Off, 1 - Default, 2 - Bar
 			inline CVar<bool> Cond{ false };
+			inline CVar<int> HealthBarStyle{ 0 }; // 0 - off, 1 - gradient, 2 - old
 			inline CVar<bool> HealthBar{ false };
 			inline CVar<int> Box{ 0 }; //0 - OFF, 1 - Simple, 2 - Corners
 			inline CVar<int> Bones{ 0 };
