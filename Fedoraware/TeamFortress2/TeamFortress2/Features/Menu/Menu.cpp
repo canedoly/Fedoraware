@@ -272,7 +272,7 @@ void CMenu::MenuAimbot()
 			ColorPickerL("Invulnerable colour", Colors::Invuln);
 
 			WToggle("Dont wait for shot###AimbotWaitForValidShot", &Vars::Aimbot::Global::DontWaitForShot.Value); HelpMarker("Prevents fps drops by only running aimbot while we are able to shoot");
-			WToggle("Flick at Enemies", &Vars::Aimbot::Global::FlicktEnemies.Value); HelpMarker("Keep this disabled if low fps");
+			WToggle("Flick at Enemies", &Vars::Aimbot::Global::FlickatEnemies.Value); HelpMarker("Keep this disabled if low fps");
 
 
 			SectionTitle("Crits");

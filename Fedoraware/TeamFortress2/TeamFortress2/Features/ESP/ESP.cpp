@@ -448,6 +448,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			// Health bar
 			if (Vars::ESP::Players::HealthBar.Value)
 			{
+				Color_t HealthColor = Utils::GetHealthColor(nHealth, nMaxHealth);
 				x -= 1;
 
 				auto flHealth = static_cast<float>(nHealth);

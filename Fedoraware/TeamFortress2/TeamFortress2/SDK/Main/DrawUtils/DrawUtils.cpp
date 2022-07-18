@@ -174,7 +174,7 @@ void Draw_t::Rect(int x, int y, int w, int h, const Color_t& clr)
 }
 void Draw_t::RectOverlay(int x, int y, int w, int h, const Color_t& clr, const Color_t& overlay_clr)
 {
-	OutlinedRect(x - 1, y + 1 - (h + 2), w + 2, h + 2, outline_clr);
+	OutlinedRect(x - 1, y + 1 - (h + 2), w + 2, h + 2, overlay_clr);
 	Rect(x, y, x + w, y + h, { 17, 24, 26, 255 });
 }
 
