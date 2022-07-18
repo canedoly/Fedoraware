@@ -458,14 +458,14 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					Gradient_t clr = flHealth > flMaxHealth ? Colors::OverhealHealthBar : Colors::GradientHealthBar;
 				}
-				else if (Vars::ESP::Players::HealthBarStyle.Value == 2)
+				if (Vars::ESP::Players::HealthBarStyle.Value == 2)
 				{
 					Color_t clr = flHealth > flMaxHealth ? Colors::Overheal : HealthColor;
 				}
 
 				if (!Player->IsVulnerable())
 				{
-					clr = {Colors::Invuln, Colors::Invuln};
+					clr = {Colors::Invuln};
 				}
 
 				if (flHealth > flMaxHealth)
