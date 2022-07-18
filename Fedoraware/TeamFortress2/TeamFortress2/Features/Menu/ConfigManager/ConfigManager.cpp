@@ -421,7 +421,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::ESP::Players::Class);
 				SAVE_VAR(Vars::ESP::Players::HealthText);
 				SAVE_VAR(Vars::ESP::Players::Cond);
-				SAVE_OTHER(Vars::ESP::Players::HealthBarStyle);
+				SAVE_VAR(Vars::ESP::Players::HealthBarStyle);
 				SAVE_VAR(Vars::ESP::Players::HealthBar);
 				SAVE_VAR(Vars::ESP::Players::Box);
 				SAVE_VAR(Vars::ESP::Players::GUID);
