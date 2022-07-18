@@ -476,7 +476,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				
 				else if (Vars::ESP::Players::HealthBarStyle.Value == 2) // probably won't work but worth testing
 				{
-					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, HealthColor, Colors::OutlineESP);
+					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, ratio, HealthColor, Colors::OutlineESP, false);
 				}
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
