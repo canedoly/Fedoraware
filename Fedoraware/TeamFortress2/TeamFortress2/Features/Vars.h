@@ -242,8 +242,7 @@ namespace Vars
 			inline CVar<bool> WeaponIcon{ false };
 			inline CVar<int> HealthText{ 0 }; // 0 - Off, 1 - Default, 2 - Bar
 			inline CVar<bool> Cond{ false };
-			inline CVar<int> HealthBarStyle{ 0 }; // 0 - off, 1 - gradient, 2 - old
-			inline CVar<bool> HealthBar{ false };
+			inline CVar<int> HealthBar{ 0 }; // 0 - off, 1 - gradient, 2 - old
 			inline CVar<int> Box{ 0 }; //0 - OFF, 1 - Simple, 2 - Corners
 			inline CVar<int> Bones{ 0 };
 			inline CVar<bool> GUID{ false };

@@ -272,7 +272,7 @@ void CMenu::MenuAimbot()
 			ColorPickerL("Invulnerable colour", Colors::Invuln);
 
 			WToggle("Dont wait for shot###AimbotWaitForValidShot", &Vars::Aimbot::Global::DontWaitForShot.Value); HelpMarker("Prevents fps drops by only running aimbot while we are able to shoot");
-			WToggle("Flick at Enemies", &Vars::Aimbot::Global::FlickatEnemies.Value); HelpMarker("Keep this disabled if low fps");
+			WToggle("Flick at Enemies", &Vars::Aimbot::Global::FlickatEnemies.Value); HelpMarker("Keep this disabled if you have low fps");
 
 
 			SectionTitle("Crits");
@@ -492,14 +492,18 @@ void CMenu::MenuVisuals()
 				WCombo("Class###PlayerIconClass", &Vars::ESP::Players::Class.Value, { "Off", "Icon", "Text", "Both" }); HelpMarker("Will draw the class the player is");
 				WToggle("Weapon icons", &Vars::ESP::Players::WeaponIcon.Value); HelpMarker("Shows an icon for the weapon that the player has currently equipped");
 				ColorPickerL("Invulnerable colour", Colors::WeaponIcon);
-				WCombo("Health bar style", &Vars::ESP::Players::HealthBarStyle.Value, { "Off", "Gradient", "Old" }); HelpMarker("How to display the player health bar");
-				WToggle("Health bar###ESPPlayerHealthBar", &Vars::ESP::Players::HealthBar.Value); HelpMarker("Will draw a bar visualizing how much health the player has");
+				WCombo("Health bar style", &Vars::ESP::Players::HealthBar.Value, { "Off", "Gradient", "Old" }); HelpMarker("Will display a bar with a players health");
 				if (Vars::ESP::Players::HealthBar.Value == 1)
 				{
+					// having 4 color pickers in one place is kinda ugly
 					ColorPickerL("Health Bar Top", Colors::GradientHealthBar.startColour);
 					ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
-					ColorPickerL("Overheal Bar Top", Colors::OverhealHealthBar.startColour, 2);
-					ColorPickerL("Overheal Bar Bottom", Colors::OverhealHealthBar.endColour, 3);
+					ColorPickerL("Overheal Bar Top", Colors::GradientOverhealBar.startColour, 2);
+					ColorPickerL("Overheal Bar Bottom", Colors::GradientOverhealBar.endColour, 3);
+				}
+				if (Vars::ESP::Players::HealthBar.Value == 2)
+				{
+					ColorPickerL("Overheal color", Colors::Overheal);
 				}
 				WCombo("Health Text###ESPPlayerHealthText", &Vars::ESP::Players::HealthText.Value, { "Off", "Default", "Bar" }); HelpMarker("Draws the player health as a text");
 				WToggle("Condition", &Vars::ESP::Players::Cond.Value); HelpMarker("Will draw what conditions the player is under");

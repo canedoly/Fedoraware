@@ -421,7 +421,6 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::ESP::Players::Class);
 				SAVE_VAR(Vars::ESP::Players::HealthText);
 				SAVE_VAR(Vars::ESP::Players::Cond);
-				SAVE_VAR(Vars::ESP::Players::HealthBarStyle);
 				SAVE_VAR(Vars::ESP::Players::HealthBar);
 				SAVE_VAR(Vars::ESP::Players::Box);
 				SAVE_VAR(Vars::ESP::Players::GUID);
@@ -1186,7 +1185,6 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::ESP::Players::Class);
 				LOAD_VAR(Vars::ESP::Players::HealthText);
 				LOAD_VAR(Vars::ESP::Players::Cond);
-				LOAD_VAR(Vars::ESP::Players::HealthBarStyle);
 				LOAD_VAR(Vars::ESP::Players::HealthBar);
 				LOAD_VAR(Vars::ESP::Players::Box);
 				LOAD_VAR(Vars::ESP::Players::Choked);
