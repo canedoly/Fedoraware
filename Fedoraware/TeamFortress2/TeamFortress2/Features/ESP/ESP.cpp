@@ -470,12 +470,12 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				float ratio = flHealth / flMaxHealth;
 
-				if (Vars::ESP::Players::HealthBarStyle.Value == 1)
+				if (Vars::ESP::Players::HealthBar.Value == 1)
 				{
 					g_Draw.OutlinedGradientBar(x - 2 - 2, y + h, 2, h, ratio, clr.startColour, clr.endColour, Colors::OutlineESP, false);
 				}
 				
-				else if (Vars::ESP::Players::HealthBarStyle.Value == 2)
+				else if (Vars::ESP::Players::HealthBar.Value == 2)
 				{
 					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, ratio, HealthColor, Colors::OutlineESP, false);
 				}

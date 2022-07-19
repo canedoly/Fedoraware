@@ -855,7 +855,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_OTHER(Colors::DTBarIndicatorsCharging);
 			SAVE_OTHER(Colors::ChokedBar);
 			SAVE_OTHER(Colors::GradientHealthBar);
-			SAVE_OTHER(Colors::OverhealHealthBar);
+			SAVE_OTHER(Colors::GradientOverhealBar);
 			SAVE_OTHER(Colors::Cond);
 			SAVE_OTHER(Colors::Target);
 			SAVE_OTHER(Colors::Invuln);
@@ -1620,7 +1620,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_OTHER(Colors::DTBarIndicatorsCharging);
 			LOAD_OTHER(Colors::ChokedBar);
 			LOAD_OTHER(Colors::GradientHealthBar);
-			LOAD_OTHER(Colors::OverhealHealthBar);
+			LOAD_OTHER(Colors::GradientOverhealBar);
 			LOAD_OTHER(Colors::Cond);
 			LOAD_OTHER(Colors::Target);
 			LOAD_OTHER(Colors::Invuln);
