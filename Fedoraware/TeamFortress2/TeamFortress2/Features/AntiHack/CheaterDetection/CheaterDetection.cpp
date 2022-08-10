@@ -156,7 +156,7 @@ void CCheaterDetection::OnTick()
 			lastFrameTime = I::GlobalVars->realtime;
 			const int realFPS = static_cast<int>(1.0f / realFrameTime);
 
-			if (realFPS < g_ConVars.cl_updaterate->GetInt())
+			if (realFPS < (g_ConVars.cl_updaterate->GetInt() / 2)) // i wanna use cheater detection cuz i have my fps capped to 67 
 			{
 				return;
 			}

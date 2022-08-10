@@ -359,18 +359,29 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					}
 				}
 
-				// Cheater detection ESP
-				if (G::PlayerPriority[pi.friendsID].Mode == 4 && Vars::ESP::Players::CheaterDetection.Value)
+				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					g_Draw.String(FONT, nTextX, y + nTextOffset, { 255, 0, 0, 255 }, ALIGN_DEFAULT, "CHEATER");
-					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-				}
+					//int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;	// we need to multiply by 2 so it renders above the name
+					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					int middle = x + w / 2;
 
-				// GUID ESP
-				if (Vars::ESP::Players::GUID.Value)
-				{
-					g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, "%s", pi.guid);
-					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+					if (G::PlayerPriority[pi.friendsID].Mode == 4)
+					{
+						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "CHEATER");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 3)
+					{
+						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {247, 247, 64, 255}, ALIGN_CENTERHORIZONTAL, "RAGE");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 1)
+					{
+						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 0)
+					{
+						g_Draw.String(FONT_NAME, middle, y - (offset * 2), Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
+					}
+
 				}
 			}
 
@@ -574,7 +585,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 2, (y + h) - (ratio * h) - 15, nHealth > nMaxHealth ? Colors::Overheal : healthColor, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
+					g_Draw.String(FONT, x - 8, (y + h) - (ratio * h) - 10, Colors::White, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
 				}
 
 				x += 1;

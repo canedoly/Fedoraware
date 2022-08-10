@@ -541,6 +541,7 @@ void CMenu::MenuVisuals()
 				ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 				ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
 				WToggle("Cheater Detection", &Vars::ESP::Players::CheaterDetection.Value); HelpMarker("Attempts to automatically mark cheaters.");
+				WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
 				WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 				WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 				ColorPickerL("Skellington colour", Colors::Bones);
@@ -1091,6 +1092,7 @@ void CMenu::MenuVisuals()
 				WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 				WToggle("Movement simulation lines", &Vars::Visuals::MoveSimLine.Value);
+				WToggle("Movement simulation debug", &Vars::Visuals::MoveSimDebug.Value);
 				ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
 				{
 					static std::vector flagNames{ "Text", "Console", "Chat", "Party", "Verbose"};
@@ -1157,7 +1159,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.Value, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin" }); HelpMarker("What style the bar should draw in.");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Rijin V1", "Nitro old" }); HelpMarker("What style the bar should draw in.");
 				Text("Charging Gradient");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
