@@ -552,7 +552,7 @@ void CDMEChams::RenderFakeAng(const DrawModelState_t& pState, const ModelRenderI
 				}
 				pMaterial->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, chams.overlayType == 2);
 
-				I::RenderView->SetBlend(chams.overlayPulse ? sin(I::GlobalVars->curtime * 5) * 0.5f + 0.51f : Color::TOFLOAT(chams.overlayColour.a));
+				I::RenderView->SetBlend(Color::TOFLOAT(chams.overlayColour.a));
 				I::ModelRender->ForcedMaterialOverride(pMaterial);
 			}
 
