@@ -5,10 +5,21 @@ class WDraw {
 	int CurrentFont = FONT_MENU;
 
 public:
-	// TODO: try default args using 'int align = 2'
+
 	void Text(int x, int y, const char* text)
 	{
 		g_Draw.String(CurrentFont, x, y, CurrentColor, ALIGN_DEFAULT, "%s", text);
+	}
+
+	Vec2 W2S(const Vec3& v)
+	{
+		Vec3 vScreen;
+		if (Utils::W2S(v, vScreen))
+		{
+			return {vScreen.x, vScreen.y};
+		}
+
+		return { 0, 0 };
 	}
 
 	void Line(int x, int y, int x1, int y1)

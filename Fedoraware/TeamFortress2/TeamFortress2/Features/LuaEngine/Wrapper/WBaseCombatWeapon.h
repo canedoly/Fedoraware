@@ -64,4 +64,18 @@ public:
 		return Weapon->IsInReload();
 	}
 
+	float GetDamage()
+	{
+		if (!IsValid()) { return 0; }
+		return (float)*(int*)((*(DWORD*)(Weapon + 0xB24) << 6) + *(DWORD*)(Weapon + 0xB30) + 0x6F8);
+		//return Weapon->GetWeaponData().m_nDamage;
+	}
+
+	float GetBulletsPerShot()
+	{
+		if (!IsValid()) { return 0; }
+		return (float)*(int*)((*(DWORD*)(Weapon + 0xB24) << 6) + *(DWORD*)(Weapon + 0xB30) + 0x6FC);
+		//return Weapon->GetWeaponData().m_nBulletsPerShot;
+	}
+
 };

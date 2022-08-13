@@ -18,7 +18,6 @@ enum struct ETargetType {
 };
 
 enum struct ESortMethod {
-	UNKNOWN,
 	FOV,
 	DISTANCE
 };
@@ -51,11 +50,9 @@ struct Target_t {
 class CAimbotGlobal {
 public:
 	bool IsKeyDown();
-	void SortTargets(const ESortMethod& Method);
-	const Target_t& GetBestTarget(const ESortMethod& Method);
+	void SortTargets(std::vector<Target_t>*, const ESortMethod& method);
 	bool ShouldIgnore(CBaseEntity* pTarget, bool hasMedigun = false);
-
-	std::vector<Target_t> m_vecTargets = {};
+	Priority GetPriority(int targetIdx);
 };
 
 ADD_FEATURE(CAimbotGlobal, AimbotGlobal)

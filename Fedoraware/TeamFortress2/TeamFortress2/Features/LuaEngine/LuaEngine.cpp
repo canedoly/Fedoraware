@@ -60,20 +60,37 @@ void CLuaEngine::Init()
 	{
 		static WDraw draw;
 		static WEngineClient engineClient(I::EngineClient);
+		static WClientMode clientMode(I::ClientModeShared);
 
 		// Vector3
 		auto vecClass = LuaState.new_usertype<Vec3>("Vec3", sol::constructors<Vec3(), Vec3(float, float, float)>());
 		vecClass["x"] = &Vec3::x;
 		vecClass["y"] = &Vec3::y;
 		vecClass["z"] = &Vec3::z;
-		vecClass["Cross"] = &Vec3::Cross;
-		vecClass["Dot"] = &Vec3::Dot;
-		vecClass["DistTo"] = &Vec3::DistTo;
-		vecClass["IsZero"] = &Vec3::IsZero;
 		vecClass["Length"] = &Vec3::Length;
+		vecClass["LengthSqr"] = &Vec3::LengthSqr;
+		vecClass["Normalize"] = &Vec3::Normalize;
+		vecClass["Length2D"] = &Vec3::Length2D;
+		vecClass["DistTo"] = &Vec3::DistTo;
+		vecClass["DistToSqr"] = &Vec3::DistToSqr;
+		vecClass["Dot"] = &Vec3::Dot;
+		vecClass["Cross"] = &Vec3::Cross;
+		vecClass["IsZero"] = &Vec3::IsZero;
+		
+		// Vec2
+		auto vec2Class = LuaState.new_usertype<Vec2>("Vec2", sol::constructors<Vec2(), Vec2(float, float)>());
+		vec2Class["x"] = &Vec2::x;
+		vec2Class["y"] = &Vec2::y;
+		vec2Class["Normalize"] = &Vec2::Normalize;
+		vec2Class["Length"] = &Vec2::Length;
+		vec2Class["LengthSqr"] = &Vec2::LengthSqr;
+		vec2Class["DistTo"] = &Vec2::DistTo;
+		vec2Class["DistToSqr"] = &Vec2::DistToSqr;
+		vec2Class["Dot"] = &Vec2::Dot;
 
 		// CUserCmd
 		auto userCmdClass = LuaState.new_usertype<WUserCmd>("UserCmd");
+		userCmdClass["IsValid"] = &WUserCmd::IsValid;
 		userCmdClass["GetButtons"] = &WUserCmd::GetButtons;
 		userCmdClass["GetViewAngles"] = &WUserCmd::GetViewAngles;
 		userCmdClass["GetForwardMove"] = &WUserCmd::GetForwardMove;
@@ -84,9 +101,11 @@ void CLuaEngine::Init()
 		userCmdClass["SetForwardMove"] = &WUserCmd::SetForwardMove;
 		userCmdClass["SetSideMove"] = &WUserCmd::SetSideMove;
 		userCmdClass["SetUpMove"] = &WUserCmd::SetUpMove;
+		userCmdClass["SetSendPacket"] = &WUserCmd::SetSendPacket;
 
 		// CEngineClient
 		auto engineClass = LuaState.new_usertype<WEngineClient>("EngineClient");
+		engineClass["IsValid"] = &WEngineClient::IsValid;
 		engineClass["IsInGame"] = &WEngineClient::IsInGame;
 		engineClass["IsConnected"] = &WEngineClient::IsConnected;
 		engineClass["IsTakingScreenshot"] = &WEngineClient::IsTakingScreenshot;
@@ -97,12 +116,19 @@ void CLuaEngine::Init()
 		engineClass["GetScreenSize"] = &WEngineClient::GetScreenSize;
 		engineClass["GetViewAngles"] = &WEngineClient::GetViewAngles;
 		engineClass["SetViewAngles"] = &WEngineClient::SetViewAngles;
+		engineClass["GetPlayerForUserID"] = &WEngineClient::GetPlayerForUserID;
+
+		// CClientModeShared
+		auto clientClass = LuaState.new_usertype<WClientMode>("ClientMode");
+		clientClass["ChatPrintf"] = &WClientMode::ChatPrintf;
 
 		// CBaseEntity
 		auto entityClass = LuaState.new_usertype<WBaseEntity>("BaseEntity", sol::constructors<WBaseEntity(CBaseEntity*)>());
 		entityClass["IsValid"] = &WBaseEntity::IsValid;
 		entityClass["GetIndex"] = &WBaseEntity::GetIndex;
 		entityClass["GetOrigin"] = &WBaseEntity::GetOrigin;
+		entityClass["GetAngles"] = &WBaseEntity::GetAngles;
+		entityClass["GetEyeAngles"] = &WBaseEntity::GetEyeAngles;
 		entityClass["GetClassID"] = &WBaseEntity::GetClassID;
 		entityClass["GetClass"] = &WBaseEntity::GetClass;
 		entityClass["GetHealth"] = &WBaseEntity::GetHealth;
@@ -113,6 +139,9 @@ void CLuaEngine::Init()
 		entityClass["IsAlive"] = &WBaseEntity::IsAlive;
 		entityClass["GetTeam"] = &WBaseEntity::GetTeam;
 		entityClass["SetOrigin"] = &WBaseEntity::SetOrigin;
+		entityClass["SetAngles"] = &WBaseEntity::SetAngles;
+		entityClass["SetEyeAngles"] = &WBaseEntity::SetEyeAngles;
+		entityClass["GetCriticals"] = &WBaseEntity::GetCriticals;
 
 		// CBaseCombatWeapon
 		auto weaponClass = LuaState.new_usertype<WBaseCombatWeapon>("BaseCombatWeapon");
@@ -125,6 +154,8 @@ void CLuaEngine::Init()
 		weaponClass["GetSlot"] = &WBaseCombatWeapon::GetSlot;
 		weaponClass["GetWeaponID"] = &WBaseCombatWeapon::GetWeaponID;
 		weaponClass["IsInReload"] = &WBaseCombatWeapon::IsInReload;
+		weaponClass["GetDamage"] = &WBaseCombatWeapon::GetDamage;
+		weaponClass["GetBulletsPerShot"] = &WBaseCombatWeapon::GetBulletsPerShot;
 
 		// CGameEvent
 		auto eventClass = LuaState.new_usertype<WGameEvent>("GameEvent");
@@ -145,9 +176,15 @@ void CLuaEngine::Init()
 		prClass["GetKills"] = &WPlayerResource::GetKills;
 		prClass["GetDeaths"] = &WPlayerResource::GetDeaths;
 		prClass["GetConnected"] = &WPlayerResource::GetConnected;
+		prClass["GetTeam"] = &WPlayerResource::GetTeam;
+		prClass["IsAlive"] = &WPlayerResource::IsAlive;
+		prClass["GetHealth"] = &WPlayerResource::GetHealth;
+		prClass["GetAccountID"] = &WPlayerResource::GetAccountID;
 		prClass["GetValid"] = &WPlayerResource::GetValid;
 		prClass["GetPlayerName"] = &WPlayerResource::GetPlayerName;
+		prClass["GetScore"] = &WPlayerResource::GetScore;
 		prClass["GetDamage"] = &WPlayerResource::GetDamage;
+		prClass["GetMaxHealth"] = &WPlayerResource::GetMaxHealth;
 
 		// UserMessage
 		auto userMsgClass = LuaState.new_usertype<WUserMessage>("UserMessage");
@@ -158,6 +195,7 @@ void CLuaEngine::Init()
 		userMsgClass["GetNumBitsLeft"] = &WUserMessage::GetNumBitsLeft;
 		userMsgClass["ReadByte"] = &WUserMessage::ReadByte;
 		userMsgClass["ReadFloat"] = &WUserMessage::ReadFloat;
+		userMsgClass["ReadLong"] = &WUserMessage::ReadLong;
 		userMsgClass["ReadString"] = &WUserMessage::ReadString;
 
 		// Draw
@@ -183,7 +221,7 @@ void CLuaEngine::Init()
 		inputTable["GetMousePos"] = [] {
 			int x, y;
 			I::VGuiSurface->SurfaceGetCursorPos(x, y);
-			return std::vector{ x, y };
+			return Vec2(x, y);
 		};
 
 		// GlobalInfo
@@ -203,6 +241,8 @@ void CLuaEngine::Init()
 		fwareGlobals["ShouldShift"] = [] { return G::ShouldShift; };
 		fwareGlobals["CurrentTargetIdx"] = [] { return G::CurrentTargetIdx; };
 		fwareGlobals["GetPriority"] = [](uint32_t friendsId) { return G::PlayerPriority[friendsId].Mode; };
+		fwareGlobals["SilentTime"] = [] { return G::SilentTime; };
+		fwareGlobals["SetSilentTime"] = [](bool state) { G::SilentTime = state; };
 
 		// Enums
 		auto enums = LuaState.create_named_table("Enums");
@@ -258,6 +298,7 @@ void CLuaEngine::Init()
 		// Interfaces
 		auto interfaceTable = LuaState.create_named_table("Interfaces");
 		interfaceTable["GetEngine"] = [] { return &engineClient; };
+		interfaceTable["GetClient"] = [] { return &clientMode; };
 		interfaceTable["GetDraw"] = [] { return &draw; };
 
 		// Callbacks

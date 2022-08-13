@@ -26,7 +26,7 @@ bool CAimbotMelee::CanMeleeHit(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 	filter.pSkip = pLocal;
 	CGameTrace trace;
 	Utils::TraceHull(vecTraceStart, vecTraceEnd, vecSwingMins, vecSwingMaxs, MASK_SHOT, &filter, &trace);
-	
+
 	if (!(trace.entity && trace.entity->GetIndex() == nTargetIndex))
 	{
 		if (!Vars::Aimbot::Melee::PredictSwing.Value || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE || pLocal->IsCharging())
@@ -55,40 +55,77 @@ bool CAimbotMelee::CanMeleeHit(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 	return true;
 }
 
-ESortMethod CAimbotMelee::GetSortMethod()
+EGroupType CAimbotMelee::GetGroupType(CBaseCombatWeapon* pWeapon)
 {
-	switch (Vars::Aimbot::Melee::SortMethod.Value)
+	if (Vars::Aimbot::Melee::WhipTeam.Value && pWeapon->GetItemDefIndex() == Soldier_t_TheDisciplinaryAction)
 	{
-	case 0: return ESortMethod::FOV;
-	case 1: return ESortMethod::DISTANCE;
-	default: return ESortMethod::UNKNOWN;
+		return EGroupType::PLAYERS_ENEMIES;
 	}
+
+	return EGroupType::PLAYERS_ENEMIES;
 }
 
-bool CAimbotMelee::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
+/* Aim at friendly building with the wrench */
+bool CAimbotMelee::AimFriendlyBuilding(CBaseObject* pBuilding)
 {
-	const ESortMethod sortMethod = GetSortMethod();
+	int maxAmmo = 0;
+	int maxRocket = 0;
 
-	F::AimbotGlobal.m_vecTargets.clear();
+	if (pBuilding->GetLevel() != 3 || pBuilding->GetSapped() || pBuilding->GetHealth() < pBuilding->GetMaxHealth())
+	{
+		return true;
+	}
+
+	if (pBuilding->IsSentrygun())
+	{
+		switch (pBuilding->GetLevel())
+		{
+		case 1:
+		{
+			maxAmmo = 150;
+			break;
+		}
+		case 2:
+		{
+			maxAmmo = 200;
+			break;
+		}
+		case 3:
+		{
+			maxAmmo = 200;
+			maxRocket = 20; //Yeah?
+			break;
+		}
+		}
+	}
+
+	if (pBuilding->GetAmmo() < maxAmmo || pBuilding->GetRockets() < maxRocket)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+std::vector<Target_t> CAimbotMelee::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
+{
+	std::vector<Target_t> validTargets;
+	const auto sortMethod = static_cast<ESortMethod>(Vars::Aimbot::Melee::SortMethod.Value);
 
 	const Vec3 vLocalPos = pLocal->GetShootPos();
 	const Vec3 vLocalAngles = I::EngineClient->GetViewAngles();
 
+	const bool respectFOV = (sortMethod == ESortMethod::FOV || Vars::Aimbot::Melee::RespectFOV.Value);
+
 	// Players
 	if (Vars::Aimbot::Global::AimPlayers.Value)
 	{
-		const bool bWhipTeam = (pWeapon->GetItemDefIndex() == Soldier_t_TheDisciplinaryAction &&
-			Vars::Aimbot::Melee::WhipTeam.Value);
+		const auto groupType = GetGroupType(pWeapon);
 
-		for (const auto& pTarget : g_EntityCache.GetGroup(
-			     bWhipTeam ? EGroupType::PLAYERS_ALL : EGroupType::PLAYERS_ENEMIES))
+		for (const auto& pTarget : g_EntityCache.GetGroup(groupType))
 		{
-			if (!pTarget->IsAlive() || pTarget->IsAGhost())
-			{
-				continue;
-			}
-
-			if (pTarget == pLocal)
+			// Is the target valid and alive?
+			if (!pTarget->IsAlive() || pTarget->IsAGhost() || pTarget == pLocal)
 			{
 				continue;
 			}
@@ -98,119 +135,86 @@ bool CAimbotMelee::GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon)
 			Vec3 vPos = pTarget->GetHitboxPos(HITBOX_PELVIS);
 			Vec3 vAngleTo = Math::CalcAngle(vLocalPos, vPos);
 			const float flFOVTo = Math::CalcFov(vLocalAngles, vAngleTo);
-			
-			if ((sortMethod == ESortMethod::FOV || Vars::Aimbot::Melee::RespectFOV.Value) && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
+
+			if (respectFOV && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
 			{
 				continue;
 			}
-			const float flDistTo = sortMethod == ESortMethod::DISTANCE ? vLocalPos.DistTo(vPos) : 0.0f;
-
-			if (!g_EntityCache.GetPR()) return false;
-
-			const uint32_t priorityID = g_EntityCache.GetPR()->GetValid(pTarget->GetIndex()) ? g_EntityCache.GetPR()->GetAccountID(pTarget->GetIndex()) : 0;
-			const auto& priority = G::PlayerPriority[priorityID];
-
-			F::AimbotGlobal.m_vecTargets.push_back({ pTarget, ETargetType::PLAYER, vPos, vAngleTo, flFOVTo, flDistTo, -1, false, priority });
+			
+			const auto& priority = F::AimbotGlobal.GetPriority(pTarget->GetIndex());
+			const float flDistTo = vLocalPos.DistTo(vPos);
+			validTargets.push_back({pTarget, ETargetType::PLAYER, vPos, vAngleTo, flFOVTo, flDistTo, -1, false, priority});
 		}
 	}
-	
+
 	// Buildings
 	if (Vars::Aimbot::Global::AimBuildings.Value)
 	{
-		const bool HasWrench = (pWeapon->GetWeaponID() == TF_WEAPON_WRENCH);
-		const bool CanDestroySapper = (G::CurItemDefIndex == Pyro_t_Homewrecker || G::CurItemDefIndex == Pyro_t_TheMaul || G::CurItemDefIndex == Pyro_t_NeonAnnihilator || G::CurItemDefIndex == Pyro_t_NeonAnnihilatorG);
+		const bool hasWrench = (pWeapon->GetWeaponID() == TF_WEAPON_WRENCH);
+		const bool canDestroySapper = (G::CurItemDefIndex == Pyro_t_Homewrecker || G::CurItemDefIndex == Pyro_t_TheMaul || G::CurItemDefIndex == Pyro_t_NeonAnnihilator || G::CurItemDefIndex ==
+			Pyro_t_NeonAnnihilatorG);
 
-		auto AimFriendly = [](CBaseObject* Building) -> bool
+		for (const auto& pObject : g_EntityCache.GetGroup(hasWrench || canDestroySapper ? EGroupType::BUILDINGS_ALL : EGroupType::BUILDINGS_ENEMIES))
 		{
-			int MaxAmmo = 0;
-			int MaxRocket = 0;
+			const auto& pBuilding = reinterpret_cast<CBaseObject*>(pObject);
 
-			if (Building->GetLevel() != 3 || Building->GetSapped() || Building->GetHealth() < Building->GetMaxHealth())
-				return true;
-
-			if (Building->IsSentrygun())
-			{
-				switch (Building->GetLevel())
-				{
-				case 1:
-				{
-					MaxAmmo = 150;
-					break;
-				}
-				case 2:
-				{
-					MaxAmmo = 200;
-					break;
-				}
-				case 3:
-				{
-					MaxAmmo = 200;
-					MaxRocket = 20;//Yeah?
-					break;
-				}
-				}
-			}
-
-			if (Building->GetAmmo() < MaxAmmo || Building->GetRockets() < MaxRocket)
-				return true;
-
-			return false;
-		};
-
-		for (const auto& pBuilding : g_EntityCache.GetGroup(HasWrench || CanDestroySapper ? EGroupType::BUILDINGS_ALL : EGroupType::BUILDINGS_ENEMIES))
-		{
-			const auto& Building = reinterpret_cast<CBaseObject*>(pBuilding);
-
-			if (HasWrench && (Building->GetTeamNum() == pLocal->GetTeamNum()))
-			{
-				if (!AimFriendly(Building))
-					continue;
-			}
-
-			if (CanDestroySapper && (Building->GetTeamNum() == pLocal->GetTeamNum()))
-			{
-				if (!Building->GetSapped())
-					continue;
-			}
-
-			if (!pBuilding->IsAlive())
+			// Is the building valid and alive?
+			if (!pObject || !pBuilding || !pObject->IsAlive())
 			{
 				continue;
 			}
 
-			Vec3 vPos = pBuilding->GetWorldSpaceCenter();
+			if (hasWrench && (pBuilding->GetTeamNum() == pLocal->GetTeamNum()))
+			{
+				if (!AimFriendlyBuilding(pBuilding))
+				{
+					continue;
+				}
+			}
+
+			if (canDestroySapper && (pBuilding->GetTeamNum() == pLocal->GetTeamNum()))
+			{
+				if (!pBuilding->GetSapped())
+				{
+					continue;
+				}
+			}
+
+			Vec3 vPos = pObject->GetWorldSpaceCenter();
 			Vec3 vAngleTo = Math::CalcAngle(vLocalPos, vPos);
 			const float flFOVTo = Math::CalcFov(vLocalAngles, vAngleTo);
 
-			if ((sortMethod == ESortMethod::FOV || Vars::Aimbot::Melee::RespectFOV.Value) && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
+			if (respectFOV && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
 			{
 				continue;
 			}
-			const float flDistTo = sortMethod == ESortMethod::DISTANCE ? vLocalPos.DistTo(vPos) : 0.0f;
 
-			F::AimbotGlobal.m_vecTargets.push_back({ pBuilding, ETargetType::BUILDING, vPos, vAngleTo, flFOVTo, flDistTo });
+			const float flDistTo = sortMethod == ESortMethod::DISTANCE ? vLocalPos.DistTo(vPos) : 0.0f;
+			validTargets.push_back({pObject, ETargetType::BUILDING, vPos, vAngleTo, flFOVTo, flDistTo});
 		}
 	}
 
 	// NPCs
 	if (Vars::Aimbot::Global::AimNPC.Value)
 	{
-		for (const auto& NPC : g_EntityCache.GetGroup(EGroupType::WORLD_NPC))
+		for (const auto& pNPC : g_EntityCache.GetGroup(EGroupType::WORLD_NPC))
 		{
-			Vec3 vPos = NPC->GetWorldSpaceCenter();
+			Vec3 vPos = pNPC->GetWorldSpaceCenter();
 			Vec3 vAngleTo = Math::CalcAngle(vLocalPos, vPos);
 
 			const float flFOVTo = Math::CalcFov(vLocalAngles, vAngleTo);
 			const float flDistTo = sortMethod == ESortMethod::DISTANCE ? vLocalPos.DistTo(vPos) : 0.0f;
 
-			if ((sortMethod == ESortMethod::FOV || Vars::Aimbot::Hitscan::RespectFOV.Value) && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
+			if (respectFOV && flFOVTo > Vars::Aimbot::Global::AimFOV.Value)
+			{
 				continue;
+			}
 
-			F::AimbotGlobal.m_vecTargets.push_back({ NPC, ETargetType::NPC, vPos, vAngleTo, flFOVTo, flDistTo });
+			validTargets.push_back({pNPC, ETargetType::NPC, vPos, vAngleTo, flFOVTo, flDistTo});
 		}
 	}
 
-	return !F::AimbotGlobal.m_vecTargets.empty();
+	return validTargets;
 }
 
 bool CAimbotMelee::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, Target_t& target)
@@ -254,7 +258,7 @@ bool CAimbotMelee::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon,
 			return false;
 		}
 	}
-	
+
 	if (Vars::Aimbot::Melee::RangeCheck.Value && !(Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value))
 	{
 		if (!CanMeleeHit(pLocal, pWeapon, target.m_vAngleTo, target.m_pEntity->GetIndex()))
@@ -277,24 +281,21 @@ bool CAimbotMelee::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon,
 	return true;
 }
 
-bool CAimbotMelee::GetTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, Target_t& Out)
+bool CAimbotMelee::GetTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, Target_t& outTarget)
 {
-	if (!GetTargets(pLocal, pWeapon))
-	{
-		return false;
-	}
+	auto validTargets = GetTargets(pLocal, pWeapon);
+	if (validTargets.empty()) { return false; }
 
-	F::AimbotGlobal.SortTargets(GetSortMethod());
+	const auto& sortMethod = static_cast<ESortMethod>(Vars::Aimbot::Melee::SortMethod.Value);
+	F::AimbotGlobal.SortTargets(&validTargets, sortMethod);
 
-	for (auto& target : F::AimbotGlobal.m_vecTargets)
+	for (auto& target : validTargets)
 	{
-		if (!VerifyTarget(pLocal, pWeapon, target))
+		if (VerifyTarget(pLocal, pWeapon, target))
 		{
-			continue;
+			outTarget = target;
+			return true;
 		}
-
-		Out = target;
-		return true;
 	}
 
 	return false;
@@ -358,11 +359,8 @@ bool CAimbotMelee::ShouldSwing(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 			//I::DebugOverlay->AddLineOverlay(Target.m_vPos, pLocal->GetShootPos(), 255, 0, 0, false, 1.f);
 			return false;
 		}
-		else
-		{
-			/*I::DebugOverlay->AddLineOverlay(Target.m_vPos, pLocal->GetShootPos(), 0, 255, 0, false, 1.f);*/
-			return true;
-		}
+		/*I::DebugOverlay->AddLineOverlay(Target.m_vPos, pLocal->GetShootPos(), 0, 255, 0, false, 1.f);*/
+		return true;
 	}
 
 	//There's a reason for running this even if range check is enabled (it calls this too), trust me :)
@@ -374,12 +372,13 @@ bool CAimbotMelee::ShouldSwing(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 	return true;
 }
 
-bool CAimbotMelee::IsAttacking(CUserCmd* pCmd, CBaseCombatWeapon* pWeapon)
+bool CAimbotMelee::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon)
 {
 	if (pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 	{
 		return ((pCmd->buttons & IN_ATTACK) && G::WeaponCanAttack);
 	}
+
 	return fabs(pWeapon->GetSmackTime() - I::GlobalVars->curtime) < I::GlobalVars->interval_per_tick * 2.0f;
 }
 
@@ -407,7 +406,7 @@ void CAimbotMelee::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd
 		if (ShouldSwing(pLocal, pWeapon, pCmd, target))
 		{
 			pCmd->buttons |= IN_ATTACK;
-		}	
+		}
 
 		const bool bIsAttacking = IsAttacking(pCmd, pWeapon);
 
@@ -431,7 +430,6 @@ void CAimbotMelee::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd
 				G::SilentTime = true;
 			}
 		}
-
 		else
 		{
 			Aim(pCmd, target.m_vAngleTo);

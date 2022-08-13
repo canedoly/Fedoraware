@@ -208,7 +208,6 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\CheckSimpleMaterial.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CHudCloseCaption_OnTick.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CL_LatchInterpolationAmount.cpp" />
-    <ClCompile Include="TeamFortress2\Hooks\Detours\CL_ProcessPacketEntities.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CNetGraphPanel_DrawTextFields.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CSequenceTransitioner_CheckForSequenceChange.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\C_BaseAnimating_Interpolate.cpp" />
@@ -335,6 +334,7 @@
     <ClInclude Include="TeamFortress2\Features\LuaEngine\LuaEngine.h" />
     <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WBaseCombatWeapon.h" />
     <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WBaseEntity.hpp" />
+    <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WClientMode.hpp" />
     <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WDraw.hpp" />
     <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WEngineClient.hpp" />
     <ClInclude Include="TeamFortress2\Features\LuaEngine\Wrapper\WGameEvent.hpp" />

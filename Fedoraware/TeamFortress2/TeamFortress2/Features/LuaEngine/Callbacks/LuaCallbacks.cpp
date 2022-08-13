@@ -52,7 +52,7 @@ void CLuaCallbacks::OnCreateMove(CUserCmd* pCmd, bool* pSendPacket) {
 }
 
 void CLuaCallbacks::OnFireGameEvent(CGameEvent* pEvent) {
-	for (const auto& [name, callback] : Callbacks["CreateMove"])
+	for (const auto& [name, callback] : Callbacks["FireGameEvent"])
 	{
 		if (callback.valid())
 		{
@@ -79,6 +79,17 @@ void CLuaCallbacks::OnFrameStage(int curStage)
 		if (callback.valid())
 		{
 			HandleError(callback(curStage));
+		}
+	}
+}
+
+void CLuaCallbacks::OnAntiAim(CUserCmd* pCmd, bool* pSendPacket, bool isReal)
+{
+	for (const auto& [name, callback] : Callbacks["AntiAim"])
+	{
+		if (callback.valid())
+		{
+			HandleError(callback(WUserCmd(pCmd, pSendPacket), isReal));
 		}
 	}
 }

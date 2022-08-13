@@ -417,7 +417,7 @@ namespace Utils
 		static const unsigned nSeed = std::chrono::system_clock::now().time_since_epoch().count();
 
 		std::default_random_engine gen(nSeed);
-		const std::uniform_int_distribution distr(min, max);
+		std::uniform_int_distribution distr(min, max);
 		return distr(gen);
 	}
 
@@ -914,6 +914,14 @@ namespace Utils
 
 		TraceHull(shootPos, targetPos, Vec3(-3.8f, -3.8f, -3.8f), Vec3(3.8f, 3.8f, 3.8f), MASK_SHOT_HULL, &traceFilter, &trace);
 		return !trace.DidHit();
+	}
+
+	__inline Vec3 GetHeadOffset(CBaseEntity* pEntity)
+	{
+		const Vec3 headPos = pEntity->GetHitboxPos(HITBOX_HEAD);
+		const Vec3 entPos = pEntity->GetAbsOrigin();
+		const Vec3 delta = entPos - headPos;
+		return delta * -1.f;
 	}
 }
 
