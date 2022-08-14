@@ -487,6 +487,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						int nOldTickBase = 0;
+						int nNewTickBase = 0;
 						int accurateTicks = 0;
 						if (G::Recharging && G::ShiftedTicks == 0)
 						{
