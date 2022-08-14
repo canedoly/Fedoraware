@@ -492,13 +492,15 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							const int nOldTickBase = pLocal->GetTickBase();
 						}
-						// if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
-						// {
-						// 	const int nTickBase = pLocal->GetTickBase();
-						// }
 						if (G::ShiftedTicks > 0)
 						{
-							const int accurateTicks = (pLocal->GetTickBase() - nOldTickBase);
+							int nNewTickBase = pLocal->GetTickBase();
+						}
+
+						// using pLocal->GetTickbase() causes issues don't use it
+						if (G::ShiftedTicks > 0)
+						{
+							const int accurateTicks = (nNewTickBase - nOldTickBase);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: 0 out of %d", G::ShiftedTicks);
