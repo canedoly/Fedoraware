@@ -491,28 +491,28 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nOldTickBase = 0;
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
-						const int TickBase = pLocal->GetTickBase();
+						//const int TickBase = pLocal->GetTickBase();
 
 						// tick count
 						int nOldTickCount = 0;
 						int nNewTickCount = 0;
 						int accurateCount = 0;
-						const int TickCount = I::GlobalVars->tickcount;
+						//const int TickCount = I::GlobalVars->tickcount;
 
 						//checks for if shifted ticks are 0 and saves the tickbase/tickcount
 						if (G::ShiftedTicks == 0)
 						{
-							const int nOldTickBase = pLocal->GetTickBase();
-							const int nOldTickCount = I::GlobalVars->tickcount;
+							int nOldTickBase = pLocal->GetTickBase();
+							int nOldTickCount = I::GlobalVars->tickcount;
 						}
 
 						if (G::ShiftedTicks > 0)
 						{
-							const int nNewTickBase = pLocal->GetTickBase();
-							const int nOldTickCount = I::GlobalVars->tickcount;
+							int nNewTickBase = pLocal->GetTickBase();
+							int nOldTickCount = I::GlobalVars->tickcount;
 						}
 
-						if (G::ShiftedTicks > 0)
+						if (G::ShiftedTicks > 1)
 						{
 							const int accurateTicks = (nNewTickBase - nOldTickBase);
 							const int accurateCount = (nNewTickCount - nOldTickCount);
