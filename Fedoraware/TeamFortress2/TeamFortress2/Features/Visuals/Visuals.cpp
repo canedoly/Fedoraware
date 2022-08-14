@@ -485,27 +485,30 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 6:
 					{
-						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						int nOldTickBase = 0;
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
+						int TickBase = pLocal->GetTickBase();
+
 						if (G::ShiftedTicks == 0)
 						{
 							int nOldTickBase = pLocal->GetTickBase();
 						}
+
 						if (G::ShiftedTicks > 0)
 						{
 							int nNewTickBase = pLocal->GetTickBase();
 						}
 
-						// using pLocal->GetTickbase() causes issues don't use it
 						if (G::ShiftedTicks > 0)
 						{
-							const int accurateTicks = (nNewTickBase - nOldTickBase);
+							int accurateTicks = (nNewTickBase - nOldTickBase);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + TextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + TextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tickbase: %i", TickBase);
+						TextOffset += Vars::Fonts::FONT_INDICATORS::nTall.Value;
 
 						break;
 					}
