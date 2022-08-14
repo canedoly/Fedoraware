@@ -489,9 +489,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nOldTickBase = 0;
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
-						if (G::Recharging && G::ShiftedTicks == 0)
+						if (G::ShiftedTicks == 0)
 						{
-							const int nOldTickBase = pLocal->GetTickBase();
+							int nOldTickBase = pLocal->GetTickBase();
 						}
 						if (G::ShiftedTicks > 0)
 						{
@@ -504,8 +504,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							const int accurateTicks = (nNewTickBase - nOldTickBase);
 						}
 						
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: 0 out of %d", G::ShiftedTicks);
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks 0 out of %i", accurateTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
 
 						break;
 					}
