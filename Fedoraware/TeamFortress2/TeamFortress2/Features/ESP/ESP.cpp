@@ -361,7 +361,6 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					pEntity = I::ClientEntityList->GetClientEntity(EntIndex);
 					//int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;	// we need to multiply by 2 so it renders above the name
 					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
 					int middle = x + w / 2;
@@ -378,7 +377,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					{
 						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
 					}
-					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(pEntity->GetIndex()))
+					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(nIndex))
 					{
 						g_Draw.String(FONT_NAME, middle, y - (offset * 2), Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
 					}
