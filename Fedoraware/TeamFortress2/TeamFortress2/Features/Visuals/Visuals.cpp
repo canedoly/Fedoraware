@@ -480,7 +480,26 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h / 6, Vars::Menu::Colors::MenuAccent);
 						g_Draw.Rect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h / 6, {129, 255, 61, 255});
 
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 3, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"nos %.2fs (%d)", Ticks_Time, G::ShiftedTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.c - 3, DTBox.y + 3, {255,255,255,255}, ALIGN_DEFAULT, L"nos %.2fs (%d)", Ticks_Time, G::ShiftedTicks);
+						break;
+					}
+					case 6:
+					{
+						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
+						if (G::Recharging && G::ShiftedTicks == 0)
+						{
+							const int oldTickBase = pLocal->GetTickBase();
+						}
+						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
+						{
+							const int newTickBase = pLocal->GetTickBase();
+						}
+						const int accurateTicks = (newTickBase - oldTickBase);
+
+						
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: 0 out of %d", G::ShiftedTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks 0 out of %i", accurateTicks);
+
 						break;
 					}
 				}

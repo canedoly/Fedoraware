@@ -276,7 +276,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			if (Vars::ESP::Players::HealthText.Value == 1)
 			{
 				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
-							  ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+							  ALIGN_DEFAULT, L"%d HP", nHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -377,7 +377,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					{
 						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
 					}
-					if (G::PlayerPriority[pi.friendsID].Mode == 0)
+					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(pEntity->GetIndex()))
 					{
 						g_Draw.String(FONT_NAME, middle, y - (offset * 2), Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
 					}
