@@ -485,6 +485,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 6:
 					{
+						int nTextOffset = 0;
+						
 						// tick base
 						int nOldTickBase = 0;
 						int nNewTickBase = 0;
