@@ -423,19 +423,8 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 	{
 	case ETargetType::PLAYER:
 		{
-			bool isFakelag = false;
-			if (const int oldPredTick = G::Cache[pSuspect][I::GlobalVars->tickcount - 1].playersPredictedTick) {
-				const int delta = oldPredTick - currentTickCount;
-				abs(delta) > 17;	
-			}	
-			if (abs(delta) > 17) {
-				bool isFakelag = true;
-			}
-			else {
-				bool isFakelag = false;
-			}
 			Vec3 hitboxpos;
-			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value !=)
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value)
 			{
 				if (const auto& pLastTick = F::Backtrack.GetRecord(target.m_pEntity->GetIndex(), BacktrackMode::Last))
 				{

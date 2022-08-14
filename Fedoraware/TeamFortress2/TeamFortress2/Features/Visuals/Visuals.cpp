@@ -488,15 +488,15 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						if (G::Recharging && G::ShiftedTicks == 0)
 						{
-							const int oldTickBase = pLocal->GetTickBase();
+							const int nOldTickBase = pLocal->GetTickBase();
 						}
-						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
-						{
-							const int newTickBase = pLocal->GetTickBase();
-						}
-						const int accurateTicks = (newTickBase - oldTickBase);
+						// if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
+						// {
+						// 	const int nTickBase = pLocal->GetTickBase();
+						// }
+						const int accurateTicks = (pLocal->GetTickBase() - nOldTickBase);
 
-						
+
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: 0 out of %d", G::ShiftedTicks);
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks 0 out of %i", accurateTicks);
 

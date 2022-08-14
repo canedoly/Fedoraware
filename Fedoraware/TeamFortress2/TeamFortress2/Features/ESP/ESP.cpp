@@ -361,6 +361,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::PriorityTags.Value)
 				{
+					pEntity = I::ClientEntityList->GetClientEntity(EntIndex);
 					//int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;	// we need to multiply by 2 so it renders above the name
 					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
 					int middle = x + w / 2;
