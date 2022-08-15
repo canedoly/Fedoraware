@@ -485,6 +485,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 6:
 					{
+						bool TickBaseReady = false;
 						int nTextOffset = 0;
 
 						// tick base
@@ -503,13 +504,16 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							const int nBTickBase = pLocal->GetTickBase();
 							const int nBTickCount = I::GlobalVars->tickcount;
+							bool TickBaseReady = true;
 						}
 
 						// using > 0 here probably won't work
-						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
+						//if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
+						if (TickBaseReady && (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value))
 						{
 							const int nNewTickBase = pLocal->GetTickBase();
 							const int nNewTickCount = I::GlobalVars->tickcount;
+							bool TickBaseReady = false;
 						}
 
 						// > 0 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
