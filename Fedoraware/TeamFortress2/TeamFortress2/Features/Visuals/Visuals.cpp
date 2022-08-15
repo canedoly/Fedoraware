@@ -491,27 +491,28 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nBTickBase = 0;
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
-						//const int TickBase = pLocal->GetTickBase();
 
 						// tick count
 						int nBTickCount = 0;
 						int nNewTickCount = 0;
 						int accurateCount = 0;
-						//const int TickCount = I::GlobalVars->tickcount;
 
-						//checks for if shifted ticks are 0 and saves the tickbase/tickcount
-						if (G::ShiftedTicks == 0 && G::RechargeQueued)
+						// idk if rechargequeued is need here but it sounded like a good idea to only save the ticks once if we're about to charge
+						//if (G::ShiftedTicks == 0 && G::RechargeQueued)
+						if (G::ShiftedTicks == 0)
 						{
 							const int nBTickBase = pLocal->GetTickBase();
 							const int nBTickCount = I::GlobalVars->tickcount;
 						}
 
+						// using > 0 here probably won't work
 						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
 						{
 							const int nNewTickBase = pLocal->GetTickBase();
 							const int nNewTickCount = I::GlobalVars->tickcount;
 						}
 
+						// > 1 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
 						if (G::ShiftedTicks > 1)
 						{
 							int accurateTicks = (nNewTickBase - nBTickBase);
