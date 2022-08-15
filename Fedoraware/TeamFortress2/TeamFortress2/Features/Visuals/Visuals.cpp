@@ -393,7 +393,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.9f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
+				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
 				static Color_t color1, color2;
@@ -488,34 +488,34 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nTextOffset = 0;
 
 						// tick base
-						int nOldTickBase = 0;
+						int nBTickBase = 0;
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
 						//const int TickBase = pLocal->GetTickBase();
 
 						// tick count
-						int nOldTickCount = 0;
+						int nBTickCount = 0;
 						int nNewTickCount = 0;
 						int accurateCount = 0;
 						//const int TickCount = I::GlobalVars->tickcount;
 
 						//checks for if shifted ticks are 0 and saves the tickbase/tickcount
-						if (G::ShiftedTicks == 0)
+						if (G::ShiftedTicks == 0 && G::RechargeQueued)
 						{
-							int nOldTickBase = pLocal->GetTickBase();
-							int nOldTickCount = I::GlobalVars->tickcount;
+							const int nBTickBase = pLocal->GetTickBase();
+							const int nBTickCount = I::GlobalVars->tickcount;
 						}
 
 						if (G::ShiftedTicks > 0)
 						{
-							int nNewTickBase = pLocal->GetTickBase();
-							int nOldTickCount = I::GlobalVars->tickcount;
+							const int nNewTickBase = pLocal->GetTickBase();
+							const int nNewTickCount = I::GlobalVars->tickcount;
 						}
 
 						if (G::ShiftedTicks > 1)
 						{
-							const int accurateTicks = (nNewTickBase - nOldTickBase);
-							const int accurateCount = (nNewTickCount - nOldTickCount);
+							int accurateTicks = (nNewTickBase - nBTickBase);
+							int accurateCount = (nNewTickCount - nBTickCount);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
