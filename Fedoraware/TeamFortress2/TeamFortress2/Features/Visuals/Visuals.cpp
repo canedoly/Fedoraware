@@ -506,7 +506,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							const int nBTickCount = I::GlobalVars->tickcount;
 						}
 
-						if (G::ShiftedTicks > 0)
+						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
 						{
 							const int nNewTickBase = pLocal->GetTickBase();
 							const int nNewTickCount = I::GlobalVars->tickcount;
