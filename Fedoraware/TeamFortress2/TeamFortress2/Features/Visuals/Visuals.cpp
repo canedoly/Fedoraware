@@ -512,8 +512,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							const int nNewTickCount = I::GlobalVars->tickcount;
 						}
 
-						// > 1 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
-						if (G::ShiftedTicks > 1)
+						// > 0 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
+						if (G::ShiftedTicks > 0)
 						{
 							int accurateTicks = (nNewTickBase - nBTickBase);
 							int accurateCount = (nNewTickCount - nBTickCount);
