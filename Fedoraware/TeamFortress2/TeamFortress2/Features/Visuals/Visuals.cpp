@@ -487,15 +487,15 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						int nTextOffset = 0;
 
-						// tick base
-						int nBTickBase = 0;
-						int nNewTickBase = 0;
-						int accurateTicks = 0;
+						// // tick base
+						// int nBTickBase = 0;
+						// int nNewTickBase = 0;
+						// int accurateTicks = 0;
 
-						// tick count
-						int nBTickCount = 0;
-						int nNewTickCount = 0;
-						int accurateCount = 0;
+						// // tick count
+						// int nBTickCount = 0;
+						// int nNewTickCount = 0;
+						// int accurateCount = 0;
 
 						// idk if rechargequeued is need here but it sounded like a good idea to only save the ticks once if we're about to charge
 						//if (G::ShiftedTicks == 0 && G::RechargeQueued)

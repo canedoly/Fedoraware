@@ -12,7 +12,9 @@ void CFakeAng::Run(CUserCmd* pCmd) {
 			if (const auto& pAnimState = pLocal->GetAnimState()) {
 				Math::Clamp(G::FakeViewAngles.x, -89.f, 89.f);
 
-				float flOldFrameTime = I::GlobalVars->frametime;
+				// frametime is bad, why would you use this + it gets impacted by host_timescale and isn't good overall
+
+				//float flOldFrameTime = I::GlobalVars->frametime;
 				int nOldSequence = pLocal->m_nSequence();
 				float flOldCycle = pLocal->m_flCycle();
 				auto pOldPoseParams = pLocal->GetPoseParam();
@@ -22,14 +24,14 @@ void CFakeAng::Run(CUserCmd* pCmd) {
 
 				auto Restore = [&]()
 				{
-					I::GlobalVars->frametime = flOldFrameTime;
+					//I::GlobalVars->frametime = flOldFrameTime;
 					pLocal->m_nSequence() = nOldSequence;
 					pLocal->m_flCycle() = flOldCycle;
 					pLocal->SetPoseParam(pOldPoseParams);
 					memcpy(pAnimState, pOldAnimState, sizeof(CMultiPlayerAnimState));
 				};
 
-				I::GlobalVars->frametime = 0.0f;
+				//I::GlobalVars->frametime = 0.0f;
 
 				pAnimState->m_flCurrentFeetYaw = G::FakeViewAngles.y;
 				pAnimState->m_flGoalFeetYaw = G::FakeViewAngles.x;
