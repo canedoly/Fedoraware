@@ -391,9 +391,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
 				const int nY = (g_ScreenSize.h / 2) + 20;
+				int FlickTicks = I::GlobalVars->tickcount % 47;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				const float flickCurrent = std::clamp(((float)I::GlobalVars->tickcount % (float)47 / (float)47), 0.0f, 1.0f);
+				const float flickCurrent = std::clamp(((float)FlickTicks / (float)47), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 				static float flickInterp = 0.00f; flickInterp = g_Draw.EaseIn(flickInterp, flickCurrent, 0.9f); Math::Clamp(flickInterp, 0.00f, 1.00f);
