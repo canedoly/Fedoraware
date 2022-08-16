@@ -393,8 +393,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
+				const float flickCurrent = std::clamp(I::GlobalVars->tickcount % 47, 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+				static float flickInterp = 0.00f; flickInterp = g_Draw.EaseIn(flickInterp, flickCurrent, 0.9f); Math::Clamp(flickInterp, 0.00f, 1.00f);
 
 				static Color_t color1, color2;
 
@@ -485,7 +487,6 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 6:
 					{
-						bool TickBaseReady = false;
 						int nTextOffset = 0;
 
 						// tick base
@@ -504,7 +505,6 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							const int nBTickBase = pLocal->GetTickBase();
 							const int nBTickCount = I::GlobalVars->tickcount;
-							bool TickBaseReady = true;
 						}
 
 						// using > 0 here probably won't work
@@ -513,15 +513,14 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							const int nNewTickBase = pLocal->GetTickBase();
 							const int nNewTickCount = I::GlobalVars->tickcount;
-							bool TickBaseReady = false;
 						}
 
 						// > 0 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
-						if (G::ShiftedTicks > 0)
-						{
-							int accurateTicks = (nNewTickBase - nBTickBase);
-							int accurateCount = (nNewTickCount - nBTickCount);
-						}
+						//if (G::ShiftedTicks > 0)
+						//{
+						int accurateTicks = (nNewTickBase - nBTickBase);
+						int accurateCount = (nNewTickCount - nBTickCount);
+						//}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
@@ -532,6 +531,13 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate count %i out of %i", accurateCount, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
+						break;
+					}
+					case 7:
+					{
+						g_Draw.RoundedBoxStatic(DTBox.x, DTBox.y, DTBox.w, DTBox.h, 5, {12,12,12,220});
+						g_Draw.RoundedBoxStatic(DTBox.x + 2, DTBox.y + 2, flickCurrent * (DTBox.w - 4), DTBox.h - 4, 5, {147, 255, 133, 255});
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fake Flick exploit");
 						break;
 					}
 				}

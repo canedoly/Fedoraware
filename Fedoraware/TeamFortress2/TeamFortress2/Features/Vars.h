@@ -764,8 +764,14 @@ namespace Vars
 			inline CVar<float> CustomRealPitch{ 0.f };
 			inline CVar<float> CustomRealYaw{ 0 };
 			inline CVar<float> CustomFakeYaw{ 0 };
+			inline CVar<float> StaticRealYaw{ 0 };
+			inline CVar<float> StaticFakeYaw{ 0 };
 			inline CVar<int> RandInterval{ 25 };
 			inline CVar<bool> AntiBackstab{ false };
+			inline CVar<float> Sideways1{ 0 };
+			inline CVar<float> Sideways2{ 0 };
+			inline CVar<float> SidewaysUpdate{ 0 };
+			inline CVar<bool> FlickRight{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };
 			inline CVar<bool> InvalidShootPitch{ false }; // i dont know what to name this its TRASH
