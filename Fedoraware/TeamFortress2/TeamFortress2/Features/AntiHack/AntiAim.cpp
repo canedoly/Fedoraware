@@ -189,9 +189,9 @@ float CAntiAim::GetAngle(int nIndex)
 	case 11:
 		{
 			//scuffed way of doing fake sideways
-			Sideways1 = Vars::AntiHack::AntiAim::Sideways1.Value;
-			Sideways2 = Vars::AntiHack::AntiAim::Sideways2.Value;
-			value = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
+			Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
+			Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
+			value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
 
 			Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
 			retnAngle = Sideways;
@@ -211,20 +211,20 @@ float CAntiAim::GetAngle(int nIndex)
 				RealAngle = bPacketFlip ? -90.f : FakeAngle;
 				if (FlickRight && I::GlobalVars->tickcount % 47)
 				{
-					FakeAngle = 90.f
+					FakeAngle = 90.f;
 				}
 				if (FlickRight && I::GlobalVars->tickcount % 48)
 				{
-					FakeAngle = -90.f
+					FakeAngle = -90.f;
 				}
 			}
 			if (!FlickRight && I::GlobalVars->tickcount % 47)
 			{
-				FakeAngle = -90.f
+				FakeAngle = -90.f;
 			}
 			if (!FlickRight && I::GlobalVars->tickcount % 48)
 			{
-				FakeAngle = 90.f
+				FakeAngle = 90.f;
 			}
 			break;
 		}
