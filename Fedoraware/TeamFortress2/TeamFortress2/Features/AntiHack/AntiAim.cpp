@@ -184,7 +184,8 @@ float CAntiAim::GetAngle(int nIndex)
 	case 10:
 		{
 			// this no static :(((
-			lastAngleRef = bPacketFlip ? Vars::AntiHack::AntiAim::StaticRealYaw.Value : Vars::AntiHack::AntiAim::StaticFakeYaw.Value;
+			lastRealAngle =	Vars::AntiHack::AntiAim::StaticRealYaw.Value;
+			lastFakeAngle =	Vars::AntiHack::AntiAim::StaticFakeYaw.Value;
 			break;
 		}
 	case 11:
@@ -196,7 +197,7 @@ float CAntiAim::GetAngle(int nIndex)
 			if (value == 0); value = 1;
 
 			float Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
-			retnAngle = Sideways;
+			lastRealAngle = Sideways;
 			break;
 		}
 	case 12:
@@ -205,30 +206,47 @@ float CAntiAim::GetAngle(int nIndex)
 			// idea how to do
 			// real is like right,left and fake is the same, but every 47 ticks it flicks for 1 tick to the opposite yaw
 			// doesn't work lol, who would have guessed
-			static bool FlickRight = false;
-			float FakeAngle = 90.f;
+
+			// static bool FlickRight = false;
+			// float FakeAngle = 90.f;
 			
-			if (Vars::AntiHack::AntiAim::FlickRight.Value)
+			// if (Vars::AntiHack::AntiAim::FlickRight.Value)
+			// {
+			// 	FlickRight = true;
+			// 	if (FlickRight && I::GlobalVars->tickcount % 47)
+			// 	{
+			// 		float FakeAngle = 90.f;
+			// 	}
+			// 	if (FlickRight && I::GlobalVars->tickcount % 50)
+			// 	{
+			// 		float FakeAngle = -90.f;
+			// 	}
+			// }
+			// if (!FlickRight && I::GlobalVars->tickcount % 47)
+			// {
+			// 	float FakeAngle = -90.f;
+			// }
+			// if (!FlickRight && I::GlobalVars->tickcount % 50)
+			// {
+			// 	float FakeAngle = 90.f;
+			// }
+			// retnAngle = FakeAngle;
+		
+			float s1 = Vars::AntiHack::AntiAim::Sideways1.Value;
+			float s2 = Vars::AntiHack::AntiAim::Sideways2.Value;
+			int sUpdate = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
+			if (sUpdate == 0); sUpdate = 1;
+
+			int flicktick = I::GlobalVars->tickcount % sUpdate;
+			
+			static bool flick = false;
+			retnAngles.first = flick ? s1 : s2;
+			retnAngles.second = retnAngles.first;
+			if (flicktick)
 			{
-				FlickRight = true;
-				if (FlickRight && I::GlobalVars->tickcount % 47)
-				{
-					float FakeAngle = 90.f;
-				}
-				if (FlickRight && I::GlobalVars->tickcount % 50)
-				{
-					float FakeAngle = -90.f;
-				}
+				flick = !flick;
 			}
-			if (!FlickRight && I::GlobalVars->tickcount % 47)
-			{
-				float FakeAngle = -90.f;
-			}
-			if (!FlickRight && I::GlobalVars->tickcount % 50)
-			{
-				float FakeAngle = 90.f;
-			}
-			retnAngle = FakeAngle;
+
 			break;
 		}
 	}
