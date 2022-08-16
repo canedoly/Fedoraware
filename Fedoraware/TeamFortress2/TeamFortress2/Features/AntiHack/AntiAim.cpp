@@ -193,7 +193,7 @@ float CAntiAim::GetAngle(int nIndex)
 			float Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
 			int value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
 
-			Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
+			float Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
 			retnAngle = Sideways;
 			break;
 		}
