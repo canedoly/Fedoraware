@@ -238,10 +238,10 @@ float CAntiAim::GetAngle(int nIndex)
 			if (sUpdate == 0); sUpdate = 1;
 
 			int flicktick = I::GlobalVars->tickcount % sUpdate;
-			
+
 			static bool flick = false;
-			retnAngles.first = flick ? s1 : s2;
-			retnAngles.second = retnAngles.first;
+			retnAngle.first = flick ? s1 : s2;
+			retnAngle.second = retnAngle.first;
 			if (flicktick)
 			{
 				flick = !flick;
