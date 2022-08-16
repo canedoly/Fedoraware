@@ -207,7 +207,7 @@ float CAntiAim::GetAngle(int nIndex)
 			int updateRate = I::GlobalVars->tickcount % sUpdate;
 
 			static bool aa = false;	
-			retnAngle = aa ? s1 : s2;
+			lastRealAngle = aa ? s1 : s2;
 			if (updateRate)
 			{
 				aa = !aa;
@@ -250,18 +250,24 @@ float CAntiAim::GetAngle(int nIndex)
 			// float s2 = Vars::AntiHack::AntiAim::Sideways2.Value;
 			// int sUpdate = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
 			// if (sUpdate == 0); sUpdate = 1;
-			float aa1 = -90.f;
-			float aa2 = 90.f;
-			if (Vars::AntiHack::AntiAim::FlickRight.Value)
-			{
-				float aa1 = 90.f;
-				float aa2 = -90.f;
-			}
+			// very bad code above (how am i so dumb l0l)
+
+
+			// float aa1 = -90.f;
+			// float aa2 = 90.f;
+			// if (Vars::AntiHack::AntiAim::FlickRight.Value)
+			// {
+			// 	float aa1 = 90.f;
+			// 	float aa2 = -90.f;
+			// }
+
+			float flickIdle = Vars::AntiHack::AntiAim::FlickIdle.Value;
+			float flickPeak = Vars::AntiHack::AntiAim::FlickPeak.Value;
 
 			int flicktick = I::GlobalVars->tickcount % 67;
 
 			static bool flick = false;
-			retnAngle = flick ? aa1 : aa2;
+			lastFakeAngle = flick ? flickIdle : flickPeak;
 			//retnAngle.second = retnAngle.first;
 			if (flicktick)
 			{

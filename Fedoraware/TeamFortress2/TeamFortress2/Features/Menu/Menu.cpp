@@ -1523,7 +1523,9 @@ void CMenu::MenuHvH()
 			}
 			if (Vars::AntiHack::AntiAim::YawFake.Value == 12)
 			{
-				WToggle("Fake Flick Right", &Vars::AntiHack::AntiAim::FlickRight.Value);
+				//WToggle("Fake Flick Right", &Vars::AntiHack::AntiAim::FlickRight.Value);
+				WSlider("Fake Flick Idle", &Vars::AntiHack::AntiAim::FlickIdle.Value, -180, 180);
+				WSlider("Fake Flick Peak", &Vars::AntiHack::AntiAim::FlickPeak.Value, -180, 180);
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.Value); HelpMarker("Enables Anti-aim resolver in the playerlist");
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.Value, &Vars::AntiHack::AntiAim::LegJitter.Value, &Vars::AntiHack::AntiAim::InvalidShootPitch.Value, &Vars::AntiHack::AntiAim::AntiBackstab.Value }, "Misc.");
