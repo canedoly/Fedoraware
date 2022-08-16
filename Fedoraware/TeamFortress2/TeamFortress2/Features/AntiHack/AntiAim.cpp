@@ -191,13 +191,27 @@ float CAntiAim::GetAngle(int nIndex)
 	case 11:
 		{
 			//scuffed way of doing fake sideways
-			float Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
-			float Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
-			int value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
-			if (value == 0); value = 1;
+			// float Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
+			// float Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
+			// int value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
+			// if (value == 0); value = 1;
 
-			float Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
-			lastRealAngle = Sideways;
+			// float Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
+			// lastRealAngle = Sideways;
+				
+			float s1 = Vars::AntiHack::AntiAim::Sideways1.Value;
+			float s2 = Vars::AntiHack::AntiAim::Sideways2.Value;
+			int sUpdate = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
+			if (sUpdate == 0); sUpdate = 1;
+
+			int updateRate = I::GlobalVars->tickcount % sUpdate;
+
+			static bool aa = false;	
+			retnAngle = aa ? s1 : s2;
+			if (updateRate)
+			{
+				aa = !aa;
+			}
 			break;
 		}
 	case 12:
@@ -232,15 +246,22 @@ float CAntiAim::GetAngle(int nIndex)
 			// }
 			// retnAngle = FakeAngle;
 		
-			float s1 = Vars::AntiHack::AntiAim::Sideways1.Value;
-			float s2 = Vars::AntiHack::AntiAim::Sideways2.Value;
-			int sUpdate = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
-			if (sUpdate == 0); sUpdate = 1;
+			// float s1 = Vars::AntiHack::AntiAim::Sideways1.Value;
+			// float s2 = Vars::AntiHack::AntiAim::Sideways2.Value;
+			// int sUpdate = Vars::AntiHack::AntiAim::SidewaysUpdate.Value;
+			// if (sUpdate == 0); sUpdate = 1;
+			float aa1 = -90.f;
+			float aa2 = 90.f;
+			if (Vars::AntiHack::AntiAim::FlickRight.Value)
+			{
+				float aa1 = 90.f;
+				float aa2 = -90.f;
+			}
 
-			int flicktick = I::GlobalVars->tickcount % sUpdate;
+			int flicktick = I::GlobalVars->tickcount % 67;
 
 			static bool flick = false;
-			retnAngle = flick ? s1 : s2;
+			retnAngle = flick ? aa1 : aa2;
 			//retnAngle.second = retnAngle.first;
 			if (flicktick)
 			{
