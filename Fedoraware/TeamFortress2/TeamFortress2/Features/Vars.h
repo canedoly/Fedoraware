@@ -770,7 +770,7 @@ namespace Vars
 			inline CVar<bool> AntiBackstab{ false };
 			inline CVar<float> Sideways1{ 0 };
 			inline CVar<float> Sideways2{ 0 };
-			inline CVar<float> SidewaysUpdate{ 0 };
+			inline CVar<int> SidewaysUpdate{ 0 };
 			inline CVar<bool> FlickRight{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };

@@ -189,9 +189,9 @@ float CAntiAim::GetAngle(int nIndex)
 	case 11:
 		{
 			//scuffed way of doing fake sideways
-			Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
-			Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
-			value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
+			float Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
+			float Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
+			int value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
 
 			Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
 			retnAngle = Sideways;
@@ -203,29 +203,31 @@ float CAntiAim::GetAngle(int nIndex)
 			// idea how to do
 			// real is like right,left and fake is the same, but every 47 ticks it flicks for 1 tick to the opposite yaw
 			static bool FlickRight = false;
-			RealAngle = bPacketFlip ? 90.f : FakeAngle;
+			float FakeAngle = 90.f;
+			//float RealAngle = bPacketFlip ? 90.f : FakeAngle;
 			
 			if (Vars::AntiHack::AntiAim::FlickRight.Value)
 			{
 				FlickRight = true;
-				RealAngle = bPacketFlip ? -90.f : FakeAngle;
+				//RealAngle = bPacketFlip ? -90.f : FakeAngle;
 				if (FlickRight && I::GlobalVars->tickcount % 47)
 				{
-					FakeAngle = 90.f;
+					float FakeAngle = 90.f;
 				}
 				if (FlickRight && I::GlobalVars->tickcount % 48)
 				{
-					FakeAngle = -90.f;
+					float FakeAngle = -90.f;
 				}
 			}
 			if (!FlickRight && I::GlobalVars->tickcount % 47)
 			{
-				FakeAngle = -90.f;
+				float FakeAngle = -90.f;
 			}
 			if (!FlickRight && I::GlobalVars->tickcount % 48)
 			{
-				FakeAngle = 90.f;
+				float FakeAngle = 90.f;
 			}
+			retnAngle = FakeAngle;
 			break;
 		}
 	}
