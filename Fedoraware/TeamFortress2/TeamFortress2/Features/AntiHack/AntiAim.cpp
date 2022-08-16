@@ -240,8 +240,8 @@ float CAntiAim::GetAngle(int nIndex)
 			int flicktick = I::GlobalVars->tickcount % sUpdate;
 
 			static bool flick = false;
-			retnAngle.first = (flick ? s1 : s2);
-			retnAngle.second = retnAngle.first;
+			retnAngle = flick ? s1 : s2;
+			//retnAngle.second = retnAngle.first;
 			if (flicktick)
 			{
 				flick = !flick;
