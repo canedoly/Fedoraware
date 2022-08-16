@@ -1485,7 +1485,7 @@ void CMenu::MenuHvH()
 			SectionTitle("Anti Aim");
 			WToggle("Enable Anti-aim", &Vars::AntiHack::AntiAim::Active.Value);
 			InputKeybind("Anti-aim Key", Vars::AntiHack::AntiAim::ToggleKey); HelpMarker("The key to toggle anti aim");
-			WCombo("Pitch", &Vars::AntiHack::AntiAim::Pitch.Value, { "None", "Zero", "Up", "Down", "Fake up", "Fake down", "Random", "Half Up", "Jitter", "Fake Up Custom", "Fake Down Custom"}); HelpMarker("Which way to look up/down");
+			WCombo("Pitch", &Vars::AntiHack::AntiAim::Pitch.Value, { "None", "Zero", "Up", "Down", "Fake up", "Fake down", "Random", "Half Up", "Jitter", "Fake Down Custom", "Automatic"}); HelpMarker("Which way to look up/down");
 			WCombo("Real yaw", &Vars::AntiHack::AntiAim::YawReal.Value, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt", "Custom", "Static", "Fake sideways", "Fake Flick"}); HelpMarker("Which way to look horizontally");
 			WCombo("Fake yaw", &Vars::AntiHack::AntiAim::YawFake.Value, { "None", "Forward", "Left", "Right", "Backwards", "Random", "Spin", "Edge", "On Hurt", "Custom", "Static", "Fake sideways", "Fake Flick"}); HelpMarker("Which way to appear to look horizontally");
 			if (Vars::AntiHack::AntiAim::Pitch.Value == 9 || Vars::AntiHack::AntiAim::Pitch.Value == 10) {
@@ -1506,6 +1506,24 @@ void CMenu::MenuHvH()
 			if (Vars::AntiHack::AntiAim::YawFake.Value == 9)
 			{
 				WSlider("Custom fake yaw", &Vars::AntiHack::AntiAim::CustomFakeYaw.Value, -180, 180);
+			}
+			if (Vars::AntiHack::AntiAim::YawReal.Value == 10)
+			{
+				WSlider("Static real yaw", &Vars::AntiHack::AntiAim::StaticRealYaw.Value, -180, 180);
+			}
+			if (Vars::AntiHack::AntiAim::YawFake.Value == 10)
+			{
+				WSlider("Static fake yaw", &Vars::AntiHack::AntiAim::StaticFakeYaw.Value, -180, 180);
+			}
+			if (Vars::AntiHack::AntiAim::YawReal.Value == 11)
+			{
+				WSlider("Sideways 1", &Vars::AntiHack::AntiAim::Sideways1.Value, -180, 180);
+				WSlider("Sideways 2", &Vars::AntiHack::AntiAim::Sideways2.Value, -180, 180);
+				WSlider("Sideways update rate", &Vars::AntiHack::AntiAim::SidewaysUpdate.Value, 1, 10);
+			}
+			if (Vars::AntiHack::AntiAim::YawFake.Value == 12)
+			{
+				WToggle("Fake Flick Right", &Vars::AntiHack::AntiAim::FlickRight.Value);
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.Value); HelpMarker("Enables Anti-aim resolver in the playerlist");
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.Value, &Vars::AntiHack::AntiAim::LegJitter.Value, &Vars::AntiHack::AntiAim::InvalidShootPitch.Value, &Vars::AntiHack::AntiAim::AntiBackstab.Value }, "Misc.");

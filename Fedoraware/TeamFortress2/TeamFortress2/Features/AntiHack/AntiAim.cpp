@@ -183,6 +183,7 @@ float CAntiAim::GetAngle(int nIndex)
 		}
 	case 10:
 		{
+			// this no static :(((
 			lastAngleRef = bPacketFlip ? Vars::AntiHack::AntiAim::StaticRealYaw.Value : Vars::AntiHack::AntiAim::StaticFakeYaw.Value;
 			break;
 		}
@@ -192,6 +193,7 @@ float CAntiAim::GetAngle(int nIndex)
 			float Sideways1 = (Vars::AntiHack::AntiAim::Sideways1.Value);
 			float Sideways2 = (Vars::AntiHack::AntiAim::Sideways2.Value);
 			int value = (Vars::AntiHack::AntiAim::SidewaysUpdate.Value);
+			if (value == 0); value = 1;
 
 			float Sideways = (I::GlobalVars->tickcount % value) ? Sideways1 : Sideways2;
 			retnAngle = Sideways;
@@ -202,19 +204,18 @@ float CAntiAim::GetAngle(int nIndex)
 			// flip aa, bigger example - https://www.youtube.com/watch?v=5t90Ni1qHJg
 			// idea how to do
 			// real is like right,left and fake is the same, but every 47 ticks it flicks for 1 tick to the opposite yaw
+			// doesn't work lol, who would have guessed
 			static bool FlickRight = false;
 			float FakeAngle = 90.f;
-			//float RealAngle = bPacketFlip ? 90.f : FakeAngle;
 			
 			if (Vars::AntiHack::AntiAim::FlickRight.Value)
 			{
 				FlickRight = true;
-				//RealAngle = bPacketFlip ? -90.f : FakeAngle;
 				if (FlickRight && I::GlobalVars->tickcount % 47)
 				{
 					float FakeAngle = 90.f;
 				}
-				if (FlickRight && I::GlobalVars->tickcount % 48)
+				if (FlickRight && I::GlobalVars->tickcount % 50)
 				{
 					float FakeAngle = -90.f;
 				}
@@ -223,7 +224,7 @@ float CAntiAim::GetAngle(int nIndex)
 			{
 				float FakeAngle = -90.f;
 			}
-			if (!FlickRight && I::GlobalVars->tickcount % 48)
+			if (!FlickRight && I::GlobalVars->tickcount % 50)
 			{
 				float FakeAngle = 90.f;
 			}
@@ -304,8 +305,8 @@ std::pair<float, float> CAntiAim::GetAnglePairPitch(int nIndex)
 				}
 				break;
 			}
+		//case 9:
 		case 9:
-		case 10:
 			{
 				//	fake up/down, real custom
 				const bool FakeDown = nIndex == 10;
@@ -314,7 +315,7 @@ std::pair<float, float> CAntiAim::GetAnglePairPitch(int nIndex)
 				G::FakeViewAngles.x = FakeDown ? 89.f : -89.f;
 				break;
 			}
-		case 11:
+		case 10:
 			{
 				const int nClassNum = pLocal->GetClassNum();
 				const int nWeaponSlot = pWeapon->GetSlot();

@@ -537,7 +537,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						g_Draw.RoundedBoxStatic(DTBox.x, DTBox.y, DTBox.w, DTBox.h, 5, {12,12,12,220});
 						g_Draw.RoundedBoxStatic(DTBox.x + 2, DTBox.y + 2, flickCurrent * (DTBox.w - 4), DTBox.h - 4, 5, {147, 255, 133, 255});
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fake Flick");
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 2, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fake Flick");
 						break;
 					}
 				}
