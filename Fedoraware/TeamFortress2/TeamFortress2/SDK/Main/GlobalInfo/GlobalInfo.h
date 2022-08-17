@@ -53,9 +53,9 @@ namespace G
 	inline int WaitForShift = 0;
 	inline int ShiftedTicks = 0; // Amount of ticks that are shifted
 	inline bool ShouldShift = false; // Should we shift now?
+	inline bool Teleporting = false;
 	inline bool Recharging = false; // Are we currently recharging?
 	inline bool RechargeQueued = false; // Queues a recharge
-	inline int TickShiftQueue = 0; // Ticks that shouls be shifted
 
 	/* Choking / Packets */
 	inline bool ForceSendPacket = false; // might not actually be useful 
@@ -94,7 +94,6 @@ namespace G
 	inline std::unordered_map<int, int> ChokeMap; // Choked packets of players <Index, Amount>
 	inline bool DrawingStaticProps = false;
 	inline std::unordered_map<uint32_t, Priority> PlayerPriority; // Playerlist priorities <FriendsID, Priority>
-	inline std::vector<FNV1A_t> FalseReturns;	//	returns the default value for convars in this vector
 	inline bool BulletTracerFix = false;
 
 	inline DWORD CalcIsAttackCriticalHelperOffset = 0;

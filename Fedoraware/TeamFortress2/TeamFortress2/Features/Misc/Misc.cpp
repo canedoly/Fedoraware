@@ -5,6 +5,7 @@
 #include "../../Utils/Timer/Timer.hpp"
 #include "../Aimbot/AimbotGlobal/AimbotGlobal.h"
 #include "../Backtrack/Backtrack.h"
+#include "../AntiHack/CheaterDetection/CheaterDetection.h"
 
 extern int attackStringW;
 extern int attackStringH;
@@ -28,7 +29,6 @@ void CMisc::Run(CUserCmd* pCmd)
 	AntiAFK(pCmd);
 	ChatSpam();
 	CheatsBypass();
-	Teleport(pCmd);
 	PingReducer();
 	ServerHitbox(); // super secret deathpole feature!!!!
 	WeaponSway();
@@ -80,6 +80,7 @@ void CMisc::WeaponSway()
 
 void CMisc::DetectChoke()
 {
+	if (G::Teleporting || G::ShouldShift) {return;}	//	do not do this code if we are shifting ticks.
 	for (const auto& player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL))
 	{
 		if (!player->IsAlive() || player->GetDormant())
@@ -94,6 +95,7 @@ void CMisc::DetectChoke()
 		}
 		else
 		{
+			F::BadActors.ReportTickCount(player, G::ChokeMap[player->GetIndex() - 3]);
 			G::ChokeMap[player->GetIndex()] = 0;
 		}
 	}
@@ -196,7 +198,6 @@ void CMisc::CheatsBypass()
 {
 	static bool cheatset = false;
 	if (ConVar* sv_cheats = g_ConVars.FindVar("sv_cheats")) {
-		G::FalseReturns.push_back(FNV1A::HashConst("sv_cheats"));
 		if (Vars::Misc::CheatsBypass.Value && sv_cheats)
 		{
 			sv_cheats->SetValue(1);
@@ -210,20 +211,6 @@ void CMisc::CheatsBypass()
 				cheatset = false;
 			}
 		}
-	}
-}
-
-void CMisc::Teleport(const CUserCmd* pCmd)
-{
-	// Stupid
-	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
-	if (tpKey.Down())
-	{
-		if (Vars::Misc::CL_Move::TeleportMode.Value == 0 && G::TickShiftQueue == 0 && G::ShiftedTicks > 0)
-		{
-			// Plain teleport
-			G::TickShiftQueue = G::ShiftedTicks;
-		} // Why do it like this wtf?
 	}
 }
 

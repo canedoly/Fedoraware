@@ -1,5 +1,12 @@
 #include "CheaterDetection.h"
 
+// TODO: make these vars
+constexpr float FL_TICKCOUNT_MULTIPLIER = 0.1f;
+constexpr float FL_BHOP_MULTIPLIER = 0.5f;
+constexpr float FL_SNAP_MULTIPLIER = 0.1f;
+constexpr float FL_SUSPICION_REMOVAL = 0.2f;
+constexpr float FL_SUSPICION_GATE = 1.f;
+
 void conLogDetection(const char* text) {
 	if (Vars::Debug::DebugInfo.Value) {
 		static std::string clr({ '\x7', 'C', 'C', '0', '0', 'F', 'F' });
@@ -60,13 +67,49 @@ bool CCheaterDetection::IsPitchInvalid(CBaseEntity* pSuspect)
 	return false;
 }
 
-bool CCheaterDetection::IsTickCountManipulated(CBaseEntity* pSuspect, int currentTickCount)
-{
-	if (const int oldPredTick = G::Cache[pSuspect][I::GlobalVars->tickcount - 1].playersPredictedTick) {
-		const int delta = oldPredTick - currentTickCount;
-		return abs(delta) > 17;	
-	}	
-	return false;
+void CCheaterDetection::ReportTickCount(CBaseEntity* pSuspect, const int iChange){
+	if (iChange < 15){return;}
+	PlayerInfo_t pi{ };
+	if (I::EngineClient->GetPlayerInfo(pSuspect->GetIndex(), &pi))
+	{
+		int friendsID = pi.friendsID;
+		PlayerData& userData = UserData[friendsID];
+		if (userData.NonDormantTimer < 67) {return;}
+		userData.PlayerSuspicion += Math::RemapValClamped((float)iChange, 0, 22, 0.f, 1.f) * FL_TICKCOUNT_MULTIPLIER;
+		conLogDetection(tfm::format("%s was detected as shifting their tickbase.\n", pi.name).c_str());
+	}
+}
+
+bool CCheaterDetection::TrustAngles(CBaseEntity* pSuspect, PlayerData& pData){
+	if (!pData.NonDormantTimer || G::ChokeMap[pSuspect->GetIndex()]) { return true; }	//	our old angle data will not be reliable
+	Vec3 oldAngles = pData.OldAngles; oldAngles.y = abs(oldAngles.y);
+	Vec3 curAngles = pSuspect->GetEyeAngles(); curAngles.y = abs(curAngles.y);
+
+	const Vec3 vDelta = oldAngles - curAngles;
+	const float flDelta = sqrt(pow(vDelta.x, 2) + pow(vDelta.y, 2));
+
+	if (flDelta > 35.f){	//	this was suspicious but we don't know if they are cheating yet
+		pData.StoredEndFlick = {true, curAngles};
+		return true;
+	}
+
+	if (!pData.StoredEndFlick.first){
+		return true;
+	}
+
+	//	we know they flicked and want to check for inaccuracy
+	const Vec3 vEndDelta = pData.StoredEndFlick.second - curAngles;
+	const float flEndDelta = sqrt(pow(vEndDelta.x, 2) + pow(vEndDelta.y, 2));;
+
+	if (flEndDelta < 0.1f){
+		pData.StoredEndFlick = {false, {0, 0, 0}};
+		return false;
+	}
+
+	pData.StoredEndFlick = {false, {0, 0, 0}};
+
+
+	return true;
 }
 
 bool CCheaterDetection::IsBhopping(CBaseEntity* pSuspect, PlayerData& pData)
@@ -93,50 +136,6 @@ bool CCheaterDetection::IsBhopping(CBaseEntity* pSuspect, PlayerData& pData)
 	}
 
 	return doReport;
-}
-
-bool CCheaterDetection::IsAimbotting(CBaseEntity* pSuspect, PlayerData& pData) {
-	const PlayerCache suspectCache = G::Cache[pSuspect][I::GlobalVars->tickcount - 1];	// get the cache info for one tick ago.
-	if (suspectCache.eyePosition.IsZero()) {
-		return false;
-	}
-
-	if ((suspectCache.playersPredictedTick - TIME_TO_TICKS(pSuspect->GetSimulationTime())) > 1) {
-		pData.StoredAngle.Clear();
-		return false;
-	}
-
-	const Vec3 oldViewAngles = suspectCache.eyePosition;
-	const Vec3 curViewAngles = pSuspect->GetEyeAngles();
-
-	const float oldViewYaw = abs(oldViewAngles.y);
-	const float oldViewPitch = oldViewAngles.x;		// there is no reason to treat pitch the same as yaw as you can't go from 180 to -180 without cheats
-	
-	const float curViewYaw = abs(curViewAngles.y);
-	const float curViewPitch = curViewAngles.x;
-
-	const float aimDelta = abs(curViewYaw - oldViewYaw) + abs(curViewPitch - oldViewPitch);
-	const float maxAimDelta = 90.f;
-	
-	if (aimDelta > maxAimDelta && pData.StoredAngle.IsZero()) {	// just look at the math
-		pData.FlickTime = 0;		// consider our player as having flicked
-		pData.StoredAngle = curViewAngles;
-		return false;
-	}
-
-	if (!pData.StoredAngle.IsZero()) {
-		if (pData.FlickTime > 1) {
-			pData.StoredAngle.Clear();
-		}
-		else if ((pData.StoredAngle - curViewAngles).IsZero()) {
-			pData.StoredAngle.Clear();
-			return true;
-		}
-	}
-
-	pData.FlickTime++;
-
-	return false;
 }
 
 void CCheaterDetection::OnTick()
@@ -184,103 +183,45 @@ void CCheaterDetection::OnTick()
 		{
 			int friendsID = pi.friendsID;
 
-			if (index == pLocal->GetIndex() || !ShouldScan(index, friendsID, pSuspect)) { continue; }
-
 			PlayerData& userData = UserData[friendsID];
 
-			//if (userData.Detections.SteamName)
-			//{
-			//	userData.Detections.SteamName = true; // to prevent false positives and needless rescanning, set this to true after the first scan.
-			//	Strikes[friendsID] += IsSteamNameDifferent(pi) ? 5 : 0; // add 5 strikes to this player if they are manipulating their in game name.
-			//}
+			if (index == pLocal->GetIndex() || !ShouldScan(index, friendsID, pSuspect)) { userData.NonDormantTimer = 0; continue; }
 
-			if (userData.Detections.InvalidPitch)
+			if (IsPitchInvalid(pSuspect))
 			{
-				if (IsPitchInvalid(pSuspect))
-				{
-					conLogDetection(tfm::format("%s was detected for sending an OOB pitch.\n", pi.name).c_str());
-					userData.Detections.InvalidPitch = true;
-					Strikes[friendsID] += 5; // because this cannot be falsely triggered, anyone detected by it should be marked as a cheater instantly 
-				}
-			}
-
-			//if (!userData.Detections.InvalidText)
-			//{
-			//	if (IllegalChar[index])
-			//	{
-			//		conLogDetection(tfm::format("%s was detected as sending an illegal character.\n", pi.name).c_str());
-			//		userData.Detections.InvalidText = true;
-			//		Strikes[friendsID] += 5;
-			//		IllegalChar[index] = false;
-			//	}
-			//}
-
-			const int currenttickcount = TIME_TO_TICKS(pSuspect->GetSimulationTime());
-
-			if (I::GlobalVars->tickcount)
-			{
-				if (IsTickCountManipulated(pSuspect, currenttickcount))
-				{
-					if (userData.AreTicksSafe)
-					{
-						conLogDetection(tfm::format("%s was detected as shifting their tickbase.\n", pi.name).c_str());
-						Strikes[friendsID]++;
-						userData.AreTicksSafe = false;
-					}
-				}
-				else
-				{
-					userData.AreTicksSafe = true;
-				}
+				conLogDetection(tfm::format("%s was detected for sending an OOB pitch.\n", pi.name).c_str());
+				userData.PlayerSuspicion = 1.f; // because this cannot be falsely triggered, anyone detected by it should be marked as a cheater instantly 
 			}
 
 			if (IsBhopping(pSuspect, userData)) {
 				conLogDetection(tfm::format("%s was detected as bhopping.\n", pi.name).c_str());
-				Strikes[friendsID]++;
+				userData.PlayerSuspicion += 1.f * FL_BHOP_MULTIPLIER;
 			}
 
-			//if (IsAimbotting(pSuspect, userData)) {
-			//	conLogDetection(tfm::format("%s was detected as aimbotting.\n", pi.name).c_str());
-			//	Strikes[friendsID]++;
-			//}
+			/*if (!TrustAngles(pSuspect, userData)){
+				conLogDetection(tfm::format("%s was detected as aim-snapping.\n", pi.name).c_str());
+				userData.PlayerSuspicion += 1.f * FL_SNAP_MULTIPLIER;
+			}*/
 
-			if (Strikes[friendsID] > 4)
+			if (userData.PlayerSuspicion >= FL_SUSPICION_GATE)
 			{
 				conLogDetection(tfm::format("%s was marked as a cheater.\n", pi.name).c_str());
 				G::PlayerPriority[friendsID].Mode = 4; // Set priority to "Cheater"
+				userData.PlayerSuspicion = 0.f;	//	reset suspicion
 			}
-			else if (userData.NonDormantTimer >= (67 * 30) && userData.OldStrikes == Strikes[friendsID] && Strikes[friendsID]) {
-				Strikes[friendsID]--;
+			else if (userData.NonDormantTimer >= (67 * 30) && userData.OldPlayerSuspicion == userData.PlayerSuspicion && userData.PlayerSuspicion > 0.f) {
+				userData.PlayerSuspicion -= FL_SUSPICION_REMOVAL;
 				userData.NonDormantTimer = 0;
 				conLogDetection(tfm::format("%s has had their suspicion reduced due to good behaviour.\n", pi.name).c_str());
 			}
 
-			if (userData.OldStrikes != Strikes[friendsID]) {
+			if (userData.OldPlayerSuspicion != userData.PlayerSuspicion) {
 				userData.NonDormantTimer = 0;
 			}
 
+			userData.OldAngles = pSuspect->GetEyeAngles();
 			userData.NonDormantTimer++;
-			userData.OldStrikes = Strikes[friendsID];
+			userData.OldPlayerSuspicion = userData.PlayerSuspicion;
 		}
-	}
-}
-
-void CCheaterDetection::Event(CGameEvent* pEvent) {
-	const FNV1A_t uNameHash = FNV1A::Hash(pEvent->GetName());
-	const CBaseEntity* pLocal = g_EntityCache.GetLocal();
-	if (!pLocal) { return; }
-	int entID{};
-
-	if (uNameHash == FNV1A::HashConst("player_hurt")) {
-		entID = I::EngineClient->GetPlayerForUserID(pEvent->GetInt("attacker"));
-	}
-	else if (uNameHash == FNV1A::HashConst("player_death")) {
-		entID = pEvent->GetInt("inflictor_entindex");
-	}
-
-	if (CBaseEntity* pInflictor = I::ClientEntityList->GetClientEntity(entID)) {
-		if (pInflictor == pLocal) { return; }
-		PlayerCache suspectCache = G::Cache[pInflictor][I::GlobalVars->tickcount];	// get the cache info for our current tick
-		suspectCache.didDamage = true;
 	}
 }
