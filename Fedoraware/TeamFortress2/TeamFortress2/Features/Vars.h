@@ -774,6 +774,7 @@ namespace Vars
 			inline CVar<bool> FlickRight{ false };
 			inline CVar<float> FlickIdle{ 0 };
 			inline CVar<float> FlickPeak{ 0 };
+			inline CVar<bool> AALines{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };
 			inline CVar<bool> InvalidShootPitch{ false }; // i dont know what to name this its TRASH

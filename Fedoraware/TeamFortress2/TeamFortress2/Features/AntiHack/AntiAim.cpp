@@ -267,7 +267,7 @@ float CAntiAim::GetAngle(int nIndex)
 			int flicktick = I::GlobalVars->tickcount % 67;
 
 			static bool flick = false;
-			lastFakeAngle = flick ? flickIdle : flickPeak;
+			retnAngle = flick ? flickIdle : flickPeak;
 			//retnAngle.second = retnAngle.first;
 			if (flicktick)
 			{

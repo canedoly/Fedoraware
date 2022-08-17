@@ -356,7 +356,7 @@ void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 		return;
 	}
 
-	if (Vars::AntiHack::AntiAim::Active.Value)
+	if (Vars::AntiHack::AntiAim::Active.Value && Vars::AntiHack::AntiAim::AALines.Value)
 	{
 		static constexpr Color_t realColour = { 0, 255,0, 255 };
 		static constexpr Color_t fakeColour = { 255, 0, 0, 255 };
@@ -391,10 +391,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
 				const int nY = (g_ScreenSize.h / 2) + 20;
-				int FlickTicks = I::GlobalVars->tickcount % 66;
+				int FlickTicks = I::GlobalVars->tickcount % 67;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				const float flickCurrent = std::clamp(((float)FlickTicks / (float)66), 0.0f, 1.0f);
+				const float flickCurrent = std::clamp(((float)FlickTicks / (float)67), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 				static float flickInterp = 0.00f; flickInterp = g_Draw.EaseIn(flickInterp, flickCurrent, 0.9f); Math::Clamp(flickInterp, 0.00f, 1.00f);
@@ -500,22 +500,18 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nNewTickCount = 0;
 						int accurateCount = 0;
 
-						// idk if rechargequeued is need here but it sounded like a good idea to only save the ticks once if we're about to charge
-						//if (G::ShiftedTicks == 0 && G::RechargeQueued)
 						if (G::ShiftedTicks == 0)
 						{
 							const int nBTickBase = pLocal->GetTickBase();
 							const int nBTickCount = I::GlobalVars->tickcount;
 						}
 
-						// using > 0 here probably won't work
-						if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value)
+						if (G::Recharging)
 						{
 							const int nNewTickBase = pLocal->GetTickBase();
 							const int nNewTickCount = I::GlobalVars->tickcount;
 						}
 
-						// > 0 because we don't want to calculate for example 1432 - 1432 so the minimum tick is 1
 						if (G::ShiftedTicks > 0)
 						{
 							int accurateTicks = (nBTickBase - nNewTickBase);
