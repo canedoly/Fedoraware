@@ -1713,7 +1713,7 @@ void CMenu::MenuMisc()
 }
 #pragma endregion
 
-/* Settings Window */
+/* Settings Windoow */
 void CMenu::SettingsWindow()
 {
 	using namespace ImGui;
