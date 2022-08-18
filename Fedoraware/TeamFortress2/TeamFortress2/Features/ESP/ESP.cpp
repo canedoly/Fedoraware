@@ -586,7 +586,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 8, (y + h) - (ratio * h) - 10, Colors::White, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
+					g_Draw.String(FONT, x - 12, (y + h) - (ratio * h) - 7, Colors::White, ALIGN_REVERSE, "%d", nHealth);
 				}
 
 				x += 1;
