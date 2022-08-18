@@ -491,6 +491,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
 						const int TickCount = I::GlobalVars->tickcount;
+						// const int UptimeSeconds = (TICKS_TO_TIME(pLocal->GetTickBase()));
+						// const int UptimeMinutes = UptimeSeconds / 60;
+						// const int UptimeHours = UptimeMinutes / 60;
 
 						// tick base
 						int nBTickBase = 0;
@@ -504,21 +507,21 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 						if (G::ShiftedTicks == 0)
 						{
-							const int nBTickBase = TickBase;
-							const int nBTickCount = TickCount;
+							int nBTickBase = TickBase;
+							int nBTickCount = TickCount;
 						}
 
 						if (G::Recharging)
 						{
-							const int nNewTickBase = TickBase;
-							const int nNewTickCount = TickCount;
+							int nNewTickBase = TickBase;
+							int nNewTickCount = TickCount;
 						}
 
-						if (G::ShiftedTicks > 0)
-						{
-							int accurateTicks = (nBTickBase - nNewTickBase);
-							int accurateCount = (nNewTickCount - nBTickCount);
-						}
+						//if (G::ShiftedTicks > 0)
+						//{
+						int accurateTicks = (nBTickBase - nNewTickBase);
+						int accurateCount = (nNewTickCount - nBTickCount);
+						//}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
