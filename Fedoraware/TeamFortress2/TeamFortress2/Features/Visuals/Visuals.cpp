@@ -517,11 +517,11 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							int nNewTickCount = TickCount;
 						}
 
-						//if (G::ShiftedTicks > 0)
-						//{
-						int accurateTicks = (nBTickBase - nNewTickBase);
-						int accurateCount = (nNewTickCount - nBTickCount);
-						//}
+						if (G::ShiftedTicks > 0)
+						{
+							int accurateTicks = (nBTickBase - nNewTickBase);
+							int accurateCount = (nNewTickCount - nBTickCount);
+						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
