@@ -92,12 +92,26 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 	if (Vars::Aimbot::Global::AimPlayers.Value)
 	{
 		int nHitbox = GetHitbox(pLocal, pWeapon);
+		
 		const bool bIsMedigun = pWeapon->GetWeaponID() == TF_WEAPON_MEDIGUN;
 		const bool hasPissRifle = G::CurItemDefIndex == Sniper_m_TheSydneySleeper;
 		const auto groupType = GetGroupType(pWeapon);
 
 		for (const auto& pTarget : g_EntityCache.GetGroup(groupType))
 		{
+			int nIndex = pTarget->GetIndex();
+			bool isFakeLagging = false;
+			int chokeCount = G::ChokeMap[nIndex];
+			if (chokeCount >= 14)
+			{
+				isFakeLagging = true;
+			}
+			// Is the target fake lagging?
+			if (!isFakeLagging)
+			{
+				continue;
+			}
+
 			// Is the target valid and alive?
 			if (!pTarget->IsAlive() || pTarget->IsAGhost() || pTarget == pLocal)
 			{
@@ -423,8 +437,9 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 	{
 	case ETargetType::PLAYER:
 		{
+			a
 			Vec3 hitboxpos;
-			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value)
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value && !isFakeLagging)
 			{
 				if (const auto& pLastTick = F::Backtrack.GetRecord(target.m_pEntity->GetIndex(), BacktrackMode::Last))
 				{

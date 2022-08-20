@@ -490,7 +490,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
-						const int TickCount = I::GlobalVars->tickcount;
+						//const int TickCount = I::GlobalVars->tickcount;
 						// const int UptimeSeconds = (TICKS_TO_TIME(pLocal->GetTickBase()));
 						// const int UptimeMinutes = UptimeSeconds / 60;
 						// const int UptimeHours = UptimeMinutes / 60;
@@ -500,27 +500,27 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nNewTickBase = 0;
 						int accurateTicks = 0;
 
-						// tick count
-						int nBTickCount = 0;
-						int nNewTickCount = 0;
-						int accurateCount = 0;
+						//// tick count
+						//int nBTickCount = 0;
+						//int nNewTickCount = 0;
+						//int accurateCount = 0;
 
 						if (G::ShiftedTicks == 0)
 						{
 							int nBTickBase = TickBase;
-							int nBTickCount = TickCount;
+							//int nBTickCount = TickCount;
 						}
 
 						if (G::Recharging)
 						{
 							int nNewTickBase = TickBase;
-							int nNewTickCount = TickCount;
+							//int nNewTickCount = TickCount;
 						}
 
 						if (G::ShiftedTicks > 0)
 						{
 							int accurateTicks = (nBTickBase - nNewTickBase);
-							int accurateCount = (nNewTickCount - nBTickCount);
+							//int accurateCount = (nNewTickCount - nBTickCount);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
@@ -529,11 +529,11 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate count %i out of %i", accurateCount, Vars::Misc::CL_Move::DTTicks.Value);
-						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+						//g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate count %i out of %i", accurateCount, Vars::Misc::CL_Move::DTTicks.Value);
+						//nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Count: %i", TickCount);
-						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+						//g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Count: %i", TickCount);
+						//nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Base: %i", TickBase);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
