@@ -99,9 +99,9 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 
 		for (const auto& pTarget : g_EntityCache.GetGroup(groupType))
 		{
-			int nIndex = pTarget->GetIndex();
-			int chokeCount = G::ChokeMap[nIndex];
-			int fakelagValue = Vars::Aimbot::Hitscan::UnlagTicks.Value;
+			// int nIndex = pTarget->GetIndex();
+			// int chokeCount = G::ChokeMap[nIndex];
+			// int fakelagValue = Vars::Aimbot::Hitscan::UnlagTicks.Value;
 
 			// Is the target valid and alive?
 			if (!pTarget->IsAlive() || pTarget->IsAGhost() || pTarget == pLocal)
@@ -109,13 +109,13 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 				continue;
 			}
 
-			// Don't shoot if the target is fake lagging more than 14 ticks
-			// doesn't shoot
-			// note to self: try removing the var and chokecount only keep chokeCount <= fakelagvalue
-			if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || chokeCount <= 3)
-			{
-				continue;
-			}
+			// // Don't shoot if the target is fake lagging more than 14 ticks
+			// // doesn't shoot
+			// // note to self: try removing the var and chokecount only keep chokeCount <= fakelagvalue
+			// if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || chokeCount <= 3)
+			// {
+			// 	continue;
+			// }
 
 			// Can we extinguish a teammate using the piss rifle?
 			if (hasPissRifle && (pTarget->GetTeamNum() == pLocal->GetTeamNum()))
