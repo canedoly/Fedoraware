@@ -123,7 +123,7 @@ namespace Vars
 			inline CVar<bool> WaitForCharge{ false };
 			inline CVar<bool> SpectatedSmooth{ false };
 			inline CVar<bool> ScopedOnly{ false };
-			inline CVar<bool> AimAtLag{ false };
+			inline CVar<bool> FakelagCorrection{ false };
 			inline CVar<int> UnlagTicks{ 0 };
 			inline CVar<bool> AutoScope{ false };
 			inline CVar<bool> AutoRev{ false };
