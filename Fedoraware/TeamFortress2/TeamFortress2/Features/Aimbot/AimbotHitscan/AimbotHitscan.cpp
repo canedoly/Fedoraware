@@ -103,7 +103,8 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 			int chokeCount = G::ChokeMap[nIndex];
 
 			// Don't shoot if the target is fake lagging more than 14 ticks
-			if (!Vars::Aimbot::Hitscan::AimAtLag.Value && chokeCount <= 14)
+			// strzela tylko wtedy kiedy gracz fake laguje i jest wylaczone
+			if (!Vars::Aimbot::Hitscan::AimAtLag.Value && chokeCount <= 8)
 			{
 				continue;
 			}
@@ -433,15 +434,15 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 	{
 	case ETargetType::PLAYER:
 		{
-			int nIndex = target.m_pEntity->GetIndex();
-			bool isFakeLagging = false;
-			int chokeCount = G::ChokeMap[nIndex];
-			if (Vars::Backtrack::AimAtLag.Value && chokeCount >= 14)
-			{
-				isFakeLagging = true;
-			}
+			// int nIndex = target.m_pEntity->GetIndex();
+			// bool isFakeLagging = false;
+			// int chokeCount = G::ChokeMap[nIndex];
+			// if (Vars::Backtrack::AimAtLag.Value && chokeCount >= 14)
+			// {
+			// 	isFakeLagging = true;
+			// }
 			Vec3 hitboxpos;
-			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value && !isFakeLagging)
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Valueg)
 			{
 				if (const auto& pLastTick = F::Backtrack.GetRecord(target.m_pEntity->GetIndex(), BacktrackMode::Last))
 				{
