@@ -437,7 +437,7 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 	{
 	case ETargetType::PLAYER:
 		{
-			int nIndex = Player->GetIndex();
+			int nIndex = target.m_pEntity->GetIndex();
 			bool isFakeLagging = false;
 			int chokeCount = G::ChokeMap[nIndex];
 			if (Vars::Backtrack::AimAtLag.Value && chokeCount >= 14)
