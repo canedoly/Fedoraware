@@ -437,7 +437,13 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 	{
 	case ETargetType::PLAYER:
 		{
-			a
+			int nIndex = Player->GetIndex();
+			bool isFakeLagging = false;
+			int chokeCount = G::ChokeMap[nIndex];
+			if (chokeCount >= 14)
+			{
+				isFakeLagging = true;
+			}
 			Vec3 hitboxpos;
 			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value && !isFakeLagging)
 			{
