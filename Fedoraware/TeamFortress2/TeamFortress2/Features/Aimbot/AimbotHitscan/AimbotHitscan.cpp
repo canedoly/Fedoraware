@@ -442,7 +442,7 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 			// 	isFakeLagging = true;
 			// }
 			Vec3 hitboxpos;
-			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Valueg)
+			if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::LastTick.Value)
 			{
 				if (const auto& pLastTick = F::Backtrack.GetRecord(target.m_pEntity->GetIndex(), BacktrackMode::Last))
 				{
