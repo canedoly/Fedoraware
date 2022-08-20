@@ -104,8 +104,9 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 			int fakelagValue = Vars::Aimbot::Hitscan::UnlagTicks.Value;
 
 			// Don't shoot if the target is fake lagging more than 14 ticks
-			// strzela tylko wtedy kiedy gracz fake laguje i jest wylaczone
-			if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || !chokeCount)
+			// doesn't shoot
+			// note to self: try removing the var and chokecount only keep chokeCount <= fakelagvalue
+			if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || chokeCount <= 3)
 			{
 				continue;
 			}
