@@ -103,16 +103,16 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 			int chokeCount = G::ChokeMap[nIndex];
 			int fakelagValue = Vars::Aimbot::Hitscan::UnlagTicks.Value;
 
-			// Don't shoot if the target is fake lagging more than 14 ticks
-			// doesn't shoot
-			// note to self: try removing the var and chokecount only keep chokeCount <= fakelagvalue
-			if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || chokeCount <= 3)
+			// Is the target valid and alive?
+			if (!pTarget->IsAlive() || pTarget->IsAGhost() || pTarget == pLocal)
 			{
 				continue;
 			}
 
-			// Is the target valid and alive?
-			if (!pTarget->IsAlive() || pTarget->IsAGhost() || pTarget == pLocal)
+			// Don't shoot if the target is fake lagging more than 14 ticks
+			// doesn't shoot
+			// note to self: try removing the var and chokecount only keep chokeCount <= fakelagvalue
+			if ((Vars::Aimbot::Hitscan::FakelagCorrection.Value && chokeCount <= fakelagValue) || chokeCount <= 3)
 			{
 				continue;
 			}
