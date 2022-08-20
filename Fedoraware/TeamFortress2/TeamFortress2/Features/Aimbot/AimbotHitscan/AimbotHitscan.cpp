@@ -100,14 +100,10 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 		for (const auto& pTarget : g_EntityCache.GetGroup(groupType))
 		{
 			int nIndex = pTarget->GetIndex();
-			bool isFakeLagging = false;
 			int chokeCount = G::ChokeMap[nIndex];
-			if (Vars::Aimbot::Hitscan::AimAtLag.Value && chokeCount >= 14)
-			{
-				isFakeLagging = true;
-			}
-			// Is the target fake lagging?
-			if (!isFakeLagging)
+
+			// Don't shoot if the target is fake lagging more than 14 ticks
+			if (!Vars::Aimbot::Hitscan::AimAtLag.Value && chokeCount <= 14)
 			{
 				continue;
 			}
