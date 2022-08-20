@@ -124,6 +124,7 @@ namespace Vars
 			inline CVar<bool> SpectatedSmooth{ false };
 			inline CVar<bool> ScopedOnly{ false };
 			inline CVar<bool> AimAtLag{ false };
+			inline CVar<int> UnlagTicks{ 0 };
 			inline CVar<bool> AutoScope{ false };
 			inline CVar<bool> AutoRev{ false };
 			inline CVar<bool>ExtinguishTeam{ false };
