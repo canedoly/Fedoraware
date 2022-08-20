@@ -284,6 +284,7 @@ void CMenu::MenuAimbot()
 
 			WToggle("Dont wait for shot###AimbotWaitForValidShot", &Vars::Aimbot::Global::DontWaitForShot.Value); HelpMarker("Prevents fps drops by only running aimbot while we are able to shoot");
 			WToggle("Flick at Enemies", &Vars::Aimbot::Global::FlickatEnemies.Value); HelpMarker("Keep this disabled if you have low fps");
+			WToggle("Aim at Lag", &Vars::Aimbot::Hitscan::AimAtLag.Value); HelpMarker("P100 fakelag fix, If enabled will shoot at lagging enemies");
 
 
 			SectionTitle("Crits");
@@ -295,6 +296,7 @@ void CMenu::MenuAimbot()
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.Value); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");
 			WToggle("Aimbot aims last tick", &Vars::Backtrack::LastTick.Value); HelpMarker("Aimbot aims at the last tick if visible");
+			WToggle("Aim at Lag", &Vars::Backtrack::AimAtLag.Value); HelpMarker("If enabled will shoot at the backtrack of lagging enemies");
 			WToggle("Fake latency", &Vars::Backtrack::FakeLatency.Value); HelpMarker("Fakes your latency to hit records further in the past");
 			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 200.f, 1000.f, "%.fms", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
 		} EndChild();

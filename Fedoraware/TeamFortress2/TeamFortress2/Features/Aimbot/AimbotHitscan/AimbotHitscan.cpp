@@ -102,7 +102,7 @@ std::vector<Target_t> CAimbotHitscan::GetTargets(CBaseEntity* pLocal, CBaseComba
 			int nIndex = pTarget->GetIndex();
 			bool isFakeLagging = false;
 			int chokeCount = G::ChokeMap[nIndex];
-			if (chokeCount >= 14)
+			if (Vars::Aimbot::Hitscan::AimAtLag.Value && chokeCount >= 14)
 			{
 				isFakeLagging = true;
 			}
@@ -440,7 +440,7 @@ bool CAimbotHitscan::VerifyTarget(CBaseEntity* pLocal, Target_t& target)
 			int nIndex = Player->GetIndex();
 			bool isFakeLagging = false;
 			int chokeCount = G::ChokeMap[nIndex];
-			if (chokeCount >= 14)
+			if (Vars::Backtrack::AimAtLag.Value && chokeCount >= 14)
 			{
 				isFakeLagging = true;
 			}
