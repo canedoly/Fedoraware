@@ -415,8 +415,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				// experimental feature
 				if (Vars::Misc::CL_Move::FakelagMode.Value == 4)
 				{
-					LagCompTicks = Math::Clamp(static_cast<int>(ceil(64.f / pLocal->GetVecVelocity().Length2D())), 1, 22;
-					g_Draw.String(FONT_INDICATORS, 10, 160, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fakelag ticks: %d", LagCompTicks)
+					int LagCompTicks = std::clamp(static_cast<int>(ceil(64.f / pLocal->GetVecVelocity().Length2D())), 1, 22;
+					g_Draw.String(FONT_INDICATORS, 10, 160, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fakelag ticks: %d", LagCompTicks);
 					// i don't think there's a way of checking how many ticks were choking so no LC indicator from skeet :(
 					//g_Draw.String(FONT_INDICATORS, 10, 175, {255,0,0,255}, ALIGN_CENTERHORIZONTAL, L"LC", LagCompTicks)
 				}

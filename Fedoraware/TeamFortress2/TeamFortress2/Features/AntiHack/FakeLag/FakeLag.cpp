@@ -49,8 +49,9 @@ void CFakeLag::OnTick(CUserCmd* pCmd, bool* pSendPacket) {
 		ChosenAmount = Vars::Misc::CL_Move::FakelagValue.Value;
 	}
 	if (Vars::Misc::CL_Move::FakelagMode.Value == FL_LAGCOMP) {
+		const auto& pLocal = g_EntityCache.GetLocal();
 		int maxLagComp = Vars::Misc::CL_Move::LagCompTicks.Value;
-		ChosenAmount = Math::Clamp(static_cast<int>(ceil(64.f / pLocal->GetVecVelocity().Length2D())), 1, maxLagComp);
+		ChosenAmount = std::clamp(static_cast<int>(ceil(64.f / pLocal->GetVecVelocity().Length2D())), 1, maxLagComp);
 	}
 
 	const auto& pLocal = g_EntityCache.GetLocal();
