@@ -1460,9 +1460,9 @@ void CMenu::MenuHvH()
 			/* Section: Fakelag */
 			SectionTitle("Fakelag");
 			WToggle("Enable Fakelag", &Vars::Misc::CL_Move::Fakelag.Value);
-			WCombo("Fakelag Mode###FLmode", &Vars::Misc::CL_Move::FakelagMode.Value, { "Plain", "Random", "Velocity Based" }); HelpMarker("Controls how fakelag will be controlled.");
+			WCombo("Fakelag Mode###FLmode", &Vars::Misc::CL_Move::FakelagMode.Value, { "Plain", "Random", "Velocity Based", "Break LC" }); HelpMarker("Controls how fakelag will be controlled.");
 
-			if (Vars::Misc::CL_Move::FakelagMode.Value == 0 || Vars::Misc::CL_Move::FakelagMode.Value == 2)
+			if (Vars::Misc::CL_Move::FakelagMode.Value == 0 || Vars::Misc::CL_Move::FakelagMode.Value == 2 || !Vars::Misc::CL_Move::FakelagMode.Value == 4)
 			{
 				WSlider("Fakelag value", &Vars::Misc::CL_Move::FakelagValue.Value, 1, 22, "%d"); HelpMarker("How much lag you should fake(?)");
 				if (Vars::Misc::CL_Move::FakelagMode.Value == 0)
@@ -1474,6 +1474,8 @@ void CMenu::MenuHvH()
 					}
 				}
 			}
+			if (Vars::Misc::CL_Move::FakelagMode.Value == 4)
+			WSlider("Max Fakelag Ticks", &Vars::Misc::CL_Move::LagCompTicks.Value, 1, 22, "%d"); HelpMarker("Max fakelag ticks for breaking lag comp, the lower the worse (works only for enemies that use melee)");
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 1)
 			{
 				WSlider("Random max###flRandMax", &Vars::Misc::CL_Move::FakelagMax.Value, Vars::Misc::CL_Move::FakelagMin.Value + 1, 22, "%d"); HelpMarker("Maximum random fakelag value");
