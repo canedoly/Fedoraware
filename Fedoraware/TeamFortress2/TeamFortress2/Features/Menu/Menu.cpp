@@ -1455,7 +1455,7 @@ void CMenu::MenuHvH()
 			{
 				WSlider("SpeedHack Factor", &Vars::Misc::CL_Move::SFactor.Value, 1, 66, "%d"); HelpMarker("High values are not recommended");
 			}
-			InputKEybind("Funny exploit", Vars::Misc::CL_Move::ExploitKey);
+			InputKeybind("Funny exploit", Vars::Misc::CL_Move::ExploitKey);
 
 			/* Section: Fakelag */
 			SectionTitle("Fakelag");
