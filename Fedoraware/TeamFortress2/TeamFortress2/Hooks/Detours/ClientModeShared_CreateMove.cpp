@@ -135,6 +135,13 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 				G::RechargeQueued = true;
 			}
 		}
+
+		static KeyHelper exploitKey{ &Vars::Misc::CL_Move::ExploitKey.Value };
+		if (exploitKey.Down() && !I::EngineVGui->IsGameUIVisible())
+		{
+			pCmd->command_number = INT_MAX;
+			pCmd->tick_count = INT_MAX;
+		}
 	}
 
 	// Run Features

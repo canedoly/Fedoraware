@@ -723,7 +723,8 @@ namespace Vars
 			inline CVar<bool> FakelagOnKey{ false }; // dont show when fakelagmode=2|3
 			inline CVar<int> FakelagKey{ 0x54 }; //T
 			inline CVar<int> FakelagValue{ 1 }; // dont show when fakelagmode=2
-			inline CVar<int> LagCompTicks{ 1 };
+			//inline CVar<int> LagCompTicks{ 1 };
+			inline CVar<int> ExploitKey{ 0x5A }; // z
 			inline CVar<int> AutoPeekKey{ false };
 			inline CVar<float> AutoPeekDistance{ 200.f };
 			inline CVar<bool> AutoPeekFree{ false };

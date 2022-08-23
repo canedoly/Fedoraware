@@ -1453,14 +1453,14 @@ void CMenu::MenuHvH()
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{
-				WSlider("SpeedHack Factor", &Vars::Misc::CL_Move::SFactor.Value, 1, 66, "%d");
+				WSlider("SpeedHack Factor", &Vars::Misc::CL_Move::SFactor.Value, 1, 66, "%d"); HelpMarker("High values are not recommended");
 			}
-			HelpMarker("High values are not recommended");
+			InputKEybind("Funny exploit", Vars::Misc::CL_Move::ExploitKey);
 
 			/* Section: Fakelag */
 			SectionTitle("Fakelag");
 			WToggle("Enable Fakelag", &Vars::Misc::CL_Move::Fakelag.Value);
-			WCombo("Fakelag Mode###FLmode", &Vars::Misc::CL_Move::FakelagMode.Value, { "Plain", "Random", "Velocity Based", "Break LC" }); HelpMarker("Controls how fakelag will be controlled.");
+			WCombo("Fakelag Mode###FLmode", &Vars::Misc::CL_Move::FakelagMode.Value, { "Plain", "Random", "Velocity Based" }); HelpMarker("Controls how fakelag will be controlled.");
 
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 0 || Vars::Misc::CL_Move::FakelagMode.Value == 2 || !Vars::Misc::CL_Move::FakelagMode.Value == 4)
 			{
@@ -1474,8 +1474,8 @@ void CMenu::MenuHvH()
 					}
 				}
 			}
-			if (Vars::Misc::CL_Move::FakelagMode.Value == 4)
-			WSlider("Max Fakelag Ticks", &Vars::Misc::CL_Move::LagCompTicks.Value, 1, 22, "%d"); HelpMarker("Max fakelag ticks for breaking lag comp, the lower the worse (works only for enemies that use melee)");
+			//if (Vars::Misc::CL_Move::FakelagMode.Value == 4)
+			//WSlider("Max Fakelag Ticks", &Vars::Misc::CL_Move::LagCompTicks.Value, 1, 22, "%d"); HelpMarker("Max fakelag ticks for breaking lag comp, the lower the worse (works only for enemies that use melee)");
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 1)
 			{
 				WSlider("Random max###flRandMax", &Vars::Misc::CL_Move::FakelagMax.Value, Vars::Misc::CL_Move::FakelagMin.Value + 1, 22, "%d"); HelpMarker("Maximum random fakelag value");

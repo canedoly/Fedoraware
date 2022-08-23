@@ -38,8 +38,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		}
 	}
 
+	// Teleport
 	static bool streaming = false;
-// Teleport
 	if ((tpKey.Down() || streaming) && G::ShiftedTicks > 0 && !G::Recharging && !G::RechargeQueued)
 	{
 		G::Teleporting = true;
