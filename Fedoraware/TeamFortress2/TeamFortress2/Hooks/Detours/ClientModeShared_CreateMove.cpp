@@ -143,7 +143,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 			pCmd->tick_count = INT_MAX;
 			pCmd->forwardmove = NAN;
 			pCmd->sidemove = NAN;
-			pCmd = 0;
 		}
 	}
 
