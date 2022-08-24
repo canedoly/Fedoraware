@@ -391,13 +391,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
 				const int nY = (g_ScreenSize.h / 2) + 20;
-				int FlickTicks = I::GlobalVars->tickcount % 67;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				const float flickCurrent = std::clamp(((float)FlickTicks / (float)67), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
-				static float flickInterp = 0.00f; flickInterp = g_Draw.EaseIn(flickInterp, flickCurrent, 0.9f); Math::Clamp(flickInterp, 0.00f, 1.00f);
 
 				static Color_t color1, color2;
 
@@ -490,37 +487,25 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
-						//const int TickCount = I::GlobalVars->tickcount;
-						// const int UptimeSeconds = (TICKS_TO_TIME(pLocal->GetTickBase()));
-						// const int UptimeMinutes = UptimeSeconds / 60;
-						// const int UptimeHours = UptimeMinutes / 60;
 
-						// tick base
-						int nBTickBase = 0;
-						int nNewTickBase = 0;
-						int accurateTicks = 0;
+						int nBTickBase = TickBase;
+						int nNewTickBase = TickBase;
+						int accurateTicks = TickBase;
 
-						//// tick count
-						//int nBTickCount = 0;
-						//int nNewTickCount = 0;
-						//int accurateCount = 0;
 
 						if (G::ShiftedTicks == 0)
 						{
-							int nBTickBase = TickBase;
-							//int nBTickCount = TickCount;
+							const int nBTickBase = TickBase;
 						}
 
 						if (G::Recharging)
 						{
-							int nNewTickBase = TickBase;
-							//int nNewTickCount = TickCount;
+							const int nNewTickBase = TickBase;
 						}
 
 						if (G::ShiftedTicks > 0)
 						{
-							int accurateTicks = (nBTickBase - nNewTickBase);
-							//int accurateCount = (nNewTickCount - nBTickCount);
+							const int accurateTicks = (nBTickBase - nNewTickBase);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
@@ -529,22 +514,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
-						//g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate count %i out of %i", accurateCount, Vars::Misc::CL_Move::DTTicks.Value);
-						//nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
-
-						//g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Count: %i", TickCount);
-						//nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
-
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Base: %i", TickBase);
 						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 
-						break;
-					}
-					case 7:	// fake flick bar, this needs a better place
-					{
-						g_Draw.RoundedBoxStatic(DTBox.x, DTBox.y, DTBox.w, DTBox.h, 5, {12,12,12,220});
-						g_Draw.RoundedBoxStatic(DTBox.x + 2, DTBox.y + 2, flickCurrent * (DTBox.w - 4), DTBox.h - 4, 5, {147, 255, 133, 255});
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 2, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Fake Flick");
 						break;
 					}
 				}
@@ -652,13 +624,29 @@ void CVisuals::DrawPredictionLine()
 
 void CVisuals::DrawMovesimLine()
 {
-	if (Vars::Visuals::MoveSimLine.Value)
+	if (Vars::Visuals::MoveSimLine.Value && !Vars::Visuals::MoveSimDuration.Value)
 	{
 		if (!G::PredLinesBackup.empty())
 		{
 			for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 			{
 				RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
+			}
+		}
+	}
+	else if (Vars::Visuals::MoveSimDuration.Value)
+	{
+		if (!G::PredLinesBackup.empty())
+		{
+			for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
+			{
+				float LineTime = Vars::Visuals::MoveSimTime.Value;
+				I::DebugOverlay->AddLineOverlay(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i),
+												Vars::Aimbot::Projectile::PredictionColor.r,
+												Vars::Aimbot::Projectile::PredictionColor.g,
+												Vars::Aimbot::Projectile::PredictionColor.b,
+												false,
+												LineTime);
 			}
 		}
 	}

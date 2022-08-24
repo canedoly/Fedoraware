@@ -547,6 +547,8 @@ namespace Vars
 		inline CVar<bool> AimbotViewmodel{ false };
 		inline CVar<bool> ViewmodelSway{ false };
 		inline CVar<bool> MoveSimLine{ false };
+		inline CVar<bool> MoveSimDuration{ false };
+		inline CVar<float> MoveSimTime{ 5.f };
 		inline CVar<bool> MoveSimDebug{ false };
 		inline CVar<int> ParticleTracer{ 2 };
 		inline std::string ParticleName = "merasmus_zap_beam01";

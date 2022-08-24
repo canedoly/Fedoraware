@@ -1095,8 +1095,17 @@ void CMenu::MenuVisuals()
 				WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 				WToggle("Movement simulation lines", &Vars::Visuals::MoveSimLine.Value);
-				WToggle("Movement simulation debug", &Vars::Visuals::MoveSimDebug.Value);
 				ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
+				if (Vars::Visuals::MoveSimLine.Value)
+				{
+					WToggle("Movement simulation debug", &Vars::Visuals::MoveSimDebug.Value);
+					WToggle("Custom Duration", &Vars::Visuals::MoveSimDuration.Value);
+					if (Vars::Visuals::MoveSimDuration.Value)
+					{
+						WSlider("Duration", &Vars::Visuals::MoveSimTime.Value, 1.f, 10.f, "%.1f");
+					}
+				}
+
 				{
 					static std::vector flagNames{ "Text", "Console", "Chat", "Party", "Verbose"};
 					static std::vector flagValues{ 1, 2, 4, 8, 32 };
@@ -1455,7 +1464,7 @@ void CMenu::MenuHvH()
 			{
 				WSlider("SpeedHack Factor", &Vars::Misc::CL_Move::SFactor.Value, 1, 66, "%d"); HelpMarker("High values are not recommended");
 			}
-			InputKeybind("Funny exploit", Vars::Misc::CL_Move::ExploitKey);
+			InputKeybind("Funny exploit", Vars::Misc::CL_Move::ExploitKey); HelpMarker("This probably breaks chams, alternative way of doing this, set an ungodly amount of dt ticks or 66");
 
 			/* Section: Fakelag */
 			SectionTitle("Fakelag");

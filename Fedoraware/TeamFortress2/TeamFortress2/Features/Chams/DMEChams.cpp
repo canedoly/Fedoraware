@@ -368,6 +368,7 @@ Chams_t GetPlayerChams(CBaseEntity* pEntity) {
 		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Players::Friend.chamsActive) {
 			return Vars::Chams::Players::Friend;
 		}
+		// todo - turns this stuff into a var l0l
 		//if (pEntity->GetTeamNum() != pLocal->GetTeamNum()) {
 		if (pEntity->GetTeamNum() == 2) {
 			return Vars::Chams::Players::Enemy;
