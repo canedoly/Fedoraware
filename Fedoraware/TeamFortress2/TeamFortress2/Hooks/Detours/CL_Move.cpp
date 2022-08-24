@@ -11,7 +11,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
-	static KeyHelper exploitKey{ &Vars::Misc::CL_Move::exploitKey.Value };
+	static KeyHelper exploitKey{ &Vars::Misc::CL_Move::ExploitKey.Value };
 
 	if (!Vars::Misc::CL_Move::Enabled.Value)	// return the normal CL_Move if we don't want to manipulate it.
 	{
@@ -84,13 +84,6 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return;
 	}
 
-
-	if (exploitKey.Down())
-	{
-		// this airstucks (i think)
-		return;
-	}
-
 	// Prepare for a recharge (Is a recharge queued?)
 	if (G::RechargeQueued && !G::IsChoking)
 	{
@@ -103,7 +96,10 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	else if (G::Recharging && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
-		G::ShiftedTicks++; // add ticks to tick counter
+		if (!exploitKey.Down())
+		{
+			G::ShiftedTicks++; // add ticks to tick counter
+		}
 		G::WaitForShift = round(1.f / I::GlobalVars->interval_per_tick) - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
 		return; // this recharges
 	}
