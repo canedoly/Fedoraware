@@ -136,14 +136,14 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 			}
 		}
 
-		static KeyHelper exploitKey{ &Vars::Misc::CL_Move::ExploitKey.Value };
-		if (exploitKey.Down() && !I::EngineVGui->IsGameUIVisible())
-		{
-			pCmd->command_number = 0;
-			pCmd->tick_count = INT_MAX;
-			pCmd->forwardmove = NAN;
-			pCmd->sidemove = NAN;
-		}
+		//static KeyHelper exploitKey{ &Vars::Misc::CL_Move::ExploitKey.Value };
+		//if (exploitKey.Down() && !I::EngineVGui->IsGameUIVisible())
+		//{
+		//	pCmd->command_number = INT_MAX;
+		//	pCmd->tick_count = INT_MAX;
+		//	pCmd->forwardmove = NAN;
+		//	pCmd->sidemove = NAN;
+		//}
 	}
 
 	// Run Features
