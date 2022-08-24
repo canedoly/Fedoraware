@@ -7,9 +7,6 @@
 
 #define DEVELOPER_BUILD
 
-const auto& Player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL)
-Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
-
 using byte = unsigned char;
 
 struct Color_t { 
@@ -40,7 +37,7 @@ struct Gradient_t {
 // TODO: Move this shit to a file that isn't this
 struct Chams_t {
 
-	bool	customColour = false;
+	//bool	customColour = false;
 	bool	showObstructed = false;
 	int		drawMaterial = 0;	// 1/shaded, 2/shiny, 3/flat, 4/wfshaded, 5/wfshiny, 6/wfflat, 7/fresnel, 8/brick
 	int		overlayType = 0;
@@ -50,14 +47,14 @@ struct Chams_t {
 	bool	overlayRainbow = false;
 	float	overlayIntensity = 1;
 	Color_t fresnelBase = { 0,0,0,255 };
-	if (!customColour)
-	{
-		Color_t colour = drawColor;
-	}
-	else
-	{
-		Color_t colour = { 255, 255, 255, 255 };
-	}
+	//if (!customColour)
+	//{
+	//	Color_t colour = drawColor;
+	//}
+	//else
+	//{
+	Color_t colour = { 255, 255, 255, 255 };
+	//}
 	Color_t overlayColour = { 255, 255, 255, 255 };
 	std::string customMaterial = "None";
 };

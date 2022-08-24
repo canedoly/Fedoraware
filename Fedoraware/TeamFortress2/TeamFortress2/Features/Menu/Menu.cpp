@@ -637,11 +637,7 @@ void CMenu::MenuVisuals()
 				HelpMarker("Customize Chams");
 				WCombo("Config", &currentSelected, chamOptions);
 				{
-					WToggle("Custom Colour", &currentStruct.customColour);
-					if (currentStruct.customColour)
-					{
-						ColorPickerL("Colour", currentStruct.colour, 1);
-					}
+					ColorPickerL("Colour", currentStruct.colour, 1);
 					MultiCombo({ "Active", "Obstructed" }, { &currentStruct.chamsActive, &currentStruct.showObstructed }, "Options");
 
 					WCombo("Material", &currentStruct.drawMaterial, DMEChamMaterials); HelpMarker("Which material the chams will apply to the player");
