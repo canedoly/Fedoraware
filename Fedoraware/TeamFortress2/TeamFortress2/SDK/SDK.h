@@ -344,7 +344,7 @@ namespace Utils
 			}
 		}
 
-		if (pEntity->GetIndex() == G::CurrentTargetIdx)
+		if (Vars::Aimbot::Global::HighlightTarget.Value && pEntity->GetIndex() == G::CurrentTargetIdx)
 		{
 			out = Colors::Target;
 		}

@@ -89,6 +89,7 @@ namespace Vars
 			inline CVar<bool> Active{ false };
 			inline CVar<int> AimKey{ VK_XBUTTON1 };
 			inline CVar<float> AimFOV{ 15.0f };
+			inline CVar<bool> HighlightTarget{ false };
 			inline CVar<bool> AutoShoot{ false };
 			inline CVar<bool> DontWaitForShot{ false };
 			inline CVar<bool> FlickatEnemies{ false };
