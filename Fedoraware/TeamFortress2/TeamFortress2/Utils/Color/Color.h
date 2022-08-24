@@ -7,6 +7,9 @@
 
 #define DEVELOPER_BUILD
 
+const auto& Player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL)
+Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
+
 using byte = unsigned char;
 
 struct Color_t { 
@@ -36,8 +39,6 @@ struct Gradient_t {
 
 // TODO: Move this shit to a file that isn't this
 struct Chams_t {
-	const auto& Player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL)
-	Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
 
 	bool	customColour = false;
 	bool	showObstructed = false;
