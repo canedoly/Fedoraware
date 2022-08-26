@@ -368,12 +368,12 @@ Chams_t GetPlayerChams(CBaseEntity* pEntity) {
 		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Players::Friend.chamsActive) {
 			return Vars::Chams::Players::Friend;
 		}
-		if (pEntity->GetTeamNum() != pLocal->GetTeamNum()) {
-		//if (pEntity->GetTeamNum() == 2) {
+		//if (pEntity->GetTeamNum() != pLocal->GetTeamNum()) {
+		if (pEntity->GetTeamNum() == 2) {
 			return Vars::Chams::Players::Enemy;
 		}
-		if (pEntity->GetTeamNum() == pLocal->GetTeamNum()) {
-		//if (pEntity->GetTeamNum() == 3) {
+		//if (pEntity->GetTeamNum() == pLocal->GetTeamNum()) {
+		if (pEntity->GetTeamNum() == 3) {
 			return Vars::Chams::Players::Team;
 		}
 	}
