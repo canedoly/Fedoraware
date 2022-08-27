@@ -522,9 +522,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 7:
 					{
 						// deadflag
-						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255})
-						g_Draw.OutlinedRect(DTBox.x - 1, DTBox.y - 1, DTBox.w - 1, DTBox.h - 1, {40,40,40,255})
-						g_Draw.GradientRect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h, color1, color2, true)
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255});
+						g_Draw.OutlinedRect(DTBox.x - 1, DTBox.y - 1, DTBox.w - 1, DTBox.h - 1, {40,40,40,255});
+						g_Draw.GradientRect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h, color1, color2, true);
 
 						if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
 						{

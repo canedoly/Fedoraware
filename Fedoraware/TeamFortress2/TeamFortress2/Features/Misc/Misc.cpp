@@ -353,7 +353,7 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 			if (isJumping && !pLocal->IsDucking())
 			{
 				shouldDuck = true;
-				if {shouldDuck && needs}
+				if (shouldDuck && needs)
 				{
 					pCmd->buttons |= IN_DUCK;
 					shouldDuck = false;
