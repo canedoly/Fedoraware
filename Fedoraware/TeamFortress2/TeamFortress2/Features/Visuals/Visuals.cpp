@@ -522,40 +522,44 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 7:
 					{
 						// deadflag
+						float TextX = DTBox.w * 0.5;
+						float TextY = DTBox.h * 0.5;
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255});
-						g_Draw.OutlinedRect(DTBox.x - 1, DTBox.y - 1, DTBox.w - 1, DTBox.h - 1, {40,40,40,255});
-						g_Draw.GradientRectWH(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h, color1, color2, true);
+						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {40,40,40,255});
+						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
 
 						if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y + 30, {190,0,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY + 17, {190,0,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						}
 						else if (G::Recharging && (G::ShiftedTicks != Vars::Misc::CL_Move::DTTicks.Value))
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y + 30, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(Recharging) %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY + 17, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(Recharging) %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						}
 						else if (!G::WaitForShift && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y + 30, {15,180,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY + 17, {15,180,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						}
 						else
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y + 30, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) wait %i/%i", G::WaitForShift, DT_WAIT_CALLS);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY + 17, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) wait %i/%i", G::WaitForShift, DT_WAIT_CALLS);
 						}
 						break;
 					}
 					case 8:
 					{
 						// lmaobox
+						float TextX = DTBox.w * 0.5;
+						float TextY = DTBox.h * 0.5;
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {60,60,60,255});
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Vars::Menu::Colors::MenuAccent);
 						if (Vars::Misc::CL_Move::AntiWarp.Value)
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dt (%i)", G::ShiftedTicks);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dt (%i)", G::ShiftedTicks);
 						}
 						else
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dash+dt (%i)", G::ShiftedTicks);
+							g_Draw.String(FONT_INDICATORS, TextX, TextY, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dash+dt (%i)", G::ShiftedTicks);
 						}
 						break;
 					}

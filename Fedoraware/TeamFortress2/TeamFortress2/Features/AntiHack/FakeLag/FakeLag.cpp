@@ -1,6 +1,21 @@
 #include "FakeLag.h"
 #include "../../Visuals/FakeAngleManager/FakeAng.h"
 
+
+// toggle key for fakelag
+if (Vars::Misc::CL_Move::FakelagKey.Value)
+{
+	if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+	{
+		static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
+		if (fakelagKey.Pressed())
+		{
+			Vars::Misc::CL_Move::Fakelag.Value = !Vars::Misc::CL_Move::Fakelag.Value;
+		}
+	}
+}
+
+
 bool CFakeLag::IsAllowed(CBaseEntity* pLocal) {
 
 	const int doubleTapAllowed = 22 - G::ShiftedTicks;
@@ -17,12 +32,6 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal) {
 
 	// Are we attacking? TODO: Add more logic here
 	if (G::IsAttacking) {
-		return false;
-	}
-
-	// Is a fakelag key set and pressed?
-	static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
-	if (!fakelagKey.Down() && Vars::Misc::CL_Move::FakelagOnKey.Value && Vars::Misc::CL_Move::FakelagMode.Value == 0) {
 		return false;
 	}
 
