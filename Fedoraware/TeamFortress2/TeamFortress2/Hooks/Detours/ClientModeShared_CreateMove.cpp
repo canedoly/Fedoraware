@@ -132,11 +132,11 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 		{
 			if (I::GlobalVars->tickcount % 50)
 			{
-				G::RechargeQueued = true;
+				G::Recharging = true;
 			}
 			else if (G::ShiftedTicks == Vars::Misc::CL_Move::DTTicks.Value || !I::GlobalVars->tickcount % 50)
 			{
-				G::RechargeQueued = false;
+				G::Recharging = false;
 			}
 		}
 
