@@ -1172,7 +1172,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.Value, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Rijin V1", "Nitro old", "Beta", "Fake Flick"}); HelpMarker("What style the bar should draw in.");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Rijin V1", "Nitro old", "Beta", "Fake Flick", "Deadflag", "Lmaobox" }); HelpMarker("What style the bar should draw in.");
 				Text("Charging Gradient");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
