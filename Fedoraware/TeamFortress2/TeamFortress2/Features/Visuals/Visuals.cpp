@@ -553,7 +553,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dt (%i)", G::ShiftedTicks);
 						}
-						if (!Vars::Misc::CL_Move::AntiWarp.Value)
+						else
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dash+dt (%i)", G::ShiftedTicks);
 						}
