@@ -349,7 +349,10 @@ void CVisuals::DrawDebugInfo(CBaseEntity* pLocal)
 		}
 	}
 }
-
+void CVisuals::DrawInformation(CBaseEntity* pLocal)
+{
+	// do the tab here
+}
 void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 {
 	if (!pLocal->IsAlive() || !I::Input->CAM_IsThirdPerson()) {

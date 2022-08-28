@@ -64,6 +64,8 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 				}
 			}
 		}
+		// toggle key for fakelatency
+		// i plan to pull request it probably
 
 		nOldFlags = pLocal->GetFlags();
 		nOldGroundEnt = pLocal->m_hGroundEntity();
