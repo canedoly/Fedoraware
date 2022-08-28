@@ -7,19 +7,6 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal) {
 	const int doubleTapAllowed = 22 - G::ShiftedTicks;
 	const bool retainFakelagTest = Vars::Misc::CL_Move::RetainFakelag.Value ? G::ShiftedTicks != 1 : !G::ShiftedTicks;
 
-	// toggle key for fakelag
-	if (Vars::Misc::CL_Move::FakelagKey.Value)
-	{
-		if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
-		{
-			static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
-			if (fakelagKey.Pressed())
-			{
-				Vars::Misc::CL_Move::Fakelag.Value = !Vars::Misc::CL_Move::Fakelag.Value;
-			}
-		}
-	}
-
 	// Failsafe, in case we're trying to choke too many ticks
 	if (ChokeCounter > 22) {
 		return false;
