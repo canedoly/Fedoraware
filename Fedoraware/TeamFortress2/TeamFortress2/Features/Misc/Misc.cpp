@@ -340,6 +340,7 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 			const bool needs = (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned());
 			const bool isJumping = pCmd->buttons & IN_JUMP;
 			static bool shouldDuck = false;
+			//static bool alreadyDuck = false;
 
 			// if (needs && !pLocal->IsDucking())
 			// {
@@ -357,8 +358,13 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 				{
 					pCmd->buttons |= IN_DUCK;
 					shouldDuck = false;
+					alreadyDuck = true;
 				}
 			}
+			//if (pLocal->OnSolid())
+			//{
+			//	alreadyDuck = false;
+			//}
 		}
 	}
 }
@@ -494,6 +500,7 @@ void CMisc::AccurateMovement(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 void CMisc::AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
+	// why not use hGroundEntity???
 	if (!Vars::Misc::AutoJump.Value
 		|| !pLocal->IsAlive()
 		|| pLocal->IsSwimming()
@@ -510,23 +517,36 @@ void CMisc::AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal)
 		return;
 	}
 
-	static bool s_bState = false;
-
+	const int groundEntity = pLocal->m_hGroundEntity();
+	// would using nullptr here help?
 	if (pCmd->buttons & IN_JUMP)
 	{
-		if (!s_bState && !pLocal->OnSolid())
+		if (groundEntity >= 0)
 		{
 			pCmd->buttons &= ~IN_JUMP;
 		}
-		else if (s_bState)
-		{
-			s_bState = false;
-		}
+		
 	}
-	else if (!s_bState)
-	{
-		s_bState = true;
-	}
+
+	// old codenz below
+
+	// static bool s_bState = false;
+
+	// if (pCmd->buttons & IN_JUMP)
+	// {
+	// 	if (!s_bState && !pLocal->OnSolid())
+	// 	{
+	// 		pCmd->buttons &= ~IN_JUMP;
+	// 	}
+	// 	else if (s_bState)
+	// 	{
+	// 		s_bState = false;
+	// 	}
+	// }
+	// else if (!s_bState)
+	// {
+	// 	s_bState = true;
+	// }
 }
 
 void CMisc::AutoStrafe(CUserCmd* pCmd, CBaseEntity* pLocal)
