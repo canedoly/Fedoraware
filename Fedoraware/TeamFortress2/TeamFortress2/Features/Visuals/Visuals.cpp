@@ -352,6 +352,18 @@ void CVisuals::DrawDebugInfo(CBaseEntity* pLocal)
 void CVisuals::DrawInformation(CBaseEntity* pLocal)
 {
 	// do the tab here
+	// idea on how it will look
+	// information
+	// the gradient menu thingy
+	// its a rect with outline with menu accent
+	// and its a list below the gradient
+	// like fakelag ticks X
+	// fake latency Xms
+	// and other stuff
+	// maybe like ping
+	// dt ticks
+	// and maybe multicombo or whatever it is for options, like only fakelag or something
+
 }
 void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 {
