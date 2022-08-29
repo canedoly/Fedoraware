@@ -376,6 +376,23 @@ void CVisuals::DrawInformation(CBaseEntity* pLocal)
 	// 	g_Draw.String(FONT_INDICATORS, 65, 140, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Information");
 	// }
 
+	int textOffset = 160
+
+	if (Vars::Backtrack::FakeLatency.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, 10, textOffset += 15, {255,255,255,255}, ALIGN_DEFAULT, L"Fake latency Enabled");
+	}
+
+	if (Vars::Misc::CL_Move::Fakelag.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, 10, textOffset += 15, {255,255,255,255}, ALIGN_DEFAULT, L"Fake lag Enabled");
+	}
+	if (Vars::AntiHack::AntiAim::Active.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, 10, textOffset += 15, {255,255,255,255}, ALIGN_DEFAULT, L"Anti aim Enabled");
+	}
+	
+
 }
 void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 {
