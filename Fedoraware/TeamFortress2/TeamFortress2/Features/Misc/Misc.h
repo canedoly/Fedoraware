@@ -3,7 +3,6 @@
 
 class CMisc {
 	void AccurateMovement(CUserCmd* pCmd, CBaseEntity* pLocal);
-	void FastAccel(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoStrafe(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void NoiseMakerSpam(CBaseEntity* pLocal);
@@ -17,7 +16,6 @@ class CMisc {
 
 	void AntiAFK(CUserCmd* pCmd);
 	void ChatSpam();
-	void CheatsBypass();
 	void PingReducer();
 	void ServerHitbox();
 	void WeaponSway();
@@ -27,6 +25,8 @@ class CMisc {
 	void FastStop(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoRocketJump(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoScoutJump(CUserCmd* pCmd, CBaseEntity* pLocal);
+	void FastAccel(CUserCmd* pCmd, CBaseEntity* pLocal);
+	void DoubleTapLogic(CUserCmd* pCmd, CBaseEntity* pLocal);
 	float m_flSpinYaw = 0.f;
 	
 	bool SteamCleared = false;
@@ -34,6 +34,8 @@ public:
 	bool TauntControl(CUserCmd* pCmd);
 	void Run(CUserCmd* pCmd);
 	void RunLate(CUserCmd* pCmd);
+
+	void CheatsBypass();
 
 	void SteamRPC();
 	void UnlockAchievements();

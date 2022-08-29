@@ -28,7 +28,6 @@ void CMisc::Run(CUserCmd* pCmd)
 
 	AntiAFK(pCmd);
 	ChatSpam();
-	CheatsBypass();
 	PingReducer();
 	ServerHitbox(); // super secret deathpole feature!!!!
 	WeaponSway();
@@ -39,6 +38,7 @@ void CMisc::RunLate(CUserCmd* pCmd)
 {
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
+		DoubleTapLogic(pCmd, pLocal);
 		LegJitter(pCmd, pLocal);
 		FastStop(pCmd, pLocal);
 		AutoRocketJump(pCmd, pLocal);
@@ -196,21 +196,8 @@ void CMisc::InstantRespawnMVM() {
 
 void CMisc::CheatsBypass()
 {
-	static bool cheatset = false;
 	if (ConVar* sv_cheats = g_ConVars.FindVar("sv_cheats")) {
-		if (Vars::Misc::CheatsBypass.Value && sv_cheats)
-		{
-			sv_cheats->SetValue(1);
-			cheatset = true;
-		}
-		else
-		{
-			if (cheatset)
-			{
-				sv_cheats->SetValue(0);
-				cheatset = false;
-			}
-		}
+		sv_cheats->SetValue(Vars::Misc::CheatsBypass.Value);
 	}
 }
 
@@ -439,6 +426,19 @@ void CMisc::FastAccel(CUserCmd* pCmd, CBaseEntity* pLocal)
 				G::ForceChokePacket = true;
 			}
 		//}
+	}
+}
+
+void CMisc::DoubleTapLogic(CUserCmd* pCmd, CBaseEntity* pLocal){
+	if (G::WaitForShift && Vars::Misc::CL_Move::WaitForDT.Value) { return; }
+	if (G::ShouldShift) { return; }
+	if (!pLocal->IsAlive()) { return; }
+
+	if (pCmd) {
+		if (G::IsAttacking || (G::CurWeaponType == EWeaponType::MELEE && pCmd->buttons & IN_ATTACK))
+		{
+			G::ShouldShift = Vars::Misc::CL_Move::NotInAir.Value ? pLocal->IsOnGround() : true;
+		}
 	}
 }
 
@@ -933,15 +933,12 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 		case 1: {
 			switch (nShiftTickG) {
 			case 0: {
+				G::ShouldStop = true;
 				predEndPoint = pLocal->GetVecOrigin() + pLocal->GetVecVelocity();
 				nShiftTickG++;
 				break;
 			}
-			case 1: {
-				G::ShouldStop = true;
-				nShiftTickG++;
-				break;
-			}
+
 			default: {
 				nShiftTickG++;
 				break;
