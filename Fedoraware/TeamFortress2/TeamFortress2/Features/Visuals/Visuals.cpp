@@ -362,7 +362,7 @@ void CVisuals::DrawInformation(CBaseEntity* pLocal)
 	// and other stuff
 	// maybe like ping
 	// dt ticks
-	// and maybe multicombo or whatever it is for options, like only fakelag or something
+	// nevermind i'll just draw every information, no customization too bad
 
 }
 void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
@@ -537,8 +537,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 7:
 					{
 						// deadflag
-						float TextX = DTBox.w * 0.5;
-						float TextY = DTBox.h * 0.5;
+						float TextX = DTBox.x * 1.5;
+						float TextY = DTBox.y * 1.5;
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255});
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {40,40,40,255});
 						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
@@ -564,8 +564,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 8:
 					{
 						// lmaobox
-						float TextX = DTBox.w * 0.5;
-						float TextY = DTBox.h * 0.5;
+						float TextX = DTBox.x * 1.5;
+						float TextY = DTBox.y * 1.5;
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {60,60,60,255});
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Vars::Menu::Colors::MenuAccent);
 						if (Vars::Misc::CL_Move::AntiWarp.Value)

@@ -517,36 +517,36 @@ void CMisc::AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal)
 		return;
 	}
 
-	const int groundEntity = pLocal->m_hGroundEntity();
-	// would using nullptr here help?
-	if (pCmd->buttons & IN_JUMP)
-	{
-		if (groundEntity >= 0)
-		{
-			pCmd->buttons &= ~IN_JUMP;
-		}
-		
-	}
-
-	// old codenz below
-
-	// static bool s_bState = false;
-
+	// const int groundEntity = pLocal->m_hGroundEntity();
+	// // would using nullptr here help?
 	// if (pCmd->buttons & IN_JUMP)
 	// {
-	// 	if (!s_bState && !pLocal->OnSolid())
+	// 	if (groundEntity >= 0)
 	// 	{
 	// 		pCmd->buttons &= ~IN_JUMP;
 	// 	}
-	// 	else if (s_bState)
-	// 	{
-	// 		s_bState = false;
-	// 	}
+		
 	// }
-	// else if (!s_bState)
-	// {
-	// 	s_bState = true;
-	// }
+
+	// old codenz below
+
+	static bool s_bState = false;
+
+	if (pCmd->buttons & IN_JUMP)
+	{
+		if (!s_bState && !pLocal->OnSolid())
+		{
+			pCmd->buttons &= ~IN_JUMP;
+		}
+		else if (s_bState)
+		{
+			s_bState = false;
+		}
+	}
+	else if (!s_bState)
+	{
+		s_bState = true;
+	}
 }
 
 void CMisc::AutoStrafe(CUserCmd* pCmd, CBaseEntity* pLocal)

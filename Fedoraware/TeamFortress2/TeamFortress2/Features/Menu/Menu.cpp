@@ -302,6 +302,7 @@ void CMenu::MenuAimbot()
 			//WToggle("Aim at Lag", &Vars::Backtrack::AimAtLag.Value); HelpMarker("If enabled will shoot at the backtrack of lagging enemies");
 			WToggle("Fake latency", &Vars::Backtrack::FakeLatency.Value); HelpMarker("Fakes your latency to hit records further in the past");
 			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 200.f, 1000.f, "%.fms", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
+			InputKeybind("Fake latency key", &Vars::Backtrack::LatencyKey.Value);
 		} EndChild();
 
 		/* Column 2 */

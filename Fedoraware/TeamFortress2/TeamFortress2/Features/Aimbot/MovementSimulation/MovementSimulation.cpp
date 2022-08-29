@@ -240,10 +240,10 @@ bool CMovementSimulation::StrafePrediction()
 				return false;
 			}
 		}
-		//if (!m_pPlayer->IsOnGround())
-		//{
-		//	return false;
-		//}
+		if (!m_pPlayer->IsOnGround())
+		{
+			return false;
+		}
 		const int iEntIndex = m_pPlayer->GetIndex();
 
 		const auto& mVelocityRecord = m_Velocities[iEntIndex];

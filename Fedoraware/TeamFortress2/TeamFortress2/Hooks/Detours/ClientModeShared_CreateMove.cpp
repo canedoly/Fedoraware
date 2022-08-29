@@ -65,7 +65,17 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 			}
 		}
 		// toggle key for fakelatency
-		// i plan to pull request it probably
+		if (Vars::Backtrack::LatencyKey.Value)
+		{
+			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+			{
+				static KeyHelper latencyKey{ &Vars::Backtrack::LatencyKey.Value };
+				if (latencyKey.Pressed())
+				{
+					Vars::Backtrack::FakeLatency.Value = !Vars::Backtrack::FakeLatency.Value;
+				}
+			}
+		}
 
 		nOldFlags = pLocal->GetFlags();
 		nOldGroundEnt = pLocal->m_hGroundEntity();
