@@ -24,7 +24,7 @@ void CMisc::Run(CUserCmd* pCmd)
 		AntiBackstab(pLocal, pCmd);
 		ViewmodelFlip(pCmd, pLocal);
 		AutoPeek(pCmd, pLocal);
-		SlowWalk(pCmd, pLocal)
+		SlowWalk(pCmd, pLocal);
 	}
 
 	AntiAFK(pCmd);
