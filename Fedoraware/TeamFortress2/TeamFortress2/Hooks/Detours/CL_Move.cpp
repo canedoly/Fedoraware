@@ -89,6 +89,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		if (I::GlobalVars->tickcount % 80)
 		{
 			G::ShiftedTicks++;
+			return;
 		}
 	}
 
