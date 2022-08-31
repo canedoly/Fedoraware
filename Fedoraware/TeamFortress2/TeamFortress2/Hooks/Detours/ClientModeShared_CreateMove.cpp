@@ -64,6 +64,31 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
+		// toggle key for fakelag
+		if (Vars::Misc::CL_Move::FakelagKey.Value)
+		{
+			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+			{
+				static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
+				if (fakelagKey.Pressed())
+				{
+					Vars::Misc::CL_Move::Fakelag.Value = !Vars::Misc::CL_Move::Fakelag.Value;
+				}
+			}
+		}
+		// toggle key for fakelatency
+		if (Vars::Backtrack::LatencyKey.Value)
+		{
+			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+			{
+				static KeyHelper latencyKey{ &Vars::Backtrack::LatencyKey.Value };
+				if (latencyKey.Pressed())
+				{
+					Vars::Backtrack::FakeLatency.Value = !Vars::Backtrack::FakeLatency.Value;
+				}
+			}
+		}
+
 		nOldFlags = pLocal->GetFlags();
 		nOldGroundEnt = pLocal->m_hGroundEntity();
 
@@ -107,18 +132,18 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 		if (Vars::Misc::CL_Move::RechargeWhileDead.Value)
 		{
-			if (!pLocal->IsAlive() && G::ShiftedTicks)
+			if (!pLocal->IsAlive() && !G::ShiftedTicks)
 			{
 				G::RechargeQueued = true;
 			}
 		}
 
 		
-		if (Vars::Misc::CL_Move::AutoRecharge.Value && !G::ShouldShift && !G::Recharging && !G::ShiftedTicks)
+		if (Vars::Misc::CL_Move::AutoRecharge.Value)
 		{
-			if (pLocal->GetVecVelocity().Length2D() < 5.0f && !(pCmd->buttons))
+			if (I::GlobalVars->tickcount % 80)
 			{
-				G::RechargeQueued = true;
+				G::ShiftedTicks++;
 			}
 		}
 	}

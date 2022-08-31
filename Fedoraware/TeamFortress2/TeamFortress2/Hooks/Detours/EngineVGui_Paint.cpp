@@ -140,6 +140,7 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 13), void, __fastc
 			if (CBaseEntity* pLocal = g_EntityCache.GetLocal())
 			{
 				F::Visuals.DrawAntiAim(pLocal);
+				F::Visuals.DrawInformation(pLocal);
 				F::Visuals.DrawTickbaseInfo(pLocal);
 				F::Visuals.DrawAimbotFOV(pLocal);
 				F::Visuals.ScopeLines(pLocal);

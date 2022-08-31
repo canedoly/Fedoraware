@@ -41,7 +41,7 @@ namespace Vars
 		inline bool ModernDesign = false;
 		inline bool ShowPlayerlist = false;
 		inline bool ShowKeybinds = false;
-		inline CVar<bool> Vignette{true};
+		inline CVar<bool> Vignette{false};
 
 		inline CVar<bool> ShowDVD{ false };
 		inline CVar<int> MenuKey{ 0 };
@@ -68,6 +68,7 @@ namespace Vars
 		inline CVar<bool> LastTick{ false };
 		inline CVar<bool> FakeLatency{ false };
 		inline CVar<float> Latency{ 200.f };
+		inline CVar<int> LatencyKey{ 0x4B };	// K
 		
 
 		namespace BtChams
@@ -266,6 +267,7 @@ namespace Vars
 			inline CVar<float> DlightRadius{ 200.0f };
 			inline CVar<float> Alpha{ 1.0f };
 			inline CVar<bool> CheaterDetection{ false };
+			inline CVar<bool> PriorityTags{ false };
 			inline CVar<bool> SniperSightlines{ false };
 		}
 
@@ -544,6 +546,7 @@ namespace Vars
 		inline CVar<bool> AimbotViewmodel{ false };
 		inline CVar<bool> ViewmodelSway{ false };
 		inline CVar<bool> MoveSimLine{ false };
+		inline CVar<bool> MoveSimDebug{ false };
 		inline CVar<int> ParticleTracer{ 2 };
 		inline std::string ParticleName = "merasmus_zap_beam01"; // dont save this as a var its pointless
 		inline CVar<bool> DoPostProcessing{ false };
@@ -766,6 +769,7 @@ namespace Vars
 			inline CVar<float> CustomFakeYaw{ 0 };
 			inline CVar<int> RandInterval{ 25 };
 			inline CVar<bool> AntiBackstab{ false };
+			inline CVar<bool> AALines{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };
 			inline CVar<bool> InvalidShootPitch{ false }; // i dont know what to name this its TRASH

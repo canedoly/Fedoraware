@@ -297,6 +297,7 @@ void CMenu::MenuAimbot()
 			WToggle("Aimbot aims last tick", &Vars::Backtrack::LastTick.Value); HelpMarker("Aimbot aims at the last tick if visible");
 			WToggle("Fake latency", &Vars::Backtrack::FakeLatency.Value); HelpMarker("Fakes your latency to hit records further in the past");
 			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 200.f, 1000.f, "%.fms", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
+			InputKeybind("Fake latency key", Vars::Backtrack::LatencyKey);
 		} EndChild();
 
 		/* Column 2 */
@@ -541,6 +542,7 @@ void CMenu::MenuVisuals()
 				ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 				ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
 				WToggle("Cheater Detection", &Vars::ESP::Players::CheaterDetection.Value); HelpMarker("Attempts to automatically mark cheaters.");
+				WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
 				WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 				WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 				ColorPickerL("Skellington colour", Colors::Bones);
@@ -1092,6 +1094,7 @@ void CMenu::MenuVisuals()
 				WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 				WToggle("Movement simulation lines", &Vars::Visuals::MoveSimLine.Value);
 				ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
+				WToggle("Movement simulation debug", &Vars::Visuals::MoveSimDebug.Value);
 				{
 					static std::vector flagNames{ "Text", "Console", "Chat", "Party", "Verbose"};
 					static std::vector flagValues{ 1, 2, 4, 8, 32 };
@@ -1157,7 +1160,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.Value, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin" }); HelpMarker("What style the bar should draw in.");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Rijin V1", "Nitro old", "Beta", "Deadflag", "Lmaobox" }); HelpMarker("What style the bar should draw in.");
 				Text("Charging Gradient");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
@@ -1460,20 +1463,13 @@ void CMenu::MenuHvH()
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 0 || Vars::Misc::CL_Move::FakelagMode.Value == 2)
 			{
 				WSlider("Fakelag value", &Vars::Misc::CL_Move::FakelagValue.Value, 1, 22, "%d"); HelpMarker("How much lag you should fake(?)");
-				if (Vars::Misc::CL_Move::FakelagMode.Value == 0)
-				{
-					WToggle("Fakelag on key", &Vars::Misc::CL_Move::FakelagOnKey.Value); HelpMarker("Fakelag will only activate when an assigned key is held");
-					if (Vars::Misc::CL_Move::FakelagOnKey.Value)
-					{
-						InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
-					}
-				}
 			}
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 1)
 			{
 				WSlider("Random max###flRandMax", &Vars::Misc::CL_Move::FakelagMax.Value, Vars::Misc::CL_Move::FakelagMin.Value + 1, 22, "%d"); HelpMarker("Maximum random fakelag value");
 				WSlider("Random min###flRandMin", &Vars::Misc::CL_Move::FakelagMin.Value, 1, Vars::Misc::CL_Move::FakelagMax.Value - 1, "%d"); HelpMarker("Minimum random fakelag value");
 			}
+			InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
 		} EndChild();
 
 		/* Column 2 */
@@ -1707,6 +1703,7 @@ void CMenu::SettingsWindow()
 		if (ColorPicker("Menu accent", Vars::Menu::Colors::MenuAccent)) { LoadStyle(); } SameLine(); Text("Menu accent");
 		if (Checkbox("Alternative Design", &Vars::Menu::ModernDesign)) { LoadStyle(); }
 		Checkbox("Show DVD bounce", &Vars::Menu::ShowDVD.Value);
+		Checkbox("Debug", &Vars::Debug::DebugInfo.Value);
 		if (Checkbox("Menu Vignette", &Vars::Menu::Vignette.Value)){
 			I::ViewRender->SetScreenOverlayMaterial(nullptr);
 		}
