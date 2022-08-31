@@ -127,7 +127,7 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
 	float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
 
-	if (slowkey.Down())
+	if (slowKey.Down())
 	{
 		pCmd->forwardmove = desiredSpeed;
 		pCmd->sidemove = desiredSpeed;
