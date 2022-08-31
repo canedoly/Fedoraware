@@ -718,6 +718,7 @@ void CVisuals::DrawMovesimLine()
 				RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
 			}
 		}
+	}
 	if (Vars::Visuals::MoveSimDebug.Value)
 	{
 		if (!G::PredictionLines.empty())
