@@ -211,7 +211,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 	// Handle Silent Time
 	static bool bWasSet = false;
-	if (G::SilentTime)
+	if (G::SilentTime && !bWasSet)
 	{
 		*pSendPacket = false;
 		bWasSet = true;
@@ -221,9 +221,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 		if (bWasSet)
 		{
 			*pSendPacket = true;
-			pCmd->viewangles = vOldAngles;
-			pCmd->sidemove = fOldSide;
-			pCmd->forwardmove = fOldForward;
 			bWasSet = false;
 		}
 	}
