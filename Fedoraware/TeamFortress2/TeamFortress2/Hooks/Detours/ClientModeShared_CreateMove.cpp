@@ -137,15 +137,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 				G::RechargeQueued = true;
 			}
 		}
-
-		
-		if (Vars::Misc::CL_Move::AutoRecharge.Value)
-		{
-			if (I::GlobalVars->tickcount % 80)
-			{
-				G::ShiftedTicks++;
-			}
-		}
 	}
 
 	// Run Features

@@ -185,7 +185,8 @@ void CCritHack::Run(CUserCmd* pCmd)
 		}
 		else if (Vars::CritHack::AvoidRandom.Value) //	we don't want to crit
 		{
-			for (int tries = 0; tries < 5; tries++)
+			//does increasing the value help?
+			for (int tries = 0; tries < 10; tries++)
 			{
 				if (std::find(CritTicks.begin(), CritTicks.end(), pCmd->command_number + tries) != CritTicks.end())
 				{

@@ -8,6 +8,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	static auto oClMove = Hook.Original<FN>();
 
 	const auto pLocal = g_EntityCache.GetLocal();
+	int nClassNum = Player->GetClassNum();
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
@@ -39,7 +40,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	}
 
 	static bool streaming = false;
-// Teleport
+	// Teleport
 	if ((tpKey.Down() || streaming) && G::ShiftedTicks > 0 && !G::Recharging && !G::RechargeQueued)
 	{
 		G::Teleporting = true;
@@ -83,6 +84,14 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return;
 	}
 
+	if (Vars::Misc::CL_Move::AutoRecharge.Value && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		if (I::GlobalVars->tickcount % 80)
+		{
+			G::ShiftedTicks++;
+		}
+	}
+
 	// Prepare for a recharge (Is a recharge queued?)
 	if (G::RechargeQueued && !G::IsChoking)
 	{
@@ -96,7 +105,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
-		G::WaitForShift = round(1.f / I::GlobalVars->interval_per_tick) - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+		G::WaitForShift = nClassNum == CLASS_HEAVY ? 0 : 26;
+		//G::WaitForShift = round(1.f / I::GlobalVars->interval_per_tick) - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
 		return; // this recharges
 	}
 
