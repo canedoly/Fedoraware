@@ -118,16 +118,12 @@ void CMisc::LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
-	if (!Vars::Misc::SlowWalkGlobal.Value)
-	{
-		return;
-	}
 
 	static bool walk = true;
 	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
 	float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
 
-	if (slowKey.Down())
+	if (slowKey.Down() && Vars::Misc::SlowWalkGlobal.Value)
 	{
 		pCmd->forwardmove = desiredSpeed;
 		pCmd->sidemove = desiredSpeed;
