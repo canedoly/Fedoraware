@@ -86,7 +86,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 
 	if (Vars::Misc::CL_Move::AutoRecharge.Value && (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
 	{
-		if (I::GlobalVars->tickcount % 80)
+		if (I::GlobalVars->tickcount % 45)
 		{
 			G::ShiftedTicks++;
 			return;
