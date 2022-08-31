@@ -24,7 +24,6 @@ void CMisc::Run(CUserCmd* pCmd)
 		AntiBackstab(pLocal, pCmd);
 		ViewmodelFlip(pCmd, pLocal);
 		AutoPeek(pCmd, pLocal);
-		SlowWalk(pCmd, pLocal);
 	}
 
 	AntiAFK(pCmd);
@@ -45,6 +44,7 @@ void CMisc::RunLate(CUserCmd* pCmd)
 		AutoRocketJump(pCmd, pLocal);
 		AutoScoutJump(pCmd, pLocal);
 		FastAccel(pCmd, pLocal);
+		SlowWalk(pCmd, pLocal);
 	}
 }
 
@@ -118,14 +118,14 @@ void CMisc::LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
-	// static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
-	// float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
+	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
+	float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
 
-	// if (slowKey.Down() && Vars::Misc::SlowWalkGlobal.Value)
-	// {
-	// 	pCmd->forwardmove = desiredSpeed;
-	// 	pCmd->sidemove = desiredSpeed;
-	// }
+	if (slowKey.Down() && Vars::Misc::SlowWalkGlobal.Value)
+	{
+		pCmd->forwardmove = desiredSpeed;
+		pCmd->sidemove = desiredSpeed;
+	}
 }
 
 void CMisc::ServerHitbox()
