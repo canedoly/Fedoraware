@@ -104,7 +104,8 @@ void CSpectatorList::DrawDefault()
 		0);
 
 	// 38 to 43
-	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, {43, 43, 45, 250});
+	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, {43, 43, 45, 220});
+	g_Draw.OutlinedRect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, {20, 20, 20, 220});
 
 	g_Draw.String(FONT_IMGUI,
 	              SpecListX + (SpecListW / 2),
