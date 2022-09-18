@@ -367,26 +367,31 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					//int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;	// we need to multiply by 2 so it renders above the name
-					// fix the y position offset if name esp is disabled
-					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					if (Vars::ESP::Players::Name.Value)
+					{
+						int offset = (g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4) * 2;
+					}
+					else
+					{
+						int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					}
 					int middle = x + w / 2;
 
 					if (G::PlayerPriority[pi.friendsID].Mode == 4 && !g_EntityCache.IsFriend(nIndex))
 					{
-						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "CHEATER");
+						g_Draw.String(FONT_NAME, middle, y - offset, {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "CHEATER");
 					}
 					if (G::PlayerPriority[pi.friendsID].Mode == 3)
 					{
-						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {247, 247, 64, 255}, ALIGN_CENTERHORIZONTAL, "RAGE");
+						g_Draw.String(FONT_NAME, middle, y - offset, {247, 247, 64, 255}, ALIGN_CENTERHORIZONTAL, "RAGE");
 					}
 					if (G::PlayerPriority[pi.friendsID].Mode == 1)
 					{
-						g_Draw.String(FONT_NAME, middle, y - (offset * 2), {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
+						g_Draw.String(FONT_NAME, middle, y - offset, {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
 					}
 					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(nIndex))
 					{
-						g_Draw.String(FONT_NAME, middle, y - (offset * 2), Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
 					}
 				}
 
@@ -412,7 +417,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						offset += 2;
 					}
 
-					static constexpr int TEXTURE_SIZE = 18;
+					static constexpr int TEXTURE_SIZE = 14;
 					g_Draw.Texture(x + w / 2 - TEXTURE_SIZE / 2, y - offset - TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, Colors::White,
 								   nClassNum);
 				}
@@ -598,7 +603,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 12, (y + h) - (ratio * h) - 7, Colors::White, ALIGN_REVERSE, "%d", nHealth);
+					g_Draw.String(FONT, x - 8, (y + h) - (ratio * h) - 7, Colors::White, ALIGN_REVERSE, "%d", nHealth);
 				}
 
 				x += 1;

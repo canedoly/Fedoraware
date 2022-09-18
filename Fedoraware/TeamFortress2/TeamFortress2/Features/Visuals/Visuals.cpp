@@ -466,6 +466,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						else{
 							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 153, 255, 153, 255 }, ALIGN_CENTERHORIZONTAL, L"Shift ready!");
 						}
+						break;
 					}
 					case 5:
 					{
@@ -507,17 +508,17 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 						if (G::ShiftedTicks == 0)
 						{
-							const int nBTickBase = TickBase;
+							int nBTickBase = TickBase;
 						}
 
 						if (G::Recharging)
 						{
-							const int nNewTickBase = TickBase;
+							int nNewTickBase = TickBase;
 						}
 
 						if (G::ShiftedTicks > 0)
 						{
-							const int accurateTicks = (nBTickBase - nNewTickBase);
+							int accurateTicks = (nBTickBase - nNewTickBase);
 						}
 						
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
