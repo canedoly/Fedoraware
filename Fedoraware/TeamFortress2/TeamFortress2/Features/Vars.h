@@ -19,7 +19,7 @@ namespace Vars
 		inline bool ModernDesign = false;
 		inline bool ShowPlayerlist = false;
 		inline bool ShowKeybinds = false;
-		inline CVar<bool> Vignette{true};
+		inline CVar<bool> Vignette{false};
 
 		inline CVar<bool> ShowDVD{ false };
 		inline CVar<int> MenuKey{ 0 };
@@ -46,6 +46,7 @@ namespace Vars
 		inline CVar<bool> LastTick{ false };
 		inline CVar<bool> FakeLatency{ false };
 		inline CVar<float> Latency{ 200.f };
+		inline CVar<int> LatencyKey{ 0x4B };	// K
 		
 
 		namespace BtChams
@@ -247,6 +248,7 @@ namespace Vars
 			inline CVar<float> DlightRadius{ 200.0f };
 			inline CVar<float> Alpha{ 1.0f };
 			inline CVar<bool> CheaterDetection{ false };
+			inline CVar<bool> PriorityTags{ false };
 			inline CVar<bool> SniperSightlines{ false };
 		}
 
@@ -372,7 +374,7 @@ namespace Vars
 		namespace Main
 		{
 			inline CVar<bool> Active{ false };
-			inline CVar<int> Type{0};	//	blur, stencil, stencil2
+			inline CVar<int> Type{0};	//	blur, stencil, fps stencil, wireframe
 			inline CVar<int> Scale{ 5 };
 		}
 
@@ -527,6 +529,7 @@ namespace Vars
 		inline CVar<bool> AimbotViewmodel{ false };
 		inline CVar<bool> ViewmodelSway{ false };
 		inline CVar<bool> MoveSimLine{ false };
+		inline CVar<bool> MoveSimDebug{ false };
 		inline CVar<int> ParticleTracer{ 2 };
 		inline std::string ParticleName = "merasmus_zap_beam01"; // dont save this as a var its pointless
 		inline CVar<bool> DoPostProcessing{ false };
@@ -614,6 +617,7 @@ namespace Vars
 		inline CVar<bool> AutoJump{ false };
 		inline CVar<bool> AutoVote{ false };
 		inline CVar<bool> DuckJump{ false };
+		inline CVar<int> DuckJumpMode{0};
 		inline CVar<int> AutoStrafe{ 2 };
 		inline CVar<bool> Directional{ false };
 		inline CVar<bool> TauntSlide{ false };
@@ -754,6 +758,7 @@ namespace Vars
 			inline CVar<float> FakeJitter{ 0 };
 			inline CVar<float> RealJitter{ 0 };
 			inline CVar<int> RandInterval{ 25 };
+			inline CVar<bool> AALines{ false };
 			inline CVar<bool> AntiBackstab{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };

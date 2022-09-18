@@ -344,10 +344,10 @@ namespace Utils
 			}
 		}
 
-		if (pEntity->GetIndex() == G::CurrentTargetIdx)
-		{
-			out = Colors::Target;
-		}
+		// if (pEntity->GetIndex() == G::CurrentTargetIdx)
+		// {
+		// 	out = Colors::Target;
+		// }
 
 		return out;
 	}

@@ -299,6 +299,7 @@ void CMenu::MenuAimbot()
 			WToggle("Aimbot aims last tick", &Vars::Backtrack::LastTick.Value); HelpMarker("Aimbot aims at the last tick if visible");
 			WToggle("Fake latency", &Vars::Backtrack::FakeLatency.Value); HelpMarker("Fakes your latency to hit records further in the past");
 			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 200.f, 1000.f, "%.fms", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
+			InputKeybind("Fake latency key", Vars::Backtrack::LatencyKey);
 		} EndChild();
 
 		/* Column 2 */
@@ -554,6 +555,7 @@ void CMenu::MenuVisuals()
 				ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 				ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
 				WToggle("Cheater Detection", &Vars::ESP::Players::CheaterDetection.Value); HelpMarker("Attempts to automatically mark cheaters.");
+				WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
 				WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 				WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 				ColorPickerL("Skellington colour", Colors::Bones);
@@ -700,8 +702,8 @@ void CMenu::MenuVisuals()
 			{
 				SectionTitle("Glow Main");
 				WToggle("Glow", &Vars::Glow::Main::Active.Value);
-				WCombo("Glow Type###GlowTypeSelect", &Vars::Glow::Main::Type.Value, { "Blur", "Stencil", "FPStencil" }); HelpMarker("Method in which glow will be rendered");
-				if (Vars::Glow::Main::Type.Value != 1) { WSlider("Glow scale", &Vars::Glow::Main::Scale.Value, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp); }
+				WCombo("Glow Type###GlowTypeSelect", &Vars::Glow::Main::Type.Value, { "Blur", "Stencil", "FPStencil", "Wireframe" }); HelpMarker("Method in which glow will be rendered");
+				if (Vars::Glow::Main::Type.Value != 1 || Vars::Glow::Main::Type.Value != 3) { WSlider("Glow scale", &Vars::Glow::Main::Scale.Value, 1, 10, "%d"); }
 
 				SectionTitle("Player Glow");
 				WToggle("Player glow###PlayerGlowButton", &Vars::Glow::Players::Active.Value); HelpMarker("Player glow master switch");
@@ -1104,8 +1106,9 @@ void CMenu::MenuVisuals()
 				WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 				WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 				WToggle("Movement simulation lines", &Vars::Visuals::MoveSimLine.Value);
-				WToggle("ChatInfo Grayscale", &Vars::Visuals::ChatInfoGrayScale.Value);
 				ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
+				WToggle("Movement simulation debug", &Vars::Visuals::MoveSimDebug.Value);
+				WToggle("ChatInfo Grayscale", &Vars::Visuals::ChatInfoGrayScale.Value);
 				{
 					static std::vector flagNames{ "Text", "Console", "Chat", "Party", "Verbose"};
 					static std::vector flagValues{ 1, 2, 4, 8, 32 };
@@ -1171,7 +1174,7 @@ void CMenu::MenuVisuals()
 				WSlider("VM Roll", &Vars::Visuals::VMRoll.Value, -180, 180);
 
 				SectionTitle("DT Indicator");
-				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "SEOwned" }); HelpMarker("What style the bar should draw in.");
+				WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Seowned", "Rijin V1", "Nitro old", "Beta", "Deadflag", "Lmaobox" }); HelpMarker("What style the bar should draw in.");
 				Text("Charging Gradient");
 				ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 				ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
@@ -1474,20 +1477,13 @@ void CMenu::MenuHvH()
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 0 || Vars::Misc::CL_Move::FakelagMode.Value == 2)
 			{
 				WSlider("Fakelag value", &Vars::Misc::CL_Move::FakelagValue.Value, 1, 22, "%d"); HelpMarker("How much lag you should fake(?)");
-				if (Vars::Misc::CL_Move::FakelagMode.Value == 0)
-				{
-					WToggle("Fakelag on key", &Vars::Misc::CL_Move::FakelagOnKey.Value); HelpMarker("Fakelag will only activate when an assigned key is held");
-					if (Vars::Misc::CL_Move::FakelagOnKey.Value)
-					{
-						InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
-					}
-				}
 			}
 			if (Vars::Misc::CL_Move::FakelagMode.Value == 1)
 			{
 				WSlider("Random max###flRandMax", &Vars::Misc::CL_Move::FakelagMax.Value, Vars::Misc::CL_Move::FakelagMin.Value + 1, 22, "%d"); HelpMarker("Maximum random fakelag value");
 				WSlider("Random min###flRandMin", &Vars::Misc::CL_Move::FakelagMin.Value, 1, Vars::Misc::CL_Move::FakelagMax.Value - 1, "%d"); HelpMarker("Minimum random fakelag value");
 			}
+			InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
 		} EndChild();
 
 		/* Column 2 */
@@ -1534,6 +1530,7 @@ void CMenu::MenuHvH()
 			case 13: { WSlider("Real Jitter Amt", &Vars::AntiHack::AntiAim::RealJitter.Value, -180, 180); break; }
 			}
 			WToggle("Resolver", &Vars::AntiHack::Resolver::Resolver.Value); HelpMarker("Enables Anti-aim resolver in the playerlist");
+			WToggle("AA Lines", &Vars::AntiHack::AntiAim::AALines.Value);
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab"}, { &Vars::AntiHack::AntiAim::AntiOverlap.Value, &Vars::AntiHack::AntiAim::LegJitter.Value, &Vars::AntiHack::AntiAim::InvalidShootPitch.Value, &Vars::AntiHack::AntiAim::AntiBackstab.Value }, "Misc.");
 
 			/* Section: Auto Peek */
@@ -1560,6 +1557,7 @@ void CMenu::MenuMisc()
 			WToggle("No push", &Vars::Misc::NoPush.Value); HelpMarker("Will make teammates unable to push you around");
 			WCombo("Quick stop", &Vars::Misc::AccurateMovement.Value, { "Off", "Legacy", "Instant" }); HelpMarker("Will stop you from sliding once you stop pressing movement buttons");
 			WToggle("Duck Jump", &Vars::Misc::DuckJump.Value); HelpMarker("Will duck when bhopping");
+			WCombo("Duck Jump Mode", &Vars::Misc::DuckJumpMode.Value, { "old", "new", "test" });
 			WToggle("Bunnyhop", &Vars::Misc::AutoJump.Value); HelpMarker("Will jump as soon as you touch the ground again, keeping speed between jumps");
 			WCombo("Autostrafe", &Vars::Misc::AutoStrafe.Value, { "Off", "Legit", "Directional" }); HelpMarker("Will strafe for you in air automatically so that you gain speed");
 			WToggle("Edge jump", &Vars::Misc::EdgeJump.Value); HelpMarker("Will jump at the very end of whatever platform you're on, allowing you to perfectly make longer jumps.");
@@ -1741,6 +1739,7 @@ void CMenu::SettingsWindow()
 		if (ColorPicker("Menu accent", Vars::Menu::Colors::MenuAccent)) { LoadStyle(); } SameLine(); Text("Menu accent");
 		if (Checkbox("Alternative Design", &Vars::Menu::ModernDesign)) { LoadStyle(); }
 		Checkbox("Show DVD bounce", &Vars::Menu::ShowDVD.Value);
+		Checkbox("Debug", &Vars::Debug::DebugInfo.Value);
 		if (Checkbox("Menu Vignette", &Vars::Menu::Vignette.Value)){
 			I::ViewRender->SetScreenOverlayMaterial(nullptr);
 		}

@@ -356,7 +356,7 @@ void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 		return;
 	}
 
-	if (Vars::AntiHack::AntiAim::Active.Value)
+	if (Vars::AntiHack::AntiAim::Active.Value && Vars::AntiHack::AntiAim::AALines.Value)
 	{
 		static constexpr Color_t realColour = { 0, 255,0, 255 };
 		static constexpr Color_t fakeColour = { 255, 0, 0, 255 };
@@ -393,7 +393,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.95f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
+				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
+				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
 				static Color_t color1, color2;
 
@@ -433,24 +434,24 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Colors::DtOutline);	//	draw the outline
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, DTBox.w - 2, DTBox.h - 2, { 28, 29, 38, 255 });	//	draw the background
 						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, ratioInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
-						g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y - 10, { 255, 255, 255, 255 }, ALIGN_DEFAULT, L"CHARGE");
+						g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y - 12, { 255, 255, 255, 255 }, ALIGN_DEFAULT, L"CHARGE");
 
 						if (G::ShiftedTicks == 0) // chargless
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 55, 40, 255 }, ALIGN_REVERSE, L"NO CHARGE");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 55, 40, 255 }, ALIGN_REVERSE, L"NO CHARGE");
 						}
 						else if (G::Recharging) // charging 
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 126, 0, 255 }, ALIGN_REVERSE, L"CHARGING");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 126, 0, 255 }, ALIGN_REVERSE, L"CHARGING");
 						}
 						else if (!G::WaitForShift && ratioCurrent == 1) // ready (only show if we are fully charged)
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
 
 						}
 						else	//waiting 
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 46, 46, 255 }, ALIGN_REVERSE, L"DT IMPOSSIBLE");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 46, 46, 255 }, ALIGN_REVERSE, L"DT IMPOSSIBLE");
 						}
 						break;
 					}
@@ -465,6 +466,110 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						else{
 							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 153, 255, 153, 255 }, ALIGN_CENTERHORIZONTAL, L"Shift ready!");
 						}
+					}
+					case 5:
+					{
+						static Color_t BGcolor;
+						if (G::ShiftedTicks > 0)
+						{
+							BGcolor = {20, 20, 20, 230};
+						}
+						else
+						{
+							BGcolor = {14, 14, 14, 130};
+						}
+
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {147, 255, 133, 255});
+						break;
+					}
+					case 6:
+					{
+						float Ticks_Time = TICKS_TO_TIME(G::ShiftedTicks);	// testing new stuff
+
+
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Colors::DtOutline);
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h / 6, Vars::Menu::Colors::MenuAccent);
+						g_Draw.Rect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h / 6, {129, 255, 61, 255});
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c - 3, DTBox.y + 3, {255,255,255,255}, ALIGN_DEFAULT, L"nos %.2fs (%d)", Ticks_Time, G::ShiftedTicks);
+						break;
+					}
+					case 7:
+					{
+						int nTextOffset = 0;
+						const int TickBase = pLocal->GetTickBase();
+
+						int nBTickBase = TickBase;
+						int nNewTickBase = TickBase;
+						int accurateTicks = TickBase;
+
+
+						if (G::ShiftedTicks == 0)
+						{
+							const int nBTickBase = TickBase;
+						}
+
+						if (G::Recharging)
+						{
+							const int nNewTickBase = TickBase;
+						}
+
+						if (G::ShiftedTicks > 0)
+						{
+							const int accurateTicks = (nBTickBase - nNewTickBase);
+						}
+						
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Accurate ticks %i out of %i", accurateTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Tick Base: %i", TickBase);
+						nTextOffset += g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+
+						break;
+					}
+					case 8:
+					{
+						// deadflag
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255});
+						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {40,40,40,255});
+						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
+
+						if (G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value && !G::Recharging)
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 17, {190,0,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) too expensive %i < %i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						}
+						else if (G::Recharging && (G::ShiftedTicks != Vars::Misc::CL_Move::DTTicks.Value))
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 17, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(Recharging) %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						}
+						else if (!G::WaitForShift && (G::ShiftedTicks >= Vars::Misc::CL_Move::DTTicks.Value))
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 17, {15,180,0,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) ready! %i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						}
+						else
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 17, {200,115,20,255}, ALIGN_CENTERHORIZONTAL, L"(RapidFire) wait %i/%i", G::WaitForShift, DT_WAIT_CALLS);
+						}
+						break;
+					}
+					case 9:
+					{
+						// lmaobox
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {60,60,60,255});
+						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Vars::Menu::Colors::MenuAccent);
+						if (Vars::Misc::CL_Move::AntiWarp.Value)
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dt (%i)", G::ShiftedTicks);
+						}
+						else
+						{
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"dash+dt (%i)", G::ShiftedTicks);
+						}
+						break;
 					}
 				}
 			}
@@ -580,18 +685,21 @@ void CVisuals::DrawMovesimLine()
 				RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
 			}
 		}
-		//if (!G::PredictionLines.empty())
-		//{
-		//	for (size_t i = 1; i < G::PredictionLines.size(); i++)
-		//	{
-		//		I::DebugOverlay->AddLineOverlay(G::PredictionLines.at(i - 1), G::PredictionLines.at(i),
-		//										Vars::Aimbot::Projectile::PredictionColor.r,
-		//										Vars::Aimbot::Projectile::PredictionColor.g,
-		//										Vars::Aimbot::Projectile::PredictionColor.b,
-		//										false,
-		//										1.f);
-		//	}
-		//}
+	}
+	if (Vars::Visuals::MoveSimDebug.Value)
+	{
+		if (!G::PredictionLines.empty())
+		{
+			for (size_t i = 1; i < G::PredictionLines.size(); i++)
+			{
+				I::DebugOverlay->AddLineOverlay(G::PredictionLines.at(i - 1), G::PredictionLines.at(i),
+												Vars::Aimbot::Projectile::PredictionColor.r,
+												Vars::Aimbot::Projectile::PredictionColor.g,
+												Vars::Aimbot::Projectile::PredictionColor.b,
+												false,
+												2.f);
+			}
+		}
 	}
 }
 

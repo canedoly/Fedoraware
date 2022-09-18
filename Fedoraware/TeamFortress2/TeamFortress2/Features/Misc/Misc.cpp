@@ -359,9 +359,27 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 		// Duck Jump
 		if ((Vars::Misc::DuckJump.Value || Vars::Misc::Followbot::Enabled.Value))
 		{
-			if (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+			if (Vars::Misc::DuckJumpMode.Value == 0)
 			{
-				pCmd->buttons |= IN_DUCK;
+				if (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+				{
+					pCmd->buttons |= IN_DUCK;
+				}
+			}
+			if (Vars::Misc::DuckJumpMode.Value == 1)
+			{
+				const bool needs = (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned());
+				const bool isJumping = pCmd->buttons & IN_JUMP;
+				static bool shouldDuck = false;
+				if (isJumping && !pLocal->IsDucking())
+				{
+					shouldDuck = true;
+					if (shouldDuck && needs)
+					{
+						pCmd->buttons |= IN_DUCK;
+						shouldDuck = false;
+					}
+				}
 			}
 		}
 	}
@@ -523,22 +541,50 @@ void CMisc::AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal)
 		return;
 	}
 
-	static bool s_bState = false;
 
-	if (pCmd->buttons & IN_JUMP)
+	if (Vars::Misc::DuckJumpMode.Value != 2)
 	{
-		if (!s_bState && !pLocal->OnSolid())
+		static bool s_bState = false;
+		
+		if (pCmd->buttons & IN_JUMP)
 		{
-			pCmd->buttons &= ~IN_JUMP;
+			if (pLocal->OnSolid())
+			{
+				pCmd->buttons |= IN_DUCK;
+			}
+			if (!s_bState && !pLocal->OnSolid())
+			{
+				pCmd->buttons &= ~IN_JUMP;
+			}
+			else if (s_bState)
+			{
+				s_bState = false;
+			}
 		}
-		else if (s_bState)
+		else if (!s_bState)
 		{
-			s_bState = false;
+			s_bState = true;
 		}
 	}
-	else if (!s_bState)
+	if (Vars::Misc::DuckJumpMode.Value == 2)
 	{
-		s_bState = true;
+		static bool s_bState = false;
+
+		if (pCmd->buttons & IN_JUMP)
+		{
+			if (!s_bState && !pLocal->OnSolid())
+			{
+				pCmd->buttons &= ~IN_JUMP;
+			}
+			else if (s_bState)
+			{
+				s_bState = false;
+			}
+		}
+		else if (!s_bState)
+		{
+			s_bState = true;
+		}
 	}
 }
 

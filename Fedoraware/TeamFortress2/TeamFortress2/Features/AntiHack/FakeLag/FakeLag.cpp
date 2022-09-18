@@ -20,12 +20,6 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal) {
 		return false;
 	}
 
-	// Is a fakelag key set and pressed?
-	static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
-	if (!fakelagKey.Down() && Vars::Misc::CL_Move::FakelagOnKey.Value && Vars::Misc::CL_Move::FakelagMode.Value == 0) {
-		return false;
-	}
-
 	// Are we recharging
 	if (ChokeCounter >= doubleTapAllowed || G::Recharging || G::RechargeQueued || !retainFakelagTest) {
 		return false;

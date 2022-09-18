@@ -83,6 +83,13 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		return;
 	}
 
+	if (I::GlobalVars->tickcount % 240 && (Vars::Misc::CL_Move::AutoRecharge.Value && G::ShiftedTicks < Vars::Misc::CL_Move::DTTicks.Value))
+	{
+		G::ForceSendPacket = true;
+		G::ShiftedTicks++;
+		return;
+	}
+
 	// Prepare for a recharge (Is a recharge queued?)
 	if (G::RechargeQueued && !G::IsChoking)
 	{
