@@ -238,7 +238,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.OutlinedRect(x, y, width, height, Colors::OutlineESP);
-						g_Draw.OutlinedRect(x + 2, y + 3, width, height, Colors::OutlineESP);
+						g_Draw.OutlinedRect(x + 3, y + 4, width, height, Colors::OutlineESP);
 					}
 
 					break;
