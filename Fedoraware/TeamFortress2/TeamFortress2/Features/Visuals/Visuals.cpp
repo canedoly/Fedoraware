@@ -473,15 +473,15 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						static Color_t BGcolor;
 						if (G::ShiftedTicks > 0)
 						{
-							BGcolor = {20, 20, 20, 230};
+							BGcolor = {20, 20, 20, 235};
 						}
 						else
 						{
-							BGcolor = {14, 14, 14, 130};
+							BGcolor = {14, 14, 14, 115};
 						}
 
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
-						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {147, 255, 133, 255});
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {90, 140, 80, 235});
 						break;
 					}
 					case 6:
@@ -501,9 +501,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
 
-						int nBTickBase = TickBase;
-						int nNewTickBase = TickBase;
-						int accurateTicks = TickBase;
+						int nBTickBase = 8;
+						int nNewTickBase = 6;
+						int accurateTicks = 3;
 
 
 						if (G::ShiftedTicks == 0)
@@ -684,6 +684,14 @@ void CVisuals::DrawMovesimLine()
 			for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 			{
 				RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
+				// i hate mfed code why why why he couldn't make his base a bit similiar to fedoraware my smol brain can't understand this, why currentlines push back (what does it even do!?)
+				// why get rotated origin and angles??
+				// where does 5 come from?
+				// what is vec current lines
+				// please, baan or someone add this so i can cry myself when someone does add it, way way simpler than i could imagine prob change some stuff to fit in fedoraware
+				// i only imagine doing this by changing the whole pred lines backup
+
+				//m_vecCurrentLines.push_back(Utils::GetRotatedPosition(m_MoveData.m_vecAbsOrigin, m_MoveData.m_vecViewAngles.Length2D() + 90, 5));
 			}
 		}
 	}
