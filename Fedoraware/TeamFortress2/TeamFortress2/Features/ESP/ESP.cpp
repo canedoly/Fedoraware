@@ -367,10 +367,13 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
 					if (Vars::ESP::Players::Name.Value)
 					{
 						int offset = (g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4) * 2;
+					}
+					else
+					{
+						int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
 					}
 					int middle = x + w / 2;
 
@@ -536,7 +539,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						fh = static_cast<float>(h);
 						const auto iconWidth = static_cast<float>(pIcon->Width());
 						// lol
-						const float scale = std::clamp(fw / iconWidth, 0.5f, 0.75f);
+						const float scale = std::clamp(fw / iconWidth, 0.25f, 0.5f);
 						static float easedScale = 0.5f;
 						scale > easedScale
 							? easedScale = g_Draw.EaseOut(scale, easedScale, 0.99f)
