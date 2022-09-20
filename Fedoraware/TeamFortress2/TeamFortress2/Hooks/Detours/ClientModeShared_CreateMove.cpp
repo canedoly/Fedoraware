@@ -164,7 +164,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 	// Run Features
 	{
 		F::Misc.Run(pCmd);
-		F::Misc.FastStop(pCmd, pLocal);
 		F::Fedworking.Run();
 		F::CameraWindow.Update();
 		F::BadActors.OnTick();
