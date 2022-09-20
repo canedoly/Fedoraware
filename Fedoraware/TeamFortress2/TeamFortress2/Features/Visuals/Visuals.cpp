@@ -481,7 +481,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
-						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {90, 140, 80, 235});
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {64, 189, 97, 255});
 						break;
 					}
 					case 6:
@@ -490,10 +490,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Colors::DtOutline);
-						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h / 6, Vars::Menu::Colors::MenuAccent);
-						g_Draw.Rect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h / 6, {129, 255, 61, 255});
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h / 5, Vars::Menu::Colors::MenuAccent);
+						g_Draw.Rect(DTBox.x, DTBox.y, fastInterp * DTBox.w, DTBox.h / 5, {129, 255, 61, 255});
 
-						g_Draw.String(FONT_INDICATORS, DTBox.c - 3, DTBox.y + 3, {255,255,255,255}, ALIGN_DEFAULT, L"nos %.2fs (%d)", Ticks_Time, G::ShiftedTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.x - 3, DTBox.y + 3, {255,255,255,255}, ALIGN_DEFAULT, L"nos %.2fs (%d)", Ticks_Time, G::ShiftedTicks);
 						break;
 					}
 					case 7:
