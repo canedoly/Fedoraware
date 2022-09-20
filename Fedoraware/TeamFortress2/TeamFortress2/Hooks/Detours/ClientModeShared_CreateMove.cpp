@@ -85,7 +85,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 
 	G::CurrentUserCmd = pCmd;
-	const auto& pLocal = g_EntityCache.GetLocal()
+	const auto& pLocal = g_EntityCache.GetLocal();
 
 	if (!G::ShouldShift){
 		if (const auto& pLocal = g_EntityCache.GetLocal())
