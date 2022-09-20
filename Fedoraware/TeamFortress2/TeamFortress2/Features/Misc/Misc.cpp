@@ -963,7 +963,6 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 		static Vec3 currentPos{};
 		static int nShiftTickG = 0;
 		static int nShiftTickA = 0;
-		F::EnginePrediction.End(pCmd);
 
 		switch (stopType) {
 		case 0: {
