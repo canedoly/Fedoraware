@@ -8,7 +8,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	static auto oClMove = Hook.Original<FN>();
 
 	const auto pLocal = g_EntityCache.GetLocal();
-	const int nClassNum = pLocal->GetClassNum();
+	//const int nClassNum = pLocal->GetClassNum();
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
@@ -108,7 +108,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		// would converting ping into ticks and adding them to wait for shift improve it?
 		// it probably should cuz we would be waiting for server to also accept them
 		// condition - nclassnum == classheavy | ? - if | : - else
-		G::WaitForShift = (nClassNum == CLASS_HEAVY) ? 0.f : 26.f;
+		G::WaitForShift = 0.f;
 		return; // this recharges
 	}
 
