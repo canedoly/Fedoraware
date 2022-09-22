@@ -107,7 +107,8 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 		// if class is heavy, set the waitforshift to 0 else 26
 		// would converting ping into ticks and adding them to wait for shift improve it?
 		// it probably should cuz we would be waiting for server to also accept them
-		G::WaitForShift = nClassNum == CLASS_HEAVY ? 0.f : 26.f;
+		// condition - nclassnum == classheavy | ? - if | : - else
+		G::WaitForShift = (nClassNum == CLASS_HEAVY) ? 0.f : 26.f;
 		return; // this recharges
 	}
 
