@@ -8,6 +8,7 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	static auto oClMove = Hook.Original<FN>();
 
 	const auto pLocal = g_EntityCache.GetLocal();
+	nClassNum = pLocal->GetClassNum()
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
@@ -103,7 +104,10 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	{
 		G::ForceSendPacket = true; // force uninterrupted connection with server
 		G::ShiftedTicks++; // add ticks to tick counter
-		G::WaitForShift = round(1.f / I::GlobalVars->interval_per_tick) - Vars::Misc::CL_Move::DTTicks.Value; // set wait condition (genius)
+		// if class is heavy, set the waitforshift to 0 else 26
+		// would converting ping into ticks and adding them to wait for shift improve it?
+		// it probably should cuz we would be waiting for server to also accept them
+		G::WaitForShift = nClassNum == CLASS_HEAVY ? 0.f : 26.f;
 		return; // this recharges
 	}
 

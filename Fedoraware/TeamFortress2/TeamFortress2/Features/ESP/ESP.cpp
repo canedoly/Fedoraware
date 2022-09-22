@@ -599,7 +599,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, ratio, HealthColor, Colors::OutlineESP, false);
 				}
 
-				if (Vars::ESP::Players::HealthText.Value == 2 && (flHealth < flMaxHealth))
+				if (Vars::ESP::Players::HealthText.Value == 2 && (nHealth < nMaxHealth))
 				{
 					g_Draw.String(FONT, x - 6, (y + h) - (ratio * h) - 4, Colors::White, ALIGN_REVERSE, "%d", nHealth);
 				}

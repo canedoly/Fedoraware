@@ -86,6 +86,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 	G::CurrentUserCmd = pCmd;
 	const auto& pLocal = g_EntityCache.GetLocal();
+	nClassNum = pLocal->GetClassNum()
 
 	if (!G::ShouldShift){
 		if (const auto& pLocal = g_EntityCache.GetLocal())
@@ -252,7 +253,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 	// do this at the end just in case aimbot / triggerbot fired.//
 	if (const auto& pWeapon = g_EntityCache.GetWeapon()) {
-		if (pCmd->buttons & IN_ATTACK && Vars::Misc::CL_Move::SafeTick.Value) {
+		if (pCmd->buttons & IN_ATTACK && Vars::Misc::CL_Move::SafeTick.Value && !nClassNum == CLASS_HEAVY) {
 			if (G::NextSafeTick > I::GlobalVars->tickcount && G::ShouldShift && G::ShiftedTicks) {
 				pCmd->buttons &= ~IN_ATTACK;
 			}

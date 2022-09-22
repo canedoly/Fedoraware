@@ -394,7 +394,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
-				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.9f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.89f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
 				static Color_t color1, color2;
 
@@ -473,7 +473,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						static Color_t BGcolor;
 						if (G::ShiftedTicks > 0)
 						{
-							BGcolor = {20, 20, 20, 235};
+							BGcolor = {20, 20, 20, 245};
 						}
 						else
 						{
@@ -481,7 +481,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
-						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {64, 189, 97, 255});
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {73, 230, 79, 255});
 						break;
 					}
 					case 6:
