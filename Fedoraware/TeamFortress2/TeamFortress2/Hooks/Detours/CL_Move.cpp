@@ -8,10 +8,10 @@ MAKE_HOOK(CL_Move, g_Pattern.Find(L"engine.dll", L"55 8B EC 83 EC ? 83 3D ? ? ? 
 	static auto oClMove = Hook.Original<FN>();
 
 	const auto pLocal = g_EntityCache.GetLocal();
-	// if (pLocal->IsAlive())
-	// {
-	// 	const int nClassNum = pLocal->GetClassNum();
-	// }
+	if (pLocal->IsAlive())
+	{
+		const int nClassNum = pLocal->GetClassNum();
+	}
 
 	static KeyHelper tpKey{ &Vars::Misc::CL_Move::TeleportKey.Value };
 	static KeyHelper rechargeKey{ &Vars::Misc::CL_Move::RechargeKey.Value };
