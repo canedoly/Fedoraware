@@ -683,7 +683,8 @@ void CVisuals::DrawMovesimLine()
 		{
 			for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 			{
-				RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
+				//RenderLine(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false);
+				I::DebugOverlay->AddLineOverlay(G::PredLinesBackup.at(i - 1), G::PredLinesBackup.at(i), Vars::Aimbot::Projectile::PredictionColor, false, 4.f)
 				// i hate mfed code why why why he couldn't make his base a bit similiar to fedoraware my smol brain can't understand this, why currentlines push back (what does it even do!?)
 				// why get rotated origin and angles??
 				// where does 5 come from?
