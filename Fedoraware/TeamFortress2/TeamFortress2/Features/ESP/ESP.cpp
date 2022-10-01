@@ -950,8 +950,8 @@ void CESP::DrawWorld() const
 		{
 			if (Vars::ESP::World::HealthName.Value)
 			{
-				if (Utils::W2S(health->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x, y + h, Colors::Health, ALIGN_CENTER, L"Health");
+				nTextTopOffset += g_Draw.m_vecFonts[FONT].nTall + g_Draw.m_vecFonts[FONT].nTall / 4;
+				g_Draw.String(FONT, x + w / 2, y - nTextTopOffset, Colors::Ammo, ALIGN_CENTERHORIZONTAL, L"Ammo");
 			}
 
 			if (Vars::ESP::World::HealthLine.Value)
@@ -1012,8 +1012,8 @@ void CESP::DrawWorld() const
 		{
 			if (Vars::ESP::World::AmmoName.Value)
 			{
-				if (Utils::W2S(ammo->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x, y + h, Colors::Ammo, ALIGN_CENTER, L"Ammo");
+				nTextTopOffset += g_Draw.m_vecFonts[FONT].nTall + g_Draw.m_vecFonts[FONT].nTall / 4;
+				g_Draw.String(FONT, x + w / 2, y - nTextTopOffset, Colors::Health, ALIGN_CENTERHORIZONTAL, L"Health");
 			}
 
 			if (Vars::ESP::World::AmmoLine.Value)
