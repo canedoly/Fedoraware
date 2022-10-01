@@ -73,7 +73,7 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 	if (bRecharge){
 		if (iAvailableTicks <= Vars::Misc::CL_Move::DTTicks.Value) { return; }
 		else { bRecharge = false; }
-		G::WaitForShift = round(1.f / I::GlobalVars->interval_per_tick) - Vars::Misc::CL_Move::DTTicks.Value;
+		G::WaitForShift = 26;
 	}
 	if (bDoubletap){
 		while (iAvailableTicks){ CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); } bDoubletap = false; return;
