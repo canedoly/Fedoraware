@@ -595,7 +595,7 @@ void CAimbotHitscan::Aim(CUserCmd* pCmd, Vec3& vAngle)
 
 			if (!Vars::Aimbot::Global::DontWaitForShot.Value)
 			{ 
-				if (G::IsAttacking && G::WeaponCanAttack)
+				if ((G::IsAttacking && G::WeaponCanAttack))
 				{
 					Utils::FixMovement(pCmd, vAngle);
 					pCmd->viewangles = vAngle;
