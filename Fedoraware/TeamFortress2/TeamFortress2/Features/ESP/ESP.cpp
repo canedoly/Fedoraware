@@ -946,6 +946,7 @@ void CESP::DrawWorld() const
 
 		int x = 0, y = 0, w = 0, h = 0;
 		Vec3 vTrans[8];
+		int nTextTopOffset = 0;
 		if (GetDrawBounds(health, vTrans, x, y, w, h))
 		{
 			if (Vars::ESP::World::HealthName.Value)
@@ -1008,6 +1009,7 @@ void CESP::DrawWorld() const
 
 		int x = 0, y = 0, w = 0, h = 0;
 		Vec3 vTrans[8];
+		int nTextTopOffset = 0;
 		if (GetDrawBounds(ammo, vTrans, x, y, w, h))
 		{
 			if (Vars::ESP::World::AmmoName.Value)
