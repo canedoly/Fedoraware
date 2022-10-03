@@ -764,23 +764,11 @@ void CVisuals::PruneBulletTracers()
 
 void CVisuals::DrawBulletTracers()
 {
-	const float curTime = I::GlobalVars->curtime;
 	if (m_vecBulletTracers.size())
 	{
 		for (const auto& bulletTracer : m_vecBulletTracers)
 		{
 			Color_t tracerColor = bulletTracer.m_Color;
-			const float flDistance = curTime - bulletTracer.m_flTimeCreated;
-			if (flDistance < 0)
-			{
-				tracerColor.a = 255;
-			}
-			else
-			{
-				//I::Cvar->ConsolePrintf("%f\n", flDistance);
-				tracerColor.a = Math::RemapValClamped(flDistance, 0, 1, 255, 0);
-			}
-			/*I::Cvar->ConsolePrintf("a: %d\n", tracerColor.a);*/
 			RenderLine(bulletTracer.m_vStartPos, bulletTracer.m_vEndPos, tracerColor, false);
 		}
 	}

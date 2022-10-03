@@ -86,6 +86,119 @@ bool CCritHack::ShouldCrit()
 	return false;
 }
 
+float CCritHack::GetWithdrawMult(CBaseCombatWeapon* pWeapon)
+{
+	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa5c) + 1);
+	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa58) + 1);
+
+	float multiply = 0.5;
+	if (pWeapon->GetSlot() != 2) { multiply = Math::RemapValClamped(count / checks, .1f, 1.f, 1.f, 3.f); }
+
+	return multiply * 3.f;
+}
+
+float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
+{
+	float amount = static_cast<float>(AddedPerShot) * GetWithdrawMult(pWeapon);
+	if (pWeapon->IsRapidFire()) {
+		amount = TakenPerCrit * GetWithdrawMult(pWeapon);
+		reinterpret_cast<int&>(amount) &= ~1;
+	}
+	return amount;
+}
+
+float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
+{
+	const auto& pLocal = g_EntityCache.m_pLocal;
+	if (!pLocal) { return 0.f; }
+
+	const auto critMult = static_cast<float>(pLocal->GetCritMult());
+	float chance = .02f;
+	if (pWeapon->GetSlot() == 2)
+	{
+		chance = .15f;
+	}
+
+	float multChance = Utils::ATTRIB_HOOK_FLOAT(critMult * chance, "mult_crit_chance", pWeapon, nullptr, 1);
+	if (pWeapon->IsRapidFire())
+	{
+		const float flTotalCritChance = std::clamp(0.02f * critMult, 0.01f, 0.99f);
+		constexpr float flCritDuration = 2.0f;
+		const float flNonCritDuration = (flCritDuration / flTotalCritChance) - flCritDuration;
+		const float flStartCritChance = 1 / flNonCritDuration;
+		multChance = Utils::ATTRIB_HOOK_FLOAT(flStartCritChance, "mult_crit_chance", pWeapon, nullptr, 1);
+	}
+
+	return multChance;
+}
+
+std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
+{
+	float observed = pWeapon->ObservedCritChance();
+	float needed = GetCritCap(pWeapon) + .1f;
+	return { observed, needed };
+}
+
+bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
+{
+	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
+	if (damage) {
+		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
+			bucket += static_cast<float>(AddedPerShot);
+			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
+		}
+	}
+
+	if (GetWithdrawAmount(pWeapon) > bucket) { return false; }
+	return true;
+}
+
+bool CCritHack::CanWeaponCrit(CBaseCombatWeapon* pWeapon, bool draw)
+{
+	if (!AreRandomCritsEnabled() || !AddedPerShot) { return false; }
+	// if (!pWeapon->CanFireCriticalShot(false)) { return false; }
+	if (GetCritCap(pWeapon) == 0.f) { return false; }
+	if (!CanWithdrawFromBucket(pWeapon)) { return false; }
+	if (!draw && !pWeapon->IsReadyToFire() && !pWeapon->IsRapidFire()) { return false; }
+
+	auto [observed, needed] = GetCritMultInfo(pWeapon);
+	if (observed > needed && pWeapon->GetSlot() != 2) { return false; }
+
+	return true;
+}
+
+int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
+{
+	// Backup weapon stats
+	const auto backupBucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
+	const auto backupAttempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+
+	int shots;
+	for (shots = 0; shots < ShotsToFill + 1; shots++)
+	{
+		if (CanWithdrawFromBucket(pWeapon, true)) { break; }
+
+		auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
+		auto attempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+
+		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat())
+		{
+			bucket += static_cast<float>(AddedPerShot);
+			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
+		}
+
+		attempts++;
+
+		*reinterpret_cast<float*>(pWeapon + 0xa54) = bucket;
+		*reinterpret_cast<float*>(pWeapon + 0xa58) = attempts;
+	}
+
+	// Restore backup
+	*reinterpret_cast<float*>(pWeapon + 0xa54) = backupBucket;
+	*reinterpret_cast<float*>(pWeapon + 0xa58) = backupAttempts;
+	return shots;
+}
+
 int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 {
 	int retVal = -1;
@@ -197,6 +310,40 @@ void CCritHack::Run(CUserCmd* pCmd)
 			}
 		}
 	}
+
+
+	// Update stats
+	static int previousWeapon = 0;
+	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
+	{
+		const auto& weaponData = pWeapon->GetWeaponData();
+		const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
+		int projectilesPerShot = weaponData.m_nBulletsPerShot;
+		if (projectilesPerShot >= 1)
+		{
+			projectilesPerShot = Utils::ATTRIB_HOOK_FLOAT(projectilesPerShot, "mult_bullets_per_shot", pWeapon, nullptr, true);
+		}
+		else
+		{
+			projectilesPerShot = 1;
+		}
+
+		AddedPerShot = weaponData.m_nDamage;
+		AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
+		AddedPerShot *= std::max(1, projectilesPerShot);
+		ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
+
+		if (pWeapon->IsRapidFire())
+		{
+			TakenPerCrit = AddedPerShot;
+			TakenPerCrit *= static_cast<int>(2.f / weaponData.m_flTimeFireDelay);
+			if (TakenPerCrit * 3 > static_cast<int>(cap))
+			{
+				TakenPerCrit = static_cast<int>(cap / 3.f);
+			}
+		}
+	}
+	previousWeapon = pWeapon->GetIndex();
 }
 
 void CCritHack::Draw()
@@ -215,6 +362,8 @@ void CCritHack::Draw()
 
 	const float bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
 	const int seedRequests = *reinterpret_cast<int*>(pWeapon + 0xA5C);
+	const bool canCrit = CanWeaponCrit(pWeapon, true);
+	if (!canCrit) { ShotsUntilCrit = GetShotsUntilCrit(pWeapon); }
 
 	int longestW = 40;
 
@@ -231,6 +380,17 @@ void CCritHack::Draw()
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, {255,0,0,255}, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 	}
+	if (!canCrit)
+	{
+		auto [observed, needed] = GetCritMultInfo(pWeapon);
+		const auto critText = tfm::format("%.3f < %.3f", observed, needed);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 248, 255, 51, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+	}
+
+	const int withdrawAmount = GetWithdrawAmount(pWeapon);
+	const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
+	const auto critText = tfm::format("%s crits", potentialCrits);
+	g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 14, 204, 0, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
 	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 	const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
@@ -267,4 +427,38 @@ void CCritHack::Draw()
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;
+}
+
+void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
+{
+	switch (uNameHash)
+	{
+		case FNV1A::HashConst("player_hurt"):
+		{
+			// TODO: This
+			break;
+		}
+
+		case FNV1A::HashConst("teamplay_round_start"):
+		case FNV1A::HashConst("client_disconnect"):
+		case FNV1A::HashConst("client_beginconnect"):
+		case FNV1A::HashConst("game_newmap"):
+		{
+			// TODO: Clear CritCmds
+			LastCritTick = -1;
+			LastBucket = -1.f;
+
+			ShotsUntilCrit = 0;
+			AddedPerShot = 0;
+			ShotsToFill = 0;
+			TakenPerCrit = 0;
+			break;
+		}
+	}
+}
+
+void CCritHack::Init()
+{
+	tf_weapon_criticals = I::CVars->FindVar("tf_weapon_criticals");
+	tf_weapon_criticals_bucket_cap = I::CVars->FindVar("tf_weapon_criticals_bucket_cap");
 }

@@ -25,7 +25,7 @@ public: //Netvars
 		M_DYNVARGET(ReloadMode, int, this, "DT_TFWeaponBase", "m_iReloadMode")
 		M_DYNVARGET(DetonateTime, float, this, "DT_WeaponGrenadeLauncher", "m_flDetonateTime")
 		//M_DYNVARGET(ObservedCritChance, float, this, "DT_LocalTFWeaponData", "m_flObservedCritChance")
-		//M_DYNVARGET(LastCritCheckTime, float, this, "DT_TFWeaponBase", "LocalActiveTFWeaponData", "m_flLastCritCheckTime")
+		M_DYNVARGET(LastCritCheckTime, float, this, "DT_TFWeaponBase", "LocalActiveTFWeaponData", "m_flLastCritCheckTime")
 		M_DYNVARGET(ObservedCritChance, float, this, "DT_TFWeaponBase", "LocalActiveTFWeaponData", "m_flObservedCritChance")
 
 		M_OFFSETGET(UberCharge, float, 0xC6C) //DT_WeaponMedigun -> NonLocalTFWeaponMedigundata -> m_flChargeLevel
@@ -39,29 +39,29 @@ public: //Netvars
 
 			// pretty srue these are all wrong but i have no idea how to do the thing to find out what they are
 		// you add 1c idiot
-		/*
-				*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
-		*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
-		*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
-		*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
-		*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
-		*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
-		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
-		*//*
-		M_OFFSETGET(WeaponSeed, int, 0xB58)
-		M_OFFSETGET(Unknown1, int, 0xB4C)
-		M_OFFSETGET(Unknown2, int, 0xB50)
-		M_OFFSETGET(Unknown3, bool, 0xB33)
-		M_OFFSETGET(Unknown4, float, 0xB5C)
-		M_OFFSETGET(CritAttempts, int, 0xA58)
-		M_OFFSETGET(CritCount, int, 0xA5C)
-		M_OFFSETGET(ObservedCritChance, int, 0xC18)
-		M_OFFSETGET(Unknown7, bool, 0xB34)
-		M_OFFSETGET(WeaponMode, bool, 0xB20)
-		M_OFFSETGET(WeaponDataa, bool, 0xB2C)*/
+		
+		// *(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
+		// *(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
+		// *(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
+		// *(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
+		// *(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
+		// *(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
+		// *(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
+		// *(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
+		// *(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
+		// *(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
+		
+		// M_OFFSETGET(WeaponSeed, int, 0xB58)
+		// M_OFFSETGET(Unknown1, int, 0xB4C)
+		// M_OFFSETGET(Unknown2, int, 0xB50)
+		// M_OFFSETGET(Unknown3, bool, 0xB33)
+		// M_OFFSETGET(Unknown4, float, 0xB5C)
+		// M_OFFSETGET(CritAttempts, int, 0xA58)
+		// M_OFFSETGET(CritCount, int, 0xA5C)
+		// M_OFFSETGET(ObservedCritChance, int, 0xC18)
+		// M_OFFSETGET(Unknown7, bool, 0xB34)
+		// M_OFFSETGET(WeaponMode, bool, 0xB20)
+		// M_OFFSETGET(WeaponDataa, bool, 0xB2C)
 
 
 public: //Virtuals

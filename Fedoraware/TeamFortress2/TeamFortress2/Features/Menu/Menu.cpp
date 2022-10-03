@@ -1143,6 +1143,11 @@ void CMenu::MenuVisuals()
 				{
 					WInputText("Custom Tracer", &Vars::Visuals::ParticleName); HelpMarker("If you want to use a custom particle tracer");
 				}
+				WCombo("Crit Particle tracer", &Vars::Visuals::CritParticleTracer.Value, { "Off", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
+				if (Vars::Visuals::CritParticleTracer.Value == 9)
+				{
+					WInputText("Custom Tracer", &Vars::Visuals::CritParticleName); HelpMarker("If you want to use a custom particle tracer");
+				}
 				WToggle("On Screen Local Conditions", &Vars::Visuals::DrawOnScreenConditions.Value); HelpMarker("Render your local conditions on your screen");
 				WToggle("Noscope lines", &Vars::Visuals::ScopeLines.Value); HelpMarker("Will draw a custom overlay");
 				ColorPickerL("Inner line color", Colors::NoscopeLines1);
