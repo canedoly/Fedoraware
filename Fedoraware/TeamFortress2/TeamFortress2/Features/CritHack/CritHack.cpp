@@ -459,6 +459,6 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 void CCritHack::Init()
 {
-	tf_weapon_criticals = g_ConVars.FindVar("tf_weapon_criticals")
-	tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap")
+	tf_weapon_criticals = g_ConVars.FindVar("tf_weapon_criticals");
+	tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
 }
