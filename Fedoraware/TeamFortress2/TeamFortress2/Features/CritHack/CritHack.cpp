@@ -109,7 +109,7 @@ float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
 
 float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
 {
-	const auto& pLocal = g_EntityCache.m_pLocal;
+	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal) { return 0.f; }
 
 	const auto critMult = static_cast<float>(pLocal->GetCritMult());
@@ -459,6 +459,6 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 void CCritHack::Init()
 {
-	tf_weapon_criticals = I::CVars->FindVar("tf_weapon_criticals");
-	tf_weapon_criticals_bucket_cap = I::CVars->FindVar("tf_weapon_criticals_bucket_cap");
+	tf_weapon_criticals = g_ConVars.FindVar("tf_weapon_criticals")
+	tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap")
 }
