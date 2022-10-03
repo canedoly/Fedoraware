@@ -2,11 +2,13 @@
 
 #include "../../Features/Killstreak/Killstreak.h"
 #include "../../Features/Fedworking/Fedworking.h"
+#include "../../Features/CritHack/CritHack.h"
 
 MAKE_HOOK(GameEventManager_FireEventClientSide, Utils::GetVFuncPtr(I::GameEventManager, 8), bool, __fastcall,
 		  void* ecx, void* edx, CGameEvent* pEvent)
 {
 	const FNV1A_t uNameHash = FNV1A::Hash(pEvent->GetName());
+	g_CritHack.FireEvent(pEvent, uNameHash);
 	F::Killstreaker.FireEvents(pEvent, uNameHash);
 
 	if (uNameHash == FNV1A::HashConst("party_chat"))

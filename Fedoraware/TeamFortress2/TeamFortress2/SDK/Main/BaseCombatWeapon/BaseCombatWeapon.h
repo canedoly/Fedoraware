@@ -33,7 +33,24 @@ public: //Netvars
 		M_OFFSETGET(Healing, int, 0xC51) //DT_WeaponMedigun -> m_bHealing
 		M_OFFSETGET(CritTokenBucket, float, 0xA54)
 
-		M_OFFSETGET(CritBucket, float, 0xA54)
+		NETVAR(m_iPrimaryAmmoType, int, "CBaseCombatWeapon", "m_iPrimaryAmmoType");
+		NETVAR(m_flNextPrimaryAttack, float, "CBaseCombatWeapon", "m_flNextPrimaryAttack")
+		
+
+			// pretty srue these are all wrong but i have no idea how to do the thing to find out what they are
+		// you add 1c idiot
+		/*
+				*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
+		*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
+		*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
+		*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
+		*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
+		*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
+		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
+		*//*
 		M_OFFSETGET(WeaponSeed, int, 0xB58)
 		M_OFFSETGET(Unknown1, int, 0xB4C)
 		M_OFFSETGET(Unknown2, int, 0xB50)
@@ -44,26 +61,7 @@ public: //Netvars
 		M_OFFSETGET(ObservedCritChance, int, 0xC18)
 		M_OFFSETGET(Unknown7, bool, 0xB34)
 		M_OFFSETGET(WeaponMode, bool, 0xB20)
-		M_OFFSETGET(WeaponDataa, bool, 0xB2C);
-
-		*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
-		*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
-		*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
-		*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
-		*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
-		*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
-		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
-
-		NETVAR(m_iPrimaryAmmoType, int, "CBaseCombatWeapon", "m_iPrimaryAmmoType")
-		NETVAR(m_flNextPrimaryAttack, float, "CBaseCombatWeapon", "m_flNextPrimaryAttack")
-		
-
-			// pretty srue these are all wrong but i have no idea how to do the thing to find out what they are
-		// you add 1c idiot
-		
+		M_OFFSETGET(WeaponDataa, bool, 0xB2C)*/
 
 
 public: //Virtuals
