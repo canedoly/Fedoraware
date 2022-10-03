@@ -187,7 +187,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"55 8B EC 81 
 		const int team = pLocal->GetTeamNum();
 
 		//if crit tracers
-		// const auto& pWeapon = g_EntityCache.GetWeapon();
+		const auto& pWeapon = g_EntityCache.GetWeapon();
 		// switch (Vars::Visuals::CritParticleTracer.Value != 0 && pWeapon->CalcIsAttackCritical())
 		// {
 		// //Machina
