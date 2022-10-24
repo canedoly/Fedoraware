@@ -74,17 +74,17 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 			}
 		}
 		// toggle key for fakelatency
-		if (Vars::Backtrack::LatencyKey.Value)
-		{
-			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
-			{
-				static KeyHelper latencyKey{ &Vars::Backtrack::LatencyKey.Value };
-				if (latencyKey.Pressed())
-				{
-					Vars::Backtrack::FakeLatency.Value = !Vars::Backtrack::FakeLatency.Value;
-				}
-			}
-		}
+		// if (Vars::Backtrack::LatencyKey.Value)
+		// {
+		// 	if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+		// 	{
+		// 		static KeyHelper latencyKey{ &Vars::Backtrack::LatencyKey.Value };
+		// 		if (latencyKey.Pressed())
+		// 		{
+		// 			Vars::Backtrack::FakeLatency.Value = !Vars::Backtrack::FakeLatency.Value;
+		// 		}
+		// 	}
+		// }
 	}
 
 	G::CurrentUserCmd = pCmd;

@@ -806,6 +806,7 @@ namespace Vars
 			inline CVar<bool> AntiBackstab{ false };
 			inline CVar<bool> LegJitter{ false }; // frick u fourteen
 			inline CVar<bool> AntiOverlap{ false };
+			inline CVar<bool> AALines{ false }; 
 			inline CVar<bool> InvalidShootPitch{ false }; // i dont know what to name this its TRASH
 			// no reason to do this for projectile and melee cause u have psilent lel
 		}
