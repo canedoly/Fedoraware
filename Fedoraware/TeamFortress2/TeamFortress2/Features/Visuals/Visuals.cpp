@@ -601,8 +601,9 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 						break;
 
-				}
+					}
 
+				}
 			}
 		}
 	}
