@@ -537,7 +537,7 @@ namespace Vars
 		inline CVar<bool> ViewmodelSway{ false };
 		inline CVar<bool> MoveSimLine{ false };
 		inline CVar<bool> MoveSimSeperators{ false };
-		inline CVaar<int> MoveSimMode{ 0 };
+		inline CVar<int> MoveSimMode{ 0 };
 		inline CVar<int> SeperatorLength{ 12 };
 		inline CVar<int> SeperatorSpacing{ 6 };
 		
