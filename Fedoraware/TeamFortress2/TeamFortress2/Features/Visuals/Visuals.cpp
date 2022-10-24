@@ -534,7 +534,6 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nNewTickBase = 6;
 						int accurateTicks = 3;
 
-
 						if (G::ShiftedTicks == 0)
 						{
 							int nBTickBase = TickBase;
