@@ -583,6 +583,7 @@ void CMenu::MenuVisuals()
 					ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 					ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
 					WToggle("Cheater Detection", &Vars::ESP::Players::CheaterDetection.Value); HelpMarker("Attempts to automatically mark cheaters.");
+					WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
 					WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 					WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 					ColorPickerL("Skellington colour", Colors::Bones);
@@ -1156,6 +1157,7 @@ void CMenu::MenuVisuals()
 					WToggle("Rainbow tracers", &Vars::Visuals::BulletTracerRainbow.Value); HelpMarker("Bullet tracer color will be dictated by a changing color");
 					WToggle("Viewmodel sway", &Vars::Visuals::ViewmodelSway.Value);
 					MultiCombo({ "Line", "Seperators" }, { &Vars::Visuals::MoveSimLine.Value, &Vars::Visuals::MoveSimSeperators.Value }, "Proj Aim Lines");
+					WCombo("Proj aim line mode", &Vars::Visuals::MoveSimMode.Value, { "After shot", "Constant" });
 					ColorPickerL("Prediction Line Color", Vars::Aimbot::Projectile::PredictionColor);
 					if (Vars::Visuals::MoveSimSeperators.Value)
 					{
@@ -1232,7 +1234,7 @@ void CMenu::MenuVisuals()
 					WToggle("Anti viewmodel flip", &Vars::Misc::AntiViewmodelFlip.Value); HelpMarker("This is scuffed");
 
 					SectionTitle("DT Indicator");
-					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "SEOwned", "Numeric" }); HelpMarker("What style the bar should draw in.");
+					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "Seowned", "Numeric", "Rijin V1", "Nitro old", "Beta", "Deadflag", "Lmaobox" }); HelpMarker("What style the bar should draw in.");
 					Text("Charging Gradient");
 					ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 					ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
@@ -1527,6 +1529,16 @@ void CMenu::MenuHvH()
 			const int ticksMax = g_ConVars.sv_maxusrcmdprocessticks->GetInt() - 2;
 			WSlider("Ticks to shift", &Vars::Misc::CL_Move::DTTicks.Value, 1, ticksMax ? ticksMax : 22, "%d"); HelpMarker("How many ticks to shift");
 			WSlider("Passive Recharge Factor", &Vars::Misc::CL_Move::PassiveRecharge.Value, 0, 22, "%d");
+
+			SectionTitle("DT Extra");
+			WToggle("Custom DT", &Vars::Misc::CL_Move::CustomDT.Value);
+			if (Vars::Misc::CL_Move::CustomDT.Value)
+			{
+				WSlider("Ticks to Recharge", &Vars::Misc::CL_Move::RechargeTicks.Value, 0, 24, "%d");
+				WToggle("Shift once", &Vars::Misc::CL_Move::ShiftOnce.Value);
+			}
+
+			SectionTitle("Speedhack");
 			WToggle("SpeedHack", &Vars::Misc::CL_Move::SEnabled.Value); HelpMarker("Speedhack Master Switch");
 			if (Vars::Misc::CL_Move::SEnabled.Value)
 			{
@@ -1537,11 +1549,8 @@ void CMenu::MenuHvH()
 			/* Section: Fakelag */
 			SectionTitle("Fakelag");
 			WToggle("Enable Fakelag", &Vars::Misc::CL_Move::Fakelag.Value);
+			InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
 			MultiCombo({ "While Moving", "On Key", "While Visible", "Predict Visibility", "While Unducking", "While Airborne" }, { &Vars::Misc::CL_Move::WhileMoving.Value, &Vars::Misc::CL_Move::FakelagOnKey.Value, &Vars::Misc::CL_Move::WhileVisible.Value, &Vars::Misc::CL_Move::PredictVisibility.Value, &Vars::Misc::CL_Move::WhileUnducking.Value, &Vars::Misc::CL_Move::WhileInAir.Value }, "Flags###FakeLagFlags");
-			if (Vars::Misc::CL_Move::FakelagOnKey.Value)
-			{
-				InputKeybind("Fakelag key", Vars::Misc::CL_Move::FakelagKey); HelpMarker("The key to activate fakelag as long as it's held");
-			}
 			WCombo("Fakelag Mode###FLmode", &Vars::Misc::CL_Move::FakelagMode.Value, { "Plain", "Random", "Adaptive" }); HelpMarker("Controls how fakelag will be controlled.");
 
 			switch (Vars::Misc::CL_Move::FakelagMode.Value)
@@ -1664,6 +1673,7 @@ void CMenu::MenuHvH()
 				case 12:
 				case 13: { WSlider("Real Jitter Amt", &Vars::AntiHack::AntiAim::RealJitter.Value, -180, 180); break; }
 			}
+			WToggle("AA Lines", &Vars::AntiHack::AntiAim::AALines.Value);
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab" }, { &Vars::AntiHack::AntiAim::AntiOverlap.Value, &Vars::AntiHack::AntiAim::LegJitter.Value, &Vars::AntiHack::AntiAim::InvalidShootPitch.Value, &Vars::AntiHack::AntiAim::AntiBackstab.Value }, "Misc.");
 
 			/* Section: Auto Peek */
@@ -1690,6 +1700,7 @@ void CMenu::MenuMisc()
 			WToggle("No push", &Vars::Misc::NoPush.Value); HelpMarker("Will make teammates unable to push you around");
 			WCombo("Quick stop", &Vars::Misc::AccurateMovement.Value, { "Off", "Legacy", "Instant", "Adaptive" }); HelpMarker("Will stop you from sliding once you stop pressing movement buttons");
 			WToggle("Duck Jump", &Vars::Misc::DuckJump.Value); HelpMarker("Will duck when bhopping");
+			WCombo("Duck Jump Mode", &Vars::Misc::DuckJumpMode.Value, { "old", "new" });
 			WToggle("Bunnyhop", &Vars::Misc::AutoJump.Value); HelpMarker("Will jump as soon as you touch the ground again, keeping speed between jumps");
 			WCombo("Autostrafe", &Vars::Misc::AutoStrafe.Value, { "Off", "Legit", "Directional" }); HelpMarker("Will strafe for you in air automatically so that you gain speed");
 			if (Vars::Misc::AutoStrafe.Value == 2)
@@ -1884,6 +1895,7 @@ void CMenu::SettingsWindow()
 		if (ColorPicker("Menu accent", Vars::Menu::Colors::MenuAccent)) { LoadStyle(); } SameLine(); Text("Menu accent");
 		if (Checkbox("Alternative Design", &Vars::Menu::ModernDesign)) { LoadStyle(); }
 		Checkbox("Show DVD bounce", &Vars::Menu::ShowDVD.Value);
+		Checkbox("Debug", &Vars::Debug::DebugInfo.Value);
 		if (Checkbox("Menu Vignette", &Vars::Menu::Vignette.Value))
 		{
 			I::ViewRender->SetScreenOverlayMaterial(nullptr);

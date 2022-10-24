@@ -59,6 +59,34 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 	static float fOldSide = pCmd->sidemove;
 	static float fOldForward = pCmd->forwardmove;
 
+	if (const auto& pLocal = g_EntityCache.GetLocal())
+	{
+		// toggle key for fakelag
+		if (Vars::Misc::CL_Move::FakelagKey.Value)
+		{
+			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+			{
+				static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
+				if (fakelagKey.Pressed())
+				{
+					Vars::Misc::CL_Move::Fakelag.Value = !Vars::Misc::CL_Move::Fakelag.Value;
+				}
+			}
+		}
+		// toggle key for fakelatency
+		if (Vars::Backtrack::LatencyKey.Value)
+		{
+			if (!I::EngineVGui->IsGameUIVisible() && !I::VGuiSurface->IsCursorVisible())
+			{
+				static KeyHelper latencyKey{ &Vars::Backtrack::LatencyKey.Value };
+				if (latencyKey.Pressed())
+				{
+					Vars::Backtrack::FakeLatency.Value = !Vars::Backtrack::FakeLatency.Value;
+				}
+			}
+		}
+	}
+
 	G::CurrentUserCmd = pCmd;
 
 	if (!G::ShouldShift)

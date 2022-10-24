@@ -280,7 +280,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			if (Vars::ESP::Players::HealthText.Value == 1)
 			{
 				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
-							  ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+							  ALIGN_DEFAULT, L"%d HP", nHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -370,11 +370,32 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					}
 				}
 
-				// Cheater detection ESP
-				if (G::PlayerPriority[pi.friendsID].Mode == 4 && Vars::ESP::Players::CheaterDetection.Value)
+				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					g_Draw.String(FONT, middle, y - 28, { 255, 0, 0, 255 }, ALIGN_CENTERHORIZONTAL, "CHEATER");
-					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+					int offset = (g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4) * 2;
+
+					if (!Vars::ESP::Players::Name.Value)
+					{
+						int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					}
+					int middle = x + w / 2;
+
+					if (G::PlayerPriority[pi.friendsID].Mode == 4 && !g_EntityCache.IsFriend(nIndex))
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, {255, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, "CHEATER");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 3)
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, {247, 247, 64, 255}, ALIGN_CENTERHORIZONTAL, "RAGE");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 1)
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, {200, 200, 200, 255}, ALIGN_CENTERHORIZONTAL, "IGNORED");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(nIndex))
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
+					}
 				}
 
 				// GUID ESP
@@ -591,7 +612,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 2, (y + h) - (ratio * h) - 15, nHealth > nMaxHealth ? Colors::Overheal : healthColor, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
+					g_Draw.String(FONT, x - 6, (y + h) - (ratio * h) - 4, Colors::White, ALIGN_REVERSE, "%d", nHealth);
 				}
 
 				x += 1;

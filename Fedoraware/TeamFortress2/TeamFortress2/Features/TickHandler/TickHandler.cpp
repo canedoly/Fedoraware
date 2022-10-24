@@ -16,7 +16,7 @@ void CTickshiftHandler::Recharge(CUserCmd* pCmd)
 {
 	//	called from CreateMove
 	static KeyHelper kRecharge{ &Vars::Misc::CL_Move::RechargeKey.Value };
-	bRecharge = (((!bTeleport && !bDoubletap && !bSpeedhack) && (kRecharge.Down()) || G::RechargeQueued) || bRecharge) && iAvailableTicks < Vars::Misc::CL_Move::DTTicks.Value;
+	bRecharge = (((!bTeleport && !bDoubletap && !bSpeedhack) && (kRecharge.Down()) || G::RechargeQueued) || bRecharge) && iAvailableTicks < Vars::Misc::CL_Move::RechargeTicks.Value;
 	G::ShouldStop = (bRecharge && Vars::Misc::CL_Move::StopMovement.Value) || G::ShouldStop;
 }
 
@@ -99,7 +99,14 @@ void CTickshiftHandler::CLMoveFunc(float accumulated_extra_samples, bool bFinalT
 void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 {
 	G::ShiftedTicks = iAvailableTicks; //	put this above incremenet to prevent jittering
-	while (iAvailableTicks > Vars::Misc::CL_Move::DTTicks.Value) { CLMoveFunc(accumulated_extra_samples, false); } //	skim any excess ticks
+	if (Vars::Misc::CL_Move::CustomDT.Value)
+	{
+		while (iAvailableTicks > Vars::Misc::CL_Move::RechargeTicks.Value) { CLMoveFunc(accumulated_extra_samples, false); } //	skim any excess ticks
+	}
+	else
+	{
+		while (iAvailableTicks > Vars::Misc::CL_Move::DTTicks.Value) { CLMoveFunc(accumulated_extra_samples, false); } //	skim any excess ticks
+	}
 
 	iAvailableTicks++; //	since we now have full control over CL_Move, increment.
 	if (iAvailableTicks <= 0)
@@ -128,13 +135,30 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 		if (iAvailableTicks <= Vars::Misc::CL_Move::DTTicks.Value) { return; }
 		bRecharge = false;
 		G::RechargeQueued = false;
-		G::WaitForShift = iTickRate - Vars::Misc::CL_Move::DTTicks.Value;
+		G::WaitForShift = 26;
 	}
 
 	if (bDoubletap)
 	{
-		while (iAvailableTicks) { CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); }
-		bDoubletap = false;
+		int ticksShifted = 0;
+		while (iAvailableTicks)
+		{ 
+			int ticksShifted = 0;
+			CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); 
+			if ((ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) && Vars::Misc::CL_Move::CustomDT.Value) 
+			{
+				bDoubletap = false;
+				if (Vars::Misc::CL_Move::ShiftOnce.Value)
+				{
+					G::WaitForShift = 26;
+				}
+				else 
+				{
+					G::WaitForShift = 0;
+				}
+				return;
+			}
+		}
 		return;
 	}
 

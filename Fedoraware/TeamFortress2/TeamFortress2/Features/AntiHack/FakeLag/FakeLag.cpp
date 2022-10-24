@@ -63,13 +63,6 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal)
 		return true;
 	}	//	no other checks, we want this
 
-	// Is a fakelag key set and pressed?
-	static KeyHelper fakelagKey{ &Vars::Misc::CL_Move::FakelagKey.Value };
-	if (!fakelagKey.Down() && Vars::Misc::CL_Move::FakelagOnKey.Value && Vars::Misc::CL_Move::FakelagMode.Value == 0)
-	{
-		return false;
-	}
-
 	// Do we have enough velocity for velocity mode?
 	if (Vars::Misc::CL_Move::WhileMoving.Value && pLocal->GetVecVelocity().Length2D() < 10.f)
 	{

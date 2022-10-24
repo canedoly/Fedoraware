@@ -380,9 +380,27 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 		// Duck Jump
 		if ((Vars::Misc::DuckJump.Value || Vars::Misc::Followbot::Enabled.Value))
 		{
-			if (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+			if (Vars::Misc::DuckJumpMode.Value == 0)
 			{
-				pCmd->buttons |= IN_DUCK;
+				if (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+				{
+					pCmd->buttons |= IN_DUCK;
+				}
+			}
+			if (Vars::Misc::DuckJumpMode.Value == 1)
+			{
+				const bool needs = (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned());
+				const bool isJumping = pCmd->buttons & IN_JUMP;
+				static bool shouldDuck = false;
+				if (isJumping && !pLocal->IsDucking())
+				{
+					shouldDuck = true;
+					if (shouldDuck && needs)
+					{
+						pCmd->buttons |= IN_DUCK;
+						shouldDuck = false;
+					}
+				}
 			}
 		}
 	}

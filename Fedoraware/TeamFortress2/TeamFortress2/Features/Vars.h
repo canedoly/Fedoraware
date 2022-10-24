@@ -19,7 +19,7 @@ namespace Vars
 		inline bool ModernDesign = false;
 		inline bool ShowPlayerlist = false;
 		inline bool ShowKeybinds = false;
-		inline CVar<bool> Vignette{true};
+		inline CVar<bool> Vignette{false};
 
 		inline CVar<bool> ShowDVD{ false };
 		inline CVar<int> MenuKey{ 0 };
@@ -44,6 +44,7 @@ namespace Vars
 	{
 		inline CVar<bool> Enabled{ false };
 		inline CVar<int> Latency{ 0 };
+		inline CVar<int> LatencyKey{ 0x4B };	// K
 		
 
 		namespace BtChams
@@ -252,6 +253,7 @@ namespace Vars
 			inline CVar<float> DlightRadius{ 200.0f };
 			inline CVar<float> Alpha{ 1.0f };
 			inline CVar<bool> CheaterDetection{ false };
+			inline CVar<bool> PriorityTags{ false };
 			inline CVar<bool> SniperSightlines{ false };
 		}
 
@@ -535,6 +537,7 @@ namespace Vars
 		inline CVar<bool> ViewmodelSway{ false };
 		inline CVar<bool> MoveSimLine{ false };
 		inline CVar<bool> MoveSimSeperators{ false };
+		inline CVaar<int> MoveSimMode{ 0 };
 		inline CVar<int> SeperatorLength{ 12 };
 		inline CVar<int> SeperatorSpacing{ 6 };
 		
@@ -629,6 +632,7 @@ namespace Vars
 		inline CVar<bool> AutoJump{ false };
 		inline CVar<bool> AutoVote{ false };
 		inline CVar<bool> DuckJump{ false };
+		inline CVar<int> DuckJumpMode{ 0 };
 		inline CVar<int> AutoStrafe{ 2 };
 		inline CVar<bool> DirectionalOnlyOnMove{ false };
 		inline CVar<bool> Directional{ false };
@@ -726,6 +730,9 @@ namespace Vars
 			inline CVar<bool> RetainFakelag{ false };
 			inline CVar<bool> RechargeWhileDead{ false };
 			inline CVar<bool> AutoRecharge{ false }; //H
+			inline CVar<bool> CustomDT{ false };
+			inline CVar<bool> ShiftOnce{ false };
+			inline CVar<int> RechargeTicks{ 22 };
 			inline CVar<bool> AntiWarp{ false }; //H
 			inline CVar<int> DTMode{ 0 }; // 0 - On Key, 1 - Always DT, 2 - Disable on key, 3 - Disabled
 			inline CVar<int> DTBarStyle{ 3 };
