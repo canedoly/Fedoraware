@@ -288,9 +288,9 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	traceFilter.pSkip = predictor.m_pEntity;
 
 	const float getdetTime = (
-			if G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher ? 0.6f : 
-			if G::CurItemDefIndex == Demoman_s_TheScottishResistance ? 1.6f :
-			if G::CurItemDefIndex == (Demoman_s_FestiveStickybombLauncher || 
+			G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher ? 0.6f : 
+			G::CurItemDefIndex == Demoman_s_TheScottishResistance ? 1.6f :
+			G::CurItemDefIndex == (Demoman_s_FestiveStickybombLauncher || 
 			Demoman_s_StickybombLauncherR || Demoman_s_StickybombLauncher) ? 0.8f);
 
 	const float detTime = getdetTime;
