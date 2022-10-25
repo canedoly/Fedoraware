@@ -411,7 +411,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 		{
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
-				int maxTicks = (Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value)
+				int maxTicks = (Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value);
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
