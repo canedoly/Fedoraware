@@ -2,6 +2,8 @@
 #include "../../Hooks/HookManager.h"
 #include "../../Hooks/Hooks.h"
 
+int customDT = Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value;
+
 void CTickshiftHandler::Speedhack(CUserCmd* pCmd)
 {
 	//	called from CreateMove
@@ -16,7 +18,7 @@ void CTickshiftHandler::Recharge(CUserCmd* pCmd)
 {
 	//	called from CreateMove
 	static KeyHelper kRecharge{ &Vars::Misc::CL_Move::RechargeKey.Value };
-	bRecharge = (((!bTeleport && !bDoubletap && !bSpeedhack) && (kRecharge.Down()) || G::RechargeQueued) || bRecharge) && iAvailableTicks < Vars::Misc::CL_Move::RechargeTicks.Value;
+	bRecharge = (((!bTeleport && !bDoubletap && !bSpeedhack) && (kRecharge.Down()) || G::RechargeQueued) || bRecharge) && iAvailableTicks < customDT;
 	G::ShouldStop = (bRecharge && Vars::Misc::CL_Move::StopMovement.Value) || G::ShouldStop;
 }
 
@@ -99,21 +101,14 @@ void CTickshiftHandler::CLMoveFunc(float accumulated_extra_samples, bool bFinalT
 void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 {
 	G::ShiftedTicks = iAvailableTicks; //	put this above incremenet to prevent jittering
-	if (Vars::Misc::CL_Move::CustomDT.Value)
-	{
-		while (iAvailableTicks > Vars::Misc::CL_Move::RechargeTicks.Value) { CLMoveFunc(accumulated_extra_samples, false); } //	skim any excess ticks
-	}
-	else
-	{
-		while (iAvailableTicks > Vars::Misc::CL_Move::DTTicks.Value) { CLMoveFunc(accumulated_extra_samples, false); } //	skim any excess ticks
-	}
+	while (iAvailableTicks > customDT) { CLMoveFunc(accumulated_extra_samples, false); }
 
 	iAvailableTicks++; //	since we now have full control over CL_Move, increment.
 	if (iAvailableTicks <= 0)
 	{
 		iAvailableTicks = 0;
 		return;
-	} //	ruhroh
+	}
 
 	if (!Vars::Misc::CL_Move::Enabled.Value)
 	{
@@ -147,6 +142,7 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 			CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); 
 			if (Vars::Misc::CL_Move::CustomDT.Value && (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value)) 
 			{
+				bDoubletap = false;
 				return;
 			}
 		}

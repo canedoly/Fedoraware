@@ -411,6 +411,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 		{
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
+				int maxTicks = (Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value)
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
@@ -442,7 +443,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						const int drawX = DTBox.x;
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - fontHeight - 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Ticks %d/%d", G::ShiftedTicks, Vars::Misc::CL_Move::RechargeTicks.Value);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - fontHeight - 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Ticks %d/%d", G::ShiftedTicks, maxTicks);
 						g_Draw.RoundedBoxStatic(DTBox.x, DTBox.y, DTBox.w, DTBox.h, 4, Colors::DtOutline);
 						if (G::ShiftedTicks && ratioCurrent)
 						{
@@ -494,7 +495,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 5:
 					{
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 3, { 255, 255, 255, 255 }, ALIGN_CENTERHORIZONTAL, L"%i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::RechargeTicks.Value);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 3, { 255, 255, 255, 255 }, ALIGN_CENTERHORIZONTAL, L"%i/%i", G::ShiftedTicks, maxTicks);
 						break;
 					}
 					case 6:
