@@ -145,7 +145,7 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 		{ 
 			int ticksShifted++;
 			CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); 
-			if ((ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) && Vars::Misc::CL_Move::CustomDT.Value) 
+			if (Vars::Misc::CL_Move::CustomDT.Value && (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value)) 
 			{
 				return;
 			}
