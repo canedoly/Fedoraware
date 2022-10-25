@@ -143,19 +143,10 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 		int ticksShifted = 0;
 		while (iAvailableTicks)
 		{ 
-			int ticksShifted = 0;
+			int ticksShifted++;
 			CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); 
 			if ((ticksShifted == Vars::Misc::CL_Move::DTTicks.Value) && Vars::Misc::CL_Move::CustomDT.Value) 
 			{
-				bDoubletap = false;
-				if (Vars::Misc::CL_Move::ShiftOnce.Value)
-				{
-					G::WaitForShift = 26;
-				}
-				else 
-				{
-					G::WaitForShift = 0;
-				}
 				return;
 			}
 		}
