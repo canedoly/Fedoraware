@@ -1532,9 +1532,10 @@ void CMenu::MenuHvH()
 
 			SectionTitle("DT Extra");
 			WToggle("Custom DT", &Vars::Misc::CL_Move::CustomDT.Value);
+			const int RechargeMax = g_ConVars.sv_maxusrcmdprocessticks->GetInt();
 			if (Vars::Misc::CL_Move::CustomDT.Value)
 			{
-				WSlider("Ticks to Recharge", &Vars::Misc::CL_Move::RechargeTicks.Value, 0, 24, "%d");
+				WSlider("Ticks to Recharge", &Vars::Misc::CL_Move::RechargeTicks.Value, 1, RechargeMax, "%d");
 				WToggle("Shift once", &Vars::Misc::CL_Move::ShiftOnce.Value);
 			}
 

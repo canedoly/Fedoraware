@@ -157,7 +157,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"55 8B EC 81 
 		const int iAttachment = pWeapon->LookupAttachment("muzzle");
 		pWeapon->GetAttachment(iAttachment, trace.vStartPos);
 
-		if (Vars::Visuals::BulletTracer.Value)
+		if (Vars::Visuals::BulletTracer.Value && G::CurWeaponType == EWeaponType::PROJECTILE)
 		{
 			const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
 
