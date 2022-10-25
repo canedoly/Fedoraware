@@ -527,6 +527,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 8:
 					{
+						// yes
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
 
