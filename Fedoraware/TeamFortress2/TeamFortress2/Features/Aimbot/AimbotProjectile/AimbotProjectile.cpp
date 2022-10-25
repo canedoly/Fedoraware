@@ -290,8 +290,8 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	const float getdetTime = (
 			G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher ? 0.6f : 
 			G::CurItemDefIndex == Demoman_s_TheScottishResistance ? 1.6f :
-			G::CurItemDefIndex == (Demoman_s_FestiveStickybombLauncher || 
-			Demoman_s_StickybombLauncherR || Demoman_s_StickybombLauncher) ? 0.8f);
+			G::CurItemDefIndex == Demoman_s_FestiveStickybombLauncher || 
+			Demoman_s_StickybombLauncherR || Demoman_s_StickybombLauncher ? 0.8f);
 
 	const float detTime = getdetTime;
 
