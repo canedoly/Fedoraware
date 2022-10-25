@@ -287,6 +287,14 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	static CTraceFilterWorldAndPropsOnly traceFilter = {};
 	traceFilter.pSkip = predictor.m_pEntity;
 
+	const float getdetTime = (
+			if G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher ? 0.6f : 
+			if G::CurItemDefIndex == Demoman_s_TheScottishResistance ? 1.6f :
+			if G::CurItemDefIndex == (Demoman_s_FestiveStickybombLauncher || 
+			Demoman_s_StickybombLauncherR || Demoman_s_StickybombLauncher) ? 0.8f);
+
+	const float detTime = getdetTime;
+
 	Vec3 vLocalPos = pLocal->GetEyePosition();
 	const float maxTime = predictor.m_pEntity->IsPlayer()
 		? (projInfo.m_flMaxTime == 0.f ? Vars::Aimbot::Projectile::PredictionTime.Value : projInfo.m_flMaxTime)
@@ -461,6 +469,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 				}
 
 				out.m_flTime += fLatency;
+				out.m_flTime += detTime;
 
 				if (out.m_flTime < TICKS_TO_TIME(n))
 				{

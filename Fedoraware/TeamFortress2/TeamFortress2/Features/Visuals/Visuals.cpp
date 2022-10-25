@@ -760,6 +760,20 @@ void CVisuals::DrawMovesimLine()
 	}
 }
 
+// void CVisuals::DrawArcLine()
+// {
+// 	if (Vars::Misc::Visuals::ArcLine.Value)
+// 	{
+// 		if (Vars::Misc::Visuals::ArcMode.Value == 0)	// afer shot
+// 		{
+// 			if (G::IsAttacking)
+// 			{
+				
+// 			}
+// 		}
+// 	}
+// }
+
 // Credits go to reestart entirely
 void CVisuals::ManualNetwork(const StartSoundParams_t& params)
 {
