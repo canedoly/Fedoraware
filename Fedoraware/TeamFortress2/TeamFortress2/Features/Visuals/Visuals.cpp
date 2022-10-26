@@ -411,10 +411,14 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 		{
 			if (pLocal->GetLifeState() == LIFE_ALIVE)
 			{
-				int maxTicks = (Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value);
+				int nBTickBase = 8;
+				int nNewTickBase = 6;
+				int accurateTicks = 3;
+
+				int customDT = (Vars::Misc::CL_Move::CustomDT.Value ? Vars::Misc::CL_Move::RechargeTicks.Value : Vars::Misc::CL_Move::DTTicks.Value);
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
-				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
+				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)customDT), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.89f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
@@ -443,7 +447,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
 						const int drawX = DTBox.x;
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - fontHeight - 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Ticks %d/%d", G::ShiftedTicks, maxTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - fontHeight - 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Ticks %d/%d", G::ShiftedTicks, customDT);
 						g_Draw.RoundedBoxStatic(DTBox.x, DTBox.y, DTBox.w, DTBox.h, 4, Colors::DtOutline);
 						if (G::ShiftedTicks && ratioCurrent)
 						{
@@ -495,7 +499,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 5:
 					{
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 3, { 255, 255, 255, 255 }, ALIGN_CENTERHORIZONTAL, L"%i/%i", G::ShiftedTicks, maxTicks);
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 3, { 255, 255, 255, 255 }, ALIGN_CENTERHORIZONTAL, L"%i/%i", G::ShiftedTicks, customDT);
 						break;
 					}
 					case 6:
@@ -532,10 +536,6 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						int nTextOffset = 0;
 						const int TickBase = pLocal->GetTickBase();
 
-						int nBTickBase = 8;
-						int nNewTickBase = 6;
-						int accurateTicks = 3;
-
 						if (G::ShiftedTicks == 0)
 						{
 							int nBTickBase = TickBase;
@@ -548,7 +548,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 						if (G::ShiftedTicks > 0)
 						{
-							int accurateTicks = (nBTickBase - nNewTickBase);
+							int accurateTicks = nBTickBase - nNewTickBase;
 						}
 
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + nTextOffset, {255,255,255,255}, ALIGN_CENTERHORIZONTAL, L"Ticks: %d out of %d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
@@ -565,6 +565,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 9:
 					{
 						// deadflag
+						// todo: turn this into the updated dt bar
+						// it looks like normal bar, but also has a bar for wait ticks
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {50,50,50,255});
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {40,40,40,255});
 						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
@@ -590,7 +592,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					case 10:
 					{
 						// lmaobox
-						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {60,60,60,255});
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {35,35,35,255});
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Vars::Menu::Colors::MenuAccent);
 						if (Vars::Misc::CL_Move::AntiWarp.Value)
 						{
@@ -772,8 +774,9 @@ void CVisuals::DrawMovesimLine()
 					{
 						if (Utils::W2S(G::PredFutureLines.at(i), vScreenfuture))
 						{
-							g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
-										{ Vars::Aimbot::Projectile::PredictionColor });
+							// g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+							// 			{ Vars::Aimbot::Projectile::PredictionColor });
+							RenderLine(vScreenpast, vScreenfuture, Vars::Aimbot::Projectile::PredictionColor, false)
 						}
 					}
 				}

@@ -311,6 +311,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	}
 
 	const float detTime = getdetTime;
+	const float detTimeTicks = TIME_TO_TICKS(detTime);
 
 	Vec3 vLocalPos = pLocal->GetEyePosition();
 	const float maxTime = predictor.m_pEntity->IsPlayer()
@@ -486,7 +487,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 				}
 
 				out.m_flTime += fLatency;
-				out.m_flTime += detTime;
+				out.m_flTime += detTimeTicks;
 
 				if (out.m_flTime < TICKS_TO_TIME(n))
 				{
