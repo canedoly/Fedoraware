@@ -264,6 +264,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	const INetChannel* pNetChannel = I::EngineClient->GetNetChannelInfo();
 	ConVar* cl_flipviewmodels = g_ConVars.cl_flipviewmodels;
 
+	G::PredBeforeLines.clear(); G::PredFutureLines.clear();
 	G::PredictionLines.clear();
 
 	if (!G::WeaponCanAttack)
@@ -287,12 +288,27 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	static CTraceFilterWorldAndPropsOnly traceFilter = {};
 	traceFilter.pSkip = predictor.m_pEntity;
 
-	const float getdetTime = 
-			G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher ? 0.6f : 
-			G::CurItemDefIndex == Demoman_s_TheScottishResistance ? 1.6f :
-			G::CurItemDefIndex == Demoman_s_FestiveStickybombLauncher ? 0.8f : 
-			G::CurItemDefIndex == Demoman_s_StickybombLauncherR ? 0.8f :
-			G::CurItemDefIndex == Demoman_s_StickybombLauncher ? 0.8f : 0;
+	const float getdetTime = 0;
+	if (G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher)
+	{
+		getdetTime = 0.6f;
+	}
+	if (G::CurItemDefIndex == Demoman_s_TheScottishResistance)
+	{
+		getdetTime = 1.6f;
+	}
+	if (G::CurItemDefIndex == Demoman_s_FestiveStickybombLauncher)
+	{
+		getdetTime = 0.8f;
+	}
+	if (G::CurItemDefIndex == Demoman_s_StickybombLauncherR)
+	{
+		getdetTime = 0.8f;
+	}
+	if (G::CurItemDefIndex == Demoman_s_StickybombLauncher)
+	{
+		getdetTime = 0.8f;
+	}
 
 	const float detTime = getdetTime;
 

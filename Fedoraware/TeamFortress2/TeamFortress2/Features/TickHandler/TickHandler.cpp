@@ -135,17 +135,17 @@ void CTickshiftHandler::CLMove(float accumulated_extra_samples, bool bFinalTick)
 
 	if (bDoubletap)
 	{
-		int ticksShifted = 0;
+		//int ticksShifted = 0;
 		while (iAvailableTicks)
 		{
-			ticksShifted++;
+			// ticksShifted++;
 			CLMoveFunc(accumulated_extra_samples, iAvailableTicks == 1); 
-			if (Vars::Misc::CL_Move::CustomDT.Value && (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value)) 
-			{
-				bDoubletap = false;
-				return;
-			}
+			// if (Vars::Misc::CL_Move::CustomDT.Value && (ticksShifted == Vars::Misc::CL_Move::DTTicks.Value)) 
+			// {
+			// 	return;
+			// }
 		}
+		bDoubletap = false;
 		return;
 	}
 

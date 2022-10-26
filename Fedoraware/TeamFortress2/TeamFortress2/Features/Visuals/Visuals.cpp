@@ -735,7 +735,7 @@ void CVisuals::DrawPredictionLine()
 
 void CVisuals::DrawMovesimLine()
 {
-	if (Vars::Visuals::MoveSimLine.Value &&Vars::Visuals::MoveSimMode.Value == 0)
+	if (Vars::Visuals::MoveSimLine.Value && Vars::Visuals::MoveSimMode.Value == 0)
 	{
 		if (!G::PredLinesBackup.empty())
 		{
@@ -759,17 +759,48 @@ void CVisuals::DrawMovesimLine()
 			}
 		}
 	}
+	if (Vars::Visuals::MoveSimLine.Value && Vars::Visuals::MoveSimMode.Value == 1)
+	{
+		if (!G::PredLinesBackup.empty())
+		{
+			if (!Vars::Visuals::MoveSimSeperators.Value)	// fuck move sim seperators
+			{
+				for (size_t i = 0; i < G::PredFutureLines.size(); i++)
+				{
+					Vec3 vScreenpast, vScreenfuture;
+					if (Utils::W2S(G::PredBeforeLines.at(i), vScreenpast))
+					{
+						if (Utils::W2S(G::PredFutureLines.at(i), vScreenfuture))
+						{
+							g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
+										{ Vars::Aimbot::Projectile::PredictionColor });
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
-// void CVisuals::DrawArcLine()
+// void CVisuals::DrawArchLine()
 // {
-// 	if (Vars::Misc::Visuals::ArcLine.Value)
+// 	if (Vars::Misc::Visuals::ArchLine.Value)
 // 	{
-// 		if (Vars::Misc::Visuals::ArcMode.Value == 0)	// afer shot
+// 		if (Vars::Misc::Visuals::ArchMode.Value == 0)	// afer shot (do it in aimbot idk)
 // 		{
-// 			if (G::IsAttacking)
+// 			if (!G::ArchLinesBackup.empty())
 // 			{
-				
+// 				for (auto i = 1; i < G::ArchLinesBackup.empty(); i++)
+// 				{
+// 					RenderLine()
+// 				}
+// 			}
+// 		}
+// 		if (Vars::Misc::Visuals::ArchMode.Value == 1)
+// 		{
+// 			if (weaponArchValid)	// weaponArchValid, checks if the weapon is SLauncher, BLauncher, Huntsman or any other weapon with arch
+// 			{
+// 				// render the line here, for a very short duration idk
 // 			}
 // 		}
 // 	}
