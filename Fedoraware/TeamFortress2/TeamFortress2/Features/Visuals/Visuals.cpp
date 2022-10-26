@@ -776,7 +776,7 @@ void CVisuals::DrawMovesimLine()
 						{
 							// g_Draw.Line(vScreenpast.x, vScreenpast.y, vScreenfuture.x, vScreenfuture.y,
 							// 			{ Vars::Aimbot::Projectile::PredictionColor });
-							RenderLine(vScreenpast, vScreenfuture, Vars::Aimbot::Projectile::PredictionColor, false)
+							RenderLine(vScreenpast, vScreenfuture, Vars::Aimbot::Projectile::PredictionColor, false);
 						}
 					}
 				}
