@@ -288,7 +288,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	static CTraceFilterWorldAndPropsOnly traceFilter = {};
 	traceFilter.pSkip = predictor.m_pEntity;
 
-	const float getdetTime = 0;
+	float getdetTime = 0;
 	if (G::CurItemDefIndex == Demoman_s_TheQuickiebombLauncher)
 	{
 		getdetTime = 0.6f;
