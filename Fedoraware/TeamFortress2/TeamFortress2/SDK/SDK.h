@@ -161,7 +161,9 @@ namespace Colors
 	inline Color_t Cloak =						{ 165, 177, 194, 255 };
 	inline Color_t Friend =						{ 32, 191, 107, 255 };
 	inline Color_t Local =						{ 168, 255, 211, 255 };
-	inline Color_t Ignored =					{ 32, 191, 107, 255 };
+	inline Color_t Rage =						{ 247, 247, 64, 255 };
+	inline Color_t Cheater =					{ 255, 0, 0, 255 };
+	inline Color_t Ignored =					{ 200, 200, 200, 255 };
 	inline Color_t Overheal =					{ 84, 160, 255, 255 };
 	inline Color_t Health =						{ 0, 230, 64, 255 };
 	inline Color_t Ammo =						{ 191, 191, 191, 255 };
@@ -331,7 +333,17 @@ namespace Utils
 				out = Colors::Friend;
 			}
 
-			else if (G::IsIgnored(info.friendsID))
+			else if (G::PlayerPriority[info.friendsID].Mode == 4))
+			{
+				out = Colors::Cheater;
+			}
+
+			else if (G::PlayerPriority[info.friendsID].Mode == 3)
+			{
+				out = Colors::Rage;
+			}
+
+			else if (G::PlayerPriority[info.friendsID].Mode == 1)
 			{
 				out = Colors::Ignored;
 			}

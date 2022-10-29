@@ -582,7 +582,7 @@ void CMenu::MenuVisuals()
 					WToggle("Choked Packets", &Vars::ESP::Players::Choked.Value); HelpMarker("Shows how many packets the player has choked");
 					ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 					ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
-					WToggle("Cheater Detection", &Vars::ESP::Players::CheaterDetection.Value); HelpMarker("Attempts to automatically mark cheaters.");
+					WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
 					WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 					WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 					ColorPickerL("Skellington colour", Colors::Bones);
@@ -591,6 +591,19 @@ void CMenu::MenuVisuals()
 					WSlider("Dlight radius###PlayerDlightRadius", &Vars::ESP::Players::DlightRadius.Value, 0.f, 500.f, "%.f", ImGuiSliderFlags_AlwaysClamp); HelpMarker("How far the Dlight will illuminate");
 					WSlider("ESP alpha###PlayerESPAlpha", &Vars::ESP::Players::Alpha.Value, 0.01f, 1.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
 					WToggle("Sniper sightlines", &Vars::ESP::Players::SniperSightlines.Value);
+
+					SectionTitle("Lithium");
+					WCombo("Name Postion" &Vars::Lithium::NamePostion.Value, { "Top", "Right" });
+
+					Text("Priority Colours")
+					ColorPickerL("Cheater Colour", Colors::Cheater);
+					ColorPickerL("Rage Colour", Colors::Rage, 1);
+					ColorPickerL("Ignored Colour", Colors::Ignored, 2);
+					
+					WToggle("Team Based cond", &Vars::Lithium::TeamCond.Value);
+					WToggle("Team Based bones", &Vars::Lithium::TeamBones.Value);
+
+
 				} EndChild();
 
 				/* Column 2 */

@@ -30,6 +30,14 @@ namespace Vars
 		}
 	}
 
+	namespace Lithium
+	{
+		inline CVar<int> NamePosition{0};
+		inline CVar<bool> TeamBones{false};
+		inline CVar<bool> TeamCond{false};
+		
+	}
+
 	namespace CritHack
 	{
 		inline CVar<bool> Active{ false };

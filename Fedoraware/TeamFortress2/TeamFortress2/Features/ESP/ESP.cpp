@@ -217,7 +217,11 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			// Bone ESP
 			if (Vars::ESP::Players::Bones.Value)
 			{
-				const Color_t clrBone = Vars::ESP::Players::Bones.Value == 1 ? Colors::Bones : healthColor;
+				if (Vars::ESP::Players::Bones.Value == 0)
+				{
+					const Color_t clrBone = healthColor;
+				}
+				const Color_t clrBone =	Vars::Lithium::TeamBones ? drawColor : Colors::Bones;
 
 				DrawBones(Player, { 8, 7, 6, 4 }, clrBone);
 				DrawBones(Player, { 11, 10, 9, 4 }, clrBone);
@@ -280,7 +284,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			if (Vars::ESP::Players::HealthText.Value == 1)
 			{
 				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
-							  ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+							  ALIGN_DEFAULT, L"%d HP", nHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -345,6 +349,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				if (Vars::ESP::Players::Name.Value)
 				{
 					int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					const Color_t nameColor = Vars::ESP::Players::NameCustom.Value ? Vars::ESP::Players::NameColor : drawColor;
 					if (Vars::ESP::Players::NameBox.Value)
 					{
 						int wideth, heighth;
@@ -358,23 +363,45 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 						g_Draw.Rect(middle - wideth / 2 - 5, y - offset - 2, wideth + 10, 2, LineColor);
 						offset -= 1;
 					}
-					if (Vars::ESP::Players::NameCustom.Value)
+					if (Vars::Lithium::NamePosition.Value == 0)
 					{
-						g_Draw.String(FONT_NAME, middle, y - offset, Vars::ESP::Players::NameColor, ALIGN_CENTERHORIZONTAL,
+						g_Draw.String(FONT_NAME, middle, y - offset, nameColor, ALIGN_CENTERHORIZONTAL,
 									  Utils::ConvertUtf8ToWide(pi.name).data());
 					}
-					else
+					else if (Vars::Lithium::NamePosition.Value == 1)
 					{
-						g_Draw.String(FONT_NAME, middle, y - offset, drawColor, ALIGN_CENTERHORIZONTAL,
+						g_Draw.String(FONT_NAME, nTextX, y + nTextOffset, nameColor, ALIGN_DEFAULT,
 									  Utils::ConvertUtf8ToWide(pi.name).data());
+						nTextOffset += g_Draw.m_vecFonts[FONT_NAME].nTall;
 					}
 				}
 
-				// Cheater detection ESP
-				if (G::PlayerPriority[pi.friendsID].Mode == 4 && Vars::ESP::Players::CheaterDetection.Value)
+				if (Vars::ESP::Players::PriorityTags.Value)
 				{
-					g_Draw.String(FONT, middle, y - 28, { 255, 0, 0, 255 }, ALIGN_CENTERHORIZONTAL, "CHEATER");
-					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+					int offset = (g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4) * 2;
+
+					if (!Vars::ESP::Players::Name.Value || Vars::Lithium::NamePosition.Value == 1)
+					{
+						int offset = g_Draw.m_vecFonts[FONT_NAME].nTall + g_Draw.m_vecFonts[FONT_NAME].nTall / 4;
+					}
+					int middle = x + w / 2;
+
+					if (G::PlayerPriority[pi.friendsID].Mode == 4 && !g_EntityCache.IsFriend(nIndex))
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Cheater, ALIGN_CENTERHORIZONTAL, "CHEATER");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 3)
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors:::Rage, ALIGN_CENTERHORIZONTAL, "RAGE");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 1)
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Ignored, ALIGN_CENTERHORIZONTAL, "IGNORED");
+					}
+					if (G::PlayerPriority[pi.friendsID].Mode == 0 || g_EntityCache.IsFriend(nIndex))
+					{
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Friend, ALIGN_CENTERHORIZONTAL, "FRIEND");
+					}
 				}
 
 				// GUID ESP
@@ -400,10 +427,16 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					}
 
 					static constexpr int TEXTURE_SIZE = 18;
-					if (Vars::ESP::Players::CheaterDetection.Value && G::PlayerPriority[pi.friendsID].Mode == 4)
+					if (Vars::ESP::Players::PriorityTags.Value)
 					{
-						g_Draw.Texture(x + w / 2 - TEXTURE_SIZE / 2, y - 30 - TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, Colors::White,
+						if (G::PlayerPriority[pi.friendsID].Mode == 4
+						 || G::PlayerPriority[pi.friendsID].Mode == 3
+						 || G::PlayerPriority[pi.friendsID].Mode == 1 
+						 || G::PlayerPriority[pi.friendsID].Mode == 0)
+						{
+							g_Draw.Texture(x + w / 2 - TEXTURE_SIZE / 2, y - 30 - TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, Colors::White,
 									   nClassNum);
+						}
 					}
 					else
 						g_Draw.Texture(x + w / 2 - TEXTURE_SIZE / 2, y - offset - TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, Colors::White,
@@ -543,13 +576,14 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			{
 				size_t FONT = FONT_ESP_COND;
 				int offset = g_Draw.m_vecFonts[FONT].nTall / 4;
+				const Color_t condColor = Vars::Lithium::TeamCond ? drawColor : Colors::Cond;
 				std::vector<std::wstring> cond_strings = GetPlayerConds(Player);
 
 				if (!cond_strings.empty())
 				{
 					for (auto& condString : cond_strings)
 					{
-						g_Draw.String(FONT_ESP_COND, nTextX, y + nTextOffset, Colors::Cond, ALIGN_DEFAULT, condString.data());
+						g_Draw.String(FONT_ESP_COND, nTextX, y + nTextOffset, condColor, ALIGN_DEFAULT, condString.data());
 						nTextOffset += g_Draw.m_vecFonts[FONT_ESP_COND].nTall;
 					}
 				}
@@ -586,12 +620,16 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				else if (Vars::ESP::Players::HealthBarStyle.Value == 1 && Vars::ESP::Players::HealthBar.Value)
 				{
+					// the way the bar is drawn is weird
+					// at full health, there's no black but if the players loses half health
+					// the actual hp bar is still full but there's black being rendered from the top
+					// and transparency affects only the bg so it looks cool but bad
 					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, ratio, HealthColor, Colors::OutlineESP, false);
 				}
 
 				if (Vars::ESP::Players::HealthText.Value == 2)
 				{
-					g_Draw.String(FONT, x - 2, (y + h) - (ratio * h) - 15, nHealth > nMaxHealth ? Colors::Overheal : healthColor, ALIGN_CENTERHORIZONTAL, "%d", nHealth);
+					g_Draw.String(FONT, x - 6, (y + h) - (ratio * h) - 4, Colors::White, ALIGN_REVERSE, "%d", nHealth);
 				}
 
 				x += 1;
