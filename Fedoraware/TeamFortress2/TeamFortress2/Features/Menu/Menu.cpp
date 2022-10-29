@@ -599,9 +599,10 @@ void CMenu::MenuVisuals()
 					ColorPickerL("Cheater Colour", Colors::Cheater);
 					ColorPickerL("Rage Colour", Colors::Rage, 1);
 					ColorPickerL("Ignored Colour", Colors::Ignored, 2);
-					
+
 					WToggle("Team Based cond", &Vars::Lithium::TeamCond.Value);
 					WToggle("Team Based bones", &Vars::Lithium::TeamBones.Value);
+					WToggle("Text on Projectiles", &Vars::Lithium::TextProjectiles.Value);
 
 
 				} EndChild();

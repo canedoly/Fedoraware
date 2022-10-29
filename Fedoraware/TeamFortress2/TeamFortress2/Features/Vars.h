@@ -35,7 +35,7 @@ namespace Vars
 		inline CVar<int> NamePosition{0};
 		inline CVar<bool> TeamBones{false};
 		inline CVar<bool> TeamCond{false};
-		
+		inline CVar<bool> TextProjectiles{false};
 	}
 
 	namespace CritHack

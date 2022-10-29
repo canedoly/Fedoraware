@@ -989,7 +989,7 @@ void CESP::DrawWorld() const
 			if (Vars::ESP::World::HealthName.Value)
 			{
 				if (Utils::W2S(health->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x, y + h, Colors::Health, ALIGN_CENTER, L"Health");
+					g_Draw.String(FONT, vScreen.x - w, y - h, Colors::Health, ALIGN_CENTER, L"Health");
 			}
 
 			if (Vars::ESP::World::HealthLine.Value)
@@ -1051,7 +1051,7 @@ void CESP::DrawWorld() const
 			if (Vars::ESP::World::AmmoName.Value)
 			{
 				if (Utils::W2S(ammo->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x, y + h, Colors::Ammo, ALIGN_CENTER, L"Ammo");
+					g_Draw.String(FONT, vScreen.x - w, y - h, Colors::Ammo, ALIGN_CENTER, L"Ammo");
 			}
 
 			if (Vars::ESP::World::AmmoLine.Value)
@@ -1194,6 +1194,100 @@ void CESP::DrawWorld() const
 					break;
 				}
 				default: break;
+			}
+		}
+	}
+	for (const auto& Projectiles : g_EntityCache.GetGroup(EGroupType::WORLD_PROJECTILES))
+	{
+		const Vec3 vDelta = Projectiles->GetAbsOrigin() - pLocal->GetAbsOrigin();
+		const float flDistance = vDelta.Length2D();
+		if (flDistance >= Vars::ESP::Main::NetworkedDist.Value) { continue; }
+		I::VGuiSurface->DrawSetAlphaMultiplier(Vars::ESP::Main::DistanceToAlpha.Value ? Math::RemapValClamped(flDistance, Vars::ESP::Main::NetworkedDist.Value - 256.f, Vars::ESP::Main::NetworkedDist.Value, Vars::ESP::World::Alpha.Value, 0.f) : Vars::ESP::World::Alpha.Value);
+
+		int x = 0, y = 0, w = 0, h = 0;
+		Vec3 vTrans[8];
+
+
+		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
+		{
+			if (Vars::Lithium::TextProjectiles.Value)
+			{
+				const wchar_t* szName;
+
+					switch (Projectiles->GetClassID())
+					{
+						case ETFClassID::CTFProjectile_Rocket:
+						{
+							szName = L"Rocket";
+							break;
+						}
+						case ETFClassID::CTFGrenadePipebombProjectile:
+						{
+							szName = L"Pipe Bomb";
+							break;
+						}
+						case ETFClassID::CTFProjectile_Jar:
+						{
+							szName = L"Jarate";
+							break;
+						}
+						case ETFClassID::CTFProjectile_JarGas:
+						{
+							szName = L"Gas Passer";
+							break;
+						}
+						case ETFClassID::CTFProjectile_JarMilk:
+						{
+							szName = L"Mad Milk";
+							break;
+						}
+						case ETFClassID::CTFProjectile_Arrow:
+						{
+							szName = L"Arrow";
+							break;
+						}
+						case ETFClassID::CTFProjectile_SentryRocket:
+						{
+							szName = L"Sentry Rocket";
+							break;
+						}
+						case ETFClassID::CTFProjectile_Flare:
+						{
+							szName = L"Flare";
+							break;
+						}
+						case ETFClassID::CTFProjectile_Cleaver:
+						{
+							szName = L"Cleaver";
+							break;
+						}
+						case ETFClassID::CTFProjectile_EnergyBall:
+						{
+							szName = L"Energy Ball";
+							break;
+						}
+						case ETFClassID::CTFProjectile_EnergyRing:
+						{
+							szName = L"Energy Ring";
+							break;
+						}
+						case ETFClassID::CTFProjectile_HealingBolt:
+						{
+							szName = L"Crossbow Bolt";
+							break;
+						}
+						case ETFClassID::CTFStunBall:
+						{
+							szName = L"Stun Ball";
+							break;
+						}
+						default:
+						{
+							szName = L"Unknown";
+							break;
+						}
+					}
+				g_Draw.String(FONT, x - w, y - h, drawColor, ALIGN_CENTERHORIZONTAL, szName);
 			}
 		}
 	}
