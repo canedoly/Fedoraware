@@ -333,7 +333,7 @@ namespace Utils
 				out = Colors::Friend;
 			}
 
-			else if (G::PlayerPriority[info.friendsID].Mode == 4))
+			else if (G::PlayerPriority[info.friendsID].Mode == 4)
 			{
 				out = Colors::Cheater;
 			}

@@ -593,7 +593,7 @@ void CMenu::MenuVisuals()
 					WToggle("Sniper sightlines", &Vars::ESP::Players::SniperSightlines.Value);
 
 					SectionTitle("Lithium");
-					WCombo("Name Postion" &Vars::Lithium::NamePostion.Value, { "Top", "Right" });
+					WCombo("Name Postion" &Vars::Lithium::NamePosition.Value, { "Top", "Right" });
 
 					Text("Priority Colours")
 					ColorPickerL("Cheater Colour", Colors::Cheater);

@@ -221,7 +221,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					const Color_t clrBone = healthColor;
 				}
-				const Color_t clrBone =	Vars::Lithium::TeamBones ? drawColor : Colors::Bones;
+				const Color_t clrBone =	Vars::Lithium::TeamBones.Value ? drawColor : Colors::Bones;
 
 				DrawBones(Player, { 8, 7, 6, 4 }, clrBone);
 				DrawBones(Player, { 11, 10, 9, 4 }, clrBone);
@@ -392,7 +392,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					}
 					if (G::PlayerPriority[pi.friendsID].Mode == 3)
 					{
-						g_Draw.String(FONT_NAME, middle, y - offset, Colors:::Rage, ALIGN_CENTERHORIZONTAL, "RAGE");
+						g_Draw.String(FONT_NAME, middle, y - offset, Colors::Rage, ALIGN_CENTERHORIZONTAL, "RAGE");
 					}
 					if (G::PlayerPriority[pi.friendsID].Mode == 1)
 					{
@@ -576,7 +576,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 			{
 				size_t FONT = FONT_ESP_COND;
 				int offset = g_Draw.m_vecFonts[FONT].nTall / 4;
-				const Color_t condColor = Vars::Lithium::TeamCond ? drawColor : Colors::Cond;
+				const Color_t condColor = Vars::Lithium::TeamCond.Value ? drawColor : Colors::Cond;
 				std::vector<std::wstring> cond_strings = GetPlayerConds(Player);
 
 				if (!cond_strings.empty())
