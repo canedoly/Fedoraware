@@ -17,7 +17,6 @@ bool CCritHack::AreRandomCritsEnabled()
 bool CCritHack::IsEnabled()
 {
 	if (!Vars::CritHack::Active.Value) { return false; }
-	if (!AreRandomCritsEnabled()) { return false; }
 	if (!I::EngineClient->IsInGame()) { return false; }
 
 	return true;
@@ -482,7 +481,12 @@ void CCritHack::Draw()
 
 	int longestW = 40;
 
-	if (!CanCrit())
+	if (!AreRandomCritsEnabled())
+	{
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, {190, 190, 190, 255}, ALIGN_CENTERHORIZONTAL, L"server disabled crits");
+	}
+
+	if (!CanCrit() && AreRandomCritsEnabled())
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 	}
