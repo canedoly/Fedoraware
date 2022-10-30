@@ -482,6 +482,11 @@ void CCritHack::Draw()
 
 	int longestW = 40;
 
+	if (!CanCrit())
+	{
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
+	}
+
 	if (CanCrit())
 	{
 		if (Vars::Debug::DebugInfo.Value)
@@ -531,10 +536,6 @@ void CCritHack::Draw()
 				longestW = w;
 			}
 		}
-	}
-	if (!CanCrit())
-	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;
