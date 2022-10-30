@@ -376,7 +376,7 @@ int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 
 float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
 {
-	const auto& pLocal = g_EntityCache.m_pLocal;
+	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal) { return 0.f; }
 
 	const auto critMult = static_cast<float>(pLocal->GetCritMult());
