@@ -1197,6 +1197,7 @@ void CESP::DrawWorld() const
 			}
 		}
 	}
+
 	for (const auto& Projectiles : g_EntityCache.GetGroup(EGroupType::WORLD_PROJECTILES))
 	{
 		const Vec3 vDelta = Projectiles->GetAbsOrigin() - pLocal->GetAbsOrigin();
@@ -1214,81 +1215,80 @@ void CESP::DrawWorld() const
 			{
 				const wchar_t* szName;
 
-					switch (Projectiles->GetClassID())
+				switch (Projectiles->GetClassID())
+				{
+					case ETFClassID::CTFProjectile_Rocket:
 					{
-						case ETFClassID::CTFProjectile_Rocket:
-						{
-							szName = L"Rocket";
-							break;
-						}
-						case ETFClassID::CTFGrenadePipebombProjectile:
-						{
-							szName = L"Pipe Bomb";
-							break;
-						}
-						case ETFClassID::CTFProjectile_Jar:
-						{
-							szName = L"Jarate";
-							break;
-						}
-						case ETFClassID::CTFProjectile_JarGas:
-						{
-							szName = L"Gas Passer";
-							break;
-						}
-						case ETFClassID::CTFProjectile_JarMilk:
-						{
-							szName = L"Mad Milk";
-							break;
-						}
-						case ETFClassID::CTFProjectile_Arrow:
-						{
-							szName = L"Arrow";
-							break;
-						}
-						case ETFClassID::CTFProjectile_SentryRocket:
-						{
-							szName = L"Sentry Rocket";
-							break;
-						}
-						case ETFClassID::CTFProjectile_Flare:
-						{
-							szName = L"Flare";
-							break;
-						}
-						case ETFClassID::CTFProjectile_Cleaver:
-						{
-							szName = L"Cleaver";
-							break;
-						}
-						case ETFClassID::CTFProjectile_EnergyBall:
-						{
-							szName = L"Energy Ball";
-							break;
-						}
-						case ETFClassID::CTFProjectile_EnergyRing:
-						{
-							szName = L"Energy Ring";
-							break;
-						}
-						case ETFClassID::CTFProjectile_HealingBolt:
-						{
-							szName = L"Crossbow Bolt";
-							break;
-						}
-						case ETFClassID::CTFStunBall:
-						{
-							szName = L"Stun Ball";
-							break;
-						}
-						default:
-						{
-							szName = L"Unknown";
-							break;
-						}
+						szName = L"Rocket";
+						break;
 					}
-					
-				g_Draw.String(FONT, x - w, y - h, {210, 0, 0 255}, ALIGN_CENTERHORIZONTAL, szName);
+					case ETFClassID::CTFGrenadePipebombProjectile:
+					{
+						szName = L"Pipe Bomb";
+						break;
+					}
+					case ETFClassID::CTFProjectile_Jar:
+					{
+						szName = L"Jarate";
+						break;
+					}
+					case ETFClassID::CTFProjectile_JarGas:
+					{
+						szName = L"Gas Passer";
+						break;
+					}
+					case ETFClassID::CTFProjectile_JarMilk:
+					{
+						szName = L"Mad Milk";
+						break;
+					}
+					case ETFClassID::CTFProjectile_Arrow:
+					{
+						szName = L"Arrow";
+						break;
+					}
+					case ETFClassID::CTFProjectile_SentryRocket:
+					{
+						szName = L"Sentry Rocket";
+						break;
+					}
+					case ETFClassID::CTFProjectile_Flare:
+					{
+						szName = L"Flare";
+						break;
+					}
+					case ETFClassID::CTFProjectile_Cleaver:
+					{
+						szName = L"Cleaver";
+						break;
+					}
+					case ETFClassID::CTFProjectile_EnergyBall:
+					{
+						szName = L"Energy Ball";
+						break;
+					}
+					case ETFClassID::CTFProjectile_EnergyRing:
+					{
+						szName = L"Energy Ring";
+						break;
+					}
+					case ETFClassID::CTFProjectile_HealingBolt:
+					{
+						szName = L"Crossbow Bolt";
+						break;
+					}
+					case ETFClassID::CTFStunBall:
+					{
+						szName = L"Stun Ball";
+						break;
+					}
+					default:
+					{
+						szName = L"Unknown";
+						break;
+					}
+				}
+				g_Draw.String(FONT, x - w, y- h, {210, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, szName);
 			}
 		}
 	}
