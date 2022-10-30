@@ -1210,8 +1210,8 @@ void CESP::DrawWorld() const
 		int nTeam = Projectiles->GetTeamNum();
 
 		// idk if setting this to 0 will work
-		xpos = 0;
-		ypos = 0;
+		int xpos = 0;
+		intypos = 0;
 
 
 		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
