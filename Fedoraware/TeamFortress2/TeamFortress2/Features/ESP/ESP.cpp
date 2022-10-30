@@ -968,6 +968,8 @@ void CESP::DrawWorld() const
 	{
 		return;
 	}
+	
+	Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
 
 	Vec3 vScreen = {};
 	constexpr size_t FONT = FONT_ESP_PICKUPS;

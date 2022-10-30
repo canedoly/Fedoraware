@@ -23,6 +23,172 @@ bool CCritHack::IsEnabled()
 	return true;
 }
 
+bool CCritHack::CanCrit()
+{
+	// ty stax for the idea
+	switch (G::CurItemDefIndex)
+	{
+
+	// scout
+	case Scout_s_CritaCola:
+	case Scout_s_BonkAtomicPunch:
+	case Scout_s_MadMilk:
+	case Scout_s_MutatedMilk:
+	case Scout_s_FestiveBonk:
+	case Scout_s_TheFlyingGuillotineG:
+	case Scout_s_TheFlyingGuillotine:
+
+	// soldier
+	case Soldier_m_TheCowMangler5000:
+	case Soldier_t_TheMarketGardener:
+	case Soldier_m_RocketJumper:
+	case Soldier_s_TheBASEJumper:
+	case Soldier_s_TheBuffBanner:
+	case Soldier_s_TheBattalionsBackup:
+	case Soldier_s_Gunboats:
+	case Soldier_s_TheConcheror:
+	case Soldier_s_TheMantreads:
+	case Soldier_s_FestiveBuffBanner:
+	case Soldier_t_TheHalfZatoichi:
+
+	// pyro
+	case Pyro_m_BarnBurner:
+	case Pyro_m_ThePhlogistinator:
+	case Pyro_m_DragonsFury:
+	case Pyro_s_TheManmelter:
+	case Pyro_s_ThermalThruster:
+	case Pyro_s_GasPasser:
+	case Pyro_t_TheAxtinguisher:
+	case Pyro_t_NeonAnnihilator:
+	case Pyro_t_NeonAnnihilatorG:
+
+	// demoman
+	case Demoman_m_AliBabasWeeBooties:
+	case Demoman_m_TheBootlegger:
+	case Demoman_m_TheBASEJumper:
+	case Demoman_s_TheCharginTarge:
+	case Demoman_s_StickyJumper:
+	case Demoman_s_TheSplendidScreen:
+	case Demoman_s_TheTideTurner:
+	case Demoman_s_FestiveTarge:
+	case Demoman_t_TheEyelander:
+	case Demoman_t_HorselessHeadlessHorsemannsHeadtaker:
+	case Demoman_t_UllapoolCaber:
+	case Demoman_t_TheClaidheamhMor:
+	case Demoman_t_TheHalfZatoichi:
+	case Demoman_t_ThePersianPersuader:
+	case Demoman_t_NessiesNineIron:
+	case Demoman_t_FestiveEyelander:
+
+	// heavy
+	case Heavy_s_Sandvich:
+	case Heavy_s_TheDalokohsBar:
+	case Heavy_s_TheBuffaloSteakSandvich:
+	case Heavy_s_Fishcake:
+	case Heavy_s_RoboSandvich:
+	case Heavy_s_FestiveSandvich:
+	case Heavy_s_SecondBanana:
+
+	// engineer
+	case Engi_m_TheFrontierJustice:
+	case Engi_s_TheShortCircuit:
+	case Engi_s_FestiveWrangler:
+	case Engi_t_TheGunslinger:
+	case Engi_t_TheSouthernHospitality:
+	case Engi_p_ConstructionPDA:
+	case Engi_p_ConstructionPDAR:
+	case Engi_p_DestructionPDA:
+	case Engi_p_PDA:
+
+	// medic
+	case Medic_s_MediGun:
+	case Medic_s_MediGunR:
+	case Medic_s_TheKritzkrieg:
+	case Medic_s_TheQuickFix:
+	case Medic_s_FestiveMediGun:
+	case Medic_s_SilverBotkillerMediGunMkI:
+	case Medic_s_GoldBotkillerMediGunMkI:
+	case Medic_s_RustBotkillerMediGunMkI:
+	case Medic_s_BloodBotkillerMediGunMkI:
+	case Medic_s_CarbonadoBotkillerMediGunMkI:
+	case Medic_s_DiamondBotkillerMediGunMkI:
+	case Medic_s_SilverBotkillerMediGunMkII:
+	case Medic_s_GoldBotkillerMediGunMkII:
+	case Medic_s_TheVaccinator:
+
+	// sniper
+	case Sniper_m_SniperRifle:
+	case Sniper_m_SniperRifleR:
+	case Sniper_m_TheHuntsman:
+	case Sniper_m_TheSydneySleeper:
+	case Sniper_m_TheBazaarBargain:
+	case Sniper_m_TheMachina:
+	case Sniper_m_FestiveSniperRifle:
+	case Sniper_m_TheHitmansHeatmaker:
+	case Sniper_m_SilverBotkillerSniperRifleMkI:
+	case Sniper_m_GoldBotkillerSniperRifleMkI:
+	case Sniper_m_TheAWPerHand:
+	case Sniper_m_RustBotkillerSniperRifleMkI:
+	case Sniper_m_BloodBotkillerSniperRifleMkI:
+	case Sniper_m_CarbonadoBotkillerSniperRifleMkI:
+	case Sniper_m_DiamondBotkillerSniperRifleMkI:
+	case Sniper_m_SilverBotkillerSniperRifleMkII:
+	case Sniper_m_GoldBotkillerSniperRifleMkII:
+	case Sniper_m_FestiveHuntsman:
+	case Sniper_m_TheFortifiedCompound:
+	case Sniper_m_TheClassic:
+	case Sniper_m_ShootingStar:
+	case Sniper_s_TheRazorback:
+	case Sniper_s_Jarate:
+	case Sniper_s_DarwinsDangerShield:
+	case Sniper_s_CozyCamper:
+	case Sniper_s_FestiveJarate:
+	case Sniper_t_TheBushwacka:
+
+	// spy
+	case Spy_m_TheAmbassador:
+	case Spy_m_TheEnforcer:
+	case Spy_m_TheDiamondback:
+	case Spy_m_FestiveAmbassador:
+	case Spy_s_Sapper:
+	case Spy_s_SapperR:
+	case Spy_s_TheRedTapeRecorder:
+	case Spy_s_TheRedTapeRecorderG:
+	case Spy_s_TheApSapG:
+	case Spy_s_FestiveSapper:
+	case Spy_s_TheSnackAttack:
+	case Spy_t_Knife:
+	case Spy_t_KnifeR:
+	case Spy_t_YourEternalReward:
+	case Spy_t_ConniversKunai:
+	case Spy_t_TheBigEarner:
+	case Spy_t_TheWangaPrick:
+	case Spy_t_TheSharpDresser:
+	case Spy_t_TheSpycicle:
+	case Spy_t_FestiveKnife:
+	case Spy_t_TheBlackRose:
+	case Spy_t_SilverBotkillerKnifeMkI:
+	case Spy_t_GoldBotkillerKnifeMkI:
+	case Spy_t_RustBotkillerKnifeMkI:
+	case Spy_t_BloodBotkillerKnifeMkI:
+	case Spy_t_CarbonadoBotkillerKnifeMkI:
+	case Spy_t_DiamondBotkillerKnifeMkI:
+	case Spy_t_SilverBotkillerKnifeMkII:
+	case Spy_t_GoldBotkillerKnifeMkII:
+	case Spy_t_PrinnyMachete:
+	case Spy_d_DisguiseKitPDA:
+	case Spy_w_InvisWatch:
+	case Spy_w_InvisWatchR:
+	case Spy_w_TheDeadRinger:
+	case Spy_w_TheCloakandDagger:
+	case Spy_w_EnthusiastsTimepiece:
+	case Spy_w_TheQuackenbirdt:
+
+	return false;
+
+	}
+}
+
 bool CCritHack::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon)
 {
 	if (G::CurItemDefIndex == Soldier_m_TheBeggarsBazooka)
@@ -285,7 +451,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 		}
 		else if (Vars::CritHack::AvoidRandom.Value) //	we don't want to crit
 		{
-			for (int tries = 1; tries < 25; tries++)
+			for (int tries = 1; tries < 50; tries++)
 			{
 				if (std::find(CritTicks.begin(), CritTicks.end(), pCmd->command_number + tries) != CritTicks.end())
 				{
@@ -318,52 +484,59 @@ void CCritHack::Draw()
 
 	int longestW = 40;
 
-	if (Vars::Debug::DebugInfo.Value)
+	if (CanCrit())
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255, 255, 255, 255, }, ALIGN_CENTERHORIZONTAL, tfm::format("%x", reinterpret_cast<float*>(pWeapon + 0xA54)).c_str());
-	}
-	// Are we currently forcing crits?
-	if (ShouldCrit())
-	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
-	}
-	if (CritTicks.size() == 0)
-	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
-	}
-	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
-	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
-	const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
-	g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
-	int w, h;
-	I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
-	if (w > longestW)
-	{
-		longestW = w;
-	}
-	if (Vars::Debug::DebugInfo.Value)
-	{
-		const std::wstring seedText = L"m_nCritSeedRequests: " + std::to_wstring(seedRequests);
-		const std::wstring FoundCrits = L"Found Crit Ticks: " + std::to_wstring(CritTicks.size());
-		const std::wstring commandNumber = L"cmdNumber: " + std::to_wstring(G::CurrentUserCmd->command_number);
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, seedText.c_str());
-		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, seedText.c_str(), w, h);
+		if (Vars::Debug::DebugInfo.Value)
+		{
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255, 255, 255, 255, }, ALIGN_CENTERHORIZONTAL, tfm::format("%x", reinterpret_cast<float*>(pWeapon + 0xA54)).c_str());
+		}
+		// Are we currently forcing crits?
+		if (ShouldCrit())
+		{
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
+		}
+		if (CritTicks.size() == 0)
+		{
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+		}
+		static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+		const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
+		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
+		int w, h;
+		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
 		if (w > longestW)
 		{
 			longestW = w;
 		}
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, FoundCrits.c_str());
-		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, FoundCrits.c_str(), w, h);
-		if (w > longestW)
+		if (Vars::Debug::DebugInfo.Value)
 		{
-			longestW = w;
+			const std::wstring seedText = L"m_nCritSeedRequests: " + std::to_wstring(seedRequests);
+			const std::wstring FoundCrits = L"Found Crit Ticks: " + std::to_wstring(CritTicks.size());
+			const std::wstring commandNumber = L"cmdNumber: " + std::to_wstring(G::CurrentUserCmd->command_number);
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, seedText.c_str());
+			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, seedText.c_str(), w, h);
+			if (w > longestW)
+			{
+				longestW = w;
+			}
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, FoundCrits.c_str());
+			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, FoundCrits.c_str(), w, h);
+			if (w > longestW)
+			{
+				longestW = w;
+			}
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, commandNumber.c_str());
+			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, commandNumber.c_str(), w, h);
+			if (w > longestW)
+			{
+				longestW = w;
+			}
 		}
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, commandNumber.c_str());
-		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, commandNumber.c_str(), w, h);
-		if (w > longestW)
-		{
-			longestW = w;
-		}
+	}
+	if (!CanCrit())
+	{
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;

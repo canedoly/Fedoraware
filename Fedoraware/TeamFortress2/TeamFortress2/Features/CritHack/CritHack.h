@@ -6,6 +6,7 @@ class CCritHack
 private:
 	bool AreRandomCritsEnabled();
 	bool IsEnabled();
+	bool CanCrit();	// literally every weapon that can't crit, if its false then no crits for u
 	bool ShouldCrit();
 	//bool ShouldForceMelee(CBaseCombatWeapon* pWeapon);	//	compare distances between local & enemies, force crits if we are within swing range of enemy.
 	bool IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon);
