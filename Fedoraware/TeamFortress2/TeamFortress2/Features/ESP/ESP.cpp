@@ -1211,7 +1211,7 @@ void CESP::DrawWorld() const
 
 		// idk if setting this to 0 will work
 		int xpos = 0;
-		intypos = 0;
+		int ypos = 0;
 
 
 		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
