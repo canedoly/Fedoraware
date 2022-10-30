@@ -1207,6 +1207,7 @@ void CESP::DrawWorld() const
 
 		int x = 0, y = 0, w = 0, h = 0;
 		Vec3 vTrans[8];
+		int nTeam = Projectiles->GetTeamNum();
 
 
 		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
@@ -1220,75 +1221,103 @@ void CESP::DrawWorld() const
 					case ETFClassID::CTFProjectile_Rocket:
 					{
 						szName = L"Rocket";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFGrenadePipebombProjectile:
 					{
 						szName = L"Pipe Bomb";
+						xpos = x + 8;
+						ypos = y + 8;
 						break;
 					}
 					case ETFClassID::CTFProjectile_Jar:
 					{
 						szName = L"Jarate";
+						xpos = x + 6;
+						ypos = y + 6;
 						break;
 					}
 					case ETFClassID::CTFProjectile_JarGas:
 					{
 						szName = L"Gas Passer";
+						xpos = x + 2;
+						ypos = y + 2;
 						break;
 					}
 					case ETFClassID::CTFProjectile_JarMilk:
 					{
 						szName = L"Mad Milk";
+						xpos = x + 4;
+						ypos = y + 4;
 						break;
 					}
 					case ETFClassID::CTFProjectile_Arrow:
 					{
 						szName = L"Arrow";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFProjectile_SentryRocket:
 					{
 						szName = L"Sentry Rocket";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFProjectile_Flare:
 					{
 						szName = L"Flare";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFProjectile_Cleaver:
 					{
 						szName = L"Cleaver";
+						xpos = x + 4;
+						ypos = y + 4;
 						break;
 					}
 					case ETFClassID::CTFProjectile_EnergyBall:
 					{
 						szName = L"Energy Ball";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFProjectile_EnergyRing:
 					{
 						szName = L"Energy Ring";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFProjectile_HealingBolt:
 					{
 						szName = L"Crossbow Bolt";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 					case ETFClassID::CTFStunBall:
 					{
 						szName = L"Stun Ball";
+						xpos = x + 4;
+						ypos = y + 4;
 						break;
 					}
 					default:
 					{
 						szName = L"Unknown";
+						xpos = x - w;
+						ypos = y - h;
 						break;
 					}
 				}
-				g_Draw.String(FONT, x - w, y- h, {210, 0, 0, 255}, ALIGN_CENTERHORIZONTAL, szName);
+				g_Draw.String(FONT, xpos, ypos, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value),, ALIGN_CENTERHORIZONTAL, szName);
 			}
 		}
 	}

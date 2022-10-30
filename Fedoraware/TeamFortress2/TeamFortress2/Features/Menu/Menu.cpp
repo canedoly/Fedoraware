@@ -602,6 +602,7 @@ void CMenu::MenuVisuals()
 
 					WToggle("Team Based cond", &Vars::Lithium::TeamCond.Value);
 					WToggle("Team Based bones", &Vars::Lithium::TeamBones.Value);
+					
 					WToggle("Text on Projectiles", &Vars::Lithium::TextProjectiles.Value);
 
 
