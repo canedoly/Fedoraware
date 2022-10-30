@@ -1209,6 +1209,10 @@ void CESP::DrawWorld() const
 		Vec3 vTrans[8];
 		int nTeam = Projectiles->GetTeamNum();
 
+		// idk if setting this to 0 will work
+		xpos = 0;
+		ypos = 0;
+
 
 		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
 		{
