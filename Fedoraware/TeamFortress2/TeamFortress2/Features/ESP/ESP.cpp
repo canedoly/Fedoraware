@@ -968,8 +968,6 @@ void CESP::DrawWorld() const
 	{
 		return;
 	}
-	const auto& Player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL)
-	Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
 
 	Vec3 vScreen = {};
 	constexpr size_t FONT = FONT_ESP_PICKUPS;
@@ -1289,7 +1287,8 @@ void CESP::DrawWorld() const
 							break;
 						}
 					}
-				g_Draw.String(FONT, x - w, y - h, drawColor, ALIGN_CENTERHORIZONTAL, szName);
+					
+				g_Draw.String(FONT, x - w, y - h, {210, 0, 0 255}, ALIGN_CENTERHORIZONTAL, szName);
 			}
 		}
 	}
