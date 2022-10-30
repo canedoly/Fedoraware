@@ -1321,7 +1321,7 @@ void CESP::DrawWorld() const
 						break;
 					}
 				}
-				g_Draw.String(FONT, xpos, ypos, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value),, ALIGN_CENTERHORIZONTAL, szName);
+				g_Draw.String(FONT, xpos, ypos, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value), ALIGN_CENTERHORIZONTAL, szName);
 			}
 		}
 	}
