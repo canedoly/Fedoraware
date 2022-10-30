@@ -84,6 +84,30 @@ void CVisuals::DrawOnScreenConditions(CBaseEntity* pLocal)
 	//ConditionH = y + nTextOffset;
 }
 
+void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
+	if (!Vars::Visuals::DrawOnScreenPing.Value) { return; }
+	if (!pLocal->IsAlive() || pLocal->IsAGhost()) { return; }
+
+	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+	if (!cResource) { return; }
+
+	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
+	if (!iNetChan) { return; }
+
+	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 1000;
+	const int flLatencyScoreBoard = cResource->GetPing(pLocal->GetIndex());
+
+	const int x = Vars::Visuals::OnScreenPing.x;
+	const int y = Vars::Visuals::OnScreenPing.y;
+	const int h = Vars::Visuals::OnScreenPing.h;
+
+	const int nTextOffset = g_Draw.m_vecFonts[FONT_MENU].nTall;
+	{
+		g_Draw.String(FONT_MENU, x, y, {255, 255, 255, 255 }, ALIGN_DEFAULT, "ping real : %.0f", flLatencyReal);
+		g_Draw.String(FONT_MENU, x, y + h - nTextOffset, {255, 255, 255, 255 }, ALIGN_DEFAULT,	"ping scoreboard : %d", flLatencyScoreBoard);
+	}
+}
+
 void CVisuals::SkyboxChanger()
 {
 	using LoadNamedSkysFn = bool(_cdecl*)(const char*);
@@ -316,53 +340,14 @@ void CVisuals::DrawDebugInfo(CBaseEntity* pLocal)
 			Color_t clr = alive ? Color_t{ 153, 232, 0, 255 } : Color_t{ 167, 0, 0, 255 };
 			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, clr, ALIGN_DEFAULT, "%s", alive ? "ALIVE" : "DEAD");
 		}
-		if (const int tickcount = I::GlobalVars->tickcount)
+
+		if (!G::LastUserCmd){ return; }
+		const float flLastFwd = G::LastUserCmd->forwardmove;
+		const float flLastSde = G::LastUserCmd->sidemove;
 		{
-			DebugLine("TickCount", tfm::format(": %i", tickcount).c_str(), { xoffset, yoffset }); yoffset += 15;
+			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastFwd);
+			g_Draw.String(FONT_MENU, xoffset, yoffset += 15, {255, 255, 255, 255}, ALIGN_DEFAULT, "%.0f", flLastSde);
 		}
-
-		if (const int ctickcount = pLocal->GetTickBase())
-		{
-			DebugLine("Client TickCount", tfm::format(": %i", ctickcount).c_str(), { xoffset, yoffset }); yoffset += 15;
-		}
-
-		if (const int cmdtickcount = G::LastUserCmd->tick_count)
-		{
-			DebugLine("pCmd TickCount", tfm::format(": %i", cmdtickcount).c_str(), { xoffset, yoffset }); yoffset += 15;
-		}
-
-		//	movement data to help me make epic strafe prediction!
-		const Vec3 m_vecVelocity = pLocal->m_vecVelocity();
-		const Vec3 m_vecViewOffset = pLocal->m_vecViewOffset();
-		const Vec3 m_vecOrigin = pLocal->m_vecOrigin();
-		const Vec3 eyePosition = pLocal->GetEyePosition();;
-		DebugLine("m_vecVelocity", tfm::format(": [%.1f, %.1f, %.1f]", m_vecVelocity.x, m_vecVelocity.y, m_vecVelocity.z).c_str(), { xoffset, yoffset }); yoffset += 15;
-		DebugLine("playerVelocity", tfm::format(": [%.1f]", m_vecVelocity.Length2D()).c_str(), { xoffset, yoffset }); yoffset += 15;
-		DebugLine("m_vecViewOffset", tfm::format(": [%.1f, %.1f, %.1f]", m_vecViewOffset.x, m_vecViewOffset.y, m_vecViewOffset.z).c_str(), { xoffset, yoffset }); yoffset += 15;
-		DebugLine("m_vecOrigin", tfm::format(": [%.1f, %.1f, %.1f]", m_vecOrigin.x, m_vecOrigin.y, m_vecOrigin.z).c_str(), { xoffset, yoffset }); yoffset += 15;
-		DebugLine("eyePosition", tfm::format(": [%.1f, %.1f, %.1f]", eyePosition.x, eyePosition.y, eyePosition.z).c_str(), { xoffset, yoffset }); yoffset += 15;
-
-		const int MaxSpeed = pLocal->GetMaxSpeed();
-		DebugLine("MaxSpeed", tfm::format(": %d", MaxSpeed).c_str(), { xoffset, yoffset }); yoffset += 15;
-
-		const int m_hGroundEntity = pLocal->m_hGroundEntity();
-		DebugLine("m_hGroundEntity", tfm::format(": %d", m_hGroundEntity).c_str(), { xoffset, yoffset }); yoffset += 15;
-
-		const float m_flDucktime = pLocal->m_flDucktime();
-		DebugLine("m_flDucktime", tfm::format(": %.1f", m_flDucktime).c_str(), { xoffset, yoffset }); yoffset += 15;
-
-		const Vec3 lastViewAngles = G::LastUserCmd->viewangles;
-		DebugLine("lastViewAngles", tfm::format(": [%.1f, %.1f, %.1f]", lastViewAngles.x, lastViewAngles.y, lastViewAngles.z).c_str(), { xoffset, yoffset }); yoffset += 15;
-
-		if (CTFPlayerAnimState* animState = pLocal->GetAnimState())
-		{	// fix that fake stand shit
-			Activity mainAct = animState->GetCurrentMainActivity();
-			DebugLine("MainAct", tfm::format(": %i", (int)mainAct).c_str(), { xoffset, yoffset }); yoffset += 15;
-		}
-
-		bool truce = (*((BYTE*)I::TFGameRules + 1034));
-		DebugLine("Truce", tfm::format("%d", truce).c_str(), { xoffset,yoffset });
-
 	}
 }
 
