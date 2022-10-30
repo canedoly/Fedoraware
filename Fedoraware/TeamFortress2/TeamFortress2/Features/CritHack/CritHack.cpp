@@ -65,7 +65,6 @@ bool CCritHack::CanCrit()
 	// demoman
 	case Demoman_m_AliBabasWeeBooties:
 	case Demoman_m_TheBootlegger:
-	case Demoman_m_TheBASEJumper:
 	case Demoman_s_TheCharginTarge:
 	case Demoman_s_StickyJumper:
 	case Demoman_s_TheSplendidScreen:
@@ -75,7 +74,6 @@ bool CCritHack::CanCrit()
 	case Demoman_t_HorselessHeadlessHorsemannsHeadtaker:
 	case Demoman_t_UllapoolCaber:
 	case Demoman_t_TheClaidheamhMor:
-	case Demoman_t_TheHalfZatoichi:
 	case Demoman_t_ThePersianPersuader:
 	case Demoman_t_NessiesNineIron:
 	case Demoman_t_FestiveEyelander:
@@ -536,7 +534,7 @@ void CCritHack::Draw()
 	}
 	if (!CanCrit())
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;

@@ -968,7 +968,7 @@ void CESP::DrawWorld() const
 	{
 		return;
 	}
-	
+	const auto& Player : g_EntityCache.GetGroup(EGroupType::PLAYERS_ALL)
 	Color_t drawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
 
 	Vec3 vScreen = {};
