@@ -1,6 +1,6 @@
 #include "AimbotMelee.h"
 #include "../../Vars.h"
-
+#include "../MovementSimulation/MovementSimulation.h"
 #include "../../TickHandler/TickHandler.h"
 #include "../../Backtrack/Backtrack.h"
 
@@ -36,21 +36,60 @@ bool CAimbotMelee::CanMeleeHit(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 		}
 
 		const float FL_DELAY = std::max(pWeapon->GetWeaponData().m_flSmackDelay - ((F::Ticks.MeleeDoubletapCheck(pLocal) && Vars::Misc::CL_Move::AntiWarp.Value) ? TICKS_TO_TIME(G::ShiftedTicks) : 0.f), 0.f);
+		
+		if (FL_DELAY == 0.f) { return false; }
+		
+		const int iTicks = TIME_TO_TICKS(FL_DELAY);
 
-		if (pLocal->OnSolid())
-		{
-			vecTraceStart += (pLocal->GetVelocity() * FL_DELAY);
+		if (!bCached){
+			if (F::MoveSim.Initialize(g_EntityCache.GetLocal()))
+			{
+				CMoveData moveData = {};
+				Vec3 absOrigin = {};
+				for (int i = 0; i < iTicks; i++){
+					F::MoveSim.RunTick(moveData, absOrigin);
+				}
+				vecTraceStart = absOrigin;
+				vecTraceStart.z += 64;	//	viewheight bcs lazy
+				bCached = true;
+				vCached = vecTraceStart;
+				F::MoveSim.Restore();
+			}
+			else { return false; }
+		}
+		else{
+			vecTraceStart = vCached;
 		}
 
-		else
-		{
-			vecTraceStart += (pLocal->GetVelocity() * FL_DELAY) - (Vec3(0.0f, 0.0f, g_ConVars.sv_gravity->GetFloat()) *
-																   0.5f * FL_DELAY * FL_DELAY);
+		CBaseEntity* pTarget = I::ClientEntityList->GetClientEntity(nTargetIndex);
+		if (!pTarget) { return false; }
+
+		if (pTarget->GetVelocity().Length() < 10.f || !pTarget->IsPlayer()){
+			Vec3 vecTraceEnd = vecTraceStart + (vecForward * flRange);
+			Utils::TraceHull(vecTraceStart, vecTraceEnd, vecSwingMins, vecSwingMaxs, MASK_SHOT, &filter, &trace);
+			return (trace.entity && trace.entity->GetIndex() == nTargetIndex);
 		}
 
-		Vec3 vecTraceEnd = vecTraceStart + (vecForward * flRange);
-		Utils::TraceHull(vecTraceStart, vecTraceEnd, vecSwingMins, vecSwingMaxs, MASK_SHOT, &filter, &trace);
-		return (trace.entity && trace.entity->GetIndex() == nTargetIndex);
+		if (F::MoveSim.Initialize(pTarget)){
+			CMoveData moveData = {};
+			Vec3 absOrigin = {};
+			for (int i = 0; i < iTicks; i++){
+				F::MoveSim.RunTick(moveData, absOrigin);
+			}
+
+			const Vec3 vRestore = pTarget->GetAbsOrigin();
+			pTarget->SetAbsOrigin(absOrigin);
+
+			Vec3 vecTraceEnd = vecTraceStart + (vecForward * flRange);
+			Utils::TraceHull(vecTraceStart, vecTraceEnd, vecSwingMins, vecSwingMaxs, MASK_SHOT, &filter, &trace);
+			const bool bReturn = (trace.entity && trace.entity->GetIndex() == nTargetIndex);
+
+			pTarget->SetAbsOrigin(vRestore);
+			F::MoveSim.Restore();
+			return bReturn;
+		}
+
+		return false;
 	}
 
 	return true;
@@ -225,21 +264,20 @@ bool CAimbotMelee::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon,
 	//Backtrack the target if required
 	if (Vars::Backtrack::Enabled.Value && target.m_TargetType == ETargetType::PLAYER)
 	{
-		const auto& record = F::Backtrack.GetLastRecord(target.m_pEntity);
-		if (record)
+		const auto& pRecords = F::Backtrack.GetRecords(target.m_pEntity);
+		for (const auto& pTick : *pRecords)
 		{
-			hitboxpos = target.m_pEntity->GetHitboxPosMatrix(HITBOX_PELVIS, (matrix3x4*)(&record->BoneMatrix));
-			target.SimTime = record->flSimTime;
+			if (!F::Backtrack.WithinRewind(pTick)) { continue; }
+			hitboxpos = target.m_pEntity->GetHitboxPosMatrix(HITBOX_PELVIS, (matrix3x4*)(&pTick.BoneMatrix));
 
-			// Check if the backtrack pos is visible
-			if (Utils::VisPos(pLocal, target.m_pEntity, pLocal->GetShootPos(), hitboxpos))
-			{
+			if (Utils::VisPos(pLocal, target.m_pEntity, pLocal->GetShootPos(), hitboxpos)){
+				target.SimTime = pTick.flSimTime;
 				target.m_vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), hitboxpos);
 				target.m_vPos = hitboxpos;
 				target.ShouldBacktrack = true;
-			}
+			}	
 		}
-		if (F::Backtrack.bFakeLatency && Vars::Backtrack::Latency.Value > 200.f && !target.ShouldBacktrack) // Check if the player is in range for a non-backtrack hit
+		if (!F::Backtrack.CanHitOriginal(target.m_pEntity) && !target.ShouldBacktrack) // Check if the player is in range for a non-backtrack hit
 		{
 			return false;
 		}
@@ -247,23 +285,23 @@ bool CAimbotMelee::VerifyTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon,
 
 
 
-	if (Vars::Aimbot::Melee::RangeCheck.Value && !(Vars::Backtrack::Enabled.Value))
+	if (Vars::Aimbot::Melee::RangeCheck.Value && !(target.ShouldBacktrack))
 	{
 		if (!CanMeleeHit(pLocal, pWeapon, target.m_vAngleTo, target.m_pEntity->GetIndex()))
 		{
 			return false;
 		}
 	}
-	else
+	else if (target.ShouldBacktrack)
 	{
-		const float flRange = (pWeapon->GetSwingRange(pLocal));
-		if (hitboxpos.DistTo(target.m_vPos) < flRange)
-		{
-			if (!Utils::VisPos(pLocal, target.m_pEntity, pLocal->GetShootPos(), target.m_vPos))
-			{
-				return false;
-			}
-		}
+		const float flRange = (pWeapon->GetSwingRange(pLocal)) * 1.9f;
+		//Utils::ConLog("AimbotMelee", tfm::format("flRange : %.1f", flRange).c_str(), {133, 255, 159, 255});
+		if (hitboxpos.Dist2D(pLocal->GetShootPos()) > flRange)
+		{ return false; }
+	}
+	else {
+		if (!Utils::VisPos(pLocal, target.m_pEntity, pLocal->GetShootPos(), target.m_vPos))
+		{ return false; }
 	}
 
 	return true;
@@ -338,16 +376,7 @@ bool CAimbotMelee::ShouldSwing(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, 
 		return false;
 	}
 
-	if (Vars::Backtrack::Enabled.Value)
-	{
-		const float flRange = pWeapon->GetSwingRange(pLocal);
-
-		if (Target.m_vPos.DistTo(pLocal->GetShootPos()) > flRange) // why was this being multiplied.
-		{
-			//I::DebugOverlay->AddLineOverlay(Target.m_vPos, pLocal->GetShootPos(), 255, 0, 0, false, 1.f);
-			return false;
-		}
-		/*I::DebugOverlay->AddLineOverlay(Target.m_vPos, pLocal->GetShootPos(), 0, 255, 0, false, 1.f);*/
+	if (Target.ShouldBacktrack){
 		return true;
 	}
 
@@ -372,6 +401,8 @@ bool CAimbotMelee::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon)
 
 void CAimbotMelee::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd)
 {
+	bCached = false;
+
 	if (!Vars::Aimbot::Global::Active.Value || G::AutoBackstabRunning || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 	{
 		return;
