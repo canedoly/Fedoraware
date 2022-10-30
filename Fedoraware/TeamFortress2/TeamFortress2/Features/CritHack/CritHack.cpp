@@ -374,6 +374,38 @@ int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 	return retVal;
 }
 
+float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
+{
+	const auto& pLocal = g_EntityCache.m_pLocal;
+	if (!pLocal) { return 0.f; }
+
+	const auto critMult = static_cast<float>(pLocal->GetCritMult());
+	float chance = .02f;
+	if (pWeapon->GetSlot() == 2)
+	{
+		chance = .15f;
+	}
+
+	float multChance = Utils::ATTRIB_HOOK_FLOAT(critMult * chance, "mult_crit_chance", pWeapon, nullptr, 1);
+	if (pWeapon->IsRapidFire())
+	{
+		const float flTotalCritChance = std::clamp(0.02f * critMult, 0.01f, 0.99f);
+		constexpr float flCritDuration = 2.0f;
+		const float flNonCritDuration = (flCritDuration / flTotalCritChance) - flCritDuration;
+		const float flStartCritChance = 1 / flNonCritDuration;
+		multChance = Utils::ATTRIB_HOOK_FLOAT(flStartCritChance, "mult_crit_chance", pWeapon, nullptr, 1);
+	}
+
+	return multChance;
+}
+
+std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
+{
+	float observed = pWeapon->ObservedCritChance();
+	float needed = GetCritCap(pWeapon) + .1f;
+	return { observed, needed };
+}
+
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 {
 	static int previousWeapon = 0;
@@ -491,7 +523,7 @@ void CCritHack::Draw()
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 	}
 
-	if (CanCrit())
+	if (CanCrit() && AreRandomCritsEnabled())
 	{
 		if (Vars::Debug::DebugInfo.Value)
 		{
@@ -505,6 +537,10 @@ void CCritHack::Draw()
 		if (CritTicks.size() == 0)
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+
+			auto [observed, needed] = GetCritMultInfo(pWeapon);
+			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		}
 		static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
 		const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
