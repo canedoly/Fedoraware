@@ -513,6 +513,8 @@ void CCritHack::Draw()
 
 	int longestW = 40;
 
+	auto [observed, needed] = GetCritMultInfo(pWeapon);
+
 	if (!AreRandomCritsEnabled())
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, {190, 190, 190, 255}, ALIGN_CENTERHORIZONTAL, L"server disabled crits");
@@ -534,11 +536,10 @@ void CCritHack::Draw()
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
 		}
-		if (CritTicks.size() == 0)
+		if (CritTicks.size() == 0 || observed > needed)
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 
-			auto [observed, needed] = GetCritMultInfo(pWeapon);
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		}
