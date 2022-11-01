@@ -244,11 +244,11 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					int height = h + 1; //don't ask me /shrug
 
-					g_Draw.OutlinedRect(x, y, w, height, drawColor);
+					g_Draw.OutlinedRect(x, y, w + 2, height + 2, drawColor);
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
-						g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
-						g_Draw.OutlinedRect(x + 1, y + 1, w - 2, height - 2, Colors::OutlineESP);
+						g_Draw.OutlinedRect(x - 3, y - 3, w + 2, height + 2, Colors::OutlineESP);
+						g_Draw.OutlinedRect(x + 3, y + 3, w - 2, height - 2, Colors::OutlineESP);
 					}
 
 					break;
@@ -1007,15 +1007,16 @@ void CESP::DrawWorld() const
 		I::VGuiSurface->DrawSetAlphaMultiplier(Vars::ESP::Main::DistanceToAlpha.Value ? Math::RemapValClamped(flDistance, Vars::ESP::Main::NetworkedDist.Value - 256.f, Vars::ESP::Main::NetworkedDist.Value, Vars::ESP::World::Alpha.Value, 0.f) : Vars::ESP::World::Alpha.Value);
 
 		int x = 0, y = 0, w = 0, h = 0;
+
+		if (Vars::ESP::World::HealthName.Value)
+		{
+			if (Utils::W2S(health->GetWorldSpaceCenter(), vScreen))
+				g_Draw.String(FONT, vScreen.x, vScreen.y, Colors::Health, ALIGN_CENTER, L"Health");
+		}
+
 		Vec3 vTrans[8];
 		if (GetDrawBounds(health, vTrans, x, y, w, h))
 		{
-			if (Vars::ESP::World::HealthName.Value)
-			{
-				if (Utils::W2S(health->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x + w / 2, y + h / 2, Colors::Health, ALIGN_CENTER, L"Health");
-			}
-
 			if (Vars::ESP::World::HealthLine.Value)
 			{
 				Vec3 vScreen, vOrigin = Vec3(g_ScreenSize.c, g_ScreenSize.h, 0.0f);
@@ -1069,14 +1070,14 @@ void CESP::DrawWorld() const
 		I::VGuiSurface->DrawSetAlphaMultiplier(Vars::ESP::Main::DistanceToAlpha.Value ? Math::RemapValClamped(flDistance, Vars::ESP::Main::NetworkedDist.Value - 256.f, Vars::ESP::Main::NetworkedDist.Value, Vars::ESP::World::Alpha.Value, 0.f) : Vars::ESP::World::Alpha.Value);
 
 		int x = 0, y = 0, w = 0, h = 0;
+		if (Vars::ESP::World::AmmoName.Value)
+		{
+			if (Utils::W2S(ammo->GetWorldSpaceCenter(), vScreen))
+				g_Draw.String(FONT, vScreen.x, vScreen.y, Colors::Ammo, ALIGN_CENTER, L"Ammo");
+		}
 		Vec3 vTrans[8];
 		if (GetDrawBounds(ammo, vTrans, x, y, w, h))
 		{
-			if (Vars::ESP::World::AmmoName.Value)
-			{
-				if (Utils::W2S(ammo->GetVecOrigin(), vScreen))
-					g_Draw.String(FONT, vScreen.x + w / 2, y + h / 2, Colors::Ammo, ALIGN_CENTER, L"Ammo");
-			}
 
 			if (Vars::ESP::World::AmmoLine.Value)
 			{
@@ -1233,119 +1234,86 @@ void CESP::DrawWorld() const
 		Vec3 vTrans[8];
 		int nTeam = Projectiles->GetTeamNum();
 
-		// idk if setting this to 0 will work
-		int xpos = 0;
-		int ypos = 0;
-
-
-		if (GetDrawBounds(Projectiles, vTrans, x, y, w, h))
+		if (Vars::Lithium::TextProjectiles.Value)
 		{
-			if (Vars::Lithium::TextProjectiles.Value)
-			{
-				const wchar_t* szName;
+			const wchar_t* szName;
 
-				switch (Projectiles->GetClassID())
+			switch (Projectiles->GetClassID())
+			{
+				case ETFClassID::CTFProjectile_Rocket:
 				{
-					case ETFClassID::CTFProjectile_Rocket:
-					{
-						szName = L"Rocket";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFGrenadePipebombProjectile:
-					{
-						szName = L"Pipe Bomb";
-						xpos = x + 8;
-						ypos = y + 8;
-						break;
-					}
-					case ETFClassID::CTFProjectile_Jar:
-					{
-						szName = L"Jarate";
-						xpos = x + 6;
-						ypos = y + 6;
-						break;
-					}
-					case ETFClassID::CTFProjectile_JarGas:
-					{
-						szName = L"Gas Passer";
-						xpos = x + 2;
-						ypos = y + 2;
-						break;
-					}
-					case ETFClassID::CTFProjectile_JarMilk:
-					{
-						szName = L"Mad Milk";
-						xpos = x + 4;
-						ypos = y + 4;
-						break;
-					}
-					case ETFClassID::CTFProjectile_Arrow:
-					{
-						szName = L"Arrow";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFProjectile_SentryRocket:
-					{
-						szName = L"Sentry Rocket";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFProjectile_Flare:
-					{
-						szName = L"Flare";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFProjectile_Cleaver:
-					{
-						szName = L"Cleaver";
-						xpos = x + 4;
-						ypos = y + 4;
-						break;
-					}
-					case ETFClassID::CTFProjectile_EnergyBall:
-					{
-						szName = L"Energy Ball";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFProjectile_EnergyRing:
-					{
-						szName = L"Energy Ring";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFProjectile_HealingBolt:
-					{
-						szName = L"Crossbow Bolt";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
-					case ETFClassID::CTFStunBall:
-					{
-						szName = L"Stun Ball";
-						xpos = x + 4;
-						ypos = y + 4;
-						break;
-					}
-					default:
-					{
-						szName = L"Unknown";
-						xpos = x - w;
-						ypos = y - h;
-						break;
-					}
+					szName = L"Rocket";
+					break;
 				}
-				g_Draw.String(FONT, xpos, ypos, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value), ALIGN_CENTERHORIZONTAL, szName);
+				case ETFClassID::CTFGrenadePipebombProjectile:
+				{
+					szName = L"Pipe Bomb";
+					break;
+				}
+				case ETFClassID::CTFProjectile_Jar:
+				{
+					szName = L"Jarate";
+					break;
+				}
+				case ETFClassID::CTFProjectile_JarGas:
+				{
+					szName = L"Gas Passer";
+					break;
+				}
+				case ETFClassID::CTFProjectile_JarMilk:
+				{
+					szName = L"Mad Milk";
+					break;
+				}
+				case ETFClassID::CTFProjectile_Arrow:
+				{
+					szName = L"Arrow";
+					break;
+				}
+				case ETFClassID::CTFProjectile_SentryRocket:
+				{
+					szName = L"Sentry Rocket";
+					break;
+				}
+				case ETFClassID::CTFProjectile_Flare:
+				{
+					szName = L"Flare";
+					break;
+				}
+				case ETFClassID::CTFProjectile_Cleaver:
+				{
+					szName = L"Cleaver";
+					break;
+				}
+				case ETFClassID::CTFProjectile_EnergyBall:
+				{
+					szName = L"Energy Ball";
+					break;
+				}
+				case ETFClassID::CTFProjectile_EnergyRing:
+				{
+					szName = L"Energy Ring";
+					break;
+				}
+				case ETFClassID::CTFProjectile_HealingBolt:
+				{
+					szName = L"Crossbow Bolt";
+					break;
+				}
+				case ETFClassID::CTFStunBall:
+				{
+					szName = L"Stun Ball";
+					break;
+				}
+				default:
+				{
+					szName = L"Unknown";
+					break;
+				}
+			}
+			if (Utils::W2S(ammo->GetWorldSpaceCenter(), vScreen)) 
+			{
+				g_Draw.String(FONT, vScreen.x, vScreen.y, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value), ALIGN_CENTER, szName);
 			}
 		}
 	}
