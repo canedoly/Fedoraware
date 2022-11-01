@@ -50,7 +50,7 @@ public:
 	void DrawDVD();
 	void DrawPredictionLine();
 	void DrawMovesimLine();
-	void ArchLine(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, const ProjectileInfo_t& projInfo, Solution_t& arch);
+	// void ArchLine(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, const ProjectileInfo_t& projInfo, Solution_t& arch);
 	void ManualNetwork(const StartSoundParams_t& params); // Credits: reestart
 	void RenderLine(const Vector& v1, const Vector& v2, Color_t c, bool bZBuffer);
 	void DrawSightlines();

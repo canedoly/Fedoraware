@@ -31,10 +31,10 @@ namespace Vars
 		}
 	}
 
-	namespace Arch
-	{
-		inline CVar<bool> Enabled{false};
-	}
+	// namespace Arch
+	// {
+	// 	inline CVar<bool> Enabled{false};
+	// }
 
 	namespace Lithium
 	{
