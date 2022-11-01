@@ -1311,7 +1311,7 @@ void CESP::DrawWorld() const
 					break;
 				}
 			}
-			if (Utils::W2S(ammo->GetWorldSpaceCenter(), vScreen)) 
+			if (Utils::W2S(Projectiles->GetWorldSpaceCenter(), vScreen)) 
 			{
 				g_Draw.String(FONT, vScreen.x, vScreen.y, Utils::GetTeamColor(nTeam, Vars::ESP::Main::EnableTeamEnemyColors.Value), ALIGN_CENTER, szName);
 			}
