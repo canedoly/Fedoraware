@@ -31,6 +31,11 @@ namespace Vars
 		}
 	}
 
+	namespace Arch
+	{
+		inline CVar<bool> Enabled{false};
+	}
+
 	namespace Lithium
 	{
 		inline CVar<int> NamePosition{ 0 };

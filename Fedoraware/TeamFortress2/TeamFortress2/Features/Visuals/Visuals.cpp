@@ -642,6 +642,32 @@ void CVisuals::DrawMovesimLine()
 	}
 }
 
+void CVisuals::ArchLine(const ProjectileInfo_t& projInfo, Solution_t& arch)
+{
+	Vec3 vLocalPos = pLocal->GetEyePosition();
+	const float fGravity = g_ConVars.sv_gravity->GetFloat() * projInfo.m_flGravity;
+	const Vec3 vDelta = vTargetPos - vLocalPos;
+	const float fHyp = sqrt(vDelta.x * vDelta.x + vDelta.y * vDelta.y);
+	const float fDist = vDelta.z;
+	const float fVel = projInfo.m_flVelocity;
+	Vec3 vecOffset(16.0f, 8.0f, -6.0f);
+	Utils::GetProjectileFireSetup(pLocal, pCmd->viewangles, vecOffset, &vLocalPos);
+
+	const float fRoot = pow(fVel, 4) - fGravity * (fGravity * pow(fHyp, 2) + 2.f * fDist * pow(fVel, 2));
+	if (fRoot < 0.f)
+	{
+		return false;
+	}
+	arch.m_flPitch = atan((pow(fVel, 2) - sqrt(fRoot)) / (fGravity * fHyp));
+	arch.m_flYaw = atan2(vDelta.y, vDelta.x);
+
+	if (Vars::Arch::Enabled.Value)
+	{
+		RenderLine(&vLocalPos, arch, {255,255,255,255}, false);
+	}
+	// probably so bad
+}
+
 // Credits go to reestart entirely
 void CVisuals::ManualNetwork(const StartSoundParams_t& params)
 {
