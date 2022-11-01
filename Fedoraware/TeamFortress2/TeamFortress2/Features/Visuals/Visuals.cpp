@@ -642,8 +642,9 @@ void CVisuals::DrawMovesimLine()
 	}
 }
 
-void CVisuals::ArchLine(const ProjectileInfo_t& projInfo, Solution_t& arch)
+void CVisuals::ArchLine(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, const ProjectileInfo_t& projInfo, Solution_t& arch)
 {
+	
 	Vec3 vLocalPos = pLocal->GetEyePosition();
 	const float fGravity = g_ConVars.sv_gravity->GetFloat() * projInfo.m_flGravity;
 	const Vec3 vDelta = vTargetPos - vLocalPos;
@@ -654,16 +655,14 @@ void CVisuals::ArchLine(const ProjectileInfo_t& projInfo, Solution_t& arch)
 	Utils::GetProjectileFireSetup(pLocal, pCmd->viewangles, vecOffset, &vLocalPos);
 
 	const float fRoot = pow(fVel, 4) - fGravity * (fGravity * pow(fHyp, 2) + 2.f * fDist * pow(fVel, 2));
-	if (fRoot < 0.f)
-	{
-		return false;
-	}
 	arch.m_flPitch = atan((pow(fVel, 2) - sqrt(fRoot)) / (fGravity * fHyp));
 	arch.m_flYaw = atan2(vDelta.y, vDelta.x);
 
+	const auto& vEnd = arch;
+
 	if (Vars::Arch::Enabled.Value)
 	{
-		RenderLine(&vLocalPos, arch, {255,255,255,255}, false);
+		RenderLine(&vLocalPos, vEnd, {255,255,255,255}, false);
 	}
 	// probably so bad
 }
