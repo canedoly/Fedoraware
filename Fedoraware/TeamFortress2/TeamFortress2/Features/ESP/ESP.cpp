@@ -211,7 +211,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 			size_t FONT = FONT_ESP, FONT_NAME = FONT_ESP_NAME;
 
-			int nTextX = x + w + 3, nTextOffset = 0, nClassNum = Player->GetClassNum();
+			int nTextX = x + w + 3, nTextOffset = -3, nClassNum = Player->GetClassNum();
 
 			if (Vars::ESP::Players::Uber.Value == 2 && nClassNum == CLASS_MEDIC)
 			{
@@ -247,8 +247,8 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					g_Draw.OutlinedRect(x, y, w + 2, height + 2, drawColor);
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
-						g_Draw.OutlinedRect(x - 3, y - 3, w + 2, height + 2, Colors::OutlineESP);
-						g_Draw.OutlinedRect(x + 3, y + 3, w - 2, height - 2, Colors::OutlineESP);
+						g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
+						g_Draw.OutlinedRect(x + 1, y + 1, w - 2, height - 2, Colors::OutlineESP);
 					}
 
 					break;
