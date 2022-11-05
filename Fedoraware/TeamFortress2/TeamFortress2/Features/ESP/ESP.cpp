@@ -243,7 +243,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					int height = h + 1; //don't ask me /shrug
 
-					g_Draw.OutlinedRect(x, y, w + 2, height + 2, drawColor);
+					g_Draw.OutlinedRect(x, y, w, height, drawColor);
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
@@ -284,67 +284,6 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				if (Utils::W2S(Player->GetAbsOrigin(), vScreen))
 				{
 					g_Draw.Line(vOrigin.x, vOrigin.y, vScreen.x, vScreen.y, drawColor);
-				}
-			}
-
-			// Health Text
-			if (Vars::ESP::Players::HealthText.Value == 1)
-			{
-				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
-							  ALIGN_DEFAULT, L"%d HP", nHealth);
-				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-			}
-
-			if (Vars::Debug::DebugInfo.Value)
-			{
-				Vec3 vPlayerVelocity{};
-				Player->EstimateAbsVelocity(vPlayerVelocity);
-				g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, L"SPEED (%.0f)", vPlayerVelocity.Length());
-			}
-
-			// Ubercharge status/bar
-			if (Vars::ESP::Players::Uber.Value && nClassNum == CLASS_MEDIC)
-			{
-				if (const auto& pMedGun = Player->GetWeaponFromSlot(SLOT_SECONDARY))
-				{
-					if (Vars::ESP::Players::Uber.Value == 1)
-					{
-						g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::UberColor, ALIGN_DEFAULT, L"%.0f%%",
-									  pMedGun->GetUberCharge() * 100.0f);
-						nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-					}
-
-					if (Vars::ESP::Players::Uber.Value == 2 && pMedGun->GetUberCharge())
-					{
-						x += w + 1;
-
-						float flUber = pMedGun->GetUberCharge() * (pMedGun->GetItemDefIndex() == Medic_s_TheVaccinator
-																   ? 400.0f
-																   : 100.0f);
-
-						float flMaxUber = (pMedGun->GetItemDefIndex() == Medic_s_TheVaccinator ? 400.0f : 100.0f);
-
-						if (flUber > flMaxUber)
-						{
-							flUber = flMaxUber;
-						}
-
-						static constexpr int RECT_WIDTH = 2;
-						int nHeight = h + (flUber < flMaxUber ? 2 : 1);
-						int nHeight2 = h + 1;
-
-						float ratio = flUber / flMaxUber;
-						g_Draw.Rect(x + RECT_WIDTH, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
-									Colors::UberColor);
-
-						if (Vars::ESP::Main::Outlinedbar.Value)
-						{
-							g_Draw.OutlinedRect(x + RECT_WIDTH - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
-												nHeight * ratio + 2, Colors::OutlineESP);
-						}
-
-						x -= w + 1;
-					}
 				}
 			}
 
@@ -416,6 +355,67 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, "%s", pi.guid);
 					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+				}
+			}
+			
+			// Health Text
+			if (Vars::ESP::Players::HealthText.Value == 1)
+			{
+				g_Draw.String(FONT, nTextX, y + nTextOffset, nHealth > nMaxHealth ? Colors::Overheal : healthColor,
+							  ALIGN_DEFAULT, L"%d HP", nHealth);
+				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+			}
+
+			if (Vars::Debug::DebugInfo.Value)
+			{
+				Vec3 vPlayerVelocity{};
+				Player->EstimateAbsVelocity(vPlayerVelocity);
+				g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, L"SPEED (%.0f)", vPlayerVelocity.Length());
+			}
+
+			// Ubercharge status/bar
+			if (Vars::ESP::Players::Uber.Value && nClassNum == CLASS_MEDIC)
+			{
+				if (const auto& pMedGun = Player->GetWeaponFromSlot(SLOT_SECONDARY))
+				{
+					if (Vars::ESP::Players::Uber.Value == 1)
+					{
+						g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::UberColor, ALIGN_DEFAULT, L"%.0f%%",
+									  pMedGun->GetUberCharge() * 100.0f);
+						nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
+					}
+
+					if (Vars::ESP::Players::Uber.Value == 2 && pMedGun->GetUberCharge())
+					{
+						x += w + 1;
+
+						float flUber = pMedGun->GetUberCharge() * (pMedGun->GetItemDefIndex() == Medic_s_TheVaccinator
+																   ? 400.0f
+																   : 100.0f);
+
+						float flMaxUber = (pMedGun->GetItemDefIndex() == Medic_s_TheVaccinator ? 400.0f : 100.0f);
+
+						if (flUber > flMaxUber)
+						{
+							flUber = flMaxUber;
+						}
+
+						static constexpr int RECT_WIDTH = 2;
+						int nHeight = h + (flUber < flMaxUber ? 2 : 1);
+						int nHeight2 = h + 1;
+
+						float ratio = flUber / flMaxUber;
+						g_Draw.Rect(x + RECT_WIDTH, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
+									Colors::UberColor);
+
+						if (Vars::ESP::Main::Outlinedbar.Value)
+						{
+							g_Draw.OutlinedRect(x + RECT_WIDTH - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
+												nHeight * ratio + 2, Colors::OutlineESP);
+						}
+
+						x -= w + 1;
+					}
 				}
 			}
 

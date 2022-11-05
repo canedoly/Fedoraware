@@ -333,20 +333,20 @@ namespace Utils
 				out = Colors::Friend;
 			}
 
-			else if (G::PlayerPriority[info.friendsID].Mode == 4)
-			{
-				out = Colors::Cheater;
-			}
+			// else if (G::PlayerPriority[info.friendsID].Mode == 4)
+			// {
+			// 	out = Colors::Cheater;
+			// }
 
-			else if (G::PlayerPriority[info.friendsID].Mode == 3)
-			{
-				out = Colors::Rage;
-			}
+			// else if (G::PlayerPriority[info.friendsID].Mode == 3)
+			// {
+			// 	out = Colors::Rage;
+			// }
 
-			else if (G::PlayerPriority[info.friendsID].Mode == 1)
-			{
-				out = Colors::Ignored;
-			}
+			// else if (G::PlayerPriority[info.friendsID].Mode == 1)
+			// {
+			// 	out = Colors::Ignored;
+			// }
 
 			else if (pEntity->IsCloaked())
 			{
@@ -359,10 +359,10 @@ namespace Utils
 			}
 		}
 
-		if (pEntity->GetIndex() == G::CurrentTargetIdx)
-		{
-			out = Colors::Target;
-		}
+		// if (pEntity->GetIndex() == G::CurrentTargetIdx)
+		// {
+		// 	out = Colors::Target;
+		// }
 
 		return out;
 	}

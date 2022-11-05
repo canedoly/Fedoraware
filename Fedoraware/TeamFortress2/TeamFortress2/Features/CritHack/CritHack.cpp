@@ -536,7 +536,8 @@ void CCritHack::Draw()
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
 		}
-		if (CritTicks.size() == 0 || observed > needed)
+		//if (CritTicks.size() == 0 || observed > needed)
+		if (CritTicks.size() == 0)
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 
