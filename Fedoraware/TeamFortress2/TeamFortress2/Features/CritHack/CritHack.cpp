@@ -406,6 +406,26 @@ int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 	return retVal;
 }
 
+float CCritHack::GetWithdrawMult(CBaseCombatWeapon* pWeapon)
+{
+	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa5c) + 1);
+	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa58) + 1);
+
+	float multiply = 0.5;
+	if (pWeapon->GetSlot() != 2) { multiply = Math::RemapValClamped(count / checks, .1f, 1.f, 1.f, 3.f); }
+
+	return multiply * 3.f;
+}
+
+float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
+{
+	float amount = static_cast<float>(AddedPerShot) * GetWithdrawMult(pWeapon);
+	if (pWeapon->IsRapidFire()) {
+		amount = TakenPerCrit * GetWithdrawMult(pWeapon);
+		reinterpret_cast<int&>(amount) &= ~1;
+	}
+}
+
 float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
 {
 	const auto& pLocal = g_EntityCache.GetLocal();
@@ -438,24 +458,50 @@ std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
 	return { observed, needed };
 }
 
-float CCritHack::GetWithdrawMult(CBaseCombatWeapon* pWeapon)
+bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
 {
-	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa5c) + 1);
-	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa58) + 1);
+	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
+	if (damage) {
+		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
+			bucket += static_cast<float>(AddedPerShot);
+			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
+		}
+	}
 
-	float multiply = 0.5;
-	if (pWeapon->GetSlot() != 2) { multiply = Math::RemapValClamped(count / checks, .1f, 1.f, 1.f, 3.f); }
-
-	return multiply * 3.f;
+	if (GetWithdrawAmount(pWeapon) > bucket) { return false; }
+	return true;
 }
 
-float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
+int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 {
-	float amount = static_cast<float>(AddedPerShot) * GetWithdrawMult(pWeapon);
-	if (pWeapon->IsRapidFire()) {
-		amount = TakenPerCrit * GetWithdrawMult(pWeapon);
-		reinterpret_cast<int&>(amount) &= ~1;
+	// Backup weapon stats
+	const auto backupBucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
+	const auto backupAttempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+
+	int shots;
+	for (shots = 0; shots < ShotsToFill + 1; shots++)
+	{
+		if (CanWithdrawFromBucket(pWeapon, true)) { break; }
+
+		auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
+		auto attempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+
+		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat())
+		{
+			bucket += static_cast<float>(AddedPerShot);
+			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
+		}
+
+		attempts++;
+
+		*reinterpret_cast<float*>(pWeapon + 0xa54) = bucket;
+		*reinterpret_cast<float*>(pWeapon + 0xa58) = attempts;
 	}
+
+	// Restore backup
+	*reinterpret_cast<float*>(pWeapon + 0xa54) = backupBucket;
+	*reinterpret_cast<float*>(pWeapon + 0xa58) = backupAttempts;
+	return shots;
 }
 
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
@@ -543,39 +589,41 @@ void CCritHack::Run(CUserCmd* pCmd)
 				break; //	we found a seed that we can use to avoid a crit and have skipped to it, woohoo
 			}
 		}
+	}
+		// TODO: Fix the crit bucket
 
-		static int previousWeapon = 0;
-		if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
+	// Update stats
+	static int previousWeapon = 0;
+	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
+	{
+		const auto& weaponData = pWeapon->GetWeaponData();
+		const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
+		int projectilesPerShot = weaponData.m_nBulletsPerShot;
+		if (projectilesPerShot >= 1)
 		{
-			const auto& weaponData = pWeapon->GetWeaponData();
-			const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
-			int projectilesPerShot = weaponData.m_nBulletsPerShot;
-			if (projectilesPerShot >= 1)
-			{
-				projectilesPerShot = Utils::ATTRIB_HOOK_FLOAT(projectilesPerShot, "mult_bullets_per_shot", pWeapon, nullptr, true);
-			}
-			else
-			{
-				projectilesPerShot = 1;
-			}
+			projectilesPerShot = Utils::ATTRIB_HOOK_FLOAT(projectilesPerShot, "mult_bullets_per_shot", pWeapon, nullptr, true);
+		}
+		else
+		{
+			projectilesPerShot = 1;
+		}
 
-			AddedPerShot = weaponData.m_nDamage;
-			AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
-			AddedPerShot *= std::max(1, projectilesPerShot);
-			ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
+		AddedPerShot = weaponData.m_nDamage;
+		AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
+		AddedPerShot *= std::max(1, projectilesPerShot);
+		ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
 
-			if (pWeapon->IsRapidFire())
+		if (pWeapon->IsRapidFire())
+		{
+			TakenPerCrit = AddedPerShot;
+			TakenPerCrit *= static_cast<int>(2.f / weaponData.m_flTimeFireDelay);
+			if (TakenPerCrit * 3 > static_cast<int>(cap))
 			{
-				TakenPerCrit = AddedPerShot;
-				TakenPerCrit *= static_cast<int>(2.f / weaponData.m_flTimeFireDelay);
-				if (TakenPerCrit * 3 > static_cast<int>(cap))
-				{
-					TakenPerCrit = static_cast<int>(cap / 3.f);
-				}
+				TakenPerCrit = static_cast<int>(cap / 3.f);
 			}
 		}
-	previousWeapon = pWeapon->GetIndex();
 	}
+	previousWeapon = pWeapon->GetIndex();
 }
 
 void CCritHack::Draw()

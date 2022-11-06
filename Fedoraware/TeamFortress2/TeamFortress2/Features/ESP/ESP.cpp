@@ -916,7 +916,6 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 
 				auto flHealth = static_cast<float>(nHealth);
 				const auto flMaxHealth = static_cast<float>(nMaxHealth);
-				Color_t healthColor = Utils::GetHealthColor(flHealth, flMaxHealth);
 
 				if (flHealth > flMaxHealth)
 				{
@@ -929,16 +928,13 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 
 				const float ratio = flHealth / flMaxHealth;
 
-				// g_Draw.Rect(x - RECT_WIDTH - 2, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
-				// 			healthColor);
+				g_Draw.Rect(x - RECT_WIDTH - 2, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
+				 			healthColor);
 
 				if (Vars::ESP::Main::Outlinedbar.Value)
 				{
-					// g_Draw.OutlinedRect(x - RECT_WIDTH - 2 - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
-					// 					nHeight * ratio + 2, Colors::OutlineESP);
-					g_Draw.RectOverlay(x - RECT_WIDTH - 2 - 1, y + nHeight - nHealth * ratio - 1, RECT_WIDTH + 2,
-										nHeight * ratio + 2, ratio, HealthColor, Colors::OutlineESP, false);
-					// this should work with definetly 0 issues!
+					g_Draw.OutlinedRect(x - RECT_WIDTH - 2 - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
+					 					nHeight * ratio + 2, Colors::OutlineESP);
 				}
 
 				x += 1;
