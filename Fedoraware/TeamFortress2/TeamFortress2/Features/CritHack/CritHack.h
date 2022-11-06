@@ -14,7 +14,7 @@ private:
 	std::pair<float, float> GetCritMultInfo(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawMult(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawAmount(CBaseCombatWeapon* pWeapon);
-	bool CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage);
+	//bool CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage);
 	int GetShotsUntilCrit(CBaseCombatWeapon* pWeapon);
 
 	void ScanForCrits(const CUserCmd* pCmd, int loops = 10);

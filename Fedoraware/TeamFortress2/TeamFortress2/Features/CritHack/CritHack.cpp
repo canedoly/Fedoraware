@@ -458,19 +458,19 @@ std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
 	return { observed, needed };
 }
 
-bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
-{
-	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
-	if (damage) {
-		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
-			bucket += static_cast<float>(AddedPerShot);
-			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
-		}
-	}
+// bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
+// {
+// 	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
+// 	if (damage) {
+// 		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
+// 			bucket += static_cast<float>(AddedPerShot);
+// 			bucket = std::min(bucket, tf_weapon_criticals_bucket_cap->GetFloat());
+// 		}
+// 	}
 
-	if (GetWithdrawAmount(pWeapon) > bucket) { return false; }
-	return true;
-}
+// 	if (GetWithdrawAmount(pWeapon) > bucket) { return false; }
+// 	return true;
+// }
 
 int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 {
@@ -481,7 +481,7 @@ int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 	int shots;
 	for (shots = 0; shots < ShotsToFill + 1; shots++)
 	{
-		if (CanWithdrawFromBucket(pWeapon, true)) { break; }
+		//if (CanWithdrawFromBucket(pWeapon, true)) { break; }
 
 		auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
 		auto attempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
