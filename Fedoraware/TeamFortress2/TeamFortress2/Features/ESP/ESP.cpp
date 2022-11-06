@@ -243,7 +243,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					int height = h + 1; //don't ask me /shrug
 
-					g_Draw.OutlinedRect(x, y, w, height, drawColor);
+					g_Draw.OutlinedRect(x, y, w, height, {255,255,255,255});
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
@@ -254,7 +254,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 				case 2:
 				{
-					g_Draw.CornerRect(x, y, w, h, 3, 5, drawColor);
+					g_Draw.CornerRect(x, y, w, h, 3, 5, {255,255,255,255});
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.CornerRect(x - 1, y - 1, w + 2, h + 2, 3, 5, Colors::OutlineESP);
@@ -357,7 +357,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 				}
 			}
-			
+
 			// Health Text
 			if (Vars::ESP::Players::HealthText.Value == 1)
 			{
@@ -606,7 +606,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				Gradient_t clr = flHealth > flMaxHealth ? Colors::GradientOverhealBar : Colors::GradientHealthBar;
 
-				Color_t HealthColor = flHealth > flMaxHealth ? Colors::Overheal : Utils::GetHealthColor(nHealth, nMaxHealth);
+				Color_t HealthColor = Utils::GetHealthColor(nHealth, nMaxHealth);
 
 				if (!Player->IsVulnerable())
 				{
@@ -852,14 +852,7 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 			// Health text
 			if (Vars::ESP::Buildings::Health.Value)
 			{
-				g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d / %d", nHealth, nHealth, building->GetMaxHealth());
-				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-			}
-
-			if (flConstructed < 100.0f && static_cast<int>(flConstructed) != 0)
-			{
-				g_Draw.String(FONT, nTextX, y + nTextOffset, drawColor, ALIGN_DEFAULT, L"Building: %0.f%%",
-							  flConstructed);
+				g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d HP", nHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -935,13 +928,16 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 
 				const float ratio = flHealth / flMaxHealth;
 
-				g_Draw.Rect(x - RECT_WIDTH - 2, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
-							healthColor);
+				// g_Draw.Rect(x - RECT_WIDTH - 2, y + nHeight - nHeight * ratio, RECT_WIDTH, nHeight * ratio,
+				// 			healthColor);
 
 				if (Vars::ESP::Main::Outlinedbar.Value)
 				{
-					g_Draw.OutlinedRect(x - RECT_WIDTH - 2 - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
-										nHeight * ratio + 2, Colors::OutlineESP);
+					// g_Draw.OutlinedRect(x - RECT_WIDTH - 2 - 1, y + nHeight - nHeight * ratio - 1, RECT_WIDTH + 2,
+					// 					nHeight * ratio + 2, Colors::OutlineESP);
+					g_Draw.RectOverlay(x - RECT_WIDTH - 2 - 1, y + nHeight - nHealth * ratio - 1, RECT_WIDTH + 2,
+										nHeight * ratio + 2, ratio, HealthColor, Colors::OutlineESP, false);
+					// this should work with definetly 0 issues!
 				}
 
 				x += 1;

@@ -403,7 +403,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 				static Color_t color1, color2;
 
-				if (G::WaitForShift)
+				if (G::WaitForShift && Vars::Misc::CL_Move::WaitForDT.Value)
 				{
 					color1 = Colors::DTBarIndicatorsCharging.startColour;
 					color2 = Colors::DTBarIndicatorsCharging.endColour;
@@ -439,24 +439,28 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.OutlinedRect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, Colors::DtOutline);	//	draw the outline
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, DTBox.w - 2, DTBox.h - 2, { 28, 29, 38, 255 });	//	draw the background
 						g_Draw.GradientRectWH(DTBox.x + 1, DTBox.y + 1, ratioInterp * (DTBox.w - 2), DTBox.h - 2, color1, color2, true);
-						g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y - 10, { 255, 255, 255, 255 }, ALIGN_DEFAULT, L"CHARGE");
+						g_Draw.String(FONT_INDICATORS, DTBox.x, DTBox.y - 12, { 255, 255, 255, 255 }, ALIGN_DEFAULT, L"CHARGE");
 
 						if (G::ShiftedTicks == 0) // chargless
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 55, 40, 255 }, ALIGN_REVERSE, L"NO CHARGE");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 55, 40, 255 }, ALIGN_REVERSE, L"NO CHARGE");
 						}
 						else if (G::Recharging) // charging 
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 126, 0, 255 }, ALIGN_REVERSE, L"CHARGING");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 126, 0, 255 }, ALIGN_REVERSE, L"CHARGING");
 						}
-						else if (!G::WaitForShift && ratioCurrent == 1) // ready (only show if we are fully charged)
+						else if ((G::WaitForShift && ratioCurrent == 1) && Vars::Misc::CL_Move::WaitForDT.Value)	//waiting 
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 46, 46, 255 }, ALIGN_REVERSE, L"DT IMPOSSIBLE");
+						}
+						// else if (!G::WaitForShift && ratioCurrent == 1) // ready (only show if we are fully charged)
+						// {
+						// 	g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
 
-						}
-						else	//waiting 
+						// }
+						else
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 10, { 255, 46, 46, 255 }, ALIGN_REVERSE, L"DT IMPOSSIBLE");
+							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
 						}
 						break;
 					}
@@ -466,7 +470,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 255, 64, 64, 255 }, ALIGN_CENTERHORIZONTAL, L"Recharge! (%i / %i)", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						}
-						else if (G::WaitForShift)
+						else if (G::WaitForShift && Vars::Misc::CL_Move::WaitForDT.Value)
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 255, 178, 0, 255 }, ALIGN_CENTERHORIZONTAL, L"Wait! (%i / 25)", G::WaitForShift);
 						}
@@ -624,6 +628,9 @@ void CVisuals::DrawMovesimLine()
 			{
 				for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 				{
+					RenderLine(G::PredLinesBackup.at(i - 1).first - 1, G::PredLinesBackup.at(i).first - 1, {0,0,0,255}, false);
+					// if we draw this before the actual line, maybe the next one will take priority in rendering
+					// eventually mess with the positions of the actual prediction
 					RenderLine(G::PredLinesBackup.at(i - 1).first, G::PredLinesBackup.at(i).first, Vars::Aimbot::Projectile::PredictionColor, false);
 				}
 			}

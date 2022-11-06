@@ -2,6 +2,8 @@
 #define MASK_SIGNED 0x7FFFFFFF
 
 // i hate crithack
+static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 
 /* Returns whether random crits are enabled on the server */
 bool CCritHack::AreRandomCritsEnabled()
@@ -349,6 +351,36 @@ bool CCritHack::ShouldCrit()
 	return false;
 }
 
+// crithack damage info lol
+// todo: turn this into fware code
+// static int damageUntilToCrit(IClientEntity *wep)
+// {
+//     // First check if we even need to deal damage at all
+//     auto crit_info = critMultInfo(wep);
+//     if (crit_info.first <= crit_info.second || g_pLocalPlayer->weapon_mode == weapon_melee)
+//         return 0;
+
+//     float target_chance = critMultInfo(wep).second;
+//     // Formula taken from TotallyNotElite
+//     int damage = std::ceil(crit_damage * (2.0f * target_chance + 1.0f) / (3.0f * target_chance));
+//     return damage - (cached_damage - round_damage);
+// }
+//if (g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) < round_damage)
+//round_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx);
+//cached_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+
+//int damage = event->GetInt("damageamount");
+// imagine there's event stuff
+// {
+// 	if (damage_dealt)
+// 	{
+// 		if (event->GetBool("crit"))
+//         crit_damage += damage;
+// 	}
+// }
+
+
+
 int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 {
 	int retVal = -1;
@@ -405,6 +437,26 @@ std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
 	float needed = GetCritCap(pWeapon) + .1f;
 	return { observed, needed };
 }
+
+float CCritHack::GetWithdrawMult(CBaseCombatWeapon* pWeapon)
+{
+	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa5c) + 1);
+	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa58) + 1);
+
+	float multiply = 0.5;
+	if (pWeapon->GetSlot() != 2) { multiply = Math::RemapValClamped(count / checks, .1f, 1.f, 1.f, 3.f); }
+
+	return multiply * 3.f;
+}
+
+float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
+{
+	float amount = static_cast<float>(AddedPerShot) * GetWithdrawMult(pWeapon);
+	if (pWeapon->IsRapidFire()) {
+		amount = TakenPerCrit * GetWithdrawMult(pWeapon);
+		reinterpret_cast<int&>(amount) &= ~1;
+	}
+	
 
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 {
@@ -491,6 +543,38 @@ void CCritHack::Run(CUserCmd* pCmd)
 				break; //	we found a seed that we can use to avoid a crit and have skipped to it, woohoo
 			}
 		}
+
+		static int previousWeapon = 0;
+		if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
+		{
+			const auto& weaponData = pWeapon->GetWeaponData();
+			const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
+			int projectilesPerShot = weaponData.m_nBulletsPerShot;
+			if (projectilesPerShot >= 1)
+			{
+				projectilesPerShot = Utils::ATTRIB_HOOK_FLOAT(projectilesPerShot, "mult_bullets_per_shot", pWeapon, nullptr, true);
+			}
+			else
+			{
+				projectilesPerShot = 1;
+			}
+
+			AddedPerShot = weaponData.m_nDamage;
+			AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
+			AddedPerShot *= std::max(1, projectilesPerShot);
+			ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
+
+			if (pWeapon->IsRapidFire())
+			{
+				TakenPerCrit = AddedPerShot;
+				TakenPerCrit *= static_cast<int>(2.f / weaponData.m_flTimeFireDelay);
+				if (TakenPerCrit * 3 > static_cast<int>(cap))
+				{
+					TakenPerCrit = static_cast<int>(cap / 3.f);
+				}
+			}
+		}
+	previousWeapon = pWeapon->GetIndex();
 	}
 }
 
@@ -517,7 +601,7 @@ void CCritHack::Draw()
 
 	if (!AreRandomCritsEnabled())
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, {190, 190, 190, 255}, ALIGN_CENTERHORIZONTAL, L"server disabled crits");
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
 	}
 
 	if (!CanCrit() && AreRandomCritsEnabled())
@@ -539,15 +623,19 @@ void CCritHack::Draw()
 		//if (CritTicks.size() == 0 || observed > needed)
 		if (CritTicks.size() == 0)
 		{
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		}
-		static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
-		const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
+
 		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
+
+		const int withdrawAmount = GetWithdrawAmount(pWeapon);
+		const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
+		const auto critText = tfm::format("Estimated crits: %s", potentialCrits);
+		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		int w, h;
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
 		if (w > longestW)
@@ -581,4 +669,29 @@ void CCritHack::Draw()
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;
+}
+
+void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
+{
+	switch (uNameHash)
+	{
+		case FNV1A::HashConst("player_hurt"):
+		{
+			// TODO: This
+			break;
+		}
+
+		case FNV1A::HashConst("teamplay_round_start"):
+		case FNV1A::HashConst("client_disconnect"):
+		case FNV1A::HashConst("client_beginconnect"):
+		case FNV1A::HashConst("game_newmap"):
+		{
+
+			ShotsUntilCrit = 0;
+			AddedPerShot = 0;
+			ShotsToFill = 0;
+			TakenPerCrit = 0;
+			break;
+		}
+	}
 }
