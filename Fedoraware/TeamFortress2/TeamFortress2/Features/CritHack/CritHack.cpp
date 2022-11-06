@@ -456,7 +456,7 @@ float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
 		amount = TakenPerCrit * GetWithdrawMult(pWeapon);
 		reinterpret_cast<int&>(amount) &= ~1;
 	}
-	
+}
 
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 {

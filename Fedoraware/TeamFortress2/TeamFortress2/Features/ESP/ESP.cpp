@@ -916,6 +916,7 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 
 				auto flHealth = static_cast<float>(nHealth);
 				const auto flMaxHealth = static_cast<float>(nMaxHealth);
+				Color_t healthColor = Utils::GetHealthColor(flHealth, flMaxHealth);
 
 				if (flHealth > flMaxHealth)
 				{
