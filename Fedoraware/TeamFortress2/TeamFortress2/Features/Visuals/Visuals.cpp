@@ -628,7 +628,7 @@ void CVisuals::DrawMovesimLine()
 			{
 				for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 				{
-					RenderLine(G::PredLinesBackup.at(i - 1).first - 1, G::PredLinesBackup.at(i).first - 1, {0,0,0,255}, false);
+					//RenderLine(G::PredLinesBackup.at(i - 1).first - 1, G::PredLinesBackup.at(i).first - 1, {0,0,0,255}, false);
 					// if we draw this before the actual line, maybe the next one will take priority in rendering
 					// eventually mess with the positions of the actual prediction
 					RenderLine(G::PredLinesBackup.at(i - 1).first, G::PredLinesBackup.at(i).first, Vars::Aimbot::Projectile::PredictionColor, false);
