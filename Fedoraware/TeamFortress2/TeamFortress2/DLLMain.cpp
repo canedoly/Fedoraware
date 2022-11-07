@@ -55,6 +55,7 @@ void Loaded()
 {
 	I::Cvar->ConsoleColorPrintf(Vars::Menu::Colors::MenuAccent, "%s Loaded!\n", Vars::Menu::CheatName.c_str());
 	I::EngineClient->ClientCmd_Unrestricted("play vo/items/wheatley_sapper/wheatley_sapper_attached14.mp3");
+	I::EngineClient->ClientCmd_Unrestricted("cl_threaded_bone_setup 1");
 
 	const int dxLevel = g_ConVars.FindVar("mat_dxlevel")->GetInt();
 	if (dxLevel < 90)
