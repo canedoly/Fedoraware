@@ -377,8 +377,8 @@ int CCritHack::LastGoodCritTick(const CUserCmd* pCmd)
 
 float CCritHack::GetWithdrawMult(CBaseCombatWeapon* pWeapon)
 {
-	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa5c) + 1);
-	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xa58) + 1);
+	const auto count = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xA5C) + 1);
+	const auto checks = static_cast<float>(*reinterpret_cast<int*>(pWeapon + 0xA58) + 1);
 
 	float multiply = 0.5;
 	if (pWeapon->GetSlot() != 2) { multiply = Math::RemapValClamped(count / checks, .1f, 1.f, 1.f, 3.f); }
