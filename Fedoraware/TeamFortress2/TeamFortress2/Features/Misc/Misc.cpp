@@ -295,12 +295,12 @@ void CMisc::AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd)
 
 		Vec3 vEnemyPos = pEnemy->GetWorldSpaceCenter();
 		if (!Utils::VisPos(pLocal, pEnemy, vLocalPos, vEnemyPos)) { continue; }
-		if (!target && vLocalPos.DistTo(vEnemyPos) < 150.f)
+		if (!target && vLocalPos.DistTo(vEnemyPos) < 225.f)
 		{
 			target = pEnemy;
 			vTargetPos = target->GetWorldSpaceCenter();
 		}
-		else if (vLocalPos.DistTo(vEnemyPos) < vLocalPos.DistTo(vTargetPos) && vLocalPos.DistTo(vEnemyPos) < 150.f)
+		else if (vLocalPos.DistTo(vEnemyPos) < vLocalPos.DistTo(vTargetPos) && vLocalPos.DistTo(vEnemyPos) < 225.f)
 		{
 			target = pEnemy;
 			vTargetPos = target->GetWorldSpaceCenter();
