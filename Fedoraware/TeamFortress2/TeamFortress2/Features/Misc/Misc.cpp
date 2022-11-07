@@ -228,12 +228,13 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
 	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
 	const float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
+	float maxspeed = desiredSpeed;
 
 	float curspeed = pLocal->GetVecVelocity().Length2D();
 
 	Vec3 direction = pLocal->GetVecVelocity().toAngle();
 	direction.y = pCmd->viewangles.y - direction.y;
-	const Vector velresult = direction.fromAngle() * -curspeed;
+	const Vector velresult = direction.fromAngle() * -maxspeed;
 
 	if (slowKey.Down() && Vars::Misc::SlowWalkEnabled.Value)
 	{
