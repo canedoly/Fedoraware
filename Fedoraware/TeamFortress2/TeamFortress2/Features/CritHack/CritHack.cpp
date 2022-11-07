@@ -616,6 +616,9 @@ void CCritHack::Draw()
 	const int x = Vars::CritHack::IndicatorPos.c;
 	int currentY = Vars::CritHack::IndicatorPos.y;
 
+	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
+
 	const float bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
 	const int seedRequests = *reinterpret_cast<int*>(pWeapon + 0xA5C);
 
