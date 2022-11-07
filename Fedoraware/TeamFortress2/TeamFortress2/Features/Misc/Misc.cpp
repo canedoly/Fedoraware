@@ -233,7 +233,7 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 	Vec3 direction = pLocal->GetVecVelocity().toAngle();
 	direction.y = pCmd->viewangles.y - direction.y;
-	const Vec3 velresult = direction.fromAngle() * -speed;
+	const Vector velresult = direction.fromAngle() * -curspeed;
 
 	if (slowKey.Down() && Vars::Misc::SlowWalkEnabled.Value)
 	{
