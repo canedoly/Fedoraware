@@ -237,14 +237,8 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 	if (slowKey.Down() && Vars::Misc::SlowWalkEnabled.Value)
 	{
-		if (pCmd->forwardmove)
-		{
-			pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -velresult : velresult;
-		}
-		if (pCmd->sidemove)
-		{
-			pCmd->sidemove = pCmd->sidemove < 0.0f ? -velresult : velresult;
-		}
+		pCmd->forwardmove = velresult.x;
+		pCmd->sidemove = velresult.y;
 
 	}
 	// alternative way of doing this, if this won't work. 
