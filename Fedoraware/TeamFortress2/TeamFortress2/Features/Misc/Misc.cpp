@@ -227,13 +227,28 @@ void CMisc::LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal)
 void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
 	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
-	float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
+	const float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
+
+	float curspeed = pLocal->GetVecVelocity().Length2D();
+
+	Vec3 direction = pLocal->GetVecVelocity().toAngle();
+	direction.y = pCmd->viewangles.y - direction.y;
+	const Vec3 velresult = direction.fromAngle() * -speed;
 
 	if (slowKey.Down() && Vars::Misc::SlowWalkEnabled.Value)
 	{
-		pCmd->forwardmove = desiredSpeed;
-		pCmd->sidemove = desiredSpeed;
+		if (pCmd->forwardmove)
+		{
+			pCmd->forwardmove = pCmd->forwardmove < 0.0f ? -velresult : velresult;
+		}
+		if (pCmd->sidemove)
+		{
+			pCmd->sidemove = pCmd->sidemove < 0.0f ? -velresult : velresult;
+		}
+
 	}
+	// alternative way of doing this, if this won't work. 
+	// just set the forward or side move to 0 whenever we are past that velocity
 }
 
 // void CMisc::FakeWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
@@ -245,8 +260,7 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 // 	{
 // 		if (fwKey.Down() && Vars::Misc::CL_Move::FakeWalk.Value)
 // 		{
-// 			pCmd->forwardmove = 50.f;
-// 			pCmd->sidemove = 50.f;
+
 // 		}
 // 	}
 // }
