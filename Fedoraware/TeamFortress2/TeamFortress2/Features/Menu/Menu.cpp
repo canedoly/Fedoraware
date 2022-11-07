@@ -1796,7 +1796,7 @@ void CMenu::MenuMisc()
 			}
 
 			SectionTitle("Slow Walk");
-			WToggle("Slow walk", &Vars::Misc::SlowWalkGlobal.Value);
+			WToggle("Slow walk", &Vars::Misc::SlowWalkEnabled.Value);
 			WSlider("Desired Speed", &Vars::Misc::DesiredSpeed.Value, 20.f, 450.f, "%f");
 			InputKeybind("Slow walk key", Vars::Misc::SlowWalkKey, true);
 

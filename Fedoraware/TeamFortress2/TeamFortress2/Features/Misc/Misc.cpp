@@ -239,6 +239,16 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 // void CMisc::FakeWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 // {
 // 	// Works the same as SlowWalk, but only do it aslong we are choking packets and choked < Fakelagticks - 3
+// 	static int choked = 0;
+// 	if (!*pSendPacket) { choked++; }
+// 	if (choked < Vars::Misc::CL_Move::FakelagValue.Value - 3)
+// 	{
+// 		if (fwKey.Down() && Vars::Misc::CL_Move::FakeWalk.Value)
+// 		{
+// 			pCmd->forwardmove = 50.f;
+// 			pCmd->sidemove = 50.f;
+// 		}
+// 	}
 // }
 
 void CMisc::AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd)
