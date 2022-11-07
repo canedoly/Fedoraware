@@ -400,7 +400,7 @@ float CCritHack::GetWithdrawAmount(CBaseCombatWeapon* pWeapon)
 
 float CCritHack::GetCritCap(CBaseCombatWeapon* pWeapon)
 {
-	const auto& pLocal = g_EntityCache.m_pLocal;
+	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal) { return 0.f; }
 
 	const auto critMult = static_cast<float>(pLocal->GetCritMult());
@@ -568,6 +568,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
 	{
 		const auto& weaponData = pWeapon->GetWeaponData();
+		const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
 		int projectilesPerShot = weaponData.m_nBulletsPerShot;
 		if (projectilesPerShot >= 1)
 		{
