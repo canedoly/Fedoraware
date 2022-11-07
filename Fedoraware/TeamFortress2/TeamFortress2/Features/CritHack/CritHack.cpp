@@ -530,7 +530,7 @@ void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 		CritTicks.clear();
 	}
 
-	if (CritTicks.size() >= 256)
+	if (CritTicks.size() >= 512)
 	{
 		return;
 	}
@@ -591,9 +591,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 			}
 		}
 	}
-		// TODO: Fix the crit bucket
 
-	// Update stats
 	static int previousWeapon = 0;
 	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
 	{
@@ -721,6 +719,7 @@ void CCritHack::Draw()
 	IndicatorH = currentY;
 }
 
+
 void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 {
 	switch (uNameHash)
@@ -736,6 +735,9 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		case FNV1A::HashConst("client_beginconnect"):
 		case FNV1A::HashConst("game_newmap"):
 		{
+			// TODO: Clear CritCmds
+			LastCritTick = -1;
+			LastBucket = -1.f;
 
 			ShotsUntilCrit = 0;
 			AddedPerShot = 0;
