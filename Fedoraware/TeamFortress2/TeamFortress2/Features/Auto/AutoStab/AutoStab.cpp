@@ -136,7 +136,8 @@ void CAutoStab::RunRage(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCm
 											 pBoneMatrix[HITBOX_PELVIS][1][3],
 											 pBoneMatrix[HITBOX_PELVIS][2][3]);
 
-				vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), vPelvisPos);
+				//vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), vPelvisPos);
+				vAngleTo = pEnemy->GetEyeAngles();
 
 				// Set origins and eye angles for further logic
 				pEnemy->SetAbsOrigin(pTick.vOrigin);
