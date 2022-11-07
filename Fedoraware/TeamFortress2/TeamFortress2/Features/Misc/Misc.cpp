@@ -54,6 +54,7 @@ void CMisc::RunPost(CUserCmd* pCmd, bool* pSendPacket)
 	{
 		DoubletapPacket(pSendPacket);
 		LegJitter(pCmd, pLocal);
+		SlowWalk(pCmd, pLocal);
 		AutoRocketJump(pCmd, pLocal);
 		AutoScoutJump(pCmd, pLocal);
 		ChokeCheck(pSendPacket);
@@ -222,6 +223,23 @@ void CMisc::LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal)
 		pos = !pos;
 	}
 }
+
+void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
+{
+	static KeyHelper slowKey{ &Vars::Misc::SlowWalkKey.Value };
+	float desiredSpeed = Vars::Misc::DesiredSpeed.Value;
+
+	if (slowKey.Down() && Vars::Misc::SlowWalkEnabled.Value)
+	{
+		pCmd->forwardmove = desiredSpeed;
+		pCmd->sidemove = desiredSpeed;
+	}
+}
+
+// void CMisc::FakeWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
+// {
+// 	// Works the same as SlowWalk, but only do it aslong we are choking packets and choked < Fakelagticks - 3
+// }
 
 void CMisc::AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd)
 {

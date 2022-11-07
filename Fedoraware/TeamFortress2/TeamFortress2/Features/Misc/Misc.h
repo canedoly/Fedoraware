@@ -12,6 +12,7 @@ class CMisc
 	void RageRetry(CBaseEntity* pLocal);
 	void AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd);
 	void LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal);
+	void SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void ViewmodelFlip(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void AutoPeek(CUserCmd* pCmd, CBaseEntity* pLocal);
 	void StopMovement(CUserCmd* pCmd, bool* pSendPacket);

@@ -128,6 +128,12 @@ public:
 		return GetVFunc<FN>(this, 85)(this);
 	}
 
+	// int GetAppId()
+	// {
+	// 	typedef int(__thiscall *Fn)(PVOID);
+	// 	return getvfunc<Fn>(this, 104)(this);
+	// }
+
 	bool IsHLTV()
 	{
 		typedef bool(__thiscall *FN)(PVOID);

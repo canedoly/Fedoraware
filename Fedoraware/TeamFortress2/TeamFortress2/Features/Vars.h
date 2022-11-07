@@ -701,6 +701,9 @@ namespace Vars
 		inline CVar<bool> AntiVAC{ false };
 		inline CVar<int> InstantAccept{ false };
 		inline CVar<bool> RunescapeChat{ false };
+		inline CVar<bool> SlowWalkGlobal{ false };
+		inline CVar<int> SlowWalkKey { 0xA0 };	// left shift
+		inline CVar<float> DesiredSpeed { 300 };
 		namespace Followbot
 		{
 			inline CVar<bool> Enabled{ false };

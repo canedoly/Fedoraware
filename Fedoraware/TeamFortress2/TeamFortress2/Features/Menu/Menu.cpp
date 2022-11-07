@@ -1795,6 +1795,11 @@ void CMenu::MenuMisc()
 				WSlider("Target ping", &Vars::Misc::PingTarget.Value, 0, 200); HelpMarker("Target ping that should be reached");
 			}
 
+			SectionTitle("Slow Walk");
+			WToggle("Slow walk", &Vars::Misc::SlowWalkGlobal.Value);
+			WSlider("Desired Speed", &Vars::Misc::DesiredSpeed.Value, 20.f, 450.f, "%f");
+			InputKeybind("Slow walk key", Vars::Misc::SlowWalkKey, true);
+
 			SectionTitle("Party Networking");
 			WToggle("Enable###PartyNetEnable", &Vars::Misc::PartyNetworking.Value); HelpMarker("Enables party networking between Fedoraware users");
 			WToggle("Party crasher###PartyNetCrash", &Vars::Misc::PartyCrasher.Value); HelpMarker("Annoy your friends by crashing their game");
