@@ -610,7 +610,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 		AddedPerShot = weaponData.m_nDamage;
 		AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
 		AddedPerShot *= std::max(1, projectilesPerShot);
-		ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
+		//ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
 
 		if (pWeapon->IsRapidFire())
 		{
