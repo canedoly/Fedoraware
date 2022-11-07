@@ -1,6 +1,9 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
+static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
+
 // i hate crithack
 
 /* Returns whether random crits are enabled on the server */
@@ -565,7 +568,6 @@ void CCritHack::Run(CUserCmd* pCmd)
 	if (AddedPerShot == 0 || previousWeapon != pWeapon->GetIndex())
 	{
 		const auto& weaponData = pWeapon->GetWeaponData();
-		const auto cap = tf_weapon_criticals_bucket_cap->GetFloat();
 		int projectilesPerShot = weaponData.m_nBulletsPerShot;
 		if (projectilesPerShot >= 1)
 		{
@@ -579,7 +581,6 @@ void CCritHack::Run(CUserCmd* pCmd)
 		AddedPerShot = weaponData.m_nDamage;
 		AddedPerShot = static_cast<int>(Utils::ATTRIB_HOOK_FLOAT(static_cast<float>(AddedPerShot), "mult_dmg", pWeapon, nullptr, true));
 		AddedPerShot *= std::max(1, projectilesPerShot);
-		ShotsToFill = static_cast<int>(cap / static_cast<float>(AddedPerShot));
 
 		if (pWeapon->IsRapidFire())
 		{
@@ -644,8 +645,6 @@ void CCritHack::Draw()
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 		}
-		static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
-		const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
 		int w, h;
