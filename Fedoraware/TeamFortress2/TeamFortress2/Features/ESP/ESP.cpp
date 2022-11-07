@@ -243,7 +243,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				{
 					int height = h + 1; //don't ask me /shrug
 
-					g_Draw.OutlinedRect(x, y, w, height, drawColor);
+					g_Draw.OutlinedRect(x, y, w, height, {255,255,255,255});
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
@@ -254,7 +254,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				}
 				case 2:
 				{
-					g_Draw.CornerRect(x, y, w, h, 3, 5, drawColor);
+					g_Draw.CornerRect(x, y, w, h, 3, 5, {255,255,255,255});
 					if (Vars::ESP::Main::Outlinedbar.Value)
 					{
 						g_Draw.CornerRect(x - 1, y - 1, w + 2, h + 2, 3, 5, Colors::OutlineESP);
@@ -606,7 +606,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				Gradient_t clr = flHealth > flMaxHealth ? Colors::GradientOverhealBar : Colors::GradientHealthBar;
 
-				Color_t HealthColor = flHealth > flMaxHealth ? Colors::Overheal : Utils::GetHealthColor(nHealth, nMaxHealth);
+				Color_t HealthColor = Utils::GetHealthColor(nHealth, nMaxHealth);
 
 				if (!Player->IsVulnerable())
 				{

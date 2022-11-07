@@ -1251,7 +1251,7 @@ void CMenu::MenuVisuals()
 					WToggle("Anti viewmodel flip", &Vars::Misc::AntiViewmodelFlip.Value); HelpMarker("This is scuffed");
 
 					SectionTitle("DT Indicator");
-					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "SEOwned", "Numeric" }); HelpMarker("What style the bar should draw in.");
+					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "SEOwned", "Numeric", "Rijin V1" }); HelpMarker("What style the bar should draw in.");
 					Text("Charging Gradient");
 					ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 					ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
@@ -1906,6 +1906,7 @@ void CMenu::SettingsWindow()
 		if (ColorPicker("Menu accent", Vars::Menu::Colors::MenuAccent)) { LoadStyle(); } SameLine(); Text("Menu accent");
 		if (Checkbox("Alternative Design", &Vars::Menu::ModernDesign)) { LoadStyle(); }
 		Checkbox("Show DVD bounce", &Vars::Menu::ShowDVD.Value);
+		Checkbox("Show Debug info", &Vars::Debug::DebugInfo.Value);
 		if (Checkbox("Menu Vignette", &Vars::Menu::Vignette.Value))
 		{
 			I::ViewRender->SetScreenOverlayMaterial(nullptr);

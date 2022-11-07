@@ -517,7 +517,7 @@ void CCritHack::Draw()
 
 	if (!AreRandomCritsEnabled())
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, {190, 190, 190, 255}, ALIGN_CENTERHORIZONTAL, L"server disabled crits");
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
 	}
 
 	if (!CanCrit() && AreRandomCritsEnabled())
