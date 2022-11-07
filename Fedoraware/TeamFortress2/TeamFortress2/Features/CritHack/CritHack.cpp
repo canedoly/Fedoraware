@@ -657,6 +657,13 @@ void CCritHack::Draw()
 		}
 		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
+
+		const int withdrawAmount = GetWithdrawAmount(pWeapon);
+		const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
+		const int maxCrits = bucket + AddedPerShot;
+		const auto critText = tfm::format("%s / %s Crits", potentialCrits, maxCrits);
+		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
+
 		int w, h;
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
 		if (w > longestW)
