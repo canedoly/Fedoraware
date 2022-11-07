@@ -12,6 +12,10 @@ private:
 	bool IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon);
 	float GetCritCap(CBaseCombatWeapon* pWeapon);
 	std::pair<float, float> GetCritMultInfo(CBaseCombatWeapon* pWeapon);
+	float GetWithdrawMult(CBaseCombatWeapon* pWeapon);
+	float GetWithdrawAmount(CBaseCombatWeapon* pWeapon);
+	bool CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage);
+	int GetShotsUntilCrit(CBaseCombatWeapon* pWeapon);
 	void ScanForCrits(const CUserCmd* pCmd, int loops = 10);
 	int LastGoodCritTick(const CUserCmd* pCmd);
 	//int DamageToNextCrit(CBaseCombatWeapon* pWeapon);	//	returns a positive value if we are crit banned
@@ -28,9 +32,19 @@ private:
 		int iNumCrits;		// 0xA5C
 	};
 
+	float LastBucket = -1.f;
+	int LastCritTick = -1;
+	int LastWeapon = 0;
+
+	int ShotsUntilCrit = 0;
+	int AddedPerShot = 0;
+	int ShotsToFill = 0;
+	int TakenPerCrit = 0;
+
 public:
 	void Run(CUserCmd* pCmd);
 	void Draw();
+	void FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash);
 
 	int IndicatorW;
 	int IndicatorH;
