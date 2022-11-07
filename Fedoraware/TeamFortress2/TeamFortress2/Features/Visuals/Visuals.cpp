@@ -112,7 +112,7 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	{
 		if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Latency.Value)
 		{
-			g_Draw.String2(FONT_MENU, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f", "(+ %d) ms", flLatencyReal, flFakeLatency);
+			g_Draw.String(FONT_MENU, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f	 (+ %d) ms", flLatencyReal, flFakeLatency);
 		}
 		else
 		{
