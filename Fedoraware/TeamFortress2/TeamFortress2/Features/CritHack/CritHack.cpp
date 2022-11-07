@@ -1,8 +1,6 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
-static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
-const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 
 // i hate crithack
 
@@ -432,6 +430,8 @@ std::pair<float, float> CCritHack::GetCritMultInfo(CBaseCombatWeapon* pWeapon)
 
 bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = true)
 {
+	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 	auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
 	if (damage) {
 		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat()) {
@@ -447,16 +447,19 @@ bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = 
 int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 {
 	// Backup weapon stats
-	const auto backupBucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
-	const auto backupAttempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+	const auto backupBucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
+	const auto backupAttempts = *reinterpret_cast<float*>(pWeapon + 0xA58);
+
+	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 
 	int shots;
 	for (shots = 0; shots < ShotsToFill + 1; shots++)
 	{
 		if (CanWithdrawFromBucket(pWeapon, true)) { break; }
 
-		auto bucket = *reinterpret_cast<float*>(pWeapon + 0xa54);
-		auto attempts = *reinterpret_cast<float*>(pWeapon + 0xa58);
+		auto bucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
+		auto attempts = *reinterpret_cast<float*>(pWeapon + 0xA58);
 
 		if (bucket < tf_weapon_criticals_bucket_cap->GetFloat())
 		{
@@ -466,13 +469,13 @@ int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 
 		attempts++;
 
-		*reinterpret_cast<float*>(pWeapon + 0xa54) = bucket;
-		*reinterpret_cast<float*>(pWeapon + 0xa58) = attempts;
+		*reinterpret_cast<float*>(pWeapon + 0xA54) = bucket;
+		*reinterpret_cast<float*>(pWeapon + 0xA58) = attempts;
 	}
 
 	// Restore backup
-	*reinterpret_cast<float*>(pWeapon + 0xa54) = backupBucket;
-	*reinterpret_cast<float*>(pWeapon + 0xa58) = backupAttempts;
+	*reinterpret_cast<float*>(pWeapon + 0xA54) = backupBucket;
+	*reinterpret_cast<float*>(pWeapon + 0xA58) = backupAttempts;
 	return shots;
 }
 
@@ -536,6 +539,9 @@ void CCritHack::Run(CUserCmd* pCmd)
 
 	const auto& pWeapon = g_EntityCache.GetWeapon();
 	if (!pWeapon || !pWeapon->CanFireCriticalShot(false)) { return; }
+
+	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
+	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 
 	ScanForCrits(pCmd, 50); //	fill our vector slowly.
 
