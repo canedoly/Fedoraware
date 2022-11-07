@@ -659,8 +659,10 @@ void CCritHack::Draw()
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
 
 		const int withdrawAmount = GetWithdrawAmount(pWeapon);
-		const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
-		const int maxCrits = bucket + AddedPerShot;
+		// const int potentialCrits = (bucket + AddedPerShot) / withdrawAmount;
+		// const int maxCrits = bucket + AddedPerShot;
+		const int maxCrits = (bucket + AddedPerShot) / withdrawAmount;
+		const int potentialCrits = bucket / withdrawAmount;
 		const auto critText = tfm::format("%s / %s Crits", potentialCrits, maxCrits);
 		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
 
