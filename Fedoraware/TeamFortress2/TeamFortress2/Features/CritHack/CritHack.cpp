@@ -759,90 +759,87 @@ void CCritHack::Draw()
 
 void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 {
-	switch (uNameHash)
-	{
-		const auto& pLocal = g_EntityCache.GetLocal();
-		CTFPlayerResource* cResource = g_EntityCache.GetPR();
-		const auto& pWeapon = g_EntityCache.GetWeapon();
+	const auto& pLocal = g_EntityCache.GetLocal();
+	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+	const auto& pWeapon = g_EntityCache.GetWeapon();
 
-		int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
-		int round_damage = total_damage - melee_damage;	// cached_damage
+	int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+	int round_damage = total_damage - melee_damage;	// cached_damage
+
+	int crit_damage = 0;
+	int melee_damage = 0;
+
+	if (FNV1A::HashConst("teamplay_round_start") ||
+		FNV1A::HashConst("client_disconnect") ||
+		FNV1A::HashConst("client_beginconnect") ||
+		FNV1A::HashConst("game_newmap"))
+	{
+		// TODO: Clear CritCmds
+		LastCritTick = -1;
+		LastBucket = -1.f;
+
+		ShotsUntilCrit = 0;
+		AddedPerShot = 0;
+		ShotsToFill = 0;
+		TakenPerCrit = 0;
+
+		int total_damage = 0;	// round_damage
+		int round_damage = 0;	// cached_damage
 
 		int crit_damage = 0;
 		int melee_damage = 0;
+		break;
+	}
 
-		case FNV1A::HashConst("teamplay_round_start"):
-		case FNV1A::HashConst("client_disconnect"):
-		case FNV1A::HashConst("client_beginconnect"):
-		case FNV1A::HashConst("game_newmap"):
+	if (FNV1A::HashConst("player_hurt"))
+	{
+		const auto pEntity = I::ClientEntityList->GetClientEntity(
+			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")))
+
+		const auto nHealth = pEvent->GetInt("health");
+		const auto nAttacker = pEvent->GetInt("attacker");
+		const auto nDamage = pEvent->GetInt("damageamount");
+		const auto bCrit = pEvent->GetBool("crit");
+		status.health = cResource->GetHealth(pEntity);
+
+		auto &status 			= player_status_list[pEntity - 1];
+		int health_difference 	= status.health - nHealth;
+		status.health			= nHealth;
+		status.just_updated 	= true;
+
+
+		if (nAttacker == pLocal)
 		{
-			// TODO: Clear CritCmds
-			LastCritTick = -1;
-			LastBucket = -1.f;
-
-			ShotsUntilCrit = 0;
-			AddedPerShot = 0;
-			ShotsToFill = 0;
-			TakenPerCrit = 0;
-
-			int total_damage = 0;	// round_damage
-			int round_damage = 0;	// cached_damage
-
-			int crit_damage = 0;
-			int melee_damage = 0;
-			break;
-		}
-
-		case FNV1A::HashConst("player_hurt"):
-		{
-			const auto pEntity = I::ClientEntityList->GetClientEntity(
-				I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")))
-
-			const auto nHealth = pEvent->GetInt("health");
-			const auto nAttacker = pEvent->GetInt("attacker");
-			const auto nDamage = pEvent->GetInt("damageamount");
-			const auto bCrit = pEvent->GetBool("crit");
-			status.health = cResource->GetHealth(pEntity);
-
-			auto &status 			= player_status_list[pEntity - 1];
-            int health_difference 	= status.health - nHealth;
-            status.health			= nHealth;
-            status.just_updated 	= true;
-
-
-			if (nAttacker == pLocal)
+			if (pEntity != pLocal)
 			{
-				if (pEntity != pLocal)
+				// chceck for what weapon/slot dealt the damage
+
+				bool isMelee = false;
+				if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
 				{
-					// chceck for what weapon/slot dealt the damage
+					isMelee = true;
+				}
 
-					bool isMelee = false;
-					if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
-					{
-						isMelee = true;
-					}
+				// damage stuff
+				if (nDamage > health_difference && !nHealth)
+				{ damage = health_difference };
+				// probably so we won't add too much damage
+				// so if we kill the enemy and we deal for example 450 out of 150 hp
+				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
 
-					// damage stuff
-					if (nDamage > health_difference && !nHealth)
-					{ damage = health_difference };
-					// probably so we won't add too much damage
-					// so if we kill the enemy and we deal for example 450 out of 150 hp
-					// it would add 450 damage instead of the correct 150 (or how much the character had hp)
-
-					if (!isMelee)
+				if (!isMelee)
+				{
+					if (bCrit)
 					{
-						if (bCrit)
-						{
-							crit_damage += nDamage;
-						}
-					}
-					else if (isMelee)
-					{
-						melee_damage += nDamage;
+						crit_damage += nDamage;
 					}
 				}
+				else if (isMelee)
+				{
+					melee_damage += nDamage;
+				}
 			}
-			break;
 		}
+		break;
 	}
 }
