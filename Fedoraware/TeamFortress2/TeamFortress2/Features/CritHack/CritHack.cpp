@@ -1,6 +1,13 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
+struct player_status
+{
+    int health{};
+    int clazz{};	// int for classes 5 being heavy, or 2 being soldier
+    bool just_updated{};
+};
+static std::array<player_status, 32> player_status_list{};
 
 // i hate crithack
 
@@ -479,6 +486,48 @@ int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 	return shots;
 }
 
+int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
+{
+	auto critMultInfo = GetCritMultInfo(pWeapon);
+
+	total_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx);
+	normal_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+
+	// todo replace x with actual stuff
+	float needed_crit_mult = critMultInfo.second;
+	int damage = std::ceil(crit_damage * (2.0f * needed_crit_mult + 1.0f) / (3.0f * needed_crit_mult));
+	return damage - (normal_damage - total_damage);
+}
+
+// crithack damage info lol
+// todo: turn this into fware code
+// static int damageUntilToCrit(IClientEntity *wep)
+// {
+//     // First check if we even need to deal damage at all
+//     auto crit_info = critMultInfo(wep);
+//     if (crit_info.first <= crit_info.second || g_pLocalPlayer->weapon_mode == weapon_melee)
+//         return 0;
+
+//     float target_chance = critMultInfo(wep).second;
+//     // Formula taken from TotallyNotElite
+//     int damage = std::ceil(crit_damage * (2.0f * target_chance + 1.0f) / (3.0f * target_chance));
+//     return damage - (cached_damage - round_damage);
+// }
+//if (g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) < round_damage)
+//round_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx);
+//cached_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+
+//int damage = event->GetInt("damageamount");
+// imagine there's event stuff
+// {
+// 	if (damage_dealt)
+// 	{
+// 		if (event->GetBool("crit"))
+//         crit_damage += damage;
+// 	}
+// }
+// todo: also fix bucket but that's for later
+
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 {
 	static int previousWeapon = 0;
@@ -647,13 +696,17 @@ void CCritHack::Draw()
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
 		}
-		//if (CritTicks.size() == 0 || observed > needed)
-		if (CritTicks.size() == 0)
+		if (CritTicks.size() == 0 || observed > needed)
+		//if (CritTicks.size() == 0)
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+			
+			const int damage = GetDamageUntilCrit(pWeapon);
+		const auto dmgText = tfm::format("%s Damage", damage);
+		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
 		}
 		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
@@ -664,7 +717,10 @@ void CCritHack::Draw()
 		const int maxCrits = (bucket + AddedPerShot) / withdrawAmount;
 		const int potentialCrits = bucket / withdrawAmount;
 		const auto critText = tfm::format("%s / %s Crits", potentialCrits, maxCrits);
-		g_Draw.String(FONT_MENU, g_ScreenSize.c, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
+		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
+		const int damage = GetDamageUntilCrit(pWeapon);
+		const auto dmgText = tfm::format("%s Damage", damage);
+		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
 
 		int w, h;
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
@@ -705,9 +761,65 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 {
 	switch (uNameHash)
 	{
+		const auto& pLocal = g_EntityCache.GetLocal();
+		CTFPlayerResource* cResource = g_EntityCache.GetPR();
+		const auto& pWeapon = g_EntityCache.GetWeapon();
+
+		int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+		int round_damage = total_damage - melee_damage;	// cached_damage
+
+		int crit_damage = 0;
+		int melee_damage = 0;
+
 		case FNV1A::HashConst("player_hurt"):
 		{
-			// TODO: This
+			const auto pEntity = I::ClientEntityList->GetClientEntity(
+				I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")))
+
+			const auto nHealth = pEvent->GetInt("health");
+			const auto nAttacker = pEvent->GetInt("attacker");
+			const auto nDamage = pEvent->GetInt("damageamount");
+			const auto bCrit = pEvent->GetBool("crit");
+			status.health = cResource->GetHealth(pEntity);
+
+			auto &status 			= player_status_list[pEntity - 1];
+            int health_difference 	= status.health - nHealth;
+            status.health			= nHealth;
+            status.just_updated 	= true;
+
+
+			if (nAttacker == pLocal)
+			{
+				if (pEntity != pLocal)
+				{
+					// chceck for what weapon/slot dealt the damage
+
+					bool isMelee = false;
+					if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
+					{
+						isMelee = true;
+					}
+
+					// damage stuff
+					if (nDamage > health_difference && !nHealth)
+					{ damage = health_difference };
+					// probably so we won't add too much damage
+					// so if we kill the enemy and we deal for example 450 out of 150 hp
+					// it would add 450 damage instead of the correct 150 (or how much the character had hp)
+
+					if (!isMelee)
+					{
+						if (bCrit)
+						{
+							crit_damage += nDamage;
+						}
+					}
+					else if (isMelee)
+					{
+						melee_damage += nDamage;
+					}
+				}
+			}
 			break;
 		}
 
@@ -724,6 +836,12 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 			AddedPerShot = 0;
 			ShotsToFill = 0;
 			TakenPerCrit = 0;
+
+			int total_damage = 0;	// round_damage
+			int round_damage = 0;	// cached_damage
+
+			int crit_damage = 0;
+			int melee_damage = 0;
 			break;
 		}
 	}
