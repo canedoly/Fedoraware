@@ -703,7 +703,7 @@ void CCritHack::Draw()
 
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
-			
+
 			const int damage = GetDamageUntilCrit(pWeapon);
 		const auto dmgText = tfm::format("%s Damage", damage);
 		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
@@ -771,6 +771,28 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		int crit_damage = 0;
 		int melee_damage = 0;
 
+		case FNV1A::HashConst("teamplay_round_start"):
+		case FNV1A::HashConst("client_disconnect"):
+		case FNV1A::HashConst("client_beginconnect"):
+		case FNV1A::HashConst("game_newmap"):
+		{
+			// TODO: Clear CritCmds
+			LastCritTick = -1;
+			LastBucket = -1.f;
+
+			ShotsUntilCrit = 0;
+			AddedPerShot = 0;
+			ShotsToFill = 0;
+			TakenPerCrit = 0;
+
+			int total_damage = 0;	// round_damage
+			int round_damage = 0;	// cached_damage
+
+			int crit_damage = 0;
+			int melee_damage = 0;
+			break;
+		}
+
 		case FNV1A::HashConst("player_hurt"):
 		{
 			const auto pEntity = I::ClientEntityList->GetClientEntity(
@@ -820,28 +842,6 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 					}
 				}
 			}
-			break;
-		}
-
-		case FNV1A::HashConst("teamplay_round_start"):
-		case FNV1A::HashConst("client_disconnect"):
-		case FNV1A::HashConst("client_beginconnect"):
-		case FNV1A::HashConst("game_newmap"):
-		{
-			// TODO: Clear CritCmds
-			LastCritTick = -1;
-			LastBucket = -1.f;
-
-			ShotsUntilCrit = 0;
-			AddedPerShot = 0;
-			ShotsToFill = 0;
-			TakenPerCrit = 0;
-
-			int total_damage = 0;	// round_damage
-			int round_damage = 0;	// cached_damage
-
-			int crit_damage = 0;
-			int melee_damage = 0;
 			break;
 		}
 	}
