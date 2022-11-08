@@ -14,7 +14,7 @@ struct player_status
 };
 const std::array<player_status, 32> player_status_list{};
 
-for (int n = 1; n <= I::EngineClient->GetMaxClients(); n++)
+for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
 {
 	CTFPlayerResource* cResource = g_EntityCache.GetPR();
 	CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
@@ -815,7 +815,7 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 	if (FNV1A::HashConst("player_hurt"))
 	{
 		const auto pEntity = I::ClientEntityList->GetClientEntity(
-			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")))
+			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")));
 
 		int nHealth = pEvent->GetInt("health");
 		int nAttacker = pEvent->GetInt("attacker");
