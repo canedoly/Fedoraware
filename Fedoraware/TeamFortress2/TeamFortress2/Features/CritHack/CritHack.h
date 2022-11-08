@@ -15,6 +15,7 @@ private:
 	float GetWithdrawMult(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawAmount(CBaseCombatWeapon* pWeapon);
 	bool CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage);
+	int GetDamageUntilCrit(CBaseCombatWeapon* pWeapon);
 	int GetShotsUntilCrit(CBaseCombatWeapon* pWeapon);
 	void ScanForCrits(const CUserCmd* pCmd, int loops = 10);
 	int LastGoodCritTick(const CUserCmd* pCmd);

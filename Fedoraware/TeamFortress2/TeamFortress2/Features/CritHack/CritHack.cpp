@@ -1,29 +1,33 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
+static int melee_damage 	= 0;
+static int crit_damage 		= 0;
+static int total_damage 	= 0;
+static int normal_damage 	= 0;
+
 struct player_status
 {
     int health{};
     int clazz{};	// int for classes 5 being heavy, or 2 being soldier
     bool just_updated{};
 };
-status.health = cResource->GetHealth(pEntity);
-static std::array<player_status, 32> player_status_list{};
+const std::array<player_status, 32> player_status_list{};
 
-for (int n = 1; n <= I::EngineClient->GetMaxClients(); n++);
+for (int n = 1; n <= I::EngineClient->GetMaxClients(); n++)
 {
 	CTFPlayerResource* cResource = g_EntityCache.GetPR();
 	CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
 	if (cResource->GetHealth(pEntity))
 	{
-		auto &status = player_status_list[n - 1];
+		auto& status = player_status_list[n - 1];
 
 		if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
         {
             status.clazz  = cResource->GetClass(pEntity);
             status.health = cResource->GetHealth(pEntity);
         }
-         status.just_updated = false;
+        status.just_updated = false;
 	}
 }
 
@@ -818,7 +822,7 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		int nDamage = pEvent->GetInt("damageamount");
 		const bool bCrit = pEvent->GetBool("crit");
 
-		auto &status 			= player_status_list[pEntity - 1];
+		auto& status 			= player_status_list[pEntity - 1];
 		int health_difference 	= status.health - nHealth;
 		status.health			= nHealth;
 		status.just_updated 	= true;
