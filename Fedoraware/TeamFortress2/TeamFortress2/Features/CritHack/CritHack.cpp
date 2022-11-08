@@ -7,7 +7,25 @@ struct player_status
     int clazz{};	// int for classes 5 being heavy, or 2 being soldier
     bool just_updated{};
 };
+status.health = cResource->GetHealth(pEntity);
 static std::array<player_status, 32> player_status_list{};
+
+for (int n = 1; n <= I::EngineClient->GetMaxClients(); n++);
+{
+	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+	CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
+	if (cResource->GetHealth(pEntity))
+	{
+		auto &status = player_status_list[n - 1];
+
+		if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
+        {
+            status.clazz  = cResource->GetClass(pEntity);
+            status.health = cResource->GetHealth(pEntity);
+        }
+         status.just_updated = false;
+	}
+}
 
 // i hate crithack
 
@@ -490,8 +508,8 @@ int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
 {
 	auto critMultInfo = GetCritMultInfo(pWeapon);
 
-	total_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx);
-	normal_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+	// total_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
+	// normal_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
 
 	// todo replace x with actual stuff
 	float needed_crit_mult = critMultInfo.second;
@@ -513,9 +531,9 @@ int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
 //     int damage = std::ceil(crit_damage * (2.0f * target_chance + 1.0f) / (3.0f * target_chance));
 //     return damage - (cached_damage - round_damage);
 // }
-//if (g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) < round_damage)
-//round_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx);
-//cached_damage = g_pPlayerResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+//if (cResource->GetDamage(g_pLocalPlayer->entity_idx) < round_damage)
+//round_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
+//cached_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
 
 //int damage = event->GetInt("damageamount");
 // imagine there's event stuff
@@ -788,7 +806,6 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 		int crit_damage = 0;
 		int melee_damage = 0;
-		break;
 	}
 
 	if (FNV1A::HashConst("player_hurt"))
@@ -800,7 +817,6 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		const auto nAttacker = pEvent->GetInt("attacker");
 		const auto nDamage = pEvent->GetInt("damageamount");
 		const auto bCrit = pEvent->GetBool("crit");
-		status.health = cResource->GetHealth(pEntity);
 
 		auto &status 			= player_status_list[pEntity - 1];
 		int health_difference 	= status.health - nHealth;
@@ -808,7 +824,7 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		status.just_updated 	= true;
 
 
-		if (nAttacker == pLocal)
+		if (nAttacker == pLocal->GetIndex())
 		{
 			if (pEntity != pLocal)
 			{
@@ -822,7 +838,7 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 				// damage stuff
 				if (nDamage > health_difference && !nHealth)
-				{ damage = health_difference };
+				{ nDamage = health_difference };
 				// probably so we won't add too much damage
 				// so if we kill the enemy and we deal for example 450 out of 150 hp
 				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
@@ -840,6 +856,5 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 				}
 			}
 		}
-		break;
 	}
 }
