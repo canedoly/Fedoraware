@@ -813,10 +813,10 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 		const auto pEntity = I::ClientEntityList->GetClientEntity(
 			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")))
 
-		const auto nHealth = pEvent->GetInt("health");
-		const auto nAttacker = pEvent->GetInt("attacker");
-		const auto nDamage = pEvent->GetInt("damageamount");
-		const auto bCrit = pEvent->GetBool("crit");
+		int nHealth = pEvent->GetInt("health");
+		int nAttacker = pEvent->GetInt("attacker");
+		int nDamage = pEvent->GetInt("damageamount");
+		const bool bCrit = pEvent->GetBool("crit");
 
 		auto &status 			= player_status_list[pEntity - 1];
 		int health_difference 	= status.health - nHealth;
@@ -838,7 +838,9 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 				// damage stuff
 				if (nDamage > health_difference && !nHealth)
-				{ nDamage = health_difference };
+				{
+					nDamage = health_difference;
+				}
 				// probably so we won't add too much damage
 				// so if we kill the enemy and we deal for example 450 out of 150 hp
 				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
