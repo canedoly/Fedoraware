@@ -4,6 +4,7 @@
 class CCritHack
 {
 private:
+	int IDK();
 	bool AreRandomCritsEnabled();
 	bool IsEnabled();
 	bool CanCrit();	// literally every weapon that can't crit, if its false then no crits for u

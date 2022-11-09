@@ -14,20 +14,24 @@ struct player_status
 };
 const std::array<player_status, 32> player_status_list{};
 
-for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
-{
-	CTFPlayerResource* cResource = g_EntityCache.GetPR();
-	CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
-	if (cResource->GetHealth(pEntity))
-	{
-		auto& status = player_status_list[n - 1];
 
-		if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
-        {
-            status.clazz  = cResource->GetClass(pEntity);
-            status.health = cResource->GetHealth(pEntity);
-        }
-        status.just_updated = false;
+int CCritHack::IDK()
+{
+	for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
+	{
+		CTFPlayerResource* cResource = g_EntityCache.GetPR();
+		CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
+		if (cResource->GetHealth(pEntity))
+		{
+			auto& status = player_status_list[n - 1];
+
+			if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
+			{
+				status.clazz  = cResource->GetClass(pEntity);
+				status.health = cResource->GetHealth(pEntity);
+			}
+			status.just_updated = false;
+		}
 	}
 }
 
