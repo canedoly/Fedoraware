@@ -26,6 +26,15 @@
 int unuPrimary = 0;
 int unuSecondary = 0;
 
+// i wanna do something cool
+// make a new, commands tab
+// where you can save all tf2 commands/convars
+// and they're values
+// also add an option to auto execute them
+// whenever you join a new game
+// whenever you inject the cheat/config
+// something like nullcore's cvar manager
+
 /* The main menu */
 void CMenu::DrawMenu()
 {

@@ -24,7 +24,13 @@ void CTickshiftHandler::Teleport(CUserCmd* pCmd)
 {
 	//	called from CreateMove
 	static KeyHelper kTeleport{ &Vars::Misc::CL_Move::TeleportKey.Value };
-	bTeleport = (((!bRecharge && !bDoubletap && !bSpeedhack) && kTeleport.Down()) || bTeleport) && iAvailableTicks;
+	if (kTeleport.Down() && (!bRecharge && !bDoubletap && !bSpeedhack) && iAvailableTicks)
+	{
+		bTeleport = true;
+	}
+	else { bTeleport = false; }
+	
+	//bTeleport = (((!bRecharge && !bDoubletap && !bSpeedhack) && kTeleport.Down()) || bTeleport) && iAvailableTicks;
 }
 
 void CTickshiftHandler::Doubletap(const CUserCmd* pCmd, CBaseEntity* pLocal)

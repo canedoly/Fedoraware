@@ -419,10 +419,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 
 				// wait for shift
 				int iTickRate = round(1.f / I::GlobalVars->interval_per_tick);
-				const int WFS = G::WaitForShift = iTickRate - Vars::Misc::CL_Move::DTTicks.Value;
+				const int WFS = iTickRate - Vars::Misc::CL_Move::DTTicks.Value;
 
 				const float wfsCurrent = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
-				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.87f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
+				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.875f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
 				// end
 
 				static Color_t color1, color2;
@@ -529,7 +529,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});	// it probably isn't pure black probably like 8,8,8
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
-						int DTBoxY = DTBox.y * 0.5;
+						int DTBoxY = DTBox.h * 0.5;
 
 						// wait for shit bar (very cool)
 						if (G::WaitForShift)
