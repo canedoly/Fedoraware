@@ -528,7 +528,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					{
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});	// it probably isn't pure black probably like 8,8,8
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
-						int DTBoxY = DTBox.h * 0.5;
+						int DTBoxY = DTBox.h * 1.5;
 
 						// wait for shit bar (very cool)
 						if (G::WaitForShift)
