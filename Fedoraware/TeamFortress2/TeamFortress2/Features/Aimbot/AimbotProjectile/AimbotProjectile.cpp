@@ -1156,7 +1156,7 @@ bool CAimbotProjectile::GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* 
 		}
 
 		const auto& vTargetCenter = pTarget->GetWorldSpaceCenter();
-		const auto& vTargetOrigin = pTarget->GetAbsOrigin();
+		const auto& vTargetOrigin = G::PredictedPos;
 
 		if (vLocalOrigin.DistTo(vTargetOrigin) < Vars::Aimbot::Projectile::MinSplashPredictionDistance.Value) { continue; } // Don't shoot too close
 		if (vLocalOrigin.DistTo(vTargetOrigin) > Vars::Aimbot::Projectile::MaxSplashPredictionDistance.Value) { continue; } // Don't shoot too far

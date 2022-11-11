@@ -100,10 +100,10 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
 	if (!iNetChan) { return; }
 
-	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650;
+	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 750;
 	const int flFakeLatency = Vars::Backtrack::Latency.Value;
 	const int flLatencyScoreBoard = cResource->GetPing(pLocal->GetIndex());
-	const float flLatencyReal2 = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650 - flFakeLatency;
+	const float flLatencyReal2 = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 750 - flFakeLatency;
 
 	const int x = Vars::Visuals::OnScreenPing.x;
 	const int y = Vars::Visuals::OnScreenPing.y;
