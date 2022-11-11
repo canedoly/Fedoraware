@@ -80,7 +80,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 
 				if (G::CurItemDefIndex != nItemDefIndex || !pWeapon->GetClip1() || (!pLocal->IsAlive() || pLocal->IsTaunting() || pLocal->IsBonked() || pLocal->IsAGhost() || pLocal->IsInBumperKart()))
 				{
-					G::WaitForShift = DT_WAIT_CALLS;
+					G::WaitForShift = 26;
 				}
 
 				G::CurItemDefIndex = nItemDefIndex;

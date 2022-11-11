@@ -418,11 +418,10 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.885f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
 				// wait for shift
-				int iTickRate = round(1.f / I::GlobalVars->interval_per_tick);
-				const int WFS = iTickRate - Vars::Misc::CL_Move::DTTicks.Value;
+				const int WFS = 26;
 
 				const float wfsCurrent = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
-				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.875f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
+				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.885f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
 				// end
 
 				static Color_t color1, color2;
@@ -496,7 +495,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 						else if (G::WaitForShift && Vars::Misc::CL_Move::WaitForDT.Value)
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 255, 178, 0, 255 }, ALIGN_CENTERHORIZONTAL, L"Wait! (%i / 25)", G::WaitForShift);
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 10, { 255, 178, 0, 255 }, ALIGN_CENTERHORIZONTAL, L"Wait! (%i / 26)", G::WaitForShift);
 						}
 						else
 						{
@@ -534,8 +533,8 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						// wait for shit bar (very cool)
 						if (G::WaitForShift)
 						{
-							g_Draw.Rect(DTBox.x, DTBoxY, DTBox.w, DTBox.h, {0,0,0,255});
-							g_Draw.Rect(DTBox.x + 1, DTBoxY + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
+							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});
+							g_Draw.Rect(DTBox.x + 1, DTBoxY + DTBox.y + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
 						}
 					}
 				}
