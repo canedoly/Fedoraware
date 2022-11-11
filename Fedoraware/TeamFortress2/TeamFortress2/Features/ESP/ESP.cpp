@@ -627,11 +627,18 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 
 				else if (Vars::ESP::Players::HealthBarStyle.Value == 1 && Vars::ESP::Players::HealthBar.Value)
 				{
-					// the way the bar is drawn is weird
-					// at full health, there's no black but if the players loses half health
-					// the actual hp bar is still full but there's black being rendered from the top
-					// and transparency affects only the bg so it looks cool but bad
 					g_Draw.RectOverlay(x - 2 - 2, y + h, 2, h, ratio, HealthColor, Colors::OutlineESP, false);
+				}
+				else if (Vars::ESP::Players::HealthBarStyle.Value == 2 && Vars::ESP::Players::HealthBar.Value)
+				{
+					static const int nWidth = 2;
+					int nHeight = h + (flHealth < flMaxHealth ? 2 : 1);
+					int nHeight2 = h + 1;
+
+					g_Draw.Rect(x - nWidth - 2, y + nHeight - nHeight * ratio, nWidth, nHeight * ratio, clr);
+					g_Draw.OutlinedRect(x - nWidth - 2 - 1, y + nHeight - nHeight * ratio - 1, nWidth + 2,
+					                    nHeight * ratio + 2, Colors::OutlineESP);
+
 				}
 
 				if (Vars::ESP::Players::HealthText.Value == 2)

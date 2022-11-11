@@ -4,7 +4,7 @@
 class CCritHack
 {
 private:
-	int IDK();
+	// int IDK();
 	bool AreRandomCritsEnabled();
 	bool IsEnabled();
 	bool CanCrit();	// literally every weapon that can't crit, if its false then no crits for u
@@ -16,7 +16,7 @@ private:
 	float GetWithdrawMult(CBaseCombatWeapon* pWeapon);
 	float GetWithdrawAmount(CBaseCombatWeapon* pWeapon);
 	bool CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage);
-	int GetDamageUntilCrit(CBaseCombatWeapon* pWeapon);
+	// int GetDamageUntilCrit(CBaseCombatWeapon* pWeapon);
 	int GetShotsUntilCrit(CBaseCombatWeapon* pWeapon);
 	void ScanForCrits(const CUserCmd* pCmd, int loops = 10);
 	int LastGoodCritTick(const CUserCmd* pCmd);

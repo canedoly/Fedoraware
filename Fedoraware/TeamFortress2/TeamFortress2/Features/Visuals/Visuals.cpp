@@ -100,7 +100,7 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
 	if (!iNetChan) { return; }
 
-	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 850;
+	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650 - flFakeLatency;
 	const int flFakeLatency = Vars::Backtrack::Latency.Value;
 	const int flLatencyScoreBoard = cResource->GetPing(pLocal->GetIndex());
 
@@ -413,8 +413,16 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const int nY = (g_ScreenSize.h / 2) + 20;
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
-				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.92f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
-				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.89f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.91f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
+				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.885f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+
+				// wait for shift
+				int iTickRate = round(1.f / I::GlobalVars->interval_per_tick);
+				const int WFS = G::WaitForShift = iTickRate - Vars::Misc::CL_Move::DTTicks.Value;
+
+				const float wfsCurrent = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
+				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.87f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
+				// end
 
 				static Color_t color1, color2;
 
@@ -505,16 +513,29 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						static Color_t BGcolor;
 						if (G::ShiftedTicks > 0)
 						{
-							BGcolor = {20, 20, 20, 245};
+							BGcolor = {20, 20, 20, 240};
 						}
 						else
 						{
-							BGcolor = {14, 14, 14, 115};
+							BGcolor = {14, 14, 14, 105};
 						}
 						
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {73, 230, 79, 255});
 						break;
+					}
+					case 7:
+					{
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});	// it probably isn't pure black probably like 8,8,8
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
+						int DTBoxY = DTBox.y * 0.5;
+
+						// wait for shit bar (very cool)
+						if (G::WaitForShift)
+						{
+							g_Draw.Rect(DTBox.x, DTBoxY, DTBox.w, DTBox.h, {0,0,0,255});
+							g_Draw.Rect(DTBox.x + 1, DTBoxY + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
+						}
 					}
 				}
 			}

@@ -568,13 +568,17 @@ void CMenu::MenuVisuals()
 						ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
 					}
 
-					WCombo("Health bar style", &Vars::ESP::Players::HealthBarStyle.Value, { "Gradient", "Old" }); HelpMarker("How to draw the health bar");
+					WCombo("Health bar style", &Vars::ESP::Players::HealthBarStyle.Value, { "Gradient", "Flat", "Old" }); HelpMarker("How to draw the health bar");
 					if (Vars::ESP::Players::HealthBarStyle.Value == 0)
 					{
 						ColorPickerL("Overheal Bar Top", Colors::GradientOverhealBar.startColour);
 						ColorPickerL("Overheal Bar Bottom", Colors::GradientOverhealBar.endColour, 1);
 					}
 					if (Vars::ESP::Players::HealthBarStyle.Value == 1)
+					{
+						ColorPickerL("Overheal Colour", Colors::Overheal);
+					}
+					if (Vars::ESP::Players::HealthBarStyle.Value == 2)
 					{
 						ColorPickerL("Overheal Colour", Colors::Overheal);
 					}
@@ -1192,6 +1196,8 @@ void CMenu::MenuVisuals()
 					ColorPickerL("GUI Notif Outline", Colors::NotifOutline, 1);
 					ColorPickerL("GUI Notif Colour", Colors::NotifText, 2);
 					WSlider("GUI Notif Time", &Vars::Visuals::NotificationLifetime.Value, 0.5f, 3.f, "%.1f");
+					// Text("Particle Colour");
+					// ColorPickerL("Particle Colour", Colors::Particle);
 					WCombo("Particle tracer", &Vars::Visuals::ParticleTracer.Value, { "Off", "Machina", "C.A.P.P.E.R", "Short Circuit", "Merasmus ZAP", "Merasmus ZAP Beam 2", "Big Nasty", "Distortion Trail", "Black Ink", "Custom" });
 					if (Vars::Visuals::ParticleTracer.Value == 9)
 					{
@@ -1251,13 +1257,21 @@ void CMenu::MenuVisuals()
 					WToggle("Anti viewmodel flip", &Vars::Misc::AntiViewmodelFlip.Value); HelpMarker("This is scuffed");
 
 					SectionTitle("DT Indicator");
-					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "SEOwned", "Numeric", "Rijin V1" }); HelpMarker("What style the bar should draw in.");
-					Text("Charging Gradient");
-					ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
-					ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
-					Text("Charged Gradient");
-					ColorPickerL("DT charged right", Colors::DTBarIndicatorsCharged.endColour);
-					ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
+					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "SEOwned", "Numeric", "Rijin V1", "DeadFlag" }); HelpMarker("What style the bar should draw in.");
+					if (Vars::Misc::CL_Move::DTBarStyle.Value != 7)
+					{
+						Text("Charging Gradient");
+						ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
+						ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
+						Text("Charged Gradient");
+						ColorPickerL("DT charged right", Colors::DTBarIndicatorsCharged.endColour);
+						ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
+					}
+					else
+					(
+						Text("Wait For Shift");
+						ColorPickerL("")
+					)
 
 					SectionTitle("Attribute Changer");
 

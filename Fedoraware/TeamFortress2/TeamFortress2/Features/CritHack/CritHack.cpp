@@ -1,39 +1,39 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
-static int melee_damage 	= 0;
-static int crit_damage 		= 0;
-static int total_damage 	= 0;
-static int normal_damage 	= 0;
+// static int melee_damage 	= 0;
+// static int crit_damage 		= 0;
+// static int total_damage 	= 0;
+// static int normal_damage 	= 0;
 
-struct player_status
-{
-    int health{};
-    int clazz{};	// int for classes 5 being heavy, or 2 being soldier
-    bool just_updated{};
-};
-const std::array<player_status, 32> player_status_list{};
+// struct player_status
+// {
+//     int health{};
+//     int clazz{};	// int for classes 5 being heavy, or 2 being soldier
+//     bool just_updated{};
+// };
+// const std::array<player_status, 32> player_status_list{};
 
 
-int CCritHack::IDK()
-{
-	for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
-	{
-		CTFPlayerResource* cResource = g_EntityCache.GetPR();
-		CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
-		if (cResource->GetHealth(pEntity))
-		{
-			auto& status = player_status_list[n - 1];
+// int CCritHack::IDK()
+// {
+// 	for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
+// 	{
+// 		CTFPlayerResource* cResource = g_EntityCache.GetPR();
+// 		CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
+// 		if (cResource->GetHealth(pEntity))
+// 		{
+// 			auto& status = player_status_list[n - 1];
 
-			if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
-			{
-				status.clazz  = cResource->GetClass(pEntity);
-				status.health = cResource->GetHealth(pEntity);
-			}
-			status.just_updated = false;
-		}
-	}
-}
+// 			if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
+// 			{
+// 				status.clazz  = cResource->GetClass(pEntity);
+// 				status.health = cResource->GetHealth(pEntity);
+// 			}
+// 			status.just_updated = false;
+// 		}
+// 	}
+// }
 
 // i hate crithack
 
@@ -512,18 +512,18 @@ int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 	return shots;
 }
 
-int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
-{
-	auto critMultInfo = GetCritMultInfo(pWeapon);
+// int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
+// {
+// 	auto critMultInfo = GetCritMultInfo(pWeapon);
 
-	// total_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
-	// normal_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+// 	// total_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
+// 	// normal_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
 
-	// todo replace x with actual stuff
-	float needed_crit_mult = critMultInfo.second;
-	int damage = std::ceil(crit_damage * (2.0f * needed_crit_mult + 1.0f) / (3.0f * needed_crit_mult));
-	return damage - (normal_damage - total_damage);
-}
+// 	// todo replace x with actual stuff
+// 	float needed_crit_mult = critMultInfo.second;
+// 	int damage = std::ceil(crit_damage * (2.0f * needed_crit_mult + 1.0f) / (3.0f * needed_crit_mult));
+// 	return damage - (normal_damage - total_damage);
+// }
 
 // crithack damage info lol
 // todo: turn this into fware code
@@ -744,9 +744,9 @@ void CCritHack::Draw()
 		const int potentialCrits = bucket / withdrawAmount;
 		const auto critText = tfm::format("%s / %s Crits", potentialCrits, maxCrits);
 		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
-		const int damage = GetDamageUntilCrit(pWeapon);
-		const auto dmgText = tfm::format("%s Damage", damage);
-		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
+		// const int damage = GetDamageUntilCrit(pWeapon);
+		// const auto dmgText = tfm::format("%s Damage", damage);
+		// g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
 
 		int w, h;
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
@@ -785,86 +785,114 @@ void CCritHack::Draw()
 
 void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 {
-	const auto& pLocal = g_EntityCache.GetLocal();
-	CTFPlayerResource* cResource = g_EntityCache.GetPR();
-	const auto& pWeapon = g_EntityCache.GetWeapon();
-
-	int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
-	int round_damage = total_damage - melee_damage;	// cached_damage
-
-	int crit_damage = 0;
-	int melee_damage = 0;
-
-	if (FNV1A::HashConst("teamplay_round_start") ||
-		FNV1A::HashConst("client_disconnect") ||
-		FNV1A::HashConst("client_beginconnect") ||
-		FNV1A::HashConst("game_newmap"))
+	switch (uNameHash)
 	{
-		// TODO: Clear CritCmds
-		LastCritTick = -1;
-		LastBucket = -1.f;
-
-		ShotsUntilCrit = 0;
-		AddedPerShot = 0;
-		ShotsToFill = 0;
-		TakenPerCrit = 0;
-
-		int total_damage = 0;	// round_damage
-		int round_damage = 0;	// cached_damage
-
-		int crit_damage = 0;
-		int melee_damage = 0;
-	}
-
-	if (FNV1A::HashConst("player_hurt"))
-	{
-		const auto pEntity = I::ClientEntityList->GetClientEntity(
-			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")));
-
-		int nHealth = pEvent->GetInt("health");
-		int nAttacker = pEvent->GetInt("attacker");
-		int nDamage = pEvent->GetInt("damageamount");
-		const bool bCrit = pEvent->GetBool("crit");
-
-		auto& status 			= player_status_list[pEntity - 1];
-		int health_difference 	= status.health - nHealth;
-		status.health			= nHealth;
-		status.just_updated 	= true;
-
-
-		if (nAttacker == pLocal->GetIndex())
+		case FNV1A::HashConst("player_hurt"):
 		{
-			if (pEntity != pLocal)
-			{
-				// chceck for what weapon/slot dealt the damage
+			// TODO: This
+			break;
+		}
 
-				bool isMelee = false;
-				if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
-				{
-					isMelee = true;
-				}
+		case FNV1A::HashConst("teamplay_round_start"):
+		case FNV1A::HashConst("client_disconnect"):
+		case FNV1A::HashConst("client_beginconnect"):
+		case FNV1A::HashConst("game_newmap"):
+		{
+			// TODO: Clear CritCmds
+			LastCritTick = -1;
+			LastBucket = -1.f;
 
-				// damage stuff
-				if (nDamage > health_difference && !nHealth)
-				{
-					nDamage = health_difference;
-				}
-				// probably so we won't add too much damage
-				// so if we kill the enemy and we deal for example 450 out of 150 hp
-				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
-
-				if (!isMelee)
-				{
-					if (bCrit)
-					{
-						crit_damage += nDamage;
-					}
-				}
-				else if (isMelee)
-				{
-					melee_damage += nDamage;
-				}
-			}
+			ShotsUntilCrit = 0;
+			AddedPerShot = 0;
+			ShotsToFill = 0;
+			TakenPerCrit = 0;
+			break;
 		}
 	}
 }
+
+// void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
+// {
+// 	const auto& pLocal = g_EntityCache.GetLocal();
+// 	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+// 	const auto& pWeapon = g_EntityCache.GetWeapon();
+
+// 	int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+// 	int round_damage = total_damage - melee_damage;	// cached_damage
+
+// 	int crit_damage = 0;
+// 	int melee_damage = 0;
+
+// 	if (FNV1A::HashConst("teamplay_round_start") ||
+// 		FNV1A::HashConst("client_disconnect") ||
+// 		FNV1A::HashConst("client_beginconnect") ||
+// 		FNV1A::HashConst("game_newmap"))
+// 	{
+// 		// TODO: Clear CritCmds
+// 		LastCritTick = -1;
+// 		LastBucket = -1.f;
+
+// 		ShotsUntilCrit = 0;
+// 		AddedPerShot = 0;
+// 		ShotsToFill = 0;
+// 		TakenPerCrit = 0;
+
+// 		int total_damage = 0;	// round_damage
+// 		int round_damage = 0;	// cached_damage
+
+// 		int crit_damage = 0;
+// 		int melee_damage = 0;
+// 	}
+
+// 	if (FNV1A::HashConst("player_hurt"))
+// 	{
+// 		const auto pEntity = I::ClientEntityList->GetClientEntity(
+// 			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")));
+
+// 		int nHealth = pEvent->GetInt("health");
+// 		int nAttacker = pEvent->GetInt("attacker");
+// 		int nDamage = pEvent->GetInt("damageamount");
+// 		const bool bCrit = pEvent->GetBool("crit");
+
+// 		auto& status 			= player_status_list[pEntity - 1];
+// 		int health_difference 	= status.health - nHealth;
+// 		status.health			= nHealth;
+// 		status.just_updated 	= true;
+
+
+// 		if (nAttacker == pLocal->GetIndex())
+// 		{
+// 			if (pEntity != pLocal)
+// 			{
+// 				// chceck for what weapon/slot dealt the damage
+
+// 				bool isMelee = false;
+// 				if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
+// 				{
+// 					isMelee = true;
+// 				}
+
+// 				// damage stuff
+// 				if (nDamage > health_difference && !nHealth)
+// 				{
+// 					nDamage = health_difference;
+// 				}
+// 				// probably so we won't add too much damage
+// 				// so if we kill the enemy and we deal for example 450 out of 150 hp
+// 				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
+
+// 				if (!isMelee)
+// 				{
+// 					if (bCrit)
+// 					{
+// 						crit_damage += nDamage;
+// 					}
+// 				}
+// 				else if (isMelee)
+// 				{
+// 					melee_damage += nDamage;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
