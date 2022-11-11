@@ -635,7 +635,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					int nHeight = h + (flHealth < flMaxHealth ? 2 : 1);
 					int nHeight2 = h + 1;
 
-					g_Draw.Rect(x - nWidth - 2, y + nHeight - nHeight * ratio, nWidth, nHeight * ratio, clr);
+					g_Draw.Rect(x - nWidth - 2, y + nHeight - nHeight * ratio, nWidth, nHeight * ratio, HealthColor);
 					g_Draw.OutlinedRect(x - nWidth - 2 - 1, y + nHeight - nHeight * ratio - 1, nWidth + 2,
 					                    nHeight * ratio + 2, Colors::OutlineESP);
 

@@ -1268,10 +1268,10 @@ void CMenu::MenuVisuals()
 						ColorPickerL("DT charged left", Colors::DTBarIndicatorsCharged.startColour, 1);
 					}
 					else
-					(
+					{
 						Text("Wait For Shift");
-						ColorPickerL("")
-					)
+						ColorPickerL("Wait For Shift", Colors::WaitForShift);
+					}
 
 					SectionTitle("Attribute Changer");
 

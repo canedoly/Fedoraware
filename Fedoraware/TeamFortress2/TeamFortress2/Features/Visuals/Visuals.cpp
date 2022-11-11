@@ -100,9 +100,10 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
 	if (!iNetChan) { return; }
 
-	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650 - flFakeLatency;
+	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650;
 	const int flFakeLatency = Vars::Backtrack::Latency.Value;
 	const int flLatencyScoreBoard = cResource->GetPing(pLocal->GetIndex());
+	const float flLatencyReal2 = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 650 - flFakeLatency;
 
 	const int x = Vars::Visuals::OnScreenPing.x;
 	const int y = Vars::Visuals::OnScreenPing.y;
@@ -112,11 +113,11 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	{
 		if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Latency.Value)
 		{
-			g_Draw.String(FONT_MENU, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f	 (+ %d) ms", flLatencyReal, flFakeLatency);
+			g_Draw.String(FONT_MENU, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f	 (+ %d) ms", flLatencyReal2, flFakeLatency);
 		}
 		else
 		{
-			g_Draw.String(FONT_INDICATORS, x + 20, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f ms", flLatencyReal);
+			g_Draw.String(FONT_INDICATORS, x + 20, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f ms", flLatencyReal2);
 		}
 		g_Draw.String(FONT_INDICATORS, x, y + h - nTextOffset, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Scoreboard %d ms", flLatencyScoreBoard);
 	}

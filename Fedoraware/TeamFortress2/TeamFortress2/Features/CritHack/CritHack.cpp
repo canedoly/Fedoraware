@@ -730,9 +730,9 @@ void CCritHack::Draw()
 			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
 
-			const int damage = GetDamageUntilCrit(pWeapon);
-		const auto dmgText = tfm::format("%s Damage", damage);
-		g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
+		// 	const int damage = GetDamageUntilCrit(pWeapon);
+		// const auto dmgText = tfm::format("%s Damage", damage);
+		// g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
 		}
 		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
