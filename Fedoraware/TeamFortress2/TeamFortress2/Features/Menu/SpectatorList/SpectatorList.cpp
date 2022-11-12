@@ -104,9 +104,9 @@ void CSpectatorList::DrawDefault()
 		0);
 
 	// 38 to 43
-	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, { 43, 43, 45, 250 });
+	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, { 0, 0, 0, 220 });
 
-	g_Draw.String(FONT_IMGUI,
+	g_Draw.String(FONT_MENU,
 				  SpecListX + (SpecListW / 2),
 				  SpecListY + (SpecListTitleBarH / 2),
 				  Vars::Menu::Colors::MenuAccent,
@@ -126,7 +126,7 @@ void CSpectatorList::DrawDefault()
 		const int h = nFontTall * Spectators.size();
 
 		// 25 to 31
-		g_Draw.Rect(SpecListX, y, SpecListW, h, { 36, 36, 36, 255 });
+		g_Draw.Rect(SpecListX, y, SpecListW, h, { 0, 0, 0, 220 });
 		g_Draw.Line(nModeX + nSpacing + nModeW, y, nModeX + nSpacing + nModeW, y + h - 1, { 255, 255, 255, 255 });
 
 		for (size_t n = 0; n < Spectators.size(); n++)

@@ -421,7 +421,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const int WFS = 26;
 
 				const float wfsCurrent = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
-				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.885f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
+				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.89f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
 				// end
 
 				static Color_t color1, color2;
@@ -526,14 +526,14 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 					}
 					case 7:
 					{
-						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});	// it probably isn't pure black probably like 8,8,8
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,240});	// it probably isn't pure black probably like 8,8,8
 						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
 						int DTBoxY = DTBox.h * 1.5;
 
 						// wait for shit bar (very cool)
 						if (G::WaitForShift)
 						{
-							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {0,0,0,255});
+							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {0,0,0,240});
 							g_Draw.Rect(DTBox.x + 1, DTBoxY + DTBox.y + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
 						}
 					}

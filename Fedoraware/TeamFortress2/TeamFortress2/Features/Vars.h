@@ -35,6 +35,10 @@ namespace Vars
 	// {
 	// 	inline CVar<bool> Enabled{false};
 	// }
+	namespace Test
+	{
+		inline CVar<float> ViewZ{ 0.f };
+	}
 
 	namespace Lithium
 	{

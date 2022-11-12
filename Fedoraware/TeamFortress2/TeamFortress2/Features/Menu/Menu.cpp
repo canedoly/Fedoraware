@@ -1817,6 +1817,7 @@ void CMenu::MenuMisc()
 			{
 				WSlider("Target ping", &Vars::Misc::PingTarget.Value, 0, 200); HelpMarker("Target ping that should be reached");
 			}
+			WSlider("Funny exploit", &Vars::Test::ViewZ.Value, -180.f, 180.f, "%.f");
 
 			SectionTitle("Slow Walk");
 			WToggle("Slow walk", &Vars::Misc::SlowWalkEnabled.Value);
