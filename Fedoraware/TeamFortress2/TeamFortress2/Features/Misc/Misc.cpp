@@ -475,7 +475,7 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 		}
 		if (Vars::Test::Duck.Value)
 		{
-			if (pCmd->buttons & IN_JUMP && pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+			if (pCmd->buttons &= IN_JUMP && pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
 			{
 				pCmd->buttons ~= IN_JUMP;
 				if (pLocal->OnSolid())
@@ -483,10 +483,10 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 					pCmd->buttons |= IN_DUCK;
 					if (pLocal->GetViewOffset().z < 60.05f)
 					{
-						pCmd->buttons & IN_JUMP;
+						pCmd->buttons &= IN_JUMP;
 						if (!pLocal->OnSolid())
 						{
-							pCmd->buttons ~ IN_DUCK;
+							pCmd->buttons ~= IN_DUCK;
 						}
 					}
 				}
