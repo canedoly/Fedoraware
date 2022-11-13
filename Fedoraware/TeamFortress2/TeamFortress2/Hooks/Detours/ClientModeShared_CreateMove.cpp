@@ -73,9 +73,6 @@ MAKE_HOOK(ClientModeShared_CreateMove, Utils::GetVFuncPtr(I::ClientModeShared, 2
 				G::Frozen = MaxSpeed == 1;
 			}
 
-			// pCmd->viewangles = Vars::Test::ViewZ.Value;
-			// have fun being marked by every built in cheater detection which checks for z angles lol
-
 			// Update Global Info
 			if (const auto& pWeapon = g_EntityCache.GetWeapon())
 			{

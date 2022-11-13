@@ -1818,7 +1818,11 @@ void CMenu::MenuMisc()
 			{
 				WSlider("Target ping", &Vars::Misc::PingTarget.Value, 0, 200); HelpMarker("Target ping that should be reached");
 			}
+
+			SectionTitle("Experimental");
+			WToggle("Duck", &Vars::Test::Duck.Value);
 			WSlider("Funny exploit", &Vars::Test::ViewZ.Value, -180.f, 180.f, "%.f");
+			// the actual code doesn't exist for this, and i don't feel like making it
 
 			SectionTitle("Slow Walk");
 			WToggle("Slow walk", &Vars::Misc::SlowWalkEnabled.Value);

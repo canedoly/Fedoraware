@@ -466,13 +466,34 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 		}
 
 		// Duck Jump
-		if ((Vars::Misc::DuckJump.Value || Vars::Misc::Followbot::Enabled.Value))
+		if (Vars::Misc::DuckJump.Value || Vars::Misc::Followbot::Enabled.Value)
 		{
 			if (pLocal->IsAlive() && !pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
 			{
 				pCmd->buttons |= IN_DUCK;
 			}
 		}
+		if (Vars::Test::Duck.Value)
+		{
+			if (pCmd->buttons & IN_JUMP && pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
+			{
+				pCmd->buttons ~= IN_JUMP;
+				if (pLocal->OnSolid())
+				{
+					pCmd->buttons |= IN_DUCK;
+					if (pLocal->GetViewOffset().z < 60.05f)
+					{
+						pCmd->buttons & IN_JUMP;
+						if (!pLocal->OnSolid())
+						{
+							pCmd->buttons ~ IN_DUCK;
+						}
+					}
+				}
+			}
+		}
+		// todo: prevent the jump for one tick and instead duck (best)
+		// but idk how bitwise operators work
 	}
 }
 

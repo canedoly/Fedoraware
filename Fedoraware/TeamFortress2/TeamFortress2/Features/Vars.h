@@ -38,6 +38,7 @@ namespace Vars
 	namespace Test
 	{
 		inline CVar<float> ViewZ{ 0.f };
+		inline CVar<bool> Duck{ false };
 	}
 
 	namespace Lithium

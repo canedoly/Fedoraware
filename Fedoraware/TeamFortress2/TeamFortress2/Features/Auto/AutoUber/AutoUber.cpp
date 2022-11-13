@@ -5,7 +5,8 @@
 
 // This code is terrible and unoptimized
 
-constexpr static int CHANGE_TIMER = 5; // i am lazy to change code, this should be fine.
+constexpr static int CHANGE_TIMER = 1; // i am lazy to change code, this should be fine.
+// this code seems to crash way more often then it used to
 
 int vaccChangeState = 0;
 int vaccChangeTicks = 0;
