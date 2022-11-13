@@ -193,6 +193,7 @@
     <ClCompile Include="TeamFortress2\Features\Menu\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="TeamFortress2\Features\Misc\Misc.cpp" />
     <ClCompile Include="TeamFortress2\Features\Chams\Chams.cpp" />
+    <ClCompile Include="TeamFortress2\Features\NoSpread\NoSpread.cpp" />
     <ClCompile Include="TeamFortress2\Features\NetVarHooks\NetVarHk.cpp" />
     <ClCompile Include="TeamFortress2\Features\PlayerArrows\PlayerArrows.cpp" />
     <ClCompile Include="TeamFortress2\Features\Prediction\Prediction.cpp" />
@@ -272,6 +273,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\GameEventManager_FireEventClientSide.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\GetClientInterpAmount.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Input_GetUserCmd.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\Input_CreateMove.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\C_BaseCombatWeapon_IsAllowedToWithdrawFromCritBucket.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\IsLocalPlayerUsingVisionFilterFlags.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\ISteamNetworkingUtils_GetDirectPingToPOP.cpp" />
@@ -393,6 +395,7 @@
     <ClInclude Include="TeamFortress2\Features\Menu\SpectatorList\SpectatorList.h" />
     <ClInclude Include="TeamFortress2\Features\Misc\Misc.h" />
     <ClInclude Include="TeamFortress2\Features\Chams\Chams.h" />
+    <ClInclude Include="TeamFortress2\Features\NoSpread\NoSpread.h" />
     <ClInclude Include="TeamFortress2\Features\PlayerArrows\PlayerArrows.h" />
     <ClInclude Include="TeamFortress2\Features\Prediction\Prediction.h" />
     <ClInclude Include="TeamFortress2\Features\AttributeChanger\AttributeChanger.h" />

@@ -152,6 +152,7 @@ namespace Vars
 			inline CVar<int> StrafePredictionMaxDistance{ 1000 };
 			inline CVar<int> StrafePredictionMinDifference{ 10 };
 			inline CVar<bool> WaitForHit{ false };
+			inline CVar<bool> NoSpread{ false };
 		}
 
 		namespace Melee

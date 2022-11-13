@@ -101,6 +101,8 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\C_TFPlayer_AvoidPlayers.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\C_TFRagdoll_CreateTFRagdoll.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\CSoundEmitterSystem_EmitSound.cpp" />
+    <ClCompile Include="TeamFortress2\Features\NoSpread\NoSpread.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\Input_CreateMove.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\C_TFWeaponBase_CalcIsAttackCritical.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\DoEnginePostProcessing.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\EngineClient_ClientCmd_Unrestricted.cpp" />
@@ -416,6 +418,7 @@
     <ClInclude Include="TeamFortress2\SDK\Interfaces\EngineClient\EngineClient.h" />
     <ClInclude Include="TeamFortress2\SDK\Interfaces\EngineEffects\EngineEffects.h" />
     <ClInclude Include="TeamFortress2\SDK\Interfaces\EngineSound\EngineSound.h" />
+    <ClInclude Include="TeamFortress2\Features\NoSpread\NoSpread.h" />
     <ClInclude Include="TeamFortress2\SDK\Interfaces\EngineTrace\EngineTrace.h" />
     <ClInclude Include="TeamFortress2\SDK\Interfaces\EngineVGui\EngineVGui.h" />
     <ClInclude Include="TeamFortress2\SDK\Interfaces\GameEvent\CGameEventListener.h" />

@@ -397,6 +397,7 @@ void CMenu::MenuAimbot()
 				WSlider("Point Scale", &Vars::Aimbot::Projectile::ScanScale.Value, 0.7f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp); HelpMarker("Controls the size of the hitbox as it's given to the cheat.");
 
 				SectionTitle("Preferences");
+				WToggle("No spread###ProjectileNospread", &Vars::Aimbot::Projectile::NoSpread.Value); HelpMarker("Tries to compensate the random projectile spread");
 				WToggle("Predict Obscured Enemies", &Vars::Aimbot::Projectile::PredictObscured.Value); HelpMarker("Will predict enemies that cannot yet be targetted because of a wall etc and shoot if they are predicted to peek (FPS)");
 				WToggle("Feet aim on ground", &Vars::Aimbot::Projectile::FeetAimIfOnGround.Value); HelpMarker("Will aim at targets feet if they're on the ground in order to launch them into the air");
 				InputKeybind("Bounce Target", Vars::Aimbot::Projectile::BounceKey); HelpMarker("Forces feet aim to bounce target on keypress");
