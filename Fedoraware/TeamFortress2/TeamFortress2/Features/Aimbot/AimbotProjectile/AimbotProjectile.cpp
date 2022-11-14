@@ -21,7 +21,7 @@ Vec3 CAimbotProjectile::Predictor_t::Extrapolate(float time)
 }
 
 /* Returns the projectile info of a given weapon */
-bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, ProjectileInfo_t& out)
+bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, ProjectileInfo_t& out) f
 {
 	switch (G::CurItemDefIndex)
 	{
@@ -1163,7 +1163,7 @@ bool CAimbotProjectile::GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* 
 		if (vLocalOrigin.z < vTargetOrigin.z - 45.f) { continue; } // Don't shoot from below
 
 		// Don't predict enemies that are visible
-		if (Utils::VisPos(pLocal, pTarget, pLocal->GetShootPos(), vTargetCenter)) { continue; }
+		// if (Utils::VisPos(pLocal, pTarget, pLocal->GetShootPos(), vTargetCenter)) { continue; }
 
 		// Scan every 45 degree angle
 		for (int i = 0; i < 315; i += 45)
@@ -1264,37 +1264,82 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 			running = true;
 			pCmd->buttons |= IN_ATTACK;
 
-			if (G::CurItemDefIndex == Soldier_m_TheBeggarsBazooka)
-			{
-				if (pWeapon->GetClip1() > 0)
-				{
-					pCmd->buttons &= ~IN_ATTACK;
-				}
-			}
-			else
-			{
-				if ((pWeapon->GetWeaponID() == TF_WEAPON_COMPOUND_BOW || pWeapon->GetWeaponID() == TF_WEAPON_PIPEBOMBLAUNCHER)
-					&& pWeapon->GetChargeBeginTime() > 0.0f)
-				{
-					pCmd->buttons &= ~IN_ATTACK;
-				}
-				else if (pWeapon->GetWeaponID() == TF_WEAPON_CANNON && pWeapon->GetDetonateTime() > 0.0f)
-				{
-					const Vec3 vEyePos = pLocal->GetShootPos();
-					const float bestCharge = vEyePos.DistTo(G::PredictedPos) / 1453.9f;
+			const float bestCharge = 0.f;
 
-					if (Vars::Aimbot::Projectile::ChargeLooseCannon.Value)
-					{
-						if (pWeapon->GetDetonateTime() - I::GlobalVars->curtime <= bestCharge)
-						{
-							pCmd->buttons &= ~IN_ATTACK;
-						}
-					}
-					else
-					{
-						pCmd->buttons &= ~IN_ATTACK;
-					}
-				}
+			// ignore this for now
+			
+			// switch (G::CurItemDefIndex)
+			// {
+			// 	case Soldier_m_TheBeggarsBazooka:
+			// 	{
+			// 		if (pWeapon->GetClip1() > 0)
+			// 		{
+			// 			pCmd->buttons &= ~IN_ATTACK;
+			// 		}
+			// 	}
+			// 	case Sniper_m_TheHuntsman:
+			// 	case Sniper_m_TheFortifiedCompound:
+			// 	case Sniper_m_FestiveHuntsman:
+			// 	{
+			// 		if (pWeapon->GetChargeBeginTime() > 0.0f)
+			// 		{
+			// 			const float charge = (I::GlobalVars->curtime - pWeapon->GetChargeBeginTime());
+			// 			const float info = 
+			// 			{
+			// 				Math::RemapValClamped(charge, 0.0f, 1.f, 1800, 2600),
+			// 				Math::RemapValClamped(charge, 0.0f, 1.f, 0.5, 0.1)
+			// 			};
+			// 			const float bestCharge = vEyePos.DistTo(G::PredictedPos) / info.first;
+			// 			if (Vars::Test::ProjTest.Value)
+			// 			{
+			// 				if (charge <= bestCharge)
+			// 				{
+			// 					pCmd->buttons &= ~IN_ATTACK;
+			// 				}
+			// 			}
+			// 			else
+			// 			{
+			// 				pCmd->buttons &= ~IN_ATTACK;
+			// 			}
+			// 		}
+			// 	}
+			}
+
+			// if (G::CurItemDefIndex == Soldier_m_TheBeggarsBazooka)
+			// {
+			// 	if (pWeapon->GetClip1() > 0)
+			// 	{
+			// 		pCmd->buttons &= ~IN_ATTACK;
+			// 	}
+			// }
+			// else
+			// {
+			// 	if (pWeapon->GetWeaponID() == TF_WEAPON_COMPOUND_BOW && pWeapon->GetChargeBeginTime() > 0.0f)
+			// 	{
+			// 		pCmd->buttons &= ~IN_ATTACK;
+			// 	}
+			// 	else if (pWeapon->GetWeaponID() == TF_WEAPON_CANNON && pWeapon->GetDetonateTime() > 0.0f)
+			// 	{
+			// 		const Vec3 vEyePos = pLocal->GetShootPos();
+			// 		const float bestCharge = vEyePos.DistTo(G::PredictedPos) / 1453.9f;
+
+			// 		if (Vars::Aimbot::Projectile::ChargeLooseCannon.Value)
+			// 		{
+			// 			if (pWeapon->GetDetonateTime() - I::GlobalVars->curtime <= bestCharge)
+			// 			{
+			// 				pCmd->buttons &= ~IN_ATTACK;
+			// 			}
+			// 		}
+			// 		else
+			// 		{
+			// 			pCmd->buttons &= ~IN_ATTACK;
+			// 		}
+			// 	}
+			// 	else if (pWeapon->GetWeaponID() == TF_WEAPON_PIPEBOMBLAUNCHER && pWeapon->GetChargeBeginTime() > 0.0f)
+			// 	{
+
+			// 	}
+			// 	// it should be also easy to add code not only for the demoman's cannon (forgot how its called)
 			}
 		}
 
