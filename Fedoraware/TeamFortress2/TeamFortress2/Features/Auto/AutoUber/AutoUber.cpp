@@ -5,8 +5,7 @@
 
 // This code is terrible and unoptimized
 
-constexpr static int CHANGE_TIMER = 1; // i am lazy to change code, this should be fine.
-// this code seems to crash way more often then it used to
+static int CHANGE_TIMER = Vars::Test::ChangeTimer.Value;
 
 int vaccChangeState = 0;
 int vaccChangeTicks = 0;
@@ -33,21 +32,21 @@ int BulletDangerValue(CBaseEntity* pPatient)
 
 		switch (player->GetClassNum())
 		{
-			case 1: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 0)) { continue; }
-				  break; //	scout
-			case 2: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 7)) { continue; }
-				  break; //	sniper
-			case 3: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 1)) { continue; }
-				  break; //	soldier
-			case 6: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 4)) { continue; }
-				  break; //	heavy
-			case 7: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 2)) { continue; }
-				  break; //	pyro
-			case 8: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 8)) { continue; }
-				  break; //	spy
-			case 9: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 5)) { continue; }
-				  break; //	engineer
-			default: { continue; }
+		case 1: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 0)) { continue; }
+			  break; //	scout
+		case 2: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 7)) { continue; }
+			  break; //	sniper
+		case 3: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 1)) { continue; }
+			  break; //	soldier
+		case 6: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 4)) { continue; }
+			  break; //	heavy
+		case 7: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 2)) { continue; }
+			  break; //	pyro
+		case 8: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 8)) { continue; }
+			  break; //	spy
+		case 9: if (!(Vars::Triggerbot::Uber::ReactClasses.Value & 1 << 5)) { continue; }
+			  break; //	engineer
+		default: { continue; }
 		}
 
 		if (HAS_CONDITION(player, TFCond_Bonked))
@@ -55,13 +54,19 @@ int BulletDangerValue(CBaseEntity* pPatient)
 			return false;
 		}
 
-		if (player->GetActiveWeapon()->GetSlot() == SLOT_MELEE)
+		const auto& pWeapon = player->GetActiveWeapon();
+
+		if (!pWeapon)
+		{
+			return 0;
+		}
+
+		if (pWeapon->GetSlot() == SLOT_MELEE)
 		{
 			return false;
 		}
 
-		if (player->GetActiveWeapon()->GetClassID() == ETFClassID::CTFLunchBox || player->GetActiveWeapon()->GetClassID() == ETFClassID::CTFLunchBox_Drink || player->GetActiveWeapon()->GetClassID() ==
-			ETFClassID::CTFWeaponPDA)
+		if (pWeapon->GetClassID() == ETFClassID::CTFLunchBox || pWeapon->GetClassID() == ETFClassID::CTFLunchBox_Drink || pWeapon->GetClassID() == ETFClassID::CTFWeaponPDA)
 		{
 			return false;
 		}
@@ -97,29 +102,29 @@ int BulletDangerValue(CBaseEntity* pPatient)
 				{
 					if (pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 350.f ||
 						(pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 600.f &&
-						(player->GetClassNum() == CLASS_SPY || player->GetClassNum() == CLASS_SCOUT || player->GetClassNum() == CLASS_HEAVY || player->GetClassNum() == CLASS_MEDIC || player->
-						GetClassNum() == CLASS_SNIPER || player->GetClassNum() == CLASS_ENGINEER)))
+							(player->GetClassNum() == CLASS_SPY || player->GetClassNum() == CLASS_SCOUT || player->GetClassNum() == CLASS_HEAVY || player->GetClassNum() == CLASS_MEDIC || player->
+								GetClassNum() == CLASS_SNIPER || player->GetClassNum() == CLASS_ENGINEER)))
 					{
 						return 2;
 					}
 				}
-			}
 
-			if (player->GetActiveWeapon()->GetClassID() == ETFClassID::CTFShotgun_Pyro || player->GetActiveWeapon()->GetClassID() == ETFClassID::CTFShotgun_Soldier)
-			{
+				if (pWeapon->GetClassID() == ETFClassID::CTFShotgun_Pyro || pWeapon->GetClassID() == ETFClassID::CTFShotgun_Soldier)
 				{
-					if (pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 50.f ||
-						(pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 250.f && (
-						(player->GetClassNum() == CLASS_PYRO))))
 					{
-						return 2;
-					}
+						if (pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 50.f ||
+							(pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 250.f && (
+								(player->GetClassNum() == CLASS_PYRO))))
+						{
+							return 2;
+						}
 
-					if (pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 50.f ||
-						(pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 250.f && (
-						(player->GetClassNum() == CLASS_SOLDIER))))
-					{
-						return 2;
+						if (pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 50.f ||
+							(pPatient->GetVecOrigin().DistTo(player->GetVecOrigin()) < 250.f && (
+								(player->GetClassNum() == CLASS_SOLDIER))))
+						{
+							return 2;
+						}
 					}
 				}
 			}
@@ -192,7 +197,14 @@ int FireDangerValue(CBaseEntity* pPatient)
 			continue;
 		}
 
-		if (player->GetActiveWeapon()->GetClassID() == ETFClassID::CTFFlameThrower)
+		const auto& pPlayerWeapon = player->GetActiveWeapon();
+
+		if (!pPlayerWeapon)
+		{
+			return 0;
+		}
+
+		if (pPlayerWeapon->GetClassID() == ETFClassID::CTFFlameThrower)
 		{
 			if (HAS_CONDITION(pPatient, TFCond_OnFire) && pPatient->GetHealth() < 250)
 			{
@@ -409,7 +421,7 @@ void CAutoUber::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* p
 	if (const auto& pTarget = pWeapon->GetHealingTarget())
 	{
 		//Ignore if target is somehow dead, or already not vulnerable
-		if (!pTarget->IsAlive() || !pTarget->IsVulnerable())
+		if (!pTarget->IsAlive() || !pTarget->IsVulnerable() || pTarget->GetDormant())
 		{
 			return;
 		}

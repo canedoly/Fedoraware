@@ -3,6 +3,39 @@
 #include "../../Backtrack/Backtrack.h"
 #include "../../Resolver/Resolver.h"
 
+Vec3 CAimbotHitscan::Extrapolate(CBaseEntity* pEntity, int value)
+{
+	// TODO: Now actually implement it into aimbot
+	// 
+	// - add a checkbox for predicted hitboxes. If you select pelvis, 
+	//  if the person is about to peek, shoot at the selected hitbox
+	// 
+	// - Do not predict while enemy is visible, since most players don't care about strafing behind cover
+	//  but while visible they strafe causing us to miss more often and also lose out a chance on lag comp
+	//  cuz were forwardtracking/prediction other than backtracking
+
+	// After we do this, you also have to add the increased tickcount like (aimbot tickcount + extrapolation tickcount)
+	// so that the shot is actually delayed
+
+	/*vector extrapolate(baseentity * his, int value) {
+	
+		return his->origin + (his->velocity * (Globals->tick_interval * (float)value));
+	}
+
+	Entity->head = extrapolate(Entity, TIME_TICKS(GetNetworklatency(Flow_incoming) + getnetworklatency(flow_outgoing)));
+
+	storedvalue.tickdiff = TIME_TICKS(GetNetworklatency(Flow_incoming) + getnetworklatency(flow_outgoing));
+
+
+	cmd->tick_count = storedvalue.tick_count + tickdiff;*/
+
+	const INetChannel* pNetChannel = I::EngineClient->GetNetChannelInfo();
+
+	int extrapolationTicks = TIME_TO_TICKS(pNetChannel->GetLatency(FLOW_OUTGOING) + pNetChannel->GetLatency(FLOW_INCOMING));
+
+	return pEntity->GetVecOrigin() + (pEntity->GetVecVelocity() * (I::GlobalVars->interval_per_tick * (float)value));
+}
+
 bool IsHitboxValid(int nHitbox, int index, bool bStatic = false)
 {
 	const int iStatic = Vars::Aimbot::Hitscan::StaticHitboxes.Value;
@@ -734,16 +767,18 @@ bool CAimbotHitscan::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapo
 	return ((pCmd->buttons & IN_ATTACK) && G::WeaponCanAttack);
 }
 
-void BulletTracer(CBaseEntity* pLocal, const Target_t& target)
-{
-	const Vec3 vecPos = G::CurWeaponType == EWeaponType::PROJECTILE ? G::PredictedPos : target.m_vPos;
-	//Color_t Color = (Utils::Rainbow());
-
-	Vec3 shootPos = pLocal->GetShootPos();
-	shootPos.z -= 5.0f;
-	const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
-	I::DebugOverlay->AddLineOverlayAlpha(shootPos, vecPos, tracerColor.r, tracerColor.g, tracerColor.b, tracerColor.a, true, 5);
-}
+//void BulletTracer(CBaseEntity* pLocal, const Target_t& target)
+//{
+//	const Vec3 vecPos = G::CurWeaponType == EWeaponType::PROJECTILE ? G::PredictedPos : target.m_vPos;
+//	//Color_t Color = (Utils::Rainbow());
+//
+//	Vec3 shootPos = pLocal->GetShootPos();
+//	shootPos.z -= 5.0f;
+//	const Color_t customColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
+//	Color_t tracerColor = Vars::Test::TracerTeamBased.Value ? Utils::GetEntityDrawColor(pLocal, false) : customColor;
+//
+//	I::DebugOverlay->AddLineOverlayAlpha(shootPos, vecPos, tracerColor.r, tracerColor.g, tracerColor.b, tracerColor.a, true, Vars::Test::TracerDuration.Value);
+//}
 
 void CAimbotHitscan::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd)
 {

@@ -362,6 +362,7 @@ int GetType(int EntIndex)
 Chams_t GetPlayerChams(CBaseEntity* pEntity)
 {
 	CBaseEntity* pLocal = g_EntityCache.GetLocal();
+	PlayerInfo_t info{}; I::EngineClient->GetPlayerInfo(pEntity->GetIndex(), &info);
 	if (pEntity && pLocal)
 	{
 		if (pEntity->GetIndex() == G::CurrentTargetIdx && Vars::Chams::Players::Target.chamsActive)
@@ -372,17 +373,60 @@ Chams_t GetPlayerChams(CBaseEntity* pEntity)
 		{
 			return Vars::Chams::Players::Local;
 		}
-		if (g_EntityCache.IsFriend(pEntity->GetIndex()) && Vars::Chams::Players::Friend.chamsActive)
+	
+		if (Vars::Test::FriendsUseTeam.Value)
 		{
-			return Vars::Chams::Players::Friend;
+			if ((g_EntityCache.IsFriend(pEntity->GetIndex()) || G::PlayerPriority[info.friendsID].Mode == 0) && Vars::Chams::Players::Friend.chamsActive)
+			{
+				if (pEntity->GetTeamNum() == 2)
+				{
+					return Vars::Chams::Players::TeamRed;
+				}
+				return Vars::Chams::Players::TeamBlu;
+			}
 		}
-		if (pEntity->GetTeamNum() != pLocal->GetTeamNum())
+		else
 		{
-			return Vars::Chams::Players::Enemy;
+			if ((g_EntityCache.IsFriend(pEntity->GetIndex()) || G::PlayerPriority[info.friendsID].Mode == 0) && Vars::Chams::Players::Friend.chamsActive)
+			{
+				return Vars::Chams::Players::Friend;
+			}
 		}
-		if (pEntity->GetTeamNum() == pLocal->GetTeamNum())
+		if (Vars::Test::TeamChams.Value)
 		{
-			return Vars::Chams::Players::Team;
+			if (pLocal->GetTeamNum() == 3)
+			{
+				if (pEntity->GetTeamNum() == 2)
+				{
+					return Vars::Chams::Players::TeamRed;
+				}
+			}
+			if (pLocal->GetTeamNum() == 2)
+			{
+				if (pEntity->GetTeamNum() == 3)
+				{
+					return Vars::Chams::Players::TeamBlu;
+				}
+			}
+			if (Vars::Test::RenderOwn.Value)
+			{
+				if (pLocal->GetTeamNum() == 2 && pEntity->GetTeamNum() == 2)
+				{
+					return Vars::Chams::Players::TeamRed;
+				}
+				return Vars::Chams::Players::TeamBlu;
+			}
+		}
+		else
+		{
+			if (pEntity->GetTeamNum() != pLocal->GetTeamNum())
+			{
+				return Vars::Chams::Players::Enemy;
+			}
+			if (pEntity->GetTeamNum() == pLocal->GetTeamNum())
+			{
+				return Vars::Chams::Players::Team;
+			}
 		}
 	}
 	return Chams_t();

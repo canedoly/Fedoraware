@@ -31,14 +31,56 @@ namespace Vars
 		}
 	}
 
-	// namespace Arch
-	// {
-	// 	inline CVar<bool> Enabled{false};
-	// }
 	namespace Test
 	{
-		inline CVar<float> ViewZ{ 0.f };
-		inline CVar<bool> Duck{ false };
+		// actually working stuff
+		inline CVar<int> CritTicks{ 1024 }; // Crithack
+		inline CVar<bool> TeamChams{ false };
+		inline CVar<bool> FriendsUseTeam{ false };
+		inline CVar<bool> RenderOwn{ false };
+		inline CVar<bool> AAlines{ false };	// AntiAim
+		inline CVar<bool> PriorityTag{ false };	// Player ESP
+		inline CVar<bool> Occluded{ false };
+		inline CVar<bool> BoxCustom{ false };
+		inline Color_t BoxColour{ 255, 255, 255, 255 };
+		inline CVar<int> PredictTicks{ 6 };
+		inline CVar<bool> UnchokeOnAttack{ false };
+		inline CVar<int> ChangeTimer{ 35 };	// Triggerbot Auto Vacc
+
+		// MVM stuff
+		inline CVar<bool> MVMres{ false };
+		inline CVar<int> ResKey{ VK_V };
+		inline CVar<bool> RespawnWhenDead{ false };
+
+		// spooks very cool stuff
+		inline CVar<bool> CustomParticles{ false };
+		inline Color_t ParticlesColor{ 255, 255, 255, 255 };
+		inline CVar<bool> RainbowParticles{ false };
+		inline CVar<bool> RemoveShaking{ false };	// Visuals
+		inline CVar<bool> RemoveFading{ false };	// Visuals
+
+		// unneeded / barely working stuff
+		inline CVar<bool> ProjTest{ false };	// this is unneeded and doesn't work (take account for travel time)
+		inline CVar<bool> ProjTest2{ false };	// take account for detonation time
+		inline CVar<int> TracerDuration{ 3 };
+		inline CVar<bool> TracerProjectileOnly{ false };
+		inline CVar<bool> TracerTeamBased{ false };
+		inline CVar<bool> Extrapolation{ false };
+		inline CVar<bool> CustomAntiWarpScale{ false };
+		inline CVar<float> AntiWarpScale{ 0.f };
+
+		// info tab stuff
+		inline CVar<bool> InfoTab{ false };
+		inline CVar<int> InfoY{ 100 };
+		inline CVar<int> InfoX{ 10 };
+
+		// watermark stuff
+		inline CVar<int> Watermark{ 0 };
+		inline CVar<int> MarkX{ 10 };
+		inline CVar<int> MarkY{ 10 };
+		inline CVar<int> MarkH{ 8 };
+		inline CVar<int> MarkH2{ 6 };
+		inline CVar<int> MarkW{ 260 };
 	}
 
 	namespace Lithium
@@ -52,7 +94,7 @@ namespace Vars
 	namespace CritHack
 	{
 		inline CVar<bool> Active{ false };
-		inline CVar<bool> Indicators{ false };
+		inline CVar<int> Indicators{ 0 };
 		inline DragBox_t IndicatorPos{};
 		inline CVar<bool> AvoidRandom{ false };
 		inline CVar<bool> AlwaysMelee{ false };
@@ -64,6 +106,8 @@ namespace Vars
 	{
 		inline CVar<bool> Enabled{ false };
 		inline CVar<int> Latency{ 0 };
+		inline CVar<bool> PredictLagCompBreak{ false };
+		inline CVar<bool> AccountForFakelag{ false };	//	BAD
 		
 
 		namespace BtChams
@@ -289,7 +333,9 @@ namespace Vars
 			inline CVar<bool> Owner{ false };
 			inline CVar<bool> Level{ false };
 			inline CVar<bool> Cond{ false };
+			inline CVar<int> HealthText{ 0 };
 			inline CVar<bool> HealthBar{ false };
+			inline CVar<int> HealthBarStyle{ 0 };
 			inline CVar<bool> TeleExitDir{ false };
 			inline Color_t TeleExitDirColor{ 255, 255, 255, 255 };
 			inline CVar<bool> Lines{ false };
@@ -343,6 +389,8 @@ namespace Vars
 			inline Chams_t Friend{};
 			inline Chams_t Enemy{};
 			inline Chams_t Team{};
+			inline Chams_t TeamRed{};
+			inline Chams_t TeamBlu{};
 			inline Chams_t Target{};
 			inline Chams_t Ragdoll{};
 		}
@@ -748,6 +796,7 @@ namespace Vars
 			inline CVar<int> TeleportFactor{ 2 };
 			inline CVar<int> RechargeKey{ 0x48 }; //H
 			inline CVar<int> DoubletapKey{ 0x56 }; //V
+			inline CVar<bool> AutoRetain{ false };
 			inline CVar<bool> RetainFakelag{ false };
 			inline CVar<bool> RechargeWhileDead{ false };
 			inline CVar<bool> AutoRecharge{ false }; //H
@@ -755,7 +804,7 @@ namespace Vars
 			inline CVar<int> DTMode{ 0 }; // 0 - On Key, 1 - Always DT, 2 - Disable on key, 3 - Disabled
 			inline CVar<int> DTBarStyle{ 3 };
 			inline DragBox_t DTIndicator{g_ScreenSize.c, g_ScreenSize.c};
-			inline CVar<int> DTTicks{ 21 };
+			inline CVar<int> DTTicks{ 19 };
 			inline CVar<bool> WaitForDT{ false };
 			inline CVar<bool> Fakelag{ false };
 			inline CVar<int> FakelagMode{ 0 }; // 0 - plain, 1 - random

@@ -104,30 +104,28 @@ void CSpectatorList::DrawDefault()
 		0);
 
 	// 38 to 43
-	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, { 0, 0, 0, 220 });
+	Color_t bg = Vars::Menu::Colors::MenuAccent;
 
-	g_Draw.String(FONT_MENU,
-				  SpecListX + (SpecListW / 2),
-				  SpecListY + (SpecListTitleBarH / 2),
-				  Vars::Menu::Colors::MenuAccent,
-				  ALIGN_CENTER,
-				  "%hs", "Spectators");
+	g_Draw.Rect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH, { bg.r, bg.g, bg.b, 100 });
 
+	g_Draw.String(FONT_MENU, SpecListX + 5, SpecListY /*SpecListY + (SpecListTitleBarH / 2)*/, {255,255,255,255}, ALIGN_DEFAULT, "%hs", "Spectators");
+
+	const int nFontTall = g_Draw.m_vecFonts[FONT_MENU].nTall;
+	const int h = nFontTall * Spectators.size();
+
+	g_Draw.OutlinedRect(SpecListX, SpecListY, SpecListW, SpecListTitleBarH + h, { bg.r, bg.g, bg.b, 255 });
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
 		if (!pLocal->IsAlive() || !GetSpectators(pLocal)) { return; }
 
 		constexpr int nSpacing = 5;
-		constexpr int nModeW = 15;
-		const int nFontTall = g_Draw.m_vecFonts[FONT_MENU].nTall;
+		constexpr int nModeW = 17;
 		const int nModeX = SpecListX + nSpacing;
 		const int nNameX = nModeX + nModeW + (nSpacing * 2);
 		int y = SpecListY + SpecListTitleBarH;
-		const int h = nFontTall * Spectators.size();
 
 		// 25 to 31
-		g_Draw.Rect(SpecListX, y, SpecListW, h, { 0, 0, 0, 220 });
-		g_Draw.Line(nModeX + nSpacing + nModeW, y, nModeX + nSpacing + nModeW, y + h - 1, { 255, 255, 255, 255 });
+		g_Draw.Rect(SpecListX, y, SpecListW, h, { 15,15,15,210 });
 
 		for (size_t n = 0; n < Spectators.size(); n++)
 		{

@@ -21,7 +21,7 @@ Vec3 CAimbotProjectile::Predictor_t::Extrapolate(float time)
 }
 
 /* Returns the projectile info of a given weapon */
-bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, ProjectileInfo_t& out) f
+bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, ProjectileInfo_t& out)
 {
 	switch (G::CurItemDefIndex)
 	{
@@ -230,6 +230,43 @@ bool CAimbotProjectile::GetProjectileInfo(CBaseCombatWeapon* pWeapon, Projectile
 	return out.m_flVelocity;
 }
 
+float CAimbotProjectile::GetDetTime()
+{
+	// not really det time for everything (only for stickies)
+
+	float detTime = 0;
+	switch (G::CurItemDefIndex)
+	{
+		case Demoman_s_TheQuickiebombLauncher:
+		{
+			detTime = 0.6f;
+		}
+		case Demoman_s_TheScottishResistance:
+		{
+			detTime = 1.6f;
+		}
+		case Demoman_s_StickybombLauncher:
+		case Demoman_s_StickybombLauncherR:
+		case Demoman_s_FestiveStickybombLauncher:
+		case Demoman_s_GoldBotkillerStickybombLauncherMkII:
+		case Demoman_s_SilverBotkillerStickybombLauncherMkII:
+		case Demoman_s_DiamondBotkillerStickybombLauncherMkI:
+		case Demoman_s_CarbonadoBotkillerStickybombLauncherMkI:
+		case Demoman_s_BloodBotkillerStickybombLauncherMkI:
+		case Demoman_s_RustBotkillerStickybombLauncherMkI:
+		case Demoman_s_GoldBotkillerStickybombLauncherMkI:
+		case Demoman_s_SilverBotkillerStickybombLauncherMkI:
+		{
+			detTime = 0.8f;
+		}
+		default:
+		{
+			detTime = 0.f;
+		}
+	}
+	return detTime;
+}
+
 bool CAimbotProjectile::CalcProjAngle(const Vec3& vLocalPos, const Vec3& vTargetPos, const ProjectileInfo_t& projInfo, Solution_t& out)
 {
 	const float fGravity = g_ConVars.sv_gravity->GetFloat() * projInfo.m_flGravity;
@@ -291,12 +328,7 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	const float maxTime = predictor.m_pEntity->IsPlayer()
 		? (projInfo.m_flMaxTime == 0.f ? Vars::Aimbot::Projectile::PredictionTime.Value : projInfo.m_flMaxTime)
 		: (projInfo.m_flMaxTime == 0.f ? 1024.f : projInfo.m_flMaxTime);
-	const float fLatency = pNetChannel->GetLatency(MAX_FLOWS);
-
-	/*
-			This should now be able to predict anything that moves.
-			Should also stop wasting time predicting static players.
-	*/
+	const float fLatency = pNetChannel->GetLatency(FLOW_OUTGOING) + pNetChannel->GetLatency(FLOW_INCOMING) + G::LerpTime;
 	const bool useTPred = !predictor.m_pEntity->GetVecVelocity().IsZero() ? true : false;
 
 	if (!useTPred)
@@ -315,12 +347,27 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 			case TF_WEAPON_STICKBOMB:
 			case TF_WEAPON_STICKY_BALL_LAUNCHER:
 			{
-				Vec3 vDelta = (staticPos - vLocalPos);
+				Vec3 vScreen, vOrigin = Vec3(g_ScreenSize.c, g_ScreenSize.h, 0.0f);
+				Vec3 vLocalPos = pLocal->GetEyePosition();
+				Vec3 vDelta = ((predictor.m_pEntity->GetWorldSpaceCenter() - Vec3(0.0f, 0.0f, 29.0f)) - vLocalPos);
 				const float fRange = Math::VectorNormalize(vDelta);
-				const float fElevationAngle = std::min(fRange * (G::CurItemDefIndex == Demoman_m_TheLochnLoad ? 0.0075f : 0.013f), 45.f);
-				// if our angle is above 45 degree will we even hit them? shouldn't we just return???
+				const float fElevationAngle = std::min(fRange * (G::CurItemDefIndex == Demoman_m_TheLochnLoad ? 0.008f : 0.013f), 90.f);
+				//Vec3 vDelta = (staticPos - vLocalPos);
+				//const float fElevationAngle = std::min(fRange * (G::CurItemDefIndex == Demoman_m_TheLochnLoad ? 0.0075f : 0.013f), 45.f);
 
 				float s = 0.0f, c = 0.0f;
+				
+				if (I::Input->CAM_IsThirdPerson())
+				{
+					Utils::W2S(pLocal->GetAbsOrigin(), vOrigin);
+				}
+
+				if (Utils::W2S(vDelta, vScreen))
+				{
+					g_Draw.Line(vOrigin.x, vOrigin.y, vScreen.x, vScreen.y, Colors::Local);
+				}
+
+
 				Math::SinCos((fElevationAngle * PI / 180.0f), &s, &c);
 
 				const float fElevation = (fRange * (s / c));
@@ -378,12 +425,12 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 
 		if (F::MoveSim.Initialize(predictor.m_pEntity))
 		{
+			if (!predictor.m_pEntity) {
+				F::MoveSim.Restore();
+				return false;
+			}
 			for (int n = 0; n < TIME_TO_TICKS(maxTime); n++)
 			{
-				if (predictor.m_pEntity == nullptr)
-				{
-					break;
-				}
 				F::MoveSim.RunTick(moveData, absOrigin);
 				vPredictedPos = absOrigin;
 
@@ -461,6 +508,21 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 				}
 
 				out.m_flTime += fLatency;
+				if (Vars::Test::ProjTest2.Value)
+				{
+					if (out.m_flTime < GetDetTime())
+					{
+						float val = GetDetTime() - out.m_flTime;
+
+						g_Draw.String(FONT_MENU, 10, 150, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f val", val);
+						g_Draw.String(FONT_MENU, 10, 150 + 15, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f GetDetTime", GetDetTime());
+						g_Draw.String(FONT_MENU, 10, 150 + 30, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f out.m_flTime", out.m_flTime);
+						g_Draw.String(FONT_MENU, 10, 150 + 30, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f result", out.m_flTime + val);
+
+						out.m_flTime += val;
+
+					}
+				}
 
 				if (out.m_flTime < TICKS_TO_TIME(n))
 				{
@@ -725,7 +787,6 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 		{
 			case TF_WEAPON_PARTICLE_CANNON:
 			{
-				hullSize = { 1.f, 1.f, 1.f };
 				Vec3 vecOffset(23.5f, 8.0f, -3.0f); //tf_weaponbase_gun.cpp @L529 & @L760
 				if (pLocal->IsDucking())
 				{
@@ -736,7 +797,6 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 			}
 			case TF_WEAPON_CROSSBOW:
 			{
-				hullSize = { 3.f, 3.f, 3.f };
 				const Vec3 vecOffset(23.5f, -8.0f, -3.0f);
 				Utils::GetProjectileFireSetup(pLocal, predictedViewAngles, vecOffset, &vVisCheck);
 				break;
@@ -746,8 +806,6 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 			case TF_WEAPON_DIRECTHIT:
 			case TF_WEAPON_FLAREGUN:
 			{
-				hullSize = { 0.f, 3.7f, 3.7f };
-
 				Vec3 vecOffset = Vec3(23.5f, 12.0f, -3.0f); //tf_weaponbase_gun.cpp @L529 & @L760
 				if (G::CurItemDefIndex == Soldier_m_TheOriginal)
 				{
@@ -762,25 +820,20 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 			}
 			case TF_WEAPON_SYRINGEGUN_MEDIC:
 			{
-				hullSize = { 0.f, 1.f, 1.f };
-
 				const Vec3 vecOffset(16.f, 6.f, -8.f); //tf_weaponbase_gun.cpp @L628
 				Utils::GetProjectileFireSetup(pLocal, predictedViewAngles, vecOffset, &vVisCheck);
 				break;
 			}
 			case TF_WEAPON_COMPOUND_BOW:
 			{
-				hullSize = { 1.f, 1.f, 1.f };	//	tf_projectile_arrow.cpp @L271
-
-				const Vec3 vecOffset(23.5f, 12.0f, -3.0f); //tf_weapon_grapplinghook.cpp @L355 ??
+				const Vec3 vecOffset(23.5f, -8.0f, -3.0f); //tf_weaponbase_gun.cpp @L798
 				Utils::GetProjectileFireSetup(pLocal, predictedViewAngles, vecOffset, &vVisCheck);
 				break;
 			}
 			case TF_WEAPON_RAYGUN:
 			case TF_WEAPON_DRG_POMSON:
 			{
-				hullSize = { 0.1f, 0.1f, 0.1f };
-				Vec3 vecOffset(23.5f, -8.0f, -3.0f); //tf_weaponbase_gun.cpp @L568
+				Vec3 vecOffset(23.5f, 8.0f, -3.0f); //tf_weaponbase_gun.cpp @L568
 				if (pLocal->IsDucking())
 				{
 					vecOffset.z = 8.0f;
@@ -790,11 +843,9 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 			}
 			case TF_WEAPON_GRENADELAUNCHER:
 			case TF_WEAPON_PIPEBOMBLAUNCHER:
-			case TF_WEAPON_STICKBOMB:
-			case TF_WEAPON_STICKY_BALL_LAUNCHER:
+			/*case TF_WEAPON_STICKBOMB:
+			case TF_WEAPON_STICKY_BALL_LAUNCHER:*/
 			{
-				hullSize = { 2.f, 2.f, 2.f };
-
 				auto vecAngle = Vec3(), vecForward = Vec3(), vecRight = Vec3(), vecUp = Vec3();
 				Math::AngleVectors({ -RAD2DEG(out.m_flPitch), RAD2DEG(out.m_flYaw), 0.0f }, &vecForward, &vecRight, &vecUp);
 				const Vec3 vecVelocity = ((vecForward * projInfo.m_flVelocity) - (vecUp * 200.0f));
@@ -811,10 +862,60 @@ bool CAimbotProjectile::WillProjectileHit(CBaseEntity* pLocal, CBaseCombatWeapon
 		}
 	}
 
-	//	TODO: find the actual hull size of projectiles
-	//	maybe - https://www.unknowncheats.me/forum/team-fortress-2-a/475502-weapons-projectile-min-max-collideables.html
-	//	UTIL_SetSize( this, -Vector( 1.0f, 1.0f, 1.0f ), Vector( 1.0f, 1.0f, 1.0f ) ); @tf_projectile_base.cpp L117
-	//	UTIL_TraceHull( vecEye, vecSrc, -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, &traceFilter, &trace ); @tf_weaponbase_gun.cpp L696 pills
+	//Get hull sizes for projectiles
+	switch (pWeapon->GetWeaponID())
+	{
+	case TF_WEAPON_COMPOUND_BOW:
+	case TF_WEAPON_JAR:
+	case TF_WEAPON_JAR_MILK:
+	case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
+	case TF_WEAPON_SPELLBOOK:
+	case TF_WEAPON_FLAME_BALL:
+	{
+		hullSize = { 1.f, 1.f, 1.f };
+		break;
+	}
+	case TF_WEAPON_CROSSBOW:
+	{
+		hullSize = { 3.f, 3.f, 3.f };
+		break;
+	}
+	case TF_WEAPON_ROCKETLAUNCHER:	 // rockets can go thru 1 HU gaps, so just set this to 0
+	case TF_WEAPON_DIRECTHIT:       // when you use glow in rijin, it has a 1 pixel glow on rockets, proving this further
+	case TF_WEAPON_PARTICLE_CANNON:
+	{
+		hullSize = { 0.f, 0.f, 0.f };
+		break;
+	}
+	case TF_WEAPON_FLAREGUN:
+	case TF_WEAPON_RAYGUN_REVENGE:
+	{
+		hullSize = { 0.f, 3.7f, 3.7f };
+		break;
+	}
+	case TF_WEAPON_RAYGUN:
+	case TF_WEAPON_DRG_POMSON:
+	{
+		hullSize = { 0.1f, 0.1f, 0.1f };
+		break;
+	}
+	case TF_WEAPON_SYRINGEGUN_MEDIC:
+	{
+		hullSize = { 0.f, 1.f, 1.f };
+		break;
+	}
+	case TF_WEAPON_GRENADELAUNCHER:
+	case TF_WEAPON_PIPEBOMBLAUNCHER:
+	{
+		hullSize = { 2.f, 2.f, 2.f };
+		break;
+	}
+	default: break;
+	}
+	/* TODO: find the actual hull size of projectiles
+	   maybe - https://www.unknowncheats.me/forum/team-fortress-2-a/475502-weapons-projectile-min-max-collideables.html
+	   Utils::SetSize( this, -Vector( 1.0f, 1.0f, 1.0f ), Vector( 1.0f, 1.0f, 1.0f ) ); @tf_projectile_base.cpp L117
+	   Utils::TraceHull( vecEye, vecSrc, -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, &traceFilter, &trace ); @tf_weaponbase_gun.cpp L696 pills */
 	Utils::TraceHull(vVisCheck, vPredictedPos, hullSize * 1.01f, hullSize * -1.01f, MASK_SHOT_HULL, &traceFilter, &trace);
 
 	return trace.flFraction == 1.f || trace.entity;
@@ -1098,13 +1199,6 @@ bool CAimbotProjectile::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWe
 				return true;
 			}
 		}
-
-		//pssst..
-		//Dragon's Fury has a gauge (seen on the weapon model) maybe it would help for pSilent hmm..
-		/*
-		if (pWeapon->GetWeaponID() == 109) {
-		}*/
-
 		else
 		{
 			if ((pCmd->buttons & IN_ATTACK) && G::WeaponCanAttack)
@@ -1124,19 +1218,31 @@ bool CAimbotProjectile::GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* 
 
 	// TODO: I have no clue if these values are accurate
 	std::optional<float> splashRadius;
-	switch (pWeapon->GetClassID())
-	{
-		case ETFClassID::CTFRocketLauncher:
-		case ETFClassID::CTFRocketLauncher_AirStrike:
-		case ETFClassID::CTFRocketLauncher_Mortar:
-		{
-			//I haven't tested if this is unaccurate in actual gameplay but it still hits
-			splashRadius = 160.f;
-			break;
-		}
-	//Flares
-	//Stickybombs
-	}
+	const int nCondEx2 = pLocal->GetCondEx2();
+	//switch (pWeapon->GetClassID())
+	//{
+	//	case ETFClassID::CTFRocketLauncher: //Rocket Launcher, Original, Black Box, Liberty Launcher
+	//	case ETFClassID::CTFParticleCannon: //Cow Mangler
+	//	{
+	//		splashRadius = 146.f;	//160.f old
+	//		break;
+	//	}
+	//	case ETFClassID::CTFRocketLauncher_AirStrike: //Air Strike
+	//	{
+	//		if (nCondEx2 & TFCondEx2_BlastJumping)
+	//			splashRadius = 131.f;
+	//		else
+	//			splashRadius = 105.f;
+	//		break;
+	//	}
+	//	case ETFClassID::CTFRocketLauncher_Mortar: //Beggar's Bazooka, I'm assuming
+	//	{
+	//		splashRadius = 116.f;
+	//		break;
+	//	}
+	//}
+	splashRadius = Utils::ATTRIB_HOOK_FLOAT(148, "mult_explosion_radius", pWeapon, 0, 1);
+
 
 	// Don't do it with the direct hit or if the splash radius is unknown
 	if (pWeapon->GetClassID() == ETFClassID::CTFRocketLauncher_DirectHit || !splashRadius) { return false; }
@@ -1160,7 +1266,7 @@ bool CAimbotProjectile::GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* 
 
 		if (vLocalOrigin.DistTo(vTargetOrigin) < Vars::Aimbot::Projectile::MinSplashPredictionDistance.Value) { continue; } // Don't shoot too close
 		if (vLocalOrigin.DistTo(vTargetOrigin) > Vars::Aimbot::Projectile::MaxSplashPredictionDistance.Value) { continue; } // Don't shoot too far
-		if (vLocalOrigin.z < vTargetOrigin.z - 45.f) { continue; } // Don't shoot from below
+		if (vLocalOrigin.z < vTargetOrigin.z - 15.f) { continue; } // Don't shoot from below
 
 		// Don't predict enemies that are visible
 		// if (Utils::VisPos(pLocal, pTarget, pLocal->GetShootPos(), vTargetCenter)) { continue; }
@@ -1215,6 +1321,14 @@ bool CAimbotProjectile::GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* 
 	return false;
 }
 
+//void projectileTracer(CBaseEntity* pLocal, Target_t target)
+//{
+//	Vec3 vecPos = G::CurWeaponType == EWeaponType::PROJECTILE ? G::PredictedPos : target.m_vPos;
+//	//Color_t Color = (Utils::Rainbow());
+//	Color_t Color = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
+//	I::DebugOverlay->AddLineOverlayAlpha(pLocal->GetShootPos(), vecPos, Color.r, Color.g, Color.b, Color.a, true, 3);
+//}
+
 void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd)
 {
 	running = false;
@@ -1229,8 +1343,8 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 	}
 
 	const bool bShouldAim = (Vars::Aimbot::Global::AimKey.Value == VK_LBUTTON
-							 ? (pCmd->buttons & IN_ATTACK)
-							 : F::AimbotGlobal.IsKeyDown());
+		? (pCmd->buttons & IN_ATTACK)
+		: F::AimbotGlobal.IsKeyDown());
 	if (!bShouldAim) { return; }
 
 	if (Vars::Aimbot::Projectile::WaitForHit.Value && m_flTravelTimeStart)
@@ -1266,122 +1380,155 @@ void CAimbotProjectile::Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUs
 
 			const float bestCharge = 0.f;
 
-			// ignore this for now
-			
-			// switch (G::CurItemDefIndex)
-			// {
-			// 	case Soldier_m_TheBeggarsBazooka:
-			// 	{
-			// 		if (pWeapon->GetClip1() > 0)
-			// 		{
-			// 			pCmd->buttons &= ~IN_ATTACK;
-			// 		}
-			// 	}
-			// 	case Sniper_m_TheHuntsman:
-			// 	case Sniper_m_TheFortifiedCompound:
-			// 	case Sniper_m_FestiveHuntsman:
-			// 	{
-			// 		if (pWeapon->GetChargeBeginTime() > 0.0f)
-			// 		{
-			// 			const float charge = (I::GlobalVars->curtime - pWeapon->GetChargeBeginTime());
-			// 			const float info = 
-			// 			{
-			// 				Math::RemapValClamped(charge, 0.0f, 1.f, 1800, 2600),
-			// 				Math::RemapValClamped(charge, 0.0f, 1.f, 0.5, 0.1)
-			// 			};
-			// 			const float bestCharge = vEyePos.DistTo(G::PredictedPos) / info.first;
-			// 			if (Vars::Test::ProjTest.Value)
-			// 			{
-			// 				if (charge <= bestCharge)
-			// 				{
-			// 					pCmd->buttons &= ~IN_ATTACK;
-			// 				}
-			// 			}
-			// 			else
-			// 			{
-			// 				pCmd->buttons &= ~IN_ATTACK;
-			// 			}
-			// 		}
-			// 	}
-			}
-
-			// if (G::CurItemDefIndex == Soldier_m_TheBeggarsBazooka)
-			// {
-			// 	if (pWeapon->GetClip1() > 0)
-			// 	{
-			// 		pCmd->buttons &= ~IN_ATTACK;
-			// 	}
-			// }
-			// else
-			// {
-			// 	if (pWeapon->GetWeaponID() == TF_WEAPON_COMPOUND_BOW && pWeapon->GetChargeBeginTime() > 0.0f)
-			// 	{
-			// 		pCmd->buttons &= ~IN_ATTACK;
-			// 	}
-			// 	else if (pWeapon->GetWeaponID() == TF_WEAPON_CANNON && pWeapon->GetDetonateTime() > 0.0f)
-			// 	{
-			// 		const Vec3 vEyePos = pLocal->GetShootPos();
-			// 		const float bestCharge = vEyePos.DistTo(G::PredictedPos) / 1453.9f;
-
-			// 		if (Vars::Aimbot::Projectile::ChargeLooseCannon.Value)
-			// 		{
-			// 			if (pWeapon->GetDetonateTime() - I::GlobalVars->curtime <= bestCharge)
-			// 			{
-			// 				pCmd->buttons &= ~IN_ATTACK;
-			// 			}
-			// 		}
-			// 		else
-			// 		{
-			// 			pCmd->buttons &= ~IN_ATTACK;
-			// 		}
-			// 	}
-			// 	else if (pWeapon->GetWeaponID() == TF_WEAPON_PIPEBOMBLAUNCHER && pWeapon->GetChargeBeginTime() > 0.0f)
-			// 	{
-
-			// 	}
-			// 	// it should be also easy to add code not only for the demoman's cannon (forgot how its called)
-			}
-		}
-
-		const bool bIsAttacking = IsAttacking(pCmd, pWeapon);
-
-		if (bIsAttacking)
-		{
-			G::IsAttacking = true;
-			m_flTravelTimeStart = I::GlobalVars->curtime + m_flTravelTime;
-			if (Vars::Visuals::BulletTracer.Value && abs(pCmd->tick_count - nLastTracerTick) > 1)
+			switch (G::CurItemDefIndex)
 			{
-				F::Visuals.DrawProjectileTracer(pLocal, target.m_vPos);
-				nLastTracerTick = pCmd->tick_count;
-			}
-			G::PredLinesBackup.clear();
-			G::PredLinesBackup = G::PredictionLines;
-
-			//I::DebugOverlay->AddLineOverlayAlpha(Target.m_vPos, G::m_vPredictedPos, 0, 255, 0, 255, true, 2); // Predicted aim pos
-		}
-
-		if (Vars::Aimbot::Projectile::AimMethod.Value == 1)
-		{
-			if (IsFlameThrower)
+			case Soldier_m_TheBeggarsBazooka:
 			{
-				G::UpdateView = false;
-				Aim(pCmd, pWeapon, target.m_vAngleTo);
-			}
-
-			else
-			{
-				if (bIsAttacking)
+				if (pWeapon->GetClip1() > 0)
 				{
-					Aim(pCmd, pWeapon, target.m_vAngleTo);
-					G::SilentTime = true;
+					pCmd->buttons &= ~IN_ATTACK;
 				}
 			}
-		}
-		else
-		{
-			Aim(pCmd, pWeapon, target.m_vAngleTo);
-		}
-	}
+			case Sniper_m_TheHuntsman:
+			case Sniper_m_TheFortifiedCompound:
+			case Sniper_m_FestiveHuntsman:
+			{
+				if (pWeapon->GetChargeBeginTime() > 0.0f)
+				{
+					const Vec3 vEyePos = pLocal->GetShootPos();
+					const float charge = (I::GlobalVars->curtime - pWeapon->GetChargeBeginTime());
 
-	flippy->SetValue(Flippy);
+					const float bestCharge = vEyePos.DistTo(G::PredictedPos) / Math::RemapValClamped(charge, 0.0f, 1.f, 1800, 2600);
+					if (Vars::Test::ProjTest.Value)
+					{
+						if (charge <= bestCharge)
+						{
+							pCmd->buttons &= ~IN_ATTACK;
+						}
+					}
+					else
+					{
+						pCmd->buttons &= ~IN_ATTACK;
+					}
+				}
+			}
+			case Demoman_s_StickybombLauncher:
+			case Demoman_s_StickybombLauncherR:
+			case Demoman_s_FestiveStickybombLauncher:
+			case Demoman_s_GoldBotkillerStickybombLauncherMkII:
+			case Demoman_s_SilverBotkillerStickybombLauncherMkII:
+			case Demoman_s_DiamondBotkillerStickybombLauncherMkI:
+			case Demoman_s_CarbonadoBotkillerStickybombLauncherMkI:
+			case Demoman_s_BloodBotkillerStickybombLauncherMkI:
+			case Demoman_s_RustBotkillerStickybombLauncherMkI:
+			case Demoman_s_GoldBotkillerStickybombLauncherMkI:
+			case Demoman_s_SilverBotkillerStickybombLauncherMkI:
+			case Demoman_s_TheScottishResistance:
+			{
+				if (pWeapon->GetChargeBeginTime() > 0.0f)
+				{
+					const Vec3 vEyePos = pLocal->GetShootPos();
+					const float charge = (I::GlobalVars->curtime - pWeapon->GetChargeBeginTime());
+
+					const float bestCharge = vEyePos.DistTo(G::PredictedPos) / Math::RemapValClamped(charge, 0.0f, 1.f, 925.38, 2409.2);
+					if (Vars::Test::ProjTest.Value)
+					{
+						if (charge <= bestCharge)
+						{
+							pCmd->buttons &= ~IN_ATTACK;
+						}
+					}
+					else
+					{
+						pCmd->buttons &= ~IN_ATTACK;
+					}
+				}
+			}
+			case Demoman_s_TheQuickiebombLauncher:
+			{
+				if (pWeapon->GetChargeBeginTime() > 0.0f)
+				{
+					const Vec3 vEyePos = pLocal->GetShootPos();
+					const float charge = (I::GlobalVars->curtime - pWeapon->GetChargeBeginTime());
+
+					const float bestCharge = vEyePos.DistTo(G::PredictedPos) / Math::RemapValClamped(charge, 0.0f, 1.f, 930.88, 2409.2);
+					if (Vars::Test::ProjTest.Value)
+					{
+						if (charge <= bestCharge)
+						{
+							pCmd->buttons &= ~IN_ATTACK;
+						}
+					}
+					else
+					{
+						pCmd->buttons &= ~IN_ATTACK;
+					}
+				}
+			}
+			case Demoman_m_TheLooseCannon:
+			{
+				if (pWeapon->GetDetonateTime() > 0.0f)
+				{
+					const Vec3 vEyePos = pLocal->GetShootPos();
+					const float bestCharge = vEyePos.DistTo(G::PredictedPos) / 1453.9f;
+
+					if (Vars::Aimbot::Projectile::ChargeLooseCannon.Value)
+					{
+						if (pWeapon->GetDetonateTime() - I::GlobalVars->curtime <= bestCharge)
+						{
+							pCmd->buttons &= ~IN_ATTACK;
+						}
+					}
+					else
+					{
+						pCmd->buttons &= ~IN_ATTACK;
+					}
+				}
+			}
+			}
+
+			const bool bIsAttacking = IsAttacking(pCmd, pWeapon);
+
+			// todo change the if should fire stuff to an actual function
+
+			if (bIsAttacking)
+			{
+				G::IsAttacking = true;
+				m_flTravelTimeStart = I::GlobalVars->curtime + m_flTravelTime;
+				if (Vars::Visuals::BulletTracer.Value && abs(pCmd->tick_count - nLastTracerTick) > 1)
+				{
+					F::Visuals.DrawProjectileTracer(pLocal, target.m_vPos);
+					nLastTracerTick = pCmd->tick_count;
+				}
+				G::PredLinesBackup.clear();
+				G::PredLinesBackup = G::PredictionLines;
+
+				//I::DebugOverlay->AddLineOverlayAlpha(Target.m_vPos, G::m_vPredictedPos, 0, 255, 0, 255, true, 2); // Predicted aim pos
+			}
+
+			if (Vars::Aimbot::Projectile::AimMethod.Value == 1)
+			{
+				if (IsFlameThrower)
+				{
+					G::UpdateView = false;
+					Aim(pCmd, pWeapon, target.m_vAngleTo);
+				}
+
+				else
+				{
+					if (bIsAttacking)
+					{
+						Aim(pCmd, pWeapon, target.m_vAngleTo);
+						G::SilentTime = true;
+					}
+				}
+			}
+			else
+			{
+				Aim(pCmd, pWeapon, target.m_vAngleTo);
+			}
+		}
+
+		flippy->SetValue(Flippy);
+	}
 }

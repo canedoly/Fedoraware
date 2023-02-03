@@ -4,6 +4,7 @@
 
 class CAimbotHitscan
 {
+	Vec3 Extrapolate(CBaseEntity* pEntity, int value);
 	int GetHitbox(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon);
 	EGroupType GetGroupType(CBaseCombatWeapon* pWeapon);
 	std::vector<Target_t> GetTargets(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon);

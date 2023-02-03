@@ -272,6 +272,58 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Menu::MenuKey);
 		}
 
+		// actually working stuff
+		SAVE_VAR(Vars::Test::CritTicks);
+		SAVE_VAR(Vars::Test::TeamChams);
+		SAVE_VAR(Vars::Test::FriendsUseTeam);
+		SAVE_VAR(Vars::Test::RenderOwn);
+		SAVE_VAR(Vars::Test::AAlines);
+		SAVE_VAR(Vars::Test::PriorityTag);
+		SAVE_VAR(Vars::Test::Occluded);
+		SAVE_VAR(Vars::Test::BoxCustom);
+		SAVE_OTHER(Vars::Test::BoxColour);
+		SAVE_VAR(Vars::Test::PredictTicks);
+		SAVE_VAR(Vars::Test::UnchokeOnAttack);
+
+
+		// MVM stuff
+		SAVE_VAR(Vars::Test::MVMres);
+		SAVE_VAR(Vars::Test::ResKey);
+		SAVE_VAR(Vars::Test::RespawnWhenDead);
+
+		// spooks very cool stuff
+		SAVE_VAR(Vars::Test::CustomParticles);
+		SAVE_OTHER(Vars::Test::ParticlesColor);
+		SAVE_VAR(Vars::Test::RainbowParticles);
+		SAVE_VAR(Vars::Test::RemoveShaking);
+		SAVE_VAR(Vars::Test::RemoveFading);
+
+		// unneeded / barely working stuff
+		SAVE_VAR(Vars::Test::ProjTest);		// this is unneeded and doesn't work (take account for travel time)
+		SAVE_VAR(Vars::Test::ProjTest2);	// take account for detonation time
+		SAVE_VAR(Vars::Test::ChangeTimer);
+
+		// Information Tab
+		SAVE_VAR(Vars::Test::InfoTab);
+		SAVE_VAR(Vars::Test::InfoX);
+		SAVE_VAR(Vars::Test::InfoY);
+
+		// Watermark
+		SAVE_VAR(Vars::Test::Watermark);
+		SAVE_VAR(Vars::Test::MarkH);
+		SAVE_VAR(Vars::Test::MarkH2);
+		SAVE_VAR(Vars::Test::MarkW);
+		SAVE_VAR(Vars::Test::MarkX);
+		SAVE_VAR(Vars::Test::MarkY);
+
+		// Lithium
+		{
+			SAVE_VAR(Vars::Lithium::NamePosition);
+			SAVE_VAR(Vars::Lithium::TeamBones);
+			SAVE_VAR(Vars::Lithium::TeamCond);
+			SAVE_VAR(Vars::Lithium::TextProjectiles);
+		}
+
 		//Aimbot
 		{
 			//Global
@@ -298,6 +350,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			{
 				SAVE_VAR(Vars::Backtrack::Enabled);
 				SAVE_VAR(Vars::Backtrack::Latency);
+				SAVE_VAR(Vars::Backtrack::PredictLagCompBreak);
+				SAVE_VAR(Vars::Backtrack::AccountForFakelag);
 				//Bt Chams
 				{
 					SAVE_VAR(Vars::Backtrack::BtChams::Enabled);
@@ -479,10 +533,10 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::ESP::Players::NameBox);
 				SAVE_VAR(Vars::ESP::Players::Uber);
 				SAVE_VAR(Vars::ESP::Players::Class);
-				SAVE_VAR(Vars::ESP::Players::HealthText);
 				SAVE_VAR(Vars::ESP::Players::Cond);
 				SAVE_VAR(Vars::ESP::Players::HealthBar);
 				SAVE_VAR(Vars::ESP::Players::HealthBarStyle);
+				SAVE_VAR(Vars::ESP::Players::HealthText);
 				SAVE_VAR(Vars::ESP::Players::Box);
 				SAVE_VAR(Vars::ESP::Players::GUID);
 				SAVE_VAR(Vars::ESP::Players::Choked);
@@ -510,6 +564,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::ESP::Buildings::Level);
 				SAVE_VAR(Vars::ESP::Buildings::Cond);
 				SAVE_VAR(Vars::ESP::Buildings::HealthBar);
+				SAVE_VAR(Vars::ESP::Buildings::HealthBarStyle);
+				SAVE_VAR(Vars::ESP::Buildings::HealthText);
 				SAVE_VAR(Vars::ESP::Buildings::Box);
 				SAVE_VAR(Vars::ESP::Buildings::Alpha);
 				SAVE_VAR(Vars::ESP::Buildings::Dlights);
@@ -903,6 +959,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 				SAVE_VAR(Vars::Misc::CL_Move::TeleportMode);
 				SAVE_VAR(Vars::Misc::CL_Move::TeleportFactor);
 				SAVE_VAR(Vars::Misc::CL_Move::RechargeKey); // { 0x52, L"Recharge Key" }; //R
+				SAVE_VAR(Vars::Misc::CL_Move::AutoRetain);
 				SAVE_VAR(Vars::Misc::CL_Move::RetainFakelag);
 				SAVE_VAR(Vars::Misc::CL_Move::RechargeWhileDead);
 				SAVE_VAR(Vars::Misc::CL_Move::AutoRecharge);
@@ -1043,6 +1100,8 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_OTHER(Vars::Chams::Players::Friend);
 			SAVE_OTHER(Vars::Chams::Players::Target);
 			SAVE_OTHER(Vars::Chams::Players::Ragdoll);
+			SAVE_OTHER(Vars::Chams::Players::TeamRed);
+			SAVE_OTHER(Vars::Chams::Players::TeamBlu);
 			SAVE_OTHER(Vars::Chams::DME::Hands);
 			SAVE_OTHER(Vars::Chams::DME::Weapon);
 
@@ -1137,6 +1196,58 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Menu::MenuKey);
 		}
 
+		// actually working stuff
+		LOAD_VAR(Vars::Test::CritTicks);
+		LOAD_VAR(Vars::Test::TeamChams);
+		LOAD_VAR(Vars::Test::FriendsUseTeam);
+		LOAD_VAR(Vars::Test::RenderOwn);
+		LOAD_VAR(Vars::Test::AAlines);
+		LOAD_VAR(Vars::Test::PriorityTag);
+		LOAD_VAR(Vars::Test::Occluded);
+		LOAD_VAR(Vars::Test::BoxCustom);
+		LOAD_OTHER(Vars::Test::BoxColour);
+		LOAD_VAR(Vars::Test::PredictTicks);
+		LOAD_VAR(Vars::Test::UnchokeOnAttack);
+
+		// MVM stuff
+		LOAD_VAR(Vars::Test::MVMres);
+		LOAD_VAR(Vars::Test::ResKey);
+		LOAD_VAR(Vars::Test::RespawnWhenDead);
+		
+		// spooks very cool stuff
+		LOAD_VAR(Vars::Test::CustomParticles);
+		LOAD_OTHER(Vars::Test::ParticlesColor);
+		LOAD_VAR(Vars::Test::RainbowParticles);
+		LOAD_VAR(Vars::Test::RemoveShaking);
+		LOAD_VAR(Vars::Test::RemoveFading);
+
+		// unneeded / barely working stuff
+		LOAD_VAR(Vars::Test::ProjTest);		// this is unneeded and doesn't work (take account for travel time)
+		LOAD_VAR(Vars::Test::ProjTest2);	// take account for detonation time
+		LOAD_VAR(Vars::Test::ChangeTimer);
+
+		// Information Tab
+		LOAD_VAR(Vars::Test::InfoTab);
+		LOAD_VAR(Vars::Test::InfoX);
+		LOAD_VAR(Vars::Test::InfoY);
+
+		// Watermark
+		LOAD_VAR(Vars::Test::Watermark);
+		LOAD_VAR(Vars::Test::MarkH);
+		LOAD_VAR(Vars::Test::MarkH2);
+		LOAD_VAR(Vars::Test::MarkW);
+		LOAD_VAR(Vars::Test::MarkX);
+		LOAD_VAR(Vars::Test::MarkY);
+
+
+		// Lithium
+		{
+			LOAD_VAR(Vars::Lithium::NamePosition);
+			LOAD_VAR(Vars::Lithium::TeamBones);
+			LOAD_VAR(Vars::Lithium::TeamCond);
+			LOAD_VAR(Vars::Lithium::TextProjectiles);
+		}
+
 		//Aimbot
 		{
 			//Global
@@ -1164,6 +1275,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			{
 				LOAD_VAR(Vars::Backtrack::Enabled);
 				LOAD_VAR(Vars::Backtrack::Latency);
+				LOAD_VAR(Vars::Backtrack::PredictLagCompBreak);
+				LOAD_VAR(Vars::Backtrack::AccountForFakelag);
 				//Bt Chams
 				{
 					LOAD_VAR(Vars::Backtrack::BtChams::Enabled);
@@ -1345,10 +1458,10 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::ESP::Players::NameBox);
 				LOAD_VAR(Vars::ESP::Players::Uber);
 				LOAD_VAR(Vars::ESP::Players::Class);
-				LOAD_VAR(Vars::ESP::Players::HealthText);
 				LOAD_VAR(Vars::ESP::Players::Cond);
 				LOAD_VAR(Vars::ESP::Players::HealthBar);
 				LOAD_VAR(Vars::ESP::Players::HealthBarStyle);
+				LOAD_VAR(Vars::ESP::Players::HealthText);
 				LOAD_VAR(Vars::ESP::Players::Box);
 				LOAD_VAR(Vars::ESP::Players::Choked);
 				LOAD_VAR(Vars::ESP::Players::GUID);
@@ -1376,6 +1489,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::ESP::Buildings::Level);
 				LOAD_VAR(Vars::ESP::Buildings::Cond);
 				LOAD_VAR(Vars::ESP::Buildings::HealthBar);
+				LOAD_VAR(Vars::ESP::Buildings::HealthBarStyle);
+				LOAD_VAR(Vars::ESP::Buildings::HealthText);
 				LOAD_VAR(Vars::ESP::Buildings::Box);
 				LOAD_VAR(Vars::ESP::Buildings::Alpha);
 				LOAD_VAR(Vars::ESP::Buildings::Dlights);
@@ -1768,6 +1883,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 				LOAD_VAR(Vars::Misc::CL_Move::TeleportMode);
 				LOAD_VAR(Vars::Misc::CL_Move::TeleportFactor);
 				LOAD_VAR(Vars::Misc::CL_Move::RechargeKey); // { 0x52, L"Recharge Key" }; //R
+				LOAD_VAR(Vars::Misc::CL_Move::AutoRetain);
 				LOAD_VAR(Vars::Misc::CL_Move::RetainFakelag);
 				LOAD_VAR(Vars::Misc::CL_Move::RechargeWhileDead);
 				LOAD_VAR(Vars::Misc::CL_Move::AutoRecharge);
@@ -1906,6 +2022,8 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_OTHER(Vars::Chams::Players::Friend);
 			LOAD_OTHER(Vars::Chams::Players::Target);
 			LOAD_OTHER(Vars::Chams::Players::Ragdoll);
+			LOAD_OTHER(Vars::Chams::Players::TeamRed);
+			LOAD_OTHER(Vars::Chams::Players::TeamBlu);
 			LOAD_OTHER(Vars::Chams::DME::Hands);
 			LOAD_OTHER(Vars::Chams::DME::Weapon);
 

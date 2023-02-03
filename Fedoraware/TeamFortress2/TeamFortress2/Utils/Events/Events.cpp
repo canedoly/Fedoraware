@@ -1,5 +1,6 @@
 #include "Events.h"
 #include "../../Features/ChatInfo/ChatInfo.h"
+#include "../../Features/CritHack/CritHack.h"
 #include "../../Features/Resolver/Resolver.h"
 #include "../../Features/AntiHack/AntiAim.h"
 #include "../../Features/AntiHack/CheaterDetection/CheaterDetection.h"
@@ -37,6 +38,7 @@ void CEventListener::FireGameEvent(CGameEvent* pEvent)
 	F::ChatInfo.Event(pEvent, uNameHash);
 	F::AntiAim.Event(pEvent, uNameHash);
 	F::Statistics.Event(pEvent, uNameHash);
+	F::CritHack.FireEvent(pEvent, uNameHash);
 	/*F::Killstreaker.FireEvents(pEvent, uNameHash);*/
 
 	if (uNameHash == FNV1A::HashConst("player_hurt"))

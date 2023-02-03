@@ -31,6 +31,7 @@ class CAimbotProjectile
 	bool GetProjectileInfo(CBaseCombatWeapon* pWeapon, ProjectileInfo_t& out);
 	bool CalcProjAngle(const Vec3& vLocalPos, const Vec3& vTargetPos, const ProjectileInfo_t& projInfo,
 					   Solution_t& out);
+	float GetDetTime();
 	bool SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, Predictor_t& predictor,
 						 const ProjectileInfo_t& projInfo, Solution_t& out);
 
@@ -44,13 +45,13 @@ class CAimbotProjectile
 	bool ShouldFire(CUserCmd* pCmd);
 	bool IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon);
 	bool GetSplashTarget(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd, Target_t& outTarget);
-	float m_flTravelTime = 0.0f;
-	float m_flTravelTimeStart = 0.0f;
 	bool IsFlameThrower = false;
 	bool IsBoosted = false;
 
 public:
 
+	float m_flTravelTime = 0.0f;
+	float m_flTravelTimeStart = 0.0f;
 	bool Flippy = false;
 	bool running = false;
 	void Run(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCmd* pCmd);

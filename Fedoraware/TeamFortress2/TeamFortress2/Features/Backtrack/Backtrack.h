@@ -1,5 +1,6 @@
 #pragma once
 #include "../../SDK/SDK.h"
+#include "../Aimbot/MovementSimulation/MovementSimulation.h"
 
 #pragma warning ( disable : 4091 )
 
@@ -57,6 +58,10 @@ class CBacktrack
 	//	utils - fake latency
 	void UpdateDatagram();
 	float GetLatency();
+	//	utils - analytics
+	int GetLatencyTicks();
+	int GetMaxFakelagRemaining(CBaseEntity* pEntity);
+	bool IsLikelyToBreakLagComp(CBaseEntity* pEntity);
 
 	//	data
 	std::unordered_map<CBaseEntity*, std::deque<TickRecord>> mRecords;

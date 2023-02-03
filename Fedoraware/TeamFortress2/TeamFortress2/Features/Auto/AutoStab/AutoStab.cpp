@@ -29,7 +29,7 @@ bool CAutoStab::CanBackstab(const Vec3& vSrc, const Vec3& vDst, Vec3 vWSCDelta)
 }
 
 bool CAutoStab::TraceMelee(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, const Vec3& vViewAngles,
-						   CBaseEntity** pEntityOut)
+	CBaseEntity** pEntityOut)
 {
 	float flRange = (48.0f * Vars::Triggerbot::Stab::Range.Value);
 
@@ -133,11 +133,10 @@ void CAutoStab::RunRage(CBaseEntity* pLocal, CBaseCombatWeapon* pWeapon, CUserCm
 				// Extract the required bones
 				const auto pBoneMatrix = (matrix3x4*)&pTick.BoneMatrix;
 				const Vec3 vPelvisPos = Vec3(pBoneMatrix[HITBOX_PELVIS][0][3],
-											 pBoneMatrix[HITBOX_PELVIS][1][3],
-											 pBoneMatrix[HITBOX_PELVIS][2][3]);
+					pBoneMatrix[HITBOX_PELVIS][1][3],
+					pBoneMatrix[HITBOX_PELVIS][2][3]);
 
 				vAngleTo = Math::CalcAngle(pLocal->GetShootPos(), vPelvisPos);
-				//vAngleTo = pEnemy->GetEyeAngles();
 
 				// Set origins and eye angles for further logic
 				pEnemy->SetAbsOrigin(pTick.vOrigin);

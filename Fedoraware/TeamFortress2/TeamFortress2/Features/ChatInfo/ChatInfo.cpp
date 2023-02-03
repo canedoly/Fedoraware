@@ -3,6 +3,7 @@
 #include "../Vars.h"
 #include "../Misc/Notifications/Notifications.h"
 #include "../../Features/Visuals/Visuals.h"
+#include "../../Features/CritHack/Crithack.h"
 
 int attackStringW;
 int attackStringH;
@@ -107,7 +108,6 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash)
 				const auto bCrit = pEvent->GetBool("crit");
 				const int nIndex = pEntity->GetIndex();
 				if (pEntity == pLocal) { return; }
-
 
 				PlayerInfo_t pi{};
 

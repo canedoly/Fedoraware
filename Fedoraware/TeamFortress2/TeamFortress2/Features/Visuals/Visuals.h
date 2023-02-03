@@ -45,6 +45,8 @@ public:
 	void DrawAimbotFOV(CBaseEntity* pLocal);
 	void DrawDebugInfo(CBaseEntity* pLocal);
 	void DrawAntiAim(CBaseEntity* pLocal);
+	void DrawInfoTab(CBaseEntity* pLocal);
+	void DrawWatermark();
 	void DrawTickbaseInfo(CBaseEntity* pLocal);
 	void DrawMenuSnow();
 	void DrawDVD();

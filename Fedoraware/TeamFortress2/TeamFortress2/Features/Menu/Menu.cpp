@@ -305,14 +305,20 @@ void CMenu::MenuAimbot()
 
 			SectionTitle("Crits");
 			WToggle("Crit hack", &Vars::CritHack::Active.Value);  HelpMarker("Enables the crit hack (BETA)");
-			MultiCombo({ "Indicators", "Avoid Random", "Always Melee", "Auto Melee Crit"}, {&Vars::CritHack::Indicators.Value, &Vars::CritHack::AvoidRandom.Value, &Vars::CritHack::AlwaysMelee.Value, &Vars::CritHack::AutoMeleeCrit.Value}, "Misc###CrithackMiscOptions");
+			MultiCombo({"Avoid Random", "Always Melee", "Auto Melee Crit"}, {&Vars::CritHack::AvoidRandom.Value, &Vars::CritHack::AlwaysMelee.Value, &Vars::CritHack::AutoMeleeCrit.Value}, "Misc###CrithackMiscOptions");
 			HelpMarker("Misc options for crithack");
 			InputKeybind("Crit key", Vars::CritHack::CritKey); HelpMarker("Will try to force crits when the key is held");
+			WSlider("Crit Ticks", &Vars::Test::CritTicks.Value, 256, 4096, "%d");
+			WCombo("Crithack Indicator", &Vars::CritHack::Indicators.Value, { "Disabled", "Classic", "Revamped" });
 
 			SectionTitle("Backtrack");
 			WToggle("Active", &Vars::Backtrack::Enabled.Value); HelpMarker("If you shoot at the backtrack manually it will attempt to hit it");
 			WCombo("Backtrack Method###HitscanBacktrackMethod", &Vars::Aimbot::Hitscan::BackTrackMethod.Value, { "All", "First", "Last", "Adaptive", "Force On Shot" });
 			WSlider("Amount of latency###BTLatency", &Vars::Backtrack::Latency.Value, 0, 800, "%d", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_ClampOnInput); HelpMarker("This won't work on local servers");
+			WToggle("Predict LC breaking", &Vars::Backtrack::PredictLagCompBreak.Value); HelpMarker("Predicts if someone is likely to have broken lag comp by the time the server registers our shot.");
+			if (Vars::Backtrack::PredictLagCompBreak.Value) {
+				WToggle("Inc. Fakelag", &Vars::Backtrack::AccountForFakelag.Value); HelpMarker("Will also account for the possibility of a player fakelagging the full 22 ticks in prediction (CHEATERS ONLY)");
+			}
 		} EndChild();
 
 		/* Column 2 */
@@ -506,6 +512,7 @@ void CMenu::MenuTrigger()
 			WSlider("Health left (%)###TriggerUberHealthLeft", &Vars::Triggerbot::Uber::HealthLeft.Value, 1.f, 99.f, "%.0f%%", 1.0f); HelpMarker("The amount of health the heal target must be below to actiavte");
 			WSlider("Reaction FoV###TriggerUberReactFoV", &Vars::Triggerbot::Uber::ReactFoV.Value, 0, 90, "%d", 1); HelpMarker("Checks whether you are within a certain FoV from legit players before auto ubering.");
 			WToggle("Activate charge trigger", &Vars::Triggerbot::Uber::VoiceCommand.Value); HelpMarker("Will ubercharge regardless of anything if your target says activate charge");
+			WSlider("Vacc Change Timer", &Vars::Test::ChangeTimer.Value, 1, 50, "%d");
 		} EndChild();
 
 		EndTable();
@@ -578,7 +585,7 @@ void CMenu::MenuVisuals()
 						ColorPickerL("Health Bar Bottom", Colors::GradientHealthBar.endColour, 1);
 					}
 
-					WCombo("Health bar style", &Vars::ESP::Players::HealthBarStyle.Value, { "Gradient", "Flat", "Old" }); HelpMarker("How to draw the health bar");
+					WCombo("Health bar style", &Vars::ESP::Players::HealthBarStyle.Value, { "Gradient", "Flat", "Old", "Team Based"}); HelpMarker("How to draw the health bar");
 					if (Vars::ESP::Players::HealthBarStyle.Value == 0)
 					{
 						ColorPickerL("Overheal Bar Top", Colors::GradientOverhealBar.startColour);
@@ -592,14 +599,14 @@ void CMenu::MenuVisuals()
 					{
 						ColorPickerL("Overheal Colour", Colors::Overheal);
 					}
-					WCombo("Health Text###ESPPlayerHealthText", &Vars::ESP::Players::HealthText.Value, { "Off", "Default", "Bar" }); HelpMarker("Draws the player health as a text");
+					WCombo("Health Text###ESPPlayerHealthText", &Vars::ESP::Players::HealthText.Value, { "Off", "Default", "Bar", "Bar+"}); HelpMarker("Draws the player health as a text");
 					WToggle("Condition", &Vars::ESP::Players::Cond.Value); HelpMarker("Will draw what conditions the player is under");
 					ColorPickerL("Condition colour", Colors::Cond);
 					WToggle("GUID", &Vars::ESP::Players::GUID.Value); HelpMarker("Show's the players Steam ID");
 					WToggle("Choked Packets", &Vars::ESP::Players::Choked.Value); HelpMarker("Shows how many packets the player has choked");
 					ColorPickerL("Choked Bar Top", Colors::ChokedBar.startColour);
 					ColorPickerL("Choked Bar Bottom", Colors::ChokedBar.endColour, 1);
-					WToggle("Priority tags", &Vars::ESP::Players::PriorityTags.Value);
+					WToggle("Priority tags", &Vars::Test::PriorityTag.Value);
 					WCombo("Box###PlayerBoxESP", &Vars::ESP::Players::Box.Value, { "Off", "Bounding", "Cornered", "3D" }); HelpMarker("What sort of box to draw on players");
 					WCombo("Skeleton###PlayerSkellington", &Vars::ESP::Players::Bones.Value, { "Off", "Custom colour", "Health" }); HelpMarker("Will draw the bone structure of the player");
 					ColorPickerL("Skellington colour", Colors::Bones);
@@ -619,7 +626,6 @@ void CMenu::MenuVisuals()
 
 					WToggle("Team Based cond", &Vars::Lithium::TeamCond.Value);
 					WToggle("Team Based bones", &Vars::Lithium::TeamBones.Value);
-					
 					WToggle("Text on Projectiles", &Vars::Lithium::TextProjectiles.Value);
 
 
@@ -640,7 +646,9 @@ void CMenu::MenuVisuals()
 						"Target",
 						"Ragdolls",
 						"ViewModel",
-						"VM Weapon"
+						"VM Weapon",
+						"Team Red",
+						"Team Blu"
 					};
 					static std::vector DMEProxyMaterials{
 						"None",
@@ -703,6 +711,14 @@ void CMenu::MenuVisuals()
 													  case 8:
 													  {
 														  return Vars::Chams::DME::Weapon;
+													  }
+													  case 9:
+													  {
+														  return Vars::Chams::Players::TeamRed;
+													  }
+													  case 10:
+													  {
+														  return Vars::Chams::Players::TeamBlu;
 													  }
 												  }
 
@@ -772,7 +788,7 @@ void CMenu::MenuVisuals()
 				{
 					SectionTitle("Glow Main");
 					WToggle("Glow", &Vars::Glow::Main::Active.Value);
-					WCombo("Glow Type###GlowTypeSelect", &Vars::Glow::Main::Type.Value, { "Blur", "Stencil", "FPStencil", "Wireframe" }); HelpMarker("Method in which glow will be rendered");
+					WCombo("Glow Type###GlowTypeSelect", &Vars::Glow::Main::Type.Value, { "Blur", "Stencil", "FPStencil", "Wireframe", "Spook (sharp)"}); HelpMarker("Method in which glow will be rendered");
 					if (Vars::Glow::Main::Type.Value != 1) { WSlider("Glow scale", &Vars::Glow::Main::Scale.Value, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp); }
 
 					SectionTitle("Player Glow");
@@ -814,7 +830,17 @@ void CMenu::MenuVisuals()
 						ColorPickerL("Name ESP Color", Vars::ESP::Buildings::NameColor);
 					}
 					WToggle("Name ESP box###BuildingNameESPBox", &Vars::ESP::Buildings::NameBox.Value); HelpMarker("Will draw a box around the buildings name to make it stand out");
-					WToggle("Health bar###Buildinghelathbar", &Vars::ESP::Buildings::HealthBar.Value); HelpMarker("Will draw a bar visualizing how much health the building has");
+
+					WToggle("Health bar###ESPPlayerHealthBar", &Vars::ESP::Buildings::HealthBar.Value); HelpMarker("Will draw a bar visualizing how much health the player has");
+					if (Vars::ESP::Buildings::HealthBarStyle.Value == 0)
+					{
+						ColorPickerL("Health Bar Top", Colors::GradientHealthBarBuild.startColour);
+						ColorPickerL("Health Bar Bottom", Colors::GradientHealthBarBuild.endColour, 1);
+					}
+
+					WCombo("Health bar style", &Vars::ESP::Buildings::HealthBarStyle.Value, { "Gradient", "Flat", "Old", "Team Based" }); HelpMarker("How to draw the health bar");
+					WCombo("Health Text###ESPPlayerHealthText", &Vars::ESP::Buildings::HealthText.Value, { "Off", "Default", "Bar", "Bar+" }); HelpMarker("Draws the player health as a text");
+
 					WToggle("Health text###buildinghealth", &Vars::ESP::Buildings::Health.Value); HelpMarker("Will draw the building's health, as well as its max health");
 					WToggle("Building owner###Buildingowner", &Vars::ESP::Buildings::Owner.Value); HelpMarker("Shows who built the building");
 					WToggle("Building level###Buildinglevel", &Vars::ESP::Buildings::Level.Value); HelpMarker("Will draw what level the building is");
@@ -1173,7 +1199,7 @@ void CMenu::MenuVisuals()
 					{
 						G::ShouldUpdateMaterialCache = true;
 					}
-					MultiCombo({ "Scope", "Zoom", "Disguises", "Taunts", "Interpolation", "View Punch", "MOTD", "Screen Effects", "Angle Forcing", "Ragdolls", "Screen Overlays", "DSP", "Convar Queries" }, { &Vars::Visuals::RemoveScope.Value, &Vars::Visuals::RemoveZoom.Value, &Vars::Visuals::RemoveDisguises.Value, &Vars::Visuals::RemoveTaunts.Value, &Vars::Misc::DisableInterpolation.Value, &Vars::Visuals::RemovePunch.Value, &Vars::Visuals::RemoveMOTD.Value, &Vars::Visuals::RemoveScreenEffects.Value, &Vars::Visuals::PreventForcedAngles.Value, &Vars::Visuals::RemoveRagdolls.Value, &Vars::Visuals::RemoveScreenOverlays.Value, &Vars::Visuals::RemoveDSP.Value, &Vars::Visuals::RemoveConvarQueries.Value }, "Removals");
+					MultiCombo({ "Scope", "Zoom", "Disguises", "Taunts", "Interpolation", "View Punch", "MOTD", "Screen Effects", "Angle Forcing", "Ragdolls", "Screen Overlays", "DSP", "Convar Queries", "Shake", "Fading" }, {&Vars::Visuals::RemoveScope.Value, &Vars::Visuals::RemoveZoom.Value, &Vars::Visuals::RemoveDisguises.Value, &Vars::Visuals::RemoveTaunts.Value, &Vars::Misc::DisableInterpolation.Value, &Vars::Visuals::RemovePunch.Value, &Vars::Visuals::RemoveMOTD.Value, &Vars::Visuals::RemoveScreenEffects.Value, &Vars::Visuals::PreventForcedAngles.Value, &Vars::Visuals::RemoveRagdolls.Value, &Vars::Visuals::RemoveScreenOverlays.Value, &Vars::Visuals::RemoveDSP.Value, &Vars::Visuals::RemoveConvarQueries.Value, &Vars::Test::RemoveShaking.Value, &Vars::Test::RemoveFading.Value }, "Removals");
 					HelpMarker("Select what you want to remove");
 					if (WCombo("Screen Overlay", &Vars::Visuals::VisualOverlay.Value, { "None", "Fire", "Jarate", "Bleed", "Stealth", "Dodge" }))
 					{
@@ -1267,7 +1293,7 @@ void CMenu::MenuVisuals()
 					WToggle("Anti viewmodel flip", &Vars::Misc::AntiViewmodelFlip.Value); HelpMarker("This is scuffed");
 
 					SectionTitle("DT Indicator");
-					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "SEOwned", "Numeric", "Rijin V1", "DeadFlag" }); HelpMarker("What style the bar should draw in.");
+					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin V2", "SEOwned", "Numeric", "Rijin V1", "DeadFlag", "Lithium", "Nitro V1"}); HelpMarker("What style the bar should draw in.");
 					if (Vars::Misc::CL_Move::DTBarStyle.Value != 7)
 					{
 						Text("Charging Gradient");
@@ -1564,7 +1590,7 @@ void CMenu::MenuHvH()
 			{
 				WSlider("Smooth Teleport Factor", &Vars::Misc::CL_Move::TeleportFactor.Value, 2, 6, "%d");
 			}
-			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag", "Stop Recharge Movement", "Safe Tick", "Safe Tick Airborne" }, { &Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value, &Vars::Misc::CL_Move::StopMovement.Value, &Vars::Misc::CL_Move::SafeTick.Value, &Vars::Misc::CL_Move::SafeTickAirOverride.Value }, "Options");
+			MultiCombo({ "Recharge While Dead", "Auto Recharge", "Wait for DT", "Anti-warp", "Avoid airborne", "Retain Fakelag", "Stop Recharge Movement", "Safe Tick", "Safe Tick Airborne", "Auto Retain" }, { &Vars::Misc::CL_Move::RechargeWhileDead.Value, &Vars::Misc::CL_Move::AutoRecharge.Value, &Vars::Misc::CL_Move::WaitForDT.Value, &Vars::Misc::CL_Move::AntiWarp.Value, &Vars::Misc::CL_Move::NotInAir.Value, &Vars::Misc::CL_Move::RetainFakelag.Value, &Vars::Misc::CL_Move::StopMovement.Value, &Vars::Misc::CL_Move::SafeTick.Value, &Vars::Misc::CL_Move::SafeTickAirOverride.Value, &Vars::Misc::CL_Move::AutoRetain.Value }, "Options");
 			HelpMarker("Enable various features regarding tickbase exploits");
 			WCombo("Doubletap Mode", &Vars::Misc::CL_Move::DTMode.Value, { "On key", "Always", "Disable on key", "Disabled" }); HelpMarker("How should DT behave");
 			const int ticksMax = g_ConVars.sv_maxusrcmdprocessticks->GetInt() - 2;
@@ -1706,6 +1732,7 @@ void CMenu::MenuHvH()
 				case 12:
 				case 13: { WSlider("Real Jitter Amt", &Vars::AntiHack::AntiAim::RealJitter.Value, -180, 180); break; }
 			}
+			WToggle("AA lines", &Vars::Test::AAlines.Value);
 			MultiCombo({ "AntiOverlap", "Jitter Legs", "HidePitchOnShot", "Anti-Backstab" }, { &Vars::AntiHack::AntiAim::AntiOverlap.Value, &Vars::AntiHack::AntiAim::LegJitter.Value, &Vars::AntiHack::AntiAim::InvalidShootPitch.Value, &Vars::AntiHack::AntiAim::AntiBackstab.Value }, "Misc.");
 
 			/* Section: Auto Peek */
@@ -1819,15 +1846,141 @@ void CMenu::MenuMisc()
 				WSlider("Target ping", &Vars::Misc::PingTarget.Value, 0, 200); HelpMarker("Target ping that should be reached");
 			}
 
-			SectionTitle("Experimental");
-			WToggle("Duck", &Vars::Test::Duck.Value);
-			WSlider("Funny exploit", &Vars::Test::ViewZ.Value, -180.f, 180.f, "%.f");
-			// the actual code doesn't exist for this, and i don't feel like making it
+			// Planned:
+			// $ Extrapolation (30%) | expected (1.0b 65) | Delay: 5 commits due to not being as easy to add as i thought
+			// $ Spook's Glow Outline (0%) | expected (1.0b 60) | Hint: Just copy & paste and fix the errors
+			// $ Cathook crithack (0%) | expected (1.0b 65) | Delay: 5-10 commits
 
-			SectionTitle("Slow Walk");
+			SectionTitle("General");
+			Text("Version: 1.0b, (50)"); HelpMarker("Version X - the current version, b - beta, (X) indicates commits after initial version (NOTE: this isn't an actual version)");
+			// changelog
+			// 1.0b 50 - Should be around 55-60 but idrc. Changed spectator list to be Rijin styled, changed overall looks of info tab. Removed some stuff like aa fakelag (menu option only) and some other stuff idk
+			// 
+			// 1.0b 49 - New dt indicator, small change to crithack some other changes like choking 3 ticks while having aa and slowly implementing extrapolation for hitscan, and changes to lithium dt bar
+			// 
+			// 1.0b 48 - Even more changes to crithack (Its better to wait for baan to code it)
+			// 
+			// 1.0b 47 - Some changes to crithack
+			// 
+			// 1.0b 46 - Added team based bullet tracers, custom tracer duration, proper projectile only bullet tracers
+			// 
+			// 1.0b 45 - removed aimbot wait, added debug info in crithack added latency in swing pred
+			// 
+			// 1.0b 44 - finally added the health bar options to buildings
+			// 
+			// 1.0b 43 - Added aimbot wait ticks (how many ticks to wait if the target is visible before shooting)
+			// 
+			// 1.0b 42 - Changed enums.h (should fix crash)
+			// 
+			// 1.0b 41 - Hopefully fixed the cheat
+			// 
+			// 1.0b 40 - This should be like around 45 or atleast 41 but i forgot. Added option to treat friends like team red/blu
+			// 
+			// 1.0b 39 - Added unchoke on attack for fakelag
+			// 
+			// 1.0b 38 - Reverted the prediction separator line back to its original code, messed with take account for det time 
+			// 
+			// 1.0b 37 - Changed the format of the menu, made the "seperator" in move sim line always be 90 degrees (like rijin v1)
+			// 
+			// 1.0b 36 - Cleaned the code ever more, the vars, menu, configmanager code looks clean. Now to revamp the actual code and initial version should be ready
+			// 
+			// 1.0b 35 - Did some cleaning, by the 40th commit the initial version should be ready! also did some changes to info tab, ping tab and some other
+			// 
+			// 1.0b 34 - Clear the duration line after shooting with projectile || after 5 seconds, and some other small changes
+			// 
+			// 1.0b 33 - Changed visible only to occluded since that how it works and fixed backtrack auto stab
+			// 
+			// 1.0b 32 - Added duration for the move sim line, added visible only statement for the move sim line and changes to splash bot
+			// 
+			// 1.0b 31 - Added new style for hp bar and hp text for some trolling!!
+			// 
+			// 1.0b 30 - no major changes here, small changes to crithack (damage stuff still doesn't work) and some other stuff idk
+			// 
+			// 1.0b 29 - Added auto strafe strenght
+			// 
+			// 1.0b 28 - Added particle tracers/bullet tracers draw once, revamped the style of my config vars (saving and loading) did some minor changes to crithack (should fix the damage being 0) and removed the code which caused bullet tracers to not render (clear when attacking)
+			// 
+			// 1.0b 27 - Clear bullet tracers after shooting, and thats all, i think
+			// 
+			// 1.0b 26 - Hopefully fixed rainbow particles, and improved the code of it, fixed nitro v1 dt bar and some changes to lithium dt bar
+			// 
+			// 1.0b 25 - added lithium and nitro v1 dt bar, fixed some stuff in the watermark, made bullet tracers only for projectiles
+			// 
+			// 1.0b 24 - Removed fading in bullet tracers fixed rainbow particles, readded back saving my custom vars (i removed it idk when) and changed up the watermark (i'll add the dt bar later)
+			// 
+			// 1.0b 23 - Added a watermark 
+			// 
+			// 1.0b 22 - Added MVM respawn when dead
+			// 
+			// 1.0b 21 - Added custom and rainbow colors to particles
+			// 
+			// 1.0b 20 - (Major) Fixed latency being wrong in info tab, fixed auto vacc crash, added instant mvm revive, added custom particle colour
+			// 
+			// 1.0b 19 - Highlight Target is officialy broken by the 18th commit (IDK WHY BUT IT JUST STOPPED WORKING)
+			// 
+			// 1.0b 18 - Made every var i've made save & load!
+			// 
+			// 1.0b 17.2 - Fixed an error with Render Own chams option, made the box esp wider and hopefully fixed latency stuff
+			// 
+			// 1.0b 17.1 - Fixed an error with box colour
+			// 
+			// 1.0b 17 - Added custom colour for boxes (because i realized that i can do actual rijin v1 visuals now)
+			// 
+			// 1.0b 16 - Fixed crithack making the cheat not inject, added latency & latency ticks stuff
+
+
+			// actually working stuff
+			WToggle("Team Chams", &Vars::Test::TeamChams.Value);
+			WToggle("Friends Use Team Colors", &Vars::Test::FriendsUseTeam.Value);
+			//WToggle("Local Use Team Colors", &Vars::Test::LocalUseTeam.Value);
+			WToggle("Render own", &Vars::Test::RenderOwn.Value);
+			WToggle("Custom Box colour", &Vars::Test::BoxCustom.Value);
+			ColorPickerL("Box Colour", Vars::Test::BoxColour);
+			WToggle("Ignore Z Line", &Vars::Test::Occluded.Value);
+			WSlider("FL Predict Ticks", &Vars::Test::PredictTicks.Value, 1, 8);
+			WToggle("Unchoke On Attack", &Vars::Test::UnchokeOnAttack.Value); HelpMarker("Recommended to have this turned on");
+
+			// MVM stuff
+			Text("");
+			WToggle("Instant Respawn", &Vars::Test::MVMres.Value);
+			InputKeybind("Respawn key", Vars::Test::ResKey);
+			WToggle("Respawn When Dead", &Vars::Test::RespawnWhenDead.Value);
+
+			// spooks very cool stuff
+			Text("");
+			WToggle("Custom particles", &Vars::Test::CustomParticles.Value);
+			ColorPickerL("Particle Color", Vars::Test::ParticlesColor);
+			WToggle("Rainbow Particles", &Vars::Test::RainbowParticles.Value);
+
+			// unneeded / barely working stuff
+			Text("");
+			WToggle("account travel time", &Vars::Test::ProjTest.Value);
+			WToggle("account det time", &Vars::Test::ProjTest2.Value);
+			WToggle("Tracers Projectile only", &Vars::Test::TracerProjectileOnly.Value);
+			WToggle("Tracers Team Based", &Vars::Test::TracerTeamBased.Value);
+			WSlider("Tracers Duration", &Vars::Test::TracerDuration.Value, 1, 5, "%d");
+			WToggle("Custom Anti Warp Scale", &Vars::Test::CustomAntiWarpScale.Value);
+			WSlider("Anti Warp scale", &Vars::Test::AntiWarpScale.Value, -0.2f, 0.2f, "%.2f"); HelpMarker("Too much in negative values will make you teleport, While too much in positive values will make you stay in place longer");
+
+			// info tab stuff
+			SectionTitle("Information Tab");
+			WToggle("Information Tab", &Vars::Test::InfoTab.Value);
+			WSlider("Info Y", &Vars::Test::InfoY.Value, 0, g_ScreenSize.h, "%d");
+			WSlider("Info X", &Vars::Test::InfoX.Value, 0, g_ScreenSize.w, "%d");
+
+			// watermark stuff
+			SectionTitle("Watermark");
+			WCombo("Watermark", &Vars::Test::Watermark.Value, { "Off", "Nitro V1"} );
+			WSlider("Mark X", &Vars::Test::MarkX.Value, 0, g_ScreenSize.h, "%d");
+			WSlider("Mark Y", &Vars::Test::MarkY.Value, 0, g_ScreenSize.w, "%d");
+			WSlider("Mark Addition", &Vars::Test::MarkH.Value, 0, 10, "%d");
+			WSlider("Mark Divide", &Vars::Test::MarkH2.Value, 0, 10, "%d");
+			WSlider("Mark Width", &Vars::Test::MarkW.Value, 0, g_ScreenSize.w, "%d");
+
+			/*SectionTitle("Slow Walk");
 			WToggle("Slow walk", &Vars::Misc::SlowWalkEnabled.Value);
 			WSlider("Desired Speed", &Vars::Misc::DesiredSpeed.Value, 20.f, 450.f, "%.f");
-			InputKeybind("Slow walk key", Vars::Misc::SlowWalkKey, true);
+			InputKeybind("Slow walk key", Vars::Misc::SlowWalkKey, true);*/
 
 			SectionTitle("Party Networking");
 			WToggle("Enable###PartyNetEnable", &Vars::Misc::PartyNetworking.Value); HelpMarker("Enables party networking between Fedoraware users");

@@ -251,10 +251,14 @@ void CGlowEffect::Render()
 						DrawColor = Utils::GetEntityDrawColor(Player, Vars::ESP::Main::EnableTeamEnemyColors.Value);
 					}
 				}
-				else
+				else if (Vars::Glow::Players::Color.Value == 1)
 				{
 					DrawColor = Utils::GetHealthColor(Player->GetHealth(), Player->GetMaxHealth());
 				}
+				/*else
+				{
+					DrawColor = Vars::Test::GlowCustom;
+				}*/
 
 				m_vecGlowEntities.push_back({Player, DrawColor, Vars::Glow::Players::Alpha.Value});
 
@@ -307,6 +311,10 @@ void CGlowEffect::Render()
 		{
 			F::Visuals.DrawBulletTracers();
 		}
+		/*if (Vars::Test::GlowBacktrack.Value)
+		{
+			F::DMEChams.m_bRendering();
+		}*/
 		if (Vars::Glow::Buildings::Active.Value)
 		{
 			for (const auto& Building : g_EntityCache.GetGroup(EGroupType::BUILDINGS_ALL))

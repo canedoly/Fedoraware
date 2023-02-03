@@ -283,6 +283,7 @@
     <ClCompile Include="TeamFortress2\Hooks\Detours\NotificationQueue_Add.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Panel_PaintTraverse.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Prediction_RunCommand.cpp" />
+    <ClCompile Include="TeamFortress2\Hooks\Detours\C_ParticleEffect_RenderSprite.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\StudioRender_SetAlphaModulation.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\StudioRender_SetColorModulation.cpp" />
     <ClCompile Include="TeamFortress2\Hooks\Detours\Surface_OnScreenSizeChanged.cpp" />

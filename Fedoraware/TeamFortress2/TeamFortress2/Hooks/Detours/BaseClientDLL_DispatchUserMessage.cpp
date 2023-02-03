@@ -188,7 +188,13 @@ MAKE_HOOK(BaseClientDLL_DispatchUserMessage, Utils::GetVFuncPtr(I::BaseClientDLL
 		}
 
 		case Shake:
+		{
+			return Vars::Test::RemoveShaking.Value ? true : Hook.Original<FN>()(ecx, edx, type, msgData);
+		}
 		case Fade:
+		{
+			return Vars::Test::RemoveFading.Value ? true : Hook.Original<FN>()(ecx, edx, type, msgData);
+		}
 		case Rumble:
 		{
 			return Vars::Visuals::RemoveScreenEffects.Value ? true : Hook.Original<FN>()(ecx, edx, type, msgData);

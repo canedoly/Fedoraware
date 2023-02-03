@@ -1,41 +1,8 @@
 #include "CritHack.h"
 #define MASK_SIGNED 0x7FFFFFFF
 
-// static int melee_damage 	= 0;
-// static int crit_damage 		= 0;
-// static int total_damage 	= 0;
-// static int normal_damage 	= 0;
-
-// struct player_status
-// {
-//     int health{};
-//     int clazz{};	// int for classes 5 being heavy, or 2 being soldier
-//     bool just_updated{};
-// };
-// const std::array<player_status, 32> player_status_list{};
-
-
-// int CCritHack::IDK()
-// {
-// 	for (int n = 1; n < I::EngineClient->GetMaxClients(); n++)
-// 	{
-// 		CTFPlayerResource* cResource = g_EntityCache.GetPR();
-// 		CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
-// 		if (cResource->GetHealth(pEntity))
-// 		{
-// 			auto& status = player_status_list[n - 1];
-
-// 			if (!status.just_updated && (status.clazz != cResource->GetClass(pEntity) || status.health < cResource->GetHealth(pEntity)))
-// 			{
-// 				status.clazz  = cResource->GetClass(pEntity);
-// 				status.health = cResource->GetHealth(pEntity);
-// 			}
-// 			status.just_updated = false;
-// 		}
-// 	}
-// }
-
-// i hate crithack
+int round_damage = 0;
+int cached_damage = 0;
 
 /* Returns whether random crits are enabled on the server */
 bool CCritHack::AreRandomCritsEnabled()
@@ -62,7 +29,7 @@ bool CCritHack::CanCrit()
 	switch (G::CurItemDefIndex)
 	{
 
-	// scout
+		// scout
 	case Scout_s_CritaCola:
 	case Scout_s_BonkAtomicPunch:
 	case Scout_s_MadMilk:
@@ -71,7 +38,7 @@ bool CCritHack::CanCrit()
 	case Scout_s_TheFlyingGuillotineG:
 	case Scout_s_TheFlyingGuillotine:
 
-	// soldier
+		// soldier
 	case Soldier_m_TheCowMangler5000:
 	case Soldier_t_TheMarketGardener:
 	case Soldier_m_RocketJumper:
@@ -84,7 +51,7 @@ bool CCritHack::CanCrit()
 	case Soldier_s_FestiveBuffBanner:
 	case Soldier_t_TheHalfZatoichi:
 
-	// pyro
+		// pyro
 	case Pyro_m_BarnBurner:
 	case Pyro_m_ThePhlogistinator:
 	case Pyro_m_DragonsFury:
@@ -95,7 +62,7 @@ bool CCritHack::CanCrit()
 	case Pyro_t_NeonAnnihilator:
 	case Pyro_t_NeonAnnihilatorG:
 
-	// demoman
+		// demoman
 	case Demoman_m_AliBabasWeeBooties:
 	case Demoman_m_TheBootlegger:
 	case Demoman_s_TheCharginTarge:
@@ -111,7 +78,7 @@ bool CCritHack::CanCrit()
 	case Demoman_t_NessiesNineIron:
 	case Demoman_t_FestiveEyelander:
 
-	// heavy
+		// heavy
 	case Heavy_s_Sandvich:
 	case Heavy_s_TheDalokohsBar:
 	case Heavy_s_TheBuffaloSteakSandvich:
@@ -120,7 +87,7 @@ bool CCritHack::CanCrit()
 	case Heavy_s_FestiveSandvich:
 	case Heavy_s_SecondBanana:
 
-	// engineer
+		// engineer
 	case Engi_m_TheFrontierJustice:
 	case Engi_s_TheShortCircuit:
 	case Engi_s_FestiveWrangler:
@@ -131,7 +98,7 @@ bool CCritHack::CanCrit()
 	case Engi_p_DestructionPDA:
 	case Engi_p_PDA:
 
-	// medic
+		// medic
 	case Medic_s_MediGun:
 	case Medic_s_MediGunR:
 	case Medic_s_TheKritzkrieg:
@@ -147,7 +114,7 @@ bool CCritHack::CanCrit()
 	case Medic_s_GoldBotkillerMediGunMkII:
 	case Medic_s_TheVaccinator:
 
-	// sniper
+		// sniper
 	case Sniper_m_SniperRifle:
 	case Sniper_m_SniperRifleR:
 	case Sniper_m_TheHuntsman:
@@ -176,7 +143,7 @@ bool CCritHack::CanCrit()
 	case Sniper_s_FestiveJarate:
 	case Sniper_t_TheBushwacka:
 
-	// spy
+		// spy
 	case Spy_m_TheAmbassador:
 	case Spy_m_TheEnforcer:
 	case Spy_m_TheDiamondback:
@@ -215,7 +182,7 @@ bool CCritHack::CanCrit()
 	case Spy_w_EnthusiastsTimepiece:
 	case Spy_w_TheQuackenbirdt:
 
-	return false;
+		return false;
 
 	}
 }
@@ -255,12 +222,6 @@ bool CCritHack::IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon)
 				return true;
 			}
 		}
-
-		//pssst..
-		//Dragon's Fury has a gauge (seen on the weapon model) maybe it would help for pSilent hmm..
-		/*
-		if (pWeapon->GetWeaponID() == 109) {
-		}*/
 
 		else
 		{
@@ -479,7 +440,6 @@ bool CCritHack::CanWithdrawFromBucket(CBaseCombatWeapon* pWeapon, bool damage = 
 
 int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 {
-	// Backup weapon stats
 	const auto backupBucket = *reinterpret_cast<float*>(pWeapon + 0xA54);
 	const auto backupAttempts = *reinterpret_cast<float*>(pWeapon + 0xA58);
 
@@ -506,53 +466,32 @@ int CCritHack::GetShotsUntilCrit(CBaseCombatWeapon* pWeapon)
 		*reinterpret_cast<float*>(pWeapon + 0xA58) = attempts;
 	}
 
-	// Restore backup
 	*reinterpret_cast<float*>(pWeapon + 0xA54) = backupBucket;
 	*reinterpret_cast<float*>(pWeapon + 0xA58) = backupAttempts;
 	return shots;
 }
 
-// int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
-// {
-// 	auto critMultInfo = GetCritMultInfo(pWeapon);
+int CCritHack::GetDamageUntilCrit(CBaseCombatWeapon* pWeapon)
+{
+	const auto& pLocal = g_EntityCache.GetLocal();
+	if (!pLocal || !pLocal->IsAlive()) { return 0; }
 
-// 	// total_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
-// 	// normal_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+	CTFPlayerResource* cResource = g_EntityCache.GetPR();
 
-// 	// todo replace x with actual stuff
-// 	float needed_crit_mult = critMultInfo.second;
-// 	int damage = std::ceil(crit_damage * (2.0f * needed_crit_mult + 1.0f) / (3.0f * needed_crit_mult));
-// 	return damage - (normal_damage - total_damage);
-// }
+	auto [observed, needed] = GetCritMultInfo(pWeapon);
+	if (observed <= needed || pWeapon->GetSlot() == 2) { return 0; }
 
-// crithack damage info lol
-// todo: turn this into fware code
-// static int damageUntilToCrit(IClientEntity *wep)
-// {
-//     // First check if we even need to deal damage at all
-//     auto crit_info = critMultInfo(wep);
-//     if (crit_info.first <= crit_info.second || g_pLocalPlayer->weapon_mode == weapon_melee)
-//         return 0;
+	int round_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+	int cached_damage = round_damage - G::MeleeDamage;	// cached_damage
 
-//     float target_chance = critMultInfo(wep).second;
-//     // Formula taken from TotallyNotElite
-//     int damage = std::ceil(crit_damage * (2.0f * target_chance + 1.0f) / (3.0f * target_chance));
-//     return damage - (cached_damage - round_damage);
-// }
-//if (cResource->GetDamage(g_pLocalPlayer->entity_idx) < round_damage)
-//round_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx);
-//cached_damage = cResource->GetDamage(g_pLocalPlayer->entity_idx) - melee_damage;
+	int rdamage = G::NormalDamage;
+	int cdamage = rdamage - G::MeleeDamage;
 
-//int damage = event->GetInt("damageamount");
-// imagine there's event stuff
-// {
-// 	if (damage_dealt)
-// 	{
-// 		if (event->GetBool("crit"))
-//         crit_damage += damage;
-// 	}
-// }
-// todo: also fix bucket but that's for later
+	int damage = std::ceil(G::CritDamage * (2.0f * needed + 1.0f) / (3.0f * needed));
+	//return damage - (round_damage - cached_damage);
+	//return damage - (G::NormalDamage / 2);
+	return damage - (round_damage - cached_damage);
+}
 
 void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 {
@@ -579,7 +518,7 @@ void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 		CritTicks.clear();
 	}
 
-	if (CritTicks.size() >= 256)
+	if (CritTicks.size() >= Vars::Test::CritTicks.Value)
 	{
 		return;
 	}
@@ -631,7 +570,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 		}
 		else if (Vars::CritHack::AvoidRandom.Value) //	we don't want to crit
 		{
-			for (int tries = 1; tries < 50; tries++)
+			for (int tries = 0; tries < 10; tries++)
 			{
 				if (std::find(CritTicks.begin(), CritTicks.end(), pCmd->command_number + tries) != CritTicks.end())
 				{
@@ -643,6 +582,12 @@ void CCritHack::Run(CUserCmd* pCmd)
 			}
 		}
 	}
+
+	const auto& pLocal = g_EntityCache.GetLocal();
+	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+
+	int round_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+	int cached_damage = round_damage - 0;	// cached_damage
 
 	// Update stats
 	static int previousWeapon = 0;
@@ -679,7 +624,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 
 void CCritHack::Draw()
 {
-	if (!Vars::CritHack::Indicators.Value) { return; }
+	if (Vars::CritHack::Indicators.Value == 0) { return; }
 	if (!IsEnabled() || !G::CurrentUserCmd) { return; }
 
 	const auto& pLocal = g_EntityCache.GetLocal();
@@ -698,102 +643,144 @@ void CCritHack::Draw()
 	const int seedRequests = *reinterpret_cast<int*>(pWeapon + 0xA5C);
 
 	int longestW = 40;
-
 	auto [observed, needed] = GetCritMultInfo(pWeapon);
 
-	if (!AreRandomCritsEnabled())
+	const int nClassNum = pLocal->GetClassNum();
+	static int lastClass = 0;
+
+	int w = 0, h = 0;
+
+
+	if (Vars::CritHack::Indicators.Value == 1)
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
+		if (!AreRandomCritsEnabled())
+		{
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
+		}
+
+		if (!CanCrit() && AreRandomCritsEnabled())
+		{
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
+		}
+
+		if (CanCrit() && AreRandomCritsEnabled())
+		{
+			if (ShouldCrit())
+			{
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
+			}
+			if (CritTicks.size() == 0 || observed > needed)
+			{
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+
+				const auto critText = tfm::format("%.3f < %.3f", observed, needed);
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+
+			}
+			const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
+			int w, h;
+			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
+			if (w > longestW)
+			{
+				longestW = w;
+			}
+		}
+	}
+	if (Vars::CritHack::Indicators.Value == 2)
+	{
+		Color_t BarClr;
+		
+		int barX = x - 44;
+		int barY = currentY + 15;
+		int damage = GetDamageUntilCrit(pWeapon);
+		if (damage > 8000)
+		{
+			damage = 8000;	// limit the damage to 8000
+		}
+
+		if (!AreRandomCritsEnabled())
+		{
+			BarClr = Vars::Menu::Colors::MenuAccent;
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
+		}
+		if (!CanCrit() && AreRandomCritsEnabled())
+		{
+			BarClr = Vars::Menu::Colors::MenuAccent;
+			g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
+		}
+		if (CanCrit() && AreRandomCritsEnabled())
+		{
+			if (observed > needed)
+			{
+				BarClr = { 255, 32, 32, 255 };
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 213, 213, 24, 255 }, ALIGN_CENTERHORIZONTAL, L"Deal %d Damage", damage);
+				const auto critText = tfm::format("Observed %.3f > %.3f Needed", observed, needed);
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 213, 213, 24, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+
+			}
+			else
+			{
+				BarClr = { 0,255,0,255 };
+				g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"Ready for crits");
+			}
+		}
 	}
 
-	if (!CanCrit() && AreRandomCritsEnabled())
+	if (Vars::Debug::DebugInfo.Value)
 	{
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
-	}
 
-	if (CanCrit() && AreRandomCritsEnabled())
-	{
-		if (Vars::Debug::DebugInfo.Value)
-		{
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255, 255, 255, 255, }, ALIGN_CENTERHORIZONTAL, tfm::format("%x", reinterpret_cast<float*>(pWeapon + 0xA54)).c_str());
-		}
-		// Are we currently forcing crits?
-		if (ShouldCrit())
-		{
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
-		}
-		if (CritTicks.size() == 0 || observed > needed)
-		//if (CritTicks.size() == 0)
-		{
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+		CTFPlayerResource* cResource = g_EntityCache.GetPR();
 
-			const auto critText = tfm::format("%.3f < %.3f", observed, needed);
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, critText.c_str());
+		auto [observed, needed] = GetCritMultInfo(pWeapon);
 
-		// 	const int damage = GetDamageUntilCrit(pWeapon);
-		// const auto dmgText = tfm::format("%s Damage", damage);
-		// g_Draw.String(FONT_INDICATORS, x, currentY += 15, {225, 255, 0}, ALIGN_CENTERHORIZONTAL, dmgText.c_str());
-		}
-		const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
-		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
+		int round_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+		int cached_damage = round_damage - G::MeleeDamage;	// cached_damage
 
-		// const int withdrawAmount = GetWithdrawAmount(pWeapon);
-		// const int maxCrits = (bucket + AddedPerShot) / withdrawAmount;
-		// const int potentialCrits = bucket / withdrawAmount;
-		// const auto critText = tfm::format("%s / %s Crits", potentialCrits, maxCrits);
-		// g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, critText.c_str());
+		int rdamage = G::NormalDamage;
+		int cdamage = rdamage - G::MeleeDamage;
 
-		int w, h;
-		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, bucketstr.c_str(), w, h);
-		if (w > longestW)
-		{
-			longestW = w;
-		}
-		if (Vars::Debug::DebugInfo.Value)
-		{
-			const std::wstring seedText = L"m_nCritSeedRequests: " + std::to_wstring(seedRequests);
-			const std::wstring FoundCrits = L"Found Crit Ticks: " + std::to_wstring(CritTicks.size());
-			const std::wstring commandNumber = L"cmdNumber: " + std::to_wstring(G::CurrentUserCmd->command_number);
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, seedText.c_str());
-			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, seedText.c_str(), w, h);
-			if (w > longestW)
-			{
-				longestW = w;
-			}
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, FoundCrits.c_str());
-			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, FoundCrits.c_str(), w, h);
-			if (w > longestW)
-			{
-				longestW = w;
-			}
-			g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, commandNumber.c_str());
-			I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, commandNumber.c_str(), w, h);
-			if (w > longestW)
-			{
-				longestW = w;
-			}
-		}
+		int damage = std::ceil(G::CritDamage * (2.0f * needed + 1.0f) / (3.0f * needed));
+		int result_damage = damage - (round_damage - cached_damage);
+		int result_damage2 = damage - (rdamage - cdamage);
+
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Damage: %d", damage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Result Damage: %d", result_damage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Result Damage2: %d", result_damage2);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"r Damage: %d", rdamage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"c Damage: %d", cdamage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"round Damage: %d", round_damage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"cached Damage: %d", cached_damage);
+
+		g_Draw.String(FONT_INDICATORS, x, currentY += 30, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Normal Damage: %d", G::NormalDamage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Damage: %d", G::CritDamage);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Melee Damage: %d", G::MeleeDamage);
+
+		g_Draw.String(FONT_INDICATORS, x, currentY += 30, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Observed: %.3f", observed);
+		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Needed: %.3f", needed);
 	}
 	IndicatorW = longestW * 2;
 	IndicatorH = currentY;
+	lastClass = nClassNum;
 }
 
 void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 {
-	switch (uNameHash)
+	if (!I::EngineClient->IsConnected() || !I::EngineClient->IsInGame())
 	{
-		case FNV1A::HashConst("player_hurt"):
-		{
-			// TODO: This
-			break;
-		}
+		return;
+	}
 
-		case FNV1A::HashConst("teamplay_round_start"):
-		case FNV1A::HashConst("client_disconnect"):
-		case FNV1A::HashConst("client_beginconnect"):
-		case FNV1A::HashConst("game_newmap"):
+	const auto& pLocal = g_EntityCache.GetLocal();
+
+	if (const auto pLocal = g_EntityCache.GetLocal())
+	{
+		if (uNameHash == FNV1A::HashConst("teamplay_round_start") ||
+			uNameHash == FNV1A::HashConst("client_disconnect") ||
+			uNameHash == FNV1A::HashConst("client_beginconnect") ||
+			uNameHash == FNV1A::HashConst("game_newmap"))
 		{
-			// TODO: Clear CritCmds
 			LastCritTick = -1;
 			LastBucket = -1.f;
 
@@ -801,93 +788,131 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 			AddedPerShot = 0;
 			ShotsToFill = 0;
 			TakenPerCrit = 0;
-			break;
+
+			int round_damage = 0;
+			int cached_damage = 0;
+			int rdamage = 0;
+			int cdamage = 0;
+			G::CritDamage = 0;
+			G::MeleeDamage = 0;
+			G::NormalDamage = 0;
+
+		}
+		if (uNameHash == FNV1A::HashConst("player_hurt"))
+		{
+			if (const auto pEntity = I::ClientEntityList->GetClientEntity(
+				I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid"))))
+			{
+				const auto nAttacker = pEvent->GetInt("attacker");
+				const auto nHealth = pEvent->GetInt("health");
+				const auto nDamage = pEvent->GetInt("damageamount");
+				const auto bCrit = pEvent->GetBool("crit");
+				const int nIndex = pEntity->GetIndex();
+				if (pEntity == pLocal) { return; }
+
+				const auto& pWeapon = g_EntityCache.GetWeapon();
+				bool isMelee = false;
+				if (pWeapon->GetSlot() == 2)
+				{
+					isMelee = true;
+				}
+
+				PlayerInfo_t pi{};
+
+				{
+					I::EngineClient->GetPlayerInfo(I::EngineClient->GetLocalPlayer(), &pi);
+					if (nAttacker != pi.userID) { return; }
+				}
+
+				I::EngineClient->GetPlayerInfo(nIndex, &pi);
+
+				if (bCrit && !isMelee && CCritHack::CanCrit())
+				{
+					G::CritDamage += nDamage;
+				}
+				else if (isMelee)
+				{
+					G::MeleeDamage += nDamage;
+				}
+				else
+				{
+					G::NormalDamage += nDamage;
+				}
+			}
 		}
 	}
 }
 
-// void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
-// {
-// 	const auto& pLocal = g_EntityCache.GetLocal();
-// 	CTFPlayerResource* cResource = g_EntityCache.GetPR();
-// 	const auto& pWeapon = g_EntityCache.GetWeapon();
-
-// 	int total_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
-// 	int round_damage = total_damage - melee_damage;	// cached_damage
-
-// 	int crit_damage = 0;
-// 	int melee_damage = 0;
-
-// 	if (FNV1A::HashConst("teamplay_round_start") ||
-// 		FNV1A::HashConst("client_disconnect") ||
-// 		FNV1A::HashConst("client_beginconnect") ||
-// 		FNV1A::HashConst("game_newmap"))
-// 	{
-// 		// TODO: Clear CritCmds
-// 		LastCritTick = -1;
-// 		LastBucket = -1.f;
-
-// 		ShotsUntilCrit = 0;
-// 		AddedPerShot = 0;
-// 		ShotsToFill = 0;
-// 		TakenPerCrit = 0;
-
-// 		int total_damage = 0;	// round_damage
-// 		int round_damage = 0;	// cached_damage
-
-// 		int crit_damage = 0;
-// 		int melee_damage = 0;
-// 	}
-
-// 	if (FNV1A::HashConst("player_hurt"))
-// 	{
-// 		const auto pEntity = I::ClientEntityList->GetClientEntity(
-// 			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")));
-
-// 		int nHealth = pEvent->GetInt("health");
-// 		int nAttacker = pEvent->GetInt("attacker");
-// 		int nDamage = pEvent->GetInt("damageamount");
-// 		const bool bCrit = pEvent->GetBool("crit");
-
-// 		auto& status 			= player_status_list[pEntity - 1];
-// 		int health_difference 	= status.health - nHealth;
-// 		status.health			= nHealth;
-// 		status.just_updated 	= true;
-
-
-// 		if (nAttacker == pLocal->GetIndex())
-// 		{
-// 			if (pEntity != pLocal)
-// 			{
-// 				// chceck for what weapon/slot dealt the damage
-
-// 				bool isMelee = false;
-// 				if (pWeapon->GetSlot() == 2)	// its actually 3rd slot, but our primary is 0
-// 				{
-// 					isMelee = true;
-// 				}
-
-// 				// damage stuff
-// 				if (nDamage > health_difference && !nHealth)
-// 				{
-// 					nDamage = health_difference;
-// 				}
-// 				// probably so we won't add too much damage
-// 				// so if we kill the enemy and we deal for example 450 out of 150 hp
-// 				// it would add 450 damage instead of the correct 150 (or how much the character had hp)
-
-// 				if (!isMelee)
-// 				{
-// 					if (bCrit)
-// 					{
-// 						crit_damage += nDamage;
-// 					}
-// 				}
-// 				else if (isMelee)
-// 				{
-// 					melee_damage += nDamage;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+//void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
+//{
+//	const auto& pLocal = g_EntityCache.GetLocal();
+//	CTFPlayerResource* cResource = g_EntityCache.GetPR();
+//	int n = 1;
+//	for (n < I::EngineClient->GetMaxClients(); n++; )
+//	{
+//		CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(n);
+//	}
+//	CBaseEntity* pEntity = nullptr;
+//	const auto& pWeapon = g_EntityCache.GetWeapon();
+//
+//	int round_damage = cResource->GetDamage(pLocal->GetIndex());	// round_damage
+//	int cached_damage = round_damage - G::MeleeDamage;	// cached_damage
+//
+//
+//	const int oHealth = cResource->GetHealth(n);
+//
+//	if (FNV1A::HashConst("teamplay_round_start") ||
+//		FNV1A::HashConst("client_disconnect") ||
+//		FNV1A::HashConst("client_beginconnect") ||
+//		FNV1A::HashConst("game_newmap"))
+//	{
+//		// TODO: Clear CritCmds
+//		LastCritTick = -1;
+//		LastBucket = -1.f;
+//
+//		ShotsUntilCrit = 0;
+//		AddedPerShot = 0;
+//		ShotsToFill = 0;
+//		TakenPerCrit = 0;
+//
+//		int total_damage = 0;	// round_damage
+//		int round_damage = 0;	// cached_damage
+//
+//	}
+//
+//	if (FNV1A::HashConst("player_hurt"))
+//	{
+//		const auto pEntity = I::ClientEntityList->GetClientEntity(
+//			I::EngineClient->GetPlayerForUserID(pEvent->GetInt("userid")));
+//
+//		int nHealth = pEvent->GetInt("health");
+//		int nAttacker = pEvent->GetInt("attacker");
+//		int nDamage = pEvent->GetInt("damageamount");
+//		const bool bCrit = pEvent->GetBool("crit");
+//
+//
+//		if (nAttacker == pLocal->GetIndex())
+//		{
+//			if (pEntity != pLocal)
+//			{
+//				bool isMelee = false;
+//				if (pWeapon->GetSlot() == 2)
+//				{
+//					isMelee = true;
+//				}
+//
+//				if (!isMelee)
+//				{
+//					if (bCrit)
+//					{
+//						G::CritDamage += nDamage;
+//					}
+//				}
+//				else
+//				{
+//					G::MeleeDamage += nDamage;
+//				}
+//			}
+//		}
+//	}
+//}

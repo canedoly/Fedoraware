@@ -30,6 +30,7 @@ void CMisc::RunPre(CUserCmd* pCmd, bool* pSendPacket)
 		AntiBackstab(pLocal, pCmd);
 		ViewmodelFlip(pCmd, pLocal);
 		AutoPeek(pCmd, pLocal);
+		InstantRespawnMVM(pLocal);
 	}
 
 	AntiAFK(pCmd);
@@ -58,6 +59,20 @@ void CMisc::RunPost(CUserCmd* pCmd, bool* pSendPacket)
 		AutoRocketJump(pCmd, pLocal);
 		AutoScoutJump(pCmd, pLocal);
 		ChokeCheck(pSendPacket);
+	}
+}
+
+void CMisc::InstantRespawnMVM(CBaseEntity* pLocal)
+{
+	if (I::EngineClient->IsInGame() && !pLocal->IsAlive() && Vars::Test::MVMres.Value)
+	{
+		static KeyHelper resKey{ &Vars::Test::ResKey.Value };
+		auto kv = new KeyValues("MVM_Revive_Response");
+		if (resKey.Down() || (Vars::Test::RespawnWhenDead.Value && !pLocal->IsAlive()))
+		{
+			kv->SetInt("accepted", 1);
+			I::EngineClient->ServerCmdKeyValues(kv);
+		}
 	}
 }
 
@@ -145,7 +160,13 @@ void CMisc::AntiAFK(CUserCmd* pCmd)
 	}
 }
 
-//	pasted but looks cool
+//void CMisc::WalkwayHitboxFix()
+//{
+//	if (!Vars::Test::WalkwayFix.Value) { return; }
+//
+//	// spooks code
+//}
+
 void CMisc::WeaponSway()
 {
 	static ConVar* cl_wpn_sway_interp = g_ConVars.FindVar("cl_wpn_sway_interp");
@@ -210,7 +231,6 @@ void CMisc::DetectChoke()
 	}
 }
 
-//	dumb feature made out of spite for fourteen
 void CMisc::LegJitter(CUserCmd* pCmd, CBaseEntity* pLocal)
 {
 	static bool pos = true;
@@ -242,8 +262,6 @@ void CMisc::SlowWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
 		pCmd->sidemove = velresult.y;
 
 	}
-	// alternative way of doing this, if this won't work. 
-	// just set the forward or side move to 0 whenever we are past that velocity
 }
 
 // void CMisc::FakeWalk(CUserCmd* pCmd, CBaseEntity* pLocal)
@@ -295,12 +313,12 @@ void CMisc::AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd)
 
 		Vec3 vEnemyPos = pEnemy->GetWorldSpaceCenter();
 		if (!Utils::VisPos(pLocal, pEnemy, vLocalPos, vEnemyPos)) { continue; }
-		if (!target && vLocalPos.DistTo(vEnemyPos) < 225.f)
+		if (!target && vLocalPos.DistTo(vEnemyPos) < 250.f)
 		{
 			target = pEnemy;
 			vTargetPos = target->GetWorldSpaceCenter();
 		}
-		else if (vLocalPos.DistTo(vEnemyPos) < vLocalPos.DistTo(vTargetPos) && vLocalPos.DistTo(vEnemyPos) < 225.f)
+		else if (vLocalPos.DistTo(vEnemyPos) < vLocalPos.DistTo(vTargetPos) && vLocalPos.DistTo(vEnemyPos) < 250.f)
 		{
 			target = pEnemy;
 			vTargetPos = target->GetWorldSpaceCenter();
@@ -316,15 +334,6 @@ void CMisc::AntiBackstab(CBaseEntity* pLocal, CUserCmd* pCmd)
 		pCmd->viewangles = vAngleToSpy;
 	}
 }
-
-/*
-void CMisc::InstantRespawnMVM() {
-	if (I::Engine->IsInGame() && I::Engine->GetLocalPlayer() && !g_EntityCache.GetLocal()->IsAlive() && Vars::Misc::MVMRes.m_Var) {
-		auto kv = new KeyValues("MVM_Revive_Response");
-		kv->SetInt("accepted", 1);
-		I::Engine->ServerCmdKeyValues(kv);
-	}
-}*/
 
 void CMisc::CheatsBypass()
 {
@@ -473,27 +482,6 @@ void CMisc::EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt)
 				pCmd->buttons |= IN_DUCK;
 			}
 		}
-		// if (Vars::Test::Duck.Value)
-		// {
-		// 	if (pCmd->buttons &= IN_JUMP && pLocal->OnSolid() && !pLocal->IsSwimming() && !pLocal->IsStunned())
-		// 	{
-		// 		pCmd->buttons ~= IN_JUMP;
-		// 		if (pLocal->OnSolid())
-		// 		{
-		// 			pCmd->buttons |= IN_DUCK;
-		// 			if (pLocal->GetViewOffset().z < 60.05f)
-		// 			{
-		// 				pCmd->buttons &= IN_JUMP;
-		// 				if (!pLocal->OnSolid())
-		// 				{
-		// 					pCmd->buttons ~= IN_DUCK;
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		}
-		// todo: prevent the jump for one tick and instead duck (best)
-		// but idk how bitwise operators work
 	}
 }
 
@@ -655,7 +643,7 @@ void CMisc::AutoJump(CUserCmd* pCmd, CBaseEntity* pLocal)
 	{	//	this is our initial jump
 		bHopping = true; return;
 	}
-	else if (bHopping && !pLocal->OnSolid() && bJumpHeld)
+	else if (bHopping && bJumpHeld && (!pLocal->OnSolid() || pLocal->IsDucking()))
 	{	//	 we are not on the ground and the key is in the same hold cycle
 		pCmd->buttons &= ~IN_JUMP; return;
 	}
@@ -741,7 +729,7 @@ void CMisc::AutoStrafe(CUserCmd* pCmd, CBaseEntity* pLocal)
 			{
 				auto speedVar = pLocal->TeamFortress_CalculateMaxSpeed();
 				static auto airVar = g_ConVars.FindVar("sv_airaccelerate");
-				static auto wishSpeed = 90.0f;
+				static auto wishSpeed = 90.f;
 
 				const auto term = wishSpeed / airVar->GetFloat() / speedVar * 100.f / speed;
 
@@ -1059,12 +1047,14 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 
 		switch (stopType)
 		{
+			// none
 			case 0:
 			{
 				nShiftTickG = 0;
 				nShiftTickA = 0;
 				return;
 			}
+			// on ground
 			case 1:
 			{
 				switch (nShiftTickG)
@@ -1085,12 +1075,18 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 				}//
 
 				currentPos = pLocal->GetVecOrigin();
-				Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (1.f / currentPos.Dist2D(predEndPoint)));
+				if (Vars::Test::CustomAntiWarpScale.Value) {
+					Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, Vars::Test::AntiWarpScale.Value);
+				}
+				else {
+					Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (1.f / currentPos.Dist2D(predEndPoint)));
+				}
 				//	the "slight stop" that u can see when we do this is due to (i believe) the player reaching the desired point, and then constantly accelerating backwards, meaning their velocity-
 				//	when they finish shifting ticks, is lower than when they started.
-				//	alot of things worked better than (1/dist) as the scale, but caused issues on different classes, for now this is the best I can get it to.
+				//	alot of things worked better than (Vars::Test::stopType1.Value / currentPos.Dist2D(predEndPoint)) as the scale, but caused issues on different classes, for now this is the best I can get it to.
 				return;
 			}
+			// not on ground
 			case 2:
 			{
 				switch (nShiftTickA)

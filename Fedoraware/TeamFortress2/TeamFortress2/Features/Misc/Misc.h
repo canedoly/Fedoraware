@@ -27,6 +27,7 @@ class CMisc
 	void ChokeCheck(bool* pSendPacket);
 	void DoubletapPacket(bool* pSendPacket);
 	void EdgeJump(CUserCmd* pCmd, const int nOldGroundEnt);
+	void InstantRespawnMVM(CBaseEntity* pLocal);
 
 	void PrintProjAngles(CBaseEntity* pLocal);
 

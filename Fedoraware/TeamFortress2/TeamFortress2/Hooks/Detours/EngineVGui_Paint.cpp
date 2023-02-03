@@ -18,6 +18,7 @@
 #include "../../Features/Menu/Playerlist/Playerlist.h"
 #include "../../Features/LuaEngine/Callbacks/LuaCallbacks.h"
 #include "../../Features/AntiHack/AntiAim.h"
+#include "../../Features/TickHandler/TickHandler.h"
 
 #include "../../Resources/DVD-Icon.h"
 #include "../../Resources/64x64_Circle_Mask.h"
@@ -69,66 +70,40 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 14), void, __fastc
 
 		StartDrawing(I::VGuiSurface);
 		{
-			//static int nAvatar = 0;
-			//static int nAvatarID = 0;
-			//static uint32 w, h;
-			//static byte removebytes[16384];
-			//if (!nAvatar)
-			//{
-			//	nAvatar = g_SteamInterfaces.Friends015->GetMediumFriendAvatar(CSteamID(g_SteamInterfaces.User->GetSteamID()));
-
-			//	if (g_SteamInterfaces.Utils007->GetImageSize(nAvatar, &w, &h))
-			//	{
-			//		const int nSize = static_cast<int>(4 * w * h * sizeof(uint8));
-
-			//		if (g_SteamInterfaces.Utils007->GetImageRGBA(nAvatar, removebytes, nSize))
-			//		{
-			//			for (int i = 0; i <= 16384; i += 4)
-			//			{
-			//				// Do not convert these to hex >:)
-			//				if (rawData[i] == 105 &&
-			//					rawData[i + 1] == 20 &&
-			//					rawData[i + 2] == 136 &&
-			//					rawData[i + 3] == 0x01)
-			//				{
-			//					removebytes[i] = 0x00;
-			//					removebytes[i + 1] = 0x00;
-			//					removebytes[i + 2] = 0x00;
-			//					removebytes[i + 3] = 0x00;
-			//				}
-			//			}
-			//			nAvatarID = g_Draw.CreateTextureFromArray(removebytes, w, h);
-			//		}
-			//	}
-			//}
-			//if (nAvatarID)
-			//{
-			//	I::Surface->DrawSetTexture(nAvatarID);
-			//	I::Surface->DrawTexturedRect(100, 300, w, h);
-			//	g_Draw.OutlinedCircle(100 + (w / 2), 300 + (h / 2), w / 2, 300, Utils::Rainbow());
-			//}
+			if (g_Draw.m_vecFonts.empty())
+			{
+				g_Draw.RemakeFonts
+				({
+					{ 0x0, Vars::Fonts::FONT_ESP::szName.c_str(), Vars::Fonts::FONT_ESP::nTall.Value, Vars::Fonts::FONT_ESP::nWeight.Value, Vars::Fonts::FONT_ESP::nFlags.Value},
+					{ 0x0, Vars::Fonts::FONT_ESP_NAME::szName.c_str(), Vars::Fonts::FONT_ESP_NAME::nTall.Value, Vars::Fonts::FONT_ESP_NAME::nWeight.Value, Vars::Fonts::FONT_ESP_NAME::nFlags.Value },
+					{ 0x0, Vars::Fonts::FONT_ESP_COND::szName.c_str(), Vars::Fonts::FONT_ESP_COND::nTall.Value, Vars::Fonts::FONT_ESP_COND::nWeight.Value, Vars::Fonts::FONT_ESP_COND::nFlags.Value },
+					{ 0x0, Vars::Fonts::FONT_ESP_PICKUPS::szName.c_str(), Vars::Fonts::FONT_ESP_PICKUPS::nTall.Value, Vars::Fonts::FONT_ESP_PICKUPS::nWeight.Value, Vars::Fonts::FONT_ESP_PICKUPS::nFlags.Value },
+					{ 0x0, Vars::Fonts::FONT_MENU::szName.c_str(), Vars::Fonts::FONT_MENU::nTall.Value, Vars::Fonts::FONT_MENU::nWeight.Value, Vars::Fonts::FONT_MENU::nFlags.Value},
+					{ 0x0, Vars::Fonts::FONT_INDICATORS::szName.c_str(), Vars::Fonts::FONT_INDICATORS::nTall.Value, Vars::Fonts::FONT_INDICATORS::nWeight.Value, Vars::Fonts::FONT_INDICATORS::nFlags.Value},
+					{ 0x0, "Verdana", 18, 1600, FONTFLAG_ANTIALIAS},
+					{ 0x0, "Verdana", 12, 800, FONTFLAG_DROPSHADOW},
+					});
+			}
 
 			if (I::EngineVGui->IsGameUIVisible())
 			{
 				if (!I::EngineClient->IsInGame())
 				{
-					static bool bOpenedMenuOnce = false;
+					static time_t curTime = time(0);
+					static tm* curCalTime = localtime(&curTime);
+
 					if (F::Menu.IsOpen)
 					{
 						g_Draw.String(FONT_MENU, 5, g_ScreenSize.h - 5 - Vars::Fonts::FONT_MENU::nTall.Value, { 116, 255, 48, 255 }, ALIGN_DEFAULT, __DATE__);
 						F::Visuals.DrawDVD();
-						bOpenedMenuOnce = true;
+						if (curCalTime->tm_mon == 11)
+						{
+							g_Draw.String(FONT_MENU, g_ScreenSize.c, 150, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, "MERRY CHRISTMAS!!!!!!!");
+						}
 					}
-
-					static time_t curTime = time(0);
-					static tm* curCalTime = localtime(&curTime);
 
 					if (curCalTime->tm_mon == 11)
 					{
-						if (!bOpenedMenuOnce)
-						{
-							g_Draw.String(FONT_MENU, g_ScreenSize.c, 150, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, "Happy Non-Discriminatory December Seasonal Holiday!");
-						}
 						F::Visuals.DrawMenuSnow();
 					}
 				}
@@ -143,6 +118,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 14), void, __fastc
 			{
 				if (I::EngineClient->IsTakingScreenshot() && Vars::Visuals::CleanScreenshots.Value) { return FinishDrawing(I::VGuiSurface); }
 				F::Visuals.DrawAntiAim(pLocal);
+				F::Visuals.DrawWatermark();
+				F::Visuals.DrawInfoTab(pLocal);
 				F::Visuals.DrawTickbaseInfo(pLocal);
 				F::Visuals.DrawAimbotFOV(pLocal);
 				F::Visuals.ScopeLines(pLocal);
@@ -151,67 +128,8 @@ MAKE_HOOK(EngineVGui_Paint, Utils::GetVFuncPtr(I::EngineVGui, 14), void, __fastc
 				F::Visuals.DrawOnScreenPing(pLocal);
 				F::Visuals.DrawServerHitboxes();
 				F::AntiAim.Draw(pLocal);
+				F::Ticks.DrawDebug();
 
-				if (I::ThirdPersonManager)
-				{
-					/*g_Draw.String(FONT_MENU, 10, 400, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Camera Offset: %f %f %f",
-								  I::ThirdPersonManager->m_vecCameraOffset.x,
-								  I::ThirdPersonManager->m_vecCameraOffset.y,
-								  I::ThirdPersonManager->m_vecCameraOffset.z);
-
-					g_Draw.String(FONT_MENU, 10, 420, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Desired camera offset: %f %f %f",
-								  I::ThirdPersonManager->m_vecDesiredCameraOffset.x,
-								  I::ThirdPersonManager->m_vecDesiredCameraOffset.y,
-								  I::ThirdPersonManager->m_vecDesiredCameraOffset.z);
-
-					g_Draw.String(FONT_MENU, 10, 440, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Camera origin: %f %f %f",
-								  I::ThirdPersonManager->m_vecCameraOrigin.x,
-								  I::ThirdPersonManager->m_vecCameraOrigin.y,
-								  I::ThirdPersonManager->m_vecCameraOrigin.z);
-
-					g_Draw.String(FONT_MENU, 10, 460, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Use camera offsets: %d",
-								  I::ThirdPersonManager->m_bUseCameraOffsets);
-
-					g_Draw.String(FONT_MENU, 10, 480, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Camera viewangles: %f %f %f",
-								  I::ThirdPersonManager->m_ViewAngles.x,
-								  I::ThirdPersonManager->m_ViewAngles.y,
-								  I::ThirdPersonManager->m_ViewAngles.z);
-
-					g_Draw.String(FONT_MENU, 10, 500, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Fraction: %f", I::ThirdPersonManager->m_flFraction);
-
-					g_Draw.String(FONT_MENU, 10, 520, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Up fraction: %f", I::ThirdPersonManager->m_flUpFraction);
-
-					g_Draw.String(FONT_MENU, 10, 540, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Target fraction: %f", I::ThirdPersonManager->m_flTargetFraction);
-
-					g_Draw.String(FONT_MENU, 10, 560, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Target up fraction: %f", I::ThirdPersonManager->m_flTargetUpFraction);
-
-					g_Draw.String(FONT_MENU, 10, 580, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Override in thirdperson: %d", I::ThirdPersonManager->m_bOverrideThirdPerson);
-
-					g_Draw.String(FONT_MENU, 10, 600, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Forced: %d", I::ThirdPersonManager->m_bForced);
-
-					g_Draw.String(FONT_MENU, 10, 620, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Up offset: %f", I::ThirdPersonManager->m_flUpOffset);
-
-					g_Draw.String(FONT_MENU, 10, 640, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Lerp time: %f", I::ThirdPersonManager->m_flLerpTime);
-
-					g_Draw.String(FONT_MENU, 10, 660, { 255,255,255,255 }, ALIGN_DEFAULT,
-								  "Up lerp time: %f", I::ThirdPersonManager->m_flUpLerpTime);
-
-					if (GetAsyncKeyState('O') & 0x1) I::ThirdPersonManager->m_bForced = !I::ThirdPersonManager->m_bForced;
-				*/
-				}
 			}
 
 			F::Visuals.DrawPredictionLine();

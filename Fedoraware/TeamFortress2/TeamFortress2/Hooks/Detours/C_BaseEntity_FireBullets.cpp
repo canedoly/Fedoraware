@@ -23,6 +23,7 @@ struct FireBulletsInfo_t
 	FireBulletsInfo_t(int nShots, const Vec3& vecSrc, const Vec3& vecDir, const Vec3& vecSpread, float flDistance,
 					  int nAmmoType, bool bPrimaryAttack = true)
 	{
+		//m_iShots = Vars::Test::TracerDrawOnce.Value ? 1 : nShots;
 		m_iShots = nShots;
 		m_vecSrc = vecSrc;
 		m_vecDirShooting = vecDir;
@@ -107,6 +108,7 @@ bool FireBulletsHandler(CBaseCombatWeapon* pWeapon)
 		return false;
 	}
 
+	//const int nBulletAmount = Vars::Test::TracerDrawOnce.Value ? 1 : pWeapon->GetBulletAmount();
 	const int nBulletAmount = pWeapon->GetBulletAmount();
 
 	if (nBulletAmount != nLastBulletAmount)
@@ -142,6 +144,7 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"55 8B EC 81 
 	{
 		return Hook.Original<FN>()(ecx, edx, pWeapon, info, bDoEffects, nDamageType, nCustomDamageType);
 	}
+	I::EngineClient->ClientCmd_Unrestricted("r_drawtracers_firstperson 1");
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
 		const Vec3 vStart = info.m_vecSrc;
@@ -151,17 +154,27 @@ MAKE_HOOK(C_BaseEntity_FireBullets, g_Pattern.Find(L"client.dll", L"55 8B EC 81 
 		CTraceFilterHitscan filter = {};
 		filter.pSkip = pLocal;
 
-		/* if ur shooting thru stuff, change MASK_SHOT to MASK_SOLID - myzarfin */
 		Utils::Trace(vStart, vEnd, (MASK_SHOT /* | CONTENTS_GRATE | MASK_VISIBLE*/), &filter, &trace);
 
 		const int iAttachment = pWeapon->LookupAttachment("muzzle");
 		pWeapon->GetAttachment(iAttachment, trace.vStartPos);
 
+		const Color_t customColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
+		Color_t tracerColor = Vars::Test::TracerTeamBased.Value ? Utils::GetEntityDrawColor(pLocal, false) : customColor;
+
 		if (Vars::Visuals::BulletTracer.Value)
 		{
-			const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
-
-			F::Visuals.AddBulletTracer(trace.vStartPos, trace.vEndPos, tracerColor);
+			if (Vars::Test::TracerProjectileOnly.Value)
+			{
+				if (G::CurWeaponType == EWeaponType::PROJECTILE)
+				{
+					F::Visuals.AddBulletTracer(trace.vStartPos, trace.vEndPos, tracerColor);
+				}
+			}
+			else
+			{
+				F::Visuals.AddBulletTracer(trace.vStartPos, trace.vEndPos, tracerColor);
+			}
 
 			/*I::DebugOverlay->AddLineOverlayAlpha(trace.vStartPos, trace.vEndPos, tracerColor.r, tracerColor.g, tracerColor.b,
 												 Colors::BulletTracer.a, true, 5);*/

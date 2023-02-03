@@ -31,8 +31,11 @@ namespace G
 	inline int CurrentTargetIdx = 0; // Index of the current aimbot target
 	inline int CurItemDefIndex = 0; // DefIndex of the current weapon
 	inline int NotifyCounter = 0;
-	inline int EyeAngDelay = 25;
+	inline int EyeAngDelay = 60;
 	inline int NextSafeTick = 0;	//	I::GlobalVars->tickcount + sv_maxusrcmdprocessticks_holdaim + 1 (when attacking)
+	inline int CritDamage = 0;
+	inline int MeleeDamage = 0;
+	inline int NormalDamage = 0;
 	inline float LerpTime = 0.f;	//	current lerp time
 	inline bool WeaponCanHeadShot = false; // Can the current weapon headshot?
 	inline bool WeaponCanAttack = false; // Can the current weapon attack?
@@ -58,6 +61,8 @@ namespace G
 	inline bool ForceSendPacket = false; // might not actually be useful 
 	inline bool ForceChokePacket = false; // might not actually be useful 
 	inline bool IsChoking = false; // might not actually be useful 
+	inline int ChokedTicks = 0;	// amount the ticks were choking
+	inline int AATicks = 0;
 
 	/* Aimbot */
 	inline bool IsAttacking = false; // this is only used by aimbot, and is also set to false at the start of a lot of functions, this is not reliable

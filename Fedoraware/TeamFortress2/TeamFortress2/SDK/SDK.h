@@ -153,6 +153,7 @@ namespace Colors
 	inline Gradient_t DTBarIndicatorsCharging = { {255, 192, 81, 180}, {255, 134, 81, 180} };
 	inline Gradient_t ChokedBar =				{ { 47, 39, 0, 255 }, { 255, 210, 0, 255 } };
 	inline Gradient_t GradientHealthBar =				{ { 255, 0, 0, 255 }, { 0, 202, 124, 255 } };
+	inline Gradient_t GradientHealthBarBuild = { { 255, 0, 0, 255 }, { 0, 202, 124, 255 } };
 	inline Gradient_t GradientOverhealBar =		{ { 0, 202, 124, 255 }, { 167, 255, 237, 255 } };
 	inline Gradient_t UberchargeBar =			{ { 255, 255, 255, 255 }, { 255, 0, 228, 255 } };
 	inline Color_t WaitForShift =				{ 255, 175, 15, 255};	// used for deadflag dt bar
@@ -359,11 +360,13 @@ namespace Utils
 				out = Colors::Invuln;
 			}
 		}
-
-		// if (pEntity->GetIndex() == G::CurrentTargetIdx)
-		// {
-		// 	out = Colors::Target;
-		// }
+		/*if (Vars::Test::HighlightTarget.Value)	// this var doesn't exist anymore
+		{
+			if (pEntity->GetIndex() == G::CurrentTargetIdx)
+			{
+				out = Colors::Target;
+			}
+		}*/
 
 		return out;
 	}

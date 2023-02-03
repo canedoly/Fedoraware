@@ -4,7 +4,7 @@
 bool CFakeLag::IsVisible(CBaseEntity* pLocal)
 {
 	const Vec3 vVisCheckPoint = pLocal->GetEyePosition();
-	const Vec3 vPredictedCheckPoint = pLocal->GetEyePosition() + (pLocal->m_vecVelocity() * (I::GlobalVars->interval_per_tick * 6));	//	6 ticks in da future
+	const Vec3 vPredictedCheckPoint = pLocal->GetEyePosition() + (pLocal->m_vecVelocity() * (I::GlobalVars->interval_per_tick * Vars::Test::PredictTicks.Value));	//	6 ticks in da future
 	for (const auto& pEnemy : g_EntityCache.GetGroup(EGroupType::PLAYERS_ENEMIES))
 	{
 		if (!pEnemy || !pEnemy->IsAlive() || pEnemy->IsCloaked() || pEnemy->IsAGhost() || pEnemy->GetFeignDeathReady() || pEnemy->IsBonked()) { continue; }
@@ -37,14 +37,20 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal)
 {
 	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
 	const int doubleTapAllowed = 22 - G::ShiftedTicks;
+
 	const bool retainFakelagTest = Vars::Misc::CL_Move::RetainFakelag.Value ? G::ShiftedTicks != 1 : !G::ShiftedTicks;
 	if (!iNetChan) { return false; }	//	no netchannel no fakelag
 
 	// Failsafe, in case we're trying to choke too many ticks
-	if (std::max(ChokeCounter, iNetChan->m_nChokedPackets) > 21)
+	if (std::max(G::ChokedTicks, iNetChan->m_nChokedPackets) > 21)
 	{
 		return false;
 	}
+
+	/*if (Vars::AntiHack::AntiAim::Active.Value && Vars::Test::AAfl.Value)
+	{
+		return true;
+	}*/
 
 	// Should fix an issue with getting teleported back to the ground for now, pretty ghetto imo
 	if (!pLocal->OnSolid() && pInAirTicks.first && pInAirTicks.second > 13)
@@ -52,14 +58,13 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal)
 		return false;
 	}
 
-	// Are we attacking? TODO: Add more logic here
-	if (G::IsAttacking)
+	if (Vars::Test::UnchokeOnAttack.Value && G::IsAttacking)
 	{
 		return false;
 	}
 
 	// Are we recharging
-	if ((ChokeCounter >= doubleTapAllowed || G::Recharging || G::RechargeQueued || !retainFakelagTest) && Vars::Misc::CL_Move::Enabled.Value)
+	if ((G::ChokedTicks >= doubleTapAllowed || G::Recharging || G::RechargeQueued || !retainFakelagTest) && Vars::Misc::CL_Move::Enabled.Value)
 	{
 		return false;
 	}
@@ -91,7 +96,7 @@ bool CFakeLag::IsAllowed(CBaseEntity* pLocal)
 	switch (Vars::Misc::CL_Move::FakelagMode.Value)
 	{
 		case FL_Plain:
-		case FL_Random: { return ChokeCounter < ChosenAmount; }
+		case FL_Random: { return G::ChokedTicks < ChosenAmount; }
 		case FL_Adaptive:
 		{
 			const Vec3 vDelta = vLastPosition - pLocal->m_vecOrigin();
@@ -113,12 +118,14 @@ void CFakeLag::OnTick(CUserCmd* pCmd, bool* pSendPacket)
 		ChosenAmount = Vars::Misc::CL_Move::FakelagValue.Value;
 	}
 
+
 	const auto& pLocal = g_EntityCache.GetLocal();
 	if (!pLocal || !pLocal->IsAlive())
 	{
 
 		*pSendPacket = true;
-		ChokeCounter = 0;
+		G::ChokedTicks = 0;
+		G::AATicks = 0;
 
 		return;
 	}
@@ -130,14 +137,27 @@ void CFakeLag::OnTick(CUserCmd* pCmd, bool* pSendPacket)
 		*pSendPacket = true;
 		// Set a new random amount (if desired)
 		if (Vars::Misc::CL_Move::FakelagMode.Value == FL_Random) { ChosenAmount = Utils::RandIntSimple(Vars::Misc::CL_Move::FakelagMin.Value, Vars::Misc::CL_Move::FakelagMax.Value); }
-		ChokeCounter = 0;
+		G::ChokedTicks = 0;
 		pInAirTicks = {pLocal->OnSolid(), 0};
 		return;
 	}
 
+	/*if (Vars::Test::AAfl.Value && (G::ChokedTicks <= 3))
+	{
+		G::IsChoking = true;
+		*pSendPacket = false;
+		G::ChokedTicks++;
+		if (Vars::AntiHack::AntiAim::Active.Value)
+		{
+			G::AATicks++;
+		}
+	}
+	else
+	{*/
 	G::IsChoking = true;
 	*pSendPacket = false;
-	ChokeCounter++;
+	G::ChokedTicks++;
+	//}
 
 	if (!pLocal->OnSolid()){
 		pInAirTicks.second++;

@@ -33,14 +33,16 @@ void CVisuals::DrawHitboxMatrix(CBaseEntity* pEntity, Color_t colourface, Color_
 		Vec3 matrixOrigin;
 		Math::GetMatrixOrigin(matrix, matrixOrigin);
 
-		// if (G::CurWeaponType = EWeaponType::HITSCAN)
-		// {
 		I::DebugOverlay->AddBoxOverlay2(matrixOrigin, bbox->bbmin, bbox->bbmax, bboxAngle, colourface, colouredge, time);
-		// }
-		// if (G::CurWeaponType = EWeaponType::PROJECTILE)
-		// {
-		// 	::DebugOverlay->AddBoxOverlay2(matrixOrigin, bbox->bbmin, bbox->bbmax, 0.f, colourface, colouredge, time);
-		// }
+
+		/*if (G::CurWeaponType = EWeaponType::HITSCAN)
+		{
+			I::DebugOverlay->AddBoxOverlay2(matrixOrigin, bbox->bbmin, bbox->bbmax, bboxAngle, colourface, colouredge, time);
+		}
+		if (G::CurWeaponType = EWeaponType::PROJECTILE)
+		{
+			I::DebugOverlay->AddBoxOverlay(matrixOrigin, bbox->bbmin, bbox->bbmax, bboxAngle, clr.r,clr.g,clr.b, time);
+		}*/
 	}
 }
 
@@ -103,23 +105,23 @@ void CVisuals::DrawOnScreenPing(CBaseEntity* pLocal){
 	const float flLatencyReal = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 750;
 	const int flFakeLatency = Vars::Backtrack::Latency.Value;
 	const int flLatencyScoreBoard = cResource->GetPing(pLocal->GetIndex());
-	const float flLatencyReal2 = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 725;
+	const float flLatencyReal2 = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 775;
 
 	const int x = Vars::Visuals::OnScreenPing.x;
 	const int y = Vars::Visuals::OnScreenPing.y;
 	const int h = Vars::Visuals::OnScreenPing.h;
 
-	const int nTextOffset = g_Draw.m_vecFonts[FONT_MENU].nTall;
+	const int nTextOffset = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
 	{
 		if (Vars::Backtrack::Enabled.Value && Vars::Backtrack::Latency.Value)
 		{
-			g_Draw.String(FONT_MENU, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f	 (+ %d) ms", flLatencyReal2, flFakeLatency);
+			g_Draw.String(FONT_INDICATORS, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f	 (+ %d) ms", flLatencyReal2, flFakeLatency);
 		}
 		else
 		{
-			g_Draw.String(FONT_INDICATORS, x + 20, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f ms", flLatencyReal2);
+			g_Draw.String(FONT_INDICATORS, x, y, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Real %.0f ms", flLatencyReal2);
 		}
-		g_Draw.String(FONT_INDICATORS, x, y + h - nTextOffset, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Scoreboard %d ms", flLatencyScoreBoard);
+		g_Draw.String(FONT_INDICATORS, x, y + nTextOffset, { 255, 255, 255, 255 }, ALIGN_DEFAULT, "Scoreboard %d ms", flLatencyScoreBoard);
 	}
 }
 
@@ -343,7 +345,7 @@ void CVisuals::DrawDebugInfo(CBaseEntity* pLocal)
 	// Debug info
 	if (Vars::Debug::DebugInfo.Value)
 	{
-		int yoffset = 10, xoffset = 10;
+		int yoffset = Vars::Test::Watermark.Value ? 100 : 10, xoffset = 10;
 
 			// header
 		{
@@ -373,7 +375,7 @@ void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 		return;
 	}
 
-	if (Vars::AntiHack::AntiAim::Active.Value)
+	if (Vars::AntiHack::AntiAim::Active.Value && Vars::Test::AAlines.Value)
 	{
 		static constexpr Color_t realColour = { 0, 255,0, 255 };
 		static constexpr Color_t fakeColour = { 255, 0, 0, 255 };
@@ -397,7 +399,171 @@ void CVisuals::DrawAntiAim(CBaseEntity* pLocal)
 	}
 }
 
+void CVisuals::DrawInfoTab(CBaseEntity* pLocal)
+{
+	if (!Vars::Test::InfoTab.Value) { return; }
+
+	int options = 1;
+
+	// bools ---
+	bool AAactive;
+	bool DTactive;
+	bool FLactive;
+	bool BTactive;
+	// bools ---
+
+	// Options ---
+	if (Vars::AntiHack::AntiAim::Active.Value)	{ options += 1; AAactive = true; } else { AAactive = false; }
+	if (Vars::Misc::CL_Move::Enabled.Value)		{ options += 1; DTactive = true; } else { DTactive = false; }
+	if (Vars::Misc::CL_Move::Fakelag.Value)		{ options += 1; FLactive = true; } else { FLactive = false; }
+	if (Vars::Backtrack::Enabled.Value)			{ options += 1; BTactive = true; } else { BTactive = false; }
+	// Options ---
+
+	// main rect ---
+	int fontSize = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+
+	int x = Vars::Test::InfoX.Value;
+	int y = Vars::Test::InfoY.Value;
+	int barW = 153;
+	int barH = fontSize + 12;
+
+	int barH2 = fontSize * options + 3;
+	// main rect ---
+
+	// rect colors ---
+	Color_t green = { 0,255,0,255 };
+	Color_t red = { 255,0,0,255 };
+	Color_t white = { 255,255,255,255 };
+	Color_t bg = Vars::Menu::Colors::MenuAccent;
+	// rect colors ---
+
+	// text funcs ---
+	const char* activeDT = G::ShiftedTicks > 0 ? "Active" : "Not Active";
+	const char* activeFL = G::ChokedTicks > 0 ? "Active" : "Not Active";
+
+	Color_t clrDT = G::ShiftedTicks > 0 ? green : red;
+	Color_t clrFL = G::ChokedTicks > 0 ? green : red;
+	// text funcs ---
+
+	// text offset ---
+	int textX = x - 3;
+	int textY = y - 3;
+
+	int textY2 = (y + barH) + 3;
+	// text offset ---
+
+	// draw funcs ---
+	g_Draw.Rect(x, y, barW, barH, { bg.r, bg.g, bg.b, 70 });
+	g_Draw.String(FONT_INDICATORS, textX, textY, white, ALIGN_DEFAULT, L"Information");
+	g_Draw.Rect(x, y + barH, barW, barH2, { 15,15,15,210 });
+	g_Draw.OutlinedRect(x, y, barW, barH + barH2, { bg.r, bg.g, bg.b, 255 });
+	// draw funcs ---
+
+	// text funcs ---
+	if (AAactive) {
+		g_Draw.String(FONT_INDICATORS, textX, textY2, white, ALIGN_DEFAULT, L"Anti Aim");
+		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
+	}
+	if (DTactive) {
+		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"DT (%D)", G::ShiftedTicks);
+		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrDT, ALIGN_REVERSE, activeDT);
+	}
+	if (FLactive) {
+		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Fakelag (%d)", G::ChokedTicks);
+		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrFL, ALIGN_REVERSE, activeFL);
+	}
+	if (BTactive) {
+		int BTlatency = Vars::Backtrack::Latency.Value;
+		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Backtrack (%dms)", BTlatency);
+		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
+	}
+	// text funcs ---
+
+	/*int options = 1;
+
+	if (Vars::AntiHack::AntiAim::Active.Value)	{ options += 1; }
+	if (Vars::Misc::CL_Move::Enabled.Value)		{ options += 1; }
+	if (Vars::Misc::CL_Move::Fakelag.Value)		{ options += 1; }
+	if (Vars::Backtrack::Enabled.Value)			{ options += 1; }
+
+	int fontSize = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+	int infoY = Vars::Test::InfoY.Value;
+	int infoX = Vars::Test::InfoX.Value;
+	int infoW = 153;
+	int infoH = fontSize + 12;
+	int rectH = fontSize * options + 1;
+	Color_t green = { 0,255,0,255 };
+	Color_t red = { 255,0,0,255 };
+	Color_t white = { 255,255,255,255 };
+	Color_t bg = Vars::Menu::Colors::MenuAccent;
+
+	const char* activeDT = G::ShiftedTicks > 0 ? "Active" : "Not Active";
+	const char* activeFL = G::ChokedTicks > 0 ? "Active" : "Not Active";
+	Color_t clrDT = G::ShiftedTicks > 0 ? green : red;
+	Color_t clrFL = G::ChokedTicks > 0 ? green : red;
+
+	g_Draw.Rect(infoX - 3, infoY - 3, infoW, infoH, { bg.r, bg.g, bg.b, 70 });
+	g_Draw.String(FONT_INDICATORS, infoX, infoY, white, ALIGN_DEFAULT, L"Information");
+
+	g_Draw.Rect(infoX - 3, (infoY - 3) + infoH, infoW, rectH, { 15,15,15,215 });
+	g_Draw.OutlinedRect(infoX - 3, infoY - 3, infoW, infoH + rectH, { bg.r, bg.g, bg.b, 255 });
+
+	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
+
+	float totalLatency = (iNetChan->GetLatency(FLOW_INCOMING) + iNetChan->GetLatency(FLOW_OUTGOING)) * 775;
+	int totalLatencyT = TIME_TO_TICKS(totalLatency / 775);
+
+	int flTicks = G::ChokedTicks;
+
+	if (Vars::AntiHack::AntiAim::Active.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, infoX, infoY += fontSize, white, ALIGN_DEFAULT, L"AntiAim");
+		g_Draw.String(FONT_INDICATORS, infoX + 150, infoY, green, ALIGN_REVERSE, L"Active");
+	}
+	if (Vars::Misc::CL_Move::Enabled.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, infoX, infoY += fontSize, white, ALIGN_DEFAULT, L"DT (%d)", G::ShiftedTicks);
+		g_Draw.String(FONT_INDICATORS, infoX + 150, infoY, clrDT, ALIGN_REVERSE, activeDT);
+	}
+	if (Vars::Misc::CL_Move::Fakelag.Value)
+	{
+		g_Draw.String(FONT_INDICATORS, infoX, infoY += fontSize, white, ALIGN_DEFAULT, L"Fakelag (%d)", flTicks);
+		g_Draw.String(FONT_INDICATORS, infoX + 150, infoY, clrFL, ALIGN_REVERSE, activeFL);
+	}
+	if (Vars::Backtrack::Enabled.Value)
+	{
+		int BTlatency = Vars::Backtrack::Latency.Value;
+		g_Draw.String(FONT_INDICATORS, infoX, infoY += fontSize, white, ALIGN_DEFAULT, L"Backtrack (%dms)", BTlatency);
+		g_Draw.String(FONT_INDICATORS, infoX + 150, infoY, green, ALIGN_REVERSE, L"Active");
+	}*/
+
+}
+
+void CVisuals::DrawWatermark()
+{
+	if (!I::EngineClient->IsInGame()) { return; }
+	if (Vars::Test::Watermark.Value == 0) { return; }
+	switch (Vars::Test::Watermark.Value)
+
+	// nitro v1 styled
+	case 1:
+	{
+		int height = g_Draw.m_vecFonts[FONT_MENU].nTall + Vars::Test::MarkH.Value;
+		int MarkX = Vars::Test::MarkX.Value;
+		int MarkY = Vars::Test::MarkY.Value;
+		int MarkW = Vars::Test::MarkW.Value;
+		int MarkH2 = Vars::Test::MarkH2.Value;
+		Color_t clr = Vars::Menu::Colors::MenuAccent;
+
+		g_Draw.Rect(MarkX, MarkY, MarkW, height, { 10,10,10,220 });
+		g_Draw.Rect(MarkX, MarkY, MarkW, height / MarkH2, { clr.r, clr.g, clr.b, 220});
+
+		g_Draw.String(FONT_MENU, MarkX + 5, MarkY + (height / MarkH2) + 1, {255,255,255,255}, ALIGN_DEFAULT, L"Fedoraware | Build: 1.0.50b Date: 12/28/2022");
+	}
+}
+
 #include "../../Resources/DVD-Icon.h"
+#include "../Aimbot/AimbotProjectile/AimbotProjectile.h"
 
 void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 {
@@ -415,7 +581,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.91f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
-				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.885f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.883f); Math::Clamp(fastInterp, 0.00f, 1.00f);
 
 				// wait for shift
 				const int WFS = 26;
@@ -536,6 +702,28 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {0,0,0,240});
 							g_Draw.Rect(DTBox.x + 1, DTBoxY + DTBox.y + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
 						}
+						break;
+					}
+					case 8:
+					{
+						float charged = G::ShiftedTicks;
+						float max = Vars::Misc::CL_Move::DTTicks.Value;
+						float result = (charged / max) * 100;
+						float result2 = std::ceilf(result);
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 12, {200,0,0,255}, ALIGN_CENTERHORIZONTAL, L"Charge %.f", result2);
+						break;
+					}
+					case 9:
+					{
+						float Ticks_Time = TICKS_TO_TIME(G::ShiftedTicks);	// testing new stuff
+
+						g_Draw.Rect(10, DTBox.y, DTBox.w, DTBox.h, { 10,10,10,220 });
+						g_Draw.Rect(10, DTBox.y, DTBox.w, DTBox.h / 5, Vars::Menu::Colors::MenuAccent);
+						g_Draw.Rect(10, DTBox.y, fastInterp * DTBox.w, DTBox.h / 5, { 129, 255, 61, 255 });
+
+						g_Draw.String(FONT_MENU, 10 + 3, DTBox.y + (DTBox.h / 5) + 1, { 255,255,255,255 }, ALIGN_DEFAULT, L"nos %.2fs", Ticks_Time);
+						break;
 					}
 				}
 			}
@@ -571,77 +759,77 @@ void CVisuals::DrawServerHitboxes()
 
 void CVisuals::DrawMenuSnow()
 {
-	{	//	menu snow
-		struct snowFlake
-		{
-			std::pair<int, int> position;
-		};
-
-		static std::vector<snowFlake> vSnowFlakes;
-		constexpr int snowCount = 1000;
-
-		static bool bInit = false;
-		if (!bInit)
-		{
-			for (int i = 0; i < snowCount; i++)
-			{
-				vSnowFlakes.push_back({ {Utils::RandIntSimple(0, g_ScreenSize.w), Utils::RandIntSimple(0, g_ScreenSize.h / 2.f)} });
-			}
-			bInit = true;
-		}
-
-		for (snowFlake& flake : vSnowFlakes)
-		{
-//	do gravity
-			constexpr int drift = 1;
-			flake.position.first += Utils::RandFloatRange(-drift, drift);
-			flake.position.second += drift;
-
-			//	calculate alpha
-			float Alpha = Math::MapFloat(flake.position.second, 0.0f, g_ScreenSize.h / 2.f, 1.0f, 0.0f);
-			//
-			//	recreate snow flakes that are gone
-			if (Alpha <= 0.f || flake.position.first >= g_ScreenSize.w || flake.position.first <= 0)
-			{
-				flake = { {
-						Utils::RandIntSimple(0, g_ScreenSize.w),
-						Utils::RandIntSimple(0, 100),
-				},
-				};
-			}//
-
-			Color_t flakeColour = { 255, 255, 255, static_cast<byte>(Alpha * 255.0f) };
-			g_Draw.String(FONT_MENU, flake.position.first, flake.position.second, flakeColour, ALIGN_DEFAULT, "*");
-		}
-	}
+//	{	//	menu snow
+//		struct snowFlake
+//		{
+//			std::pair<int, int> position;
+//		};
+//
+//		static std::vector<snowFlake> vSnowFlakes;
+//		constexpr int snowCount = 1000;
+//
+//		static bool bInit = false;
+//		if (!bInit)
+//		{
+//			for (int i = 0; i < snowCount; i++)
+//			{
+//				vSnowFlakes.push_back({ {Utils::RandIntSimple(0, g_ScreenSize.w), Utils::RandIntSimple(0, g_ScreenSize.h / 2.f)} });
+//			}
+//			bInit = true;
+//		}
+//
+//		for (snowFlake& flake : vSnowFlakes)
+//		{
+////	do gravity
+//			constexpr int drift = 1;
+//			flake.position.first += Utils::RandFloatRange(-drift, drift);
+//			flake.position.second += drift;
+//
+//			//	calculate alpha
+//			float Alpha = Math::MapFloat(flake.position.second, 0.0f, g_ScreenSize.h / 2.f, 1.0f, 0.0f);
+//			//
+//			//	recreate snow flakes that are gone
+//			if (Alpha <= 0.f || flake.position.first >= g_ScreenSize.w || flake.position.first <= 0)
+//			{
+//				flake = { {
+//						Utils::RandIntSimple(0, g_ScreenSize.w),
+//						Utils::RandIntSimple(0, 100),
+//				},
+//				};
+//			}//
+//
+//			Color_t flakeColour = { 255, 255, 255, static_cast<byte>(Alpha * 255.0f) };
+//			g_Draw.String(FONT_MENU, flake.position.first, flake.position.second, flakeColour, ALIGN_DEFAULT, "*");
+//		}
+//	}
 }
 
 void CVisuals::DrawDVD()
 {
-	{
-		static int iDVD = g_Draw.CreateTextureFromArray(DVDIcon::rawData, 237, 139);
+	//{
+	//	static int iDVD = g_Draw.CreateTextureFromArray(DVDIcon::rawData, 237, 139);
 
-				// DVD Logo
-		if (iDVD && Vars::Menu::ShowDVD.Value)
-		{
-			static Vec2 logoPos = { 1, 1 };
-			static Vec2 logoVelocity = { 1, -1 };
+	//			// DVD Logo
+	//	if (iDVD && Vars::Menu::ShowDVD.Value)
+	//	{
+	//		static Vec2 logoPos = { 1, 1 };
+	//		static Vec2 logoVelocity = { 1, -1 };
 
-			if (logoPos.y <= 0 || logoPos.y >= (g_ScreenSize.h - DVDIcon::Height))
-			{
-				logoVelocity.y = -logoVelocity.y;
-			}
-			if (logoPos.x <= 0 || logoPos.x >= (g_ScreenSize.w - DVDIcon::Width))
-			{
-				logoVelocity.x = -logoVelocity.x;
-			}
-			logoPos += logoVelocity;
+	//		if (logoPos.y <= 0 || logoPos.y >= (g_ScreenSize.h - DVDIcon::Height))
+	//		{
+	//			logoVelocity.y = -logoVelocity.y;
+	//		}
+	//		if (logoPos.x <= 0 || logoPos.x >= (g_ScreenSize.w - DVDIcon::Width))
+	//		{
+	//			logoVelocity.x = -logoVelocity.x;
+	//		}
+	//		logoPos += logoVelocity;
 
-			I::VGuiSurface->DrawSetTexture(iDVD);
-			I::VGuiSurface->DrawSetColor(Utils::Rainbow());
-			I::VGuiSurface->DrawTexturedRect(logoPos.x, logoPos.y, DVDIcon::Width, DVDIcon::Height);
-		}
-	}
+	//		I::VGuiSurface->DrawSetTexture(iDVD);
+	//		I::VGuiSurface->DrawSetColor(Utils::Rainbow());
+	//		I::VGuiSurface->DrawTexturedRect(logoPos.x, logoPos.y, DVDIcon::Width, DVDIcon::Height);
+	//	}
+	//}
 }
 
 void CVisuals::DrawPredictionLine()
@@ -676,7 +864,10 @@ void CVisuals::DrawMovesimLine()
 			{
 				for (size_t i = 1; i < G::PredLinesBackup.size(); i++)
 				{
-					RenderLine(G::PredLinesBackup.at(i - 1).first, G::PredLinesBackup.at(i).first, Vars::Aimbot::Projectile::PredictionColor, false);
+					Color_t clr = Vars::Aimbot::Projectile::PredictionColor;
+					bool occluded = Vars::Test::Occluded.Value;
+
+					RenderLine(G::PredLinesBackup.at(i - 1).first, G::PredLinesBackup.at(i).first, clr, !occluded); // false - indicates ignoring z (visible through walls) true - is visible only
 				}
 			}
 			else
@@ -828,7 +1019,7 @@ void CVisuals::PruneBulletTracers()
 		for (size_t i = 0; i < m_vecBulletTracers.size(); i++)
 		{
 			const auto& bulletTracer = m_vecBulletTracers.at(i);
-			if (curtime > bulletTracer.m_flTimeCreated + 5)
+			if (curtime > bulletTracer.m_flTimeCreated + Vars::Test::TracerDuration.Value)
 			{
 				m_vecBulletTracers.erase(m_vecBulletTracers.begin(), m_vecBulletTracers.begin() + 1);
 			}
@@ -844,16 +1035,6 @@ void CVisuals::DrawBulletTracers()
 		for (const auto& bulletTracer : m_vecBulletTracers)
 		{
 			Color_t tracerColor = bulletTracer.m_Color;
-			const float flDistance = curTime - bulletTracer.m_flTimeCreated;
-			if (flDistance < 0)
-			{
-				tracerColor.a = 255;
-			}
-			else
-			{
-				//I::Cvar->ConsolePrintf("%f\n", flDistance);
-				tracerColor.a = Math::RemapValClamped(flDistance, 0, 1, 255, 0);
-			}
 			/*I::Cvar->ConsolePrintf("a: %d\n", tracerColor.a);*/
 			RenderLine(bulletTracer.m_vStartPos, bulletTracer.m_vEndPos, tracerColor, false);
 		}
@@ -880,7 +1061,9 @@ void CVisuals::DrawProjectileTracer(CBaseEntity* pLocal, const Vec3& position)
 
 	lastTickcount = I::GlobalVars->tickcount;
 	const Vec3 vecPos = G::CurWeaponType == EWeaponType::PROJECTILE ? G::PredictedPos : position;
-	const Color_t tracerColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
+	const Color_t customColor = Vars::Visuals::BulletTracerRainbow.Value ? Utils::Rainbow() : Colors::BulletTracer;
+	Color_t tracerColor = Vars::Test::TracerTeamBased.Value ? Utils::GetEntityDrawColor(pLocal, false) : customColor;
+
 	Vec3 shootPos;
 	const int iAttachment = pLocal->GetActiveWeapon()->LookupAttachment("muzzle");
 	pLocal->GetActiveWeapon()->GetAttachment(iAttachment, shootPos);

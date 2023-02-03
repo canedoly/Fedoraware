@@ -75,10 +75,13 @@ void CBacktrack::MakeRecords()
 		if (!pEntity) { continue; }
 		if (!pEntity->IsPlayer()) { return; }
 		const float flSimTime = pEntity->GetSimulationTime(), flOldSimTime = pEntity->GetOldSimulationTime();
+		const float flSimTimeDelta = flSimTime - flOldSimTime;
+		const bool bSkipFrame = flSimTimeDelta > TICKS_TO_TIME(2);	//	lag comp records are created for the first simulated tick on the server & not the last.
+		const bool bAllowPredict = mRecords[pEntity].size() > 0 && flSimTime != flOldSimTime;
 
 		//Utils::ConLog("LagCompensation", tfm::format("SimTime = %.1f\nOldSimTime = %.1f", flSimTime, flOldSimTime).c_str(), {255, 0, 0, 255});
 
-		if (flSimTime != flOldSimTime)
+		if (flSimTime != flOldSimTime && !bSkipFrame)
 		{
 			//	create record on simulated players
 			//Utils::ConLog("LagCompensation", "Setting Up Bones", {255, 0, 0, 255});
@@ -108,6 +111,42 @@ void CBacktrack::MakeRecords()
 				pEntity->GetAbsAngles(),
 										 });
 		}
+		else if (bAllowPredict && mRecords[pEntity].front().flSimTime != flSimTime) {
+			const Vec3 vRestoreOrigin = pEntity->m_vecOrigin();
+			if (F::MoveSim.Initialize(pEntity)) {
+				CMoveData moveData{}; Vec3 vAbsOrigin{};
+				F::MoveSim.RunTick(moveData, vAbsOrigin);
+				pEntity->SetAbsOrigin(vAbsOrigin);
+				F::MoveSim.Restore();
+			}
+
+			{
+				matrix3x4 bones[128];
+				if (!pEntity->SetupBones(bones, 128, BONE_USED_BY_ANYTHING, flOldSimTime + I::GlobalVars->interval_per_tick)) { continue; }
+				const Vec3 vOrigin = pEntity->m_vecOrigin();
+				if (!mRecords[pEntity].empty())
+				{
+					// as long as we have 1 record we can check for lagcomp breaking here
+					const Vec3 vPrevOrigin = mRecords[pEntity].front().vOrigin;
+					const Vec3 vDelta = vOrigin - vPrevOrigin;
+					if (vDelta.Length2DSqr() > 4096.f)
+					{
+						mRecords[pEntity].clear();
+					}
+				}
+
+				mRecords[pEntity].push_front({
+					flOldSimTime + I::GlobalVars->interval_per_tick,
+					flCurTime,
+					iTickcount,
+					mDidShoot[pEntity->GetIndex()],
+					*reinterpret_cast<BoneMatrixes*>(&bones),
+					vOrigin,
+					pEntity->GetAbsAngles(),
+					});
+			}
+			pEntity->SetVecOrigin(vRestoreOrigin);
+		}
 
 		//cleanup
 		mDidShoot[pEntity->GetIndex()] = false;
@@ -117,6 +156,47 @@ void CBacktrack::MakeRecords()
 			mRecords[pEntity].pop_back();
 		} //	schizoid check
 	}
+}
+
+int CBacktrack::GetLatencyTicks() {
+	INetChannel* iNetChan = I::EngineClient->GetNetChannelInfo();
+	if (!iNetChan) { return 0; }
+
+	const float flLatency = iNetChan->GetLatency(FLOW_OUTGOING) + iNetChan->GetLatency(FLOW_INCOMING);
+	const float flLerp = G::LerpTime;
+	return TIME_TO_TICKS(flLerp + flLatency);
+}
+
+int CBacktrack::GetMaxFakelagRemaining(CBaseEntity* pEntity) {
+	const int iCurLag = G::ChokeMap[pEntity->GetIndex()];
+	return fmax(22 - iCurLag, 0);
+}
+
+bool CBacktrack::IsLikelyToBreakLagComp(CBaseEntity* pEntity) {
+	//only run on cheaters
+	const auto& playerResource = g_EntityCache.GetPR();
+	if (playerResource && playerResource->GetValid(pEntity->GetIndex()))
+	{
+		const uint32_t priorityID = playerResource->GetAccountID(pEntity->GetIndex());
+		if (G::PlayerPriority[priorityID].Mode != 4) { return false; }
+	}
+
+	const int iPredict = (Vars::Backtrack::AccountForFakelag.Value ? GetMaxFakelagRemaining(pEntity) : 0) + GetLatencyTicks();	//	predict into when they could unchoke & to the server.
+	const Vec3 vOldOrigin = pEntity->GetAbsOrigin();
+	if (F::MoveSim.Initialize(pEntity)) {
+		CMoveData moveData{}; Vec3 vAbsOrigin{};
+
+		for (int i = 0; i < iPredict; i++) {
+			F::MoveSim.RunTick(moveData, vAbsOrigin);
+		}
+
+		const Vec3 vDelta = vAbsOrigin - vOldOrigin;
+		if (vDelta.Length2DSqr() > 4096.f) { return true; }
+
+		F::MoveSim.Restore();
+	}
+
+	return false;
 }
 
 // Store the last 2048 sequences
