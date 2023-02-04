@@ -1205,6 +1205,7 @@ void CMenu::MenuVisuals()
 					{
 						I::ViewRender->SetScreenOverlayMaterial(nullptr);
 					}
+					WToggle("Halloween Footsteps", &Vars::Visuals::HalloweenSpellFootsteps.Value);
 					if (Vars::Visuals::HalloweenSpellFootsteps.Value)
 					{
 						if (!Vars::Test::CustomParticles.Value) //Particle colors overrides the color picker
@@ -1864,8 +1865,10 @@ void CMenu::MenuMisc()
 			// $ Cathook crithack (0%) | expected (1.0b 65) | Delay: 5-10 commits
 
 			SectionTitle("General");
-			Text("Version: 1.0b, (50)"); HelpMarker("Version X - the current version, b - beta, (X) indicates commits after initial version (NOTE: this isn't an actual version)");
+			Text("Version: 1.0b, (51)"); HelpMarker("Version X - the current version, b - beta, (X) indicates commits after initial version (NOTE: this isn't an actual version)");
 			// changelog
+			// 1.0b 51 - Some changes, fixed it to work with the latest game version and some other fixes/changes
+			//
 			// 1.0b 50 - Should be around 55-60 but idrc. Changed spectator list to be Rijin styled, changed overall looks of info tab. Removed some stuff like aa fakelag (menu option only) and some other stuff idk
 			// 
 			// 1.0b 49 - New dt indicator, small change to crithack some other changes like choking 3 ticks while having aa and slowly implementing extrapolation for hitscan, and changes to lithium dt bar

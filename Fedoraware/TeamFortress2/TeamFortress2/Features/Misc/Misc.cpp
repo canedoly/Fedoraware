@@ -1079,7 +1079,7 @@ void CMisc::FastStop(CUserCmd* pCmd, CBaseEntity* pLocal)
 					Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, Vars::Test::AntiWarpScale.Value);
 				}
 				else {
-					Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (1.f / currentPos.Dist2D(predEndPoint)));
+					Utils::WalkTo(pCmd, pLocal, predEndPoint, currentPos, (1.f / currentPos.Dist2D(predEndPoint)) - 0.05f);
 				}
 				//	the "slight stop" that u can see when we do this is due to (i believe) the player reaching the desired point, and then constantly accelerating backwards, meaning their velocity-
 				//	when they finish shifting ticks, is lower than when they started.

@@ -403,83 +403,83 @@ void CVisuals::DrawInfoTab(CBaseEntity* pLocal)
 {
 	if (!Vars::Test::InfoTab.Value) { return; }
 
+	// int options = 1;
+
+	// // bools ---
+	// bool AAactive;
+	// bool DTactive;
+	// bool FLactive;
+	// bool BTactive;
+	// // bools ---
+
+	// // Options ---
+	// if (Vars::AntiHack::AntiAim::Active.Value)	{ options += 1; AAactive = true; } else { AAactive = false; }
+	// if (Vars::Misc::CL_Move::Enabled.Value)		{ options += 1; DTactive = true; } else { DTactive = false; }
+	// if (Vars::Misc::CL_Move::Fakelag.Value)		{ options += 1; FLactive = true; } else { FLactive = false; }
+	// if (Vars::Backtrack::Enabled.Value)			{ options += 1; BTactive = true; } else { BTactive = false; }
+	// // Options ---
+
+	// // main rect ---
+	// int fontSize = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
+
+	// int x = Vars::Test::InfoX.Value;
+	// int y = Vars::Test::InfoY.Value;
+	// int barW = 153;
+	// int barH = fontSize + 12;
+
+	// int barH2 = fontSize * options + 3;
+	// // main rect ---
+
+	// // rect colors ---
+	// Color_t green = { 0,255,0,255 };
+	// Color_t red = { 255,0,0,255 };
+	// Color_t white = { 255,255,255,255 };
+	// Color_t bg = Vars::Menu::Colors::MenuAccent;
+	// // rect colors ---
+
+	// // text funcs ---
+	// const char* activeDT = G::ShiftedTicks > 0 ? "Active" : "Not Active";
+	// const char* activeFL = G::ChokedTicks > 0 ? "Active" : "Not Active";
+
+	// Color_t clrDT = G::ShiftedTicks > 0 ? green : red;
+	// Color_t clrFL = G::ChokedTicks > 0 ? green : red;
+	// // text funcs ---
+
+	// // text offset ---
+	// int textX = x - 3;
+	// int textY = y - 3;
+
+	// int textY2 = (y + barH) + 3;
+	// // text offset ---
+
+	// // draw funcs ---
+	// g_Draw.Rect(x, y, barW, barH, { bg.r, bg.g, bg.b, 70 });
+	// g_Draw.String(FONT_INDICATORS, textX, textY, white, ALIGN_DEFAULT, L"Information");
+	// g_Draw.Rect(x, y + barH, barW, barH2, { 15,15,15,210 });
+	// g_Draw.OutlinedRect(x, y, barW, barH + barH2, { bg.r, bg.g, bg.b, 255 });
+	// // draw funcs ---
+
+	// // text funcs ---
+	// if (AAactive) {
+	// 	g_Draw.String(FONT_INDICATORS, textX, textY2, white, ALIGN_DEFAULT, L"Anti Aim");
+	// 	g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
+	// }
+	// if (DTactive) {
+	// 	g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"DT (%D)", G::ShiftedTicks);
+	// 	g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrDT, ALIGN_REVERSE, activeDT);
+	// }
+	// if (FLactive) {
+	// 	g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Fakelag (%d)", G::ChokedTicks);
+	// 	g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrFL, ALIGN_REVERSE, activeFL);
+	// }
+	// if (BTactive) {
+	// 	int BTlatency = Vars::Backtrack::Latency.Value;
+	// 	g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Backtrack (%dms)", BTlatency);
+	// 	g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
+	// }
+	// // text funcs ---
+
 	int options = 1;
-
-	// bools ---
-	bool AAactive;
-	bool DTactive;
-	bool FLactive;
-	bool BTactive;
-	// bools ---
-
-	// Options ---
-	if (Vars::AntiHack::AntiAim::Active.Value)	{ options += 1; AAactive = true; } else { AAactive = false; }
-	if (Vars::Misc::CL_Move::Enabled.Value)		{ options += 1; DTactive = true; } else { DTactive = false; }
-	if (Vars::Misc::CL_Move::Fakelag.Value)		{ options += 1; FLactive = true; } else { FLactive = false; }
-	if (Vars::Backtrack::Enabled.Value)			{ options += 1; BTactive = true; } else { BTactive = false; }
-	// Options ---
-
-	// main rect ---
-	int fontSize = g_Draw.m_vecFonts[FONT_INDICATORS].nTall;
-
-	int x = Vars::Test::InfoX.Value;
-	int y = Vars::Test::InfoY.Value;
-	int barW = 153;
-	int barH = fontSize + 12;
-
-	int barH2 = fontSize * options + 3;
-	// main rect ---
-
-	// rect colors ---
-	Color_t green = { 0,255,0,255 };
-	Color_t red = { 255,0,0,255 };
-	Color_t white = { 255,255,255,255 };
-	Color_t bg = Vars::Menu::Colors::MenuAccent;
-	// rect colors ---
-
-	// text funcs ---
-	const char* activeDT = G::ShiftedTicks > 0 ? "Active" : "Not Active";
-	const char* activeFL = G::ChokedTicks > 0 ? "Active" : "Not Active";
-
-	Color_t clrDT = G::ShiftedTicks > 0 ? green : red;
-	Color_t clrFL = G::ChokedTicks > 0 ? green : red;
-	// text funcs ---
-
-	// text offset ---
-	int textX = x - 3;
-	int textY = y - 3;
-
-	int textY2 = (y + barH) + 3;
-	// text offset ---
-
-	// draw funcs ---
-	g_Draw.Rect(x, y, barW, barH, { bg.r, bg.g, bg.b, 70 });
-	g_Draw.String(FONT_INDICATORS, textX, textY, white, ALIGN_DEFAULT, L"Information");
-	g_Draw.Rect(x, y + barH, barW, barH2, { 15,15,15,210 });
-	g_Draw.OutlinedRect(x, y, barW, barH + barH2, { bg.r, bg.g, bg.b, 255 });
-	// draw funcs ---
-
-	// text funcs ---
-	if (AAactive) {
-		g_Draw.String(FONT_INDICATORS, textX, textY2, white, ALIGN_DEFAULT, L"Anti Aim");
-		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
-	}
-	if (DTactive) {
-		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"DT (%D)", G::ShiftedTicks);
-		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrDT, ALIGN_REVERSE, activeDT);
-	}
-	if (FLactive) {
-		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Fakelag (%d)", G::ChokedTicks);
-		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, clrFL, ALIGN_REVERSE, activeFL);
-	}
-	if (BTactive) {
-		int BTlatency = Vars::Backtrack::Latency.Value;
-		g_Draw.String(FONT_INDICATORS, textX, textY2 += fontSize, white, ALIGN_DEFAULT, L"Backtrack (%dms)", BTlatency);
-		g_Draw.String(FONT_INDICATORS, textX + 150, textY2, white, ALIGN_REVERSE, L"Active");
-	}
-	// text funcs ---
-
-	/*int options = 1;
 
 	if (Vars::AntiHack::AntiAim::Active.Value)	{ options += 1; }
 	if (Vars::Misc::CL_Move::Enabled.Value)		{ options += 1; }
@@ -535,7 +535,7 @@ void CVisuals::DrawInfoTab(CBaseEntity* pLocal)
 		int BTlatency = Vars::Backtrack::Latency.Value;
 		g_Draw.String(FONT_INDICATORS, infoX, infoY += fontSize, white, ALIGN_DEFAULT, L"Backtrack (%dms)", BTlatency);
 		g_Draw.String(FONT_INDICATORS, infoX + 150, infoY, green, ALIGN_REVERSE, L"Active");
-	}*/
+	}
 
 }
 
@@ -555,10 +555,13 @@ void CVisuals::DrawWatermark()
 		int MarkH2 = Vars::Test::MarkH2.Value;
 		Color_t clr = Vars::Menu::Colors::MenuAccent;
 
-		g_Draw.Rect(MarkX, MarkY, MarkW, height, { 10,10,10,220 });
-		g_Draw.Rect(MarkX, MarkY, MarkW, height / MarkH2, { clr.r, clr.g, clr.b, 220});
+		std::wstring watermark = L"Fedoraware | Build: 1.0.51b Date: 2/4/2023";	// Month / Day / Year
+		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, watermark.c_str(), textw, texth);
 
-		g_Draw.String(FONT_MENU, MarkX + 5, MarkY + (height / MarkH2) + 1, {255,255,255,255}, ALIGN_DEFAULT, L"Fedoraware | Build: 1.0.50b Date: 12/28/2022");
+		g_Draw.Rect(MarkX, MarkY, textw + 10, height, { 10,10,10,220 });
+		g_Draw.Rect(MarkX, MarkY, textw + 10, height / MarkH2, { clr.r, clr.g, clr.b, 220});
+
+		g_Draw.String(FONT_MENU, MarkX + 5, MarkY + (height / MarkH2) + 1, {255,255,255,255}, ALIGN_DEFAULT, watermark.c_str());
 	}
 }
 
@@ -581,14 +584,11 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 				const DragBox_t DTBox = Vars::Misc::CL_Move::DTIndicator;
 				const float ratioCurrent = std::clamp(((float)G::ShiftedTicks / (float)Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
 				static float ratioInterp = 0.00f; ratioInterp = g_Draw.EaseIn(ratioInterp, ratioCurrent, 0.91f); Math::Clamp(ratioInterp, 0.00f, 1.00f);
-				static float fastInterp = 0.00f; fastInterp = g_Draw.EaseIn(fastInterp, ratioCurrent, 0.883f); Math::Clamp(fastInterp, 0.00f, 1.00f);
+
+				const float ratio = std::clamp(( (float) (G::ShiftedTicks) / Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
 
 				// wait for shift
 				const int WFS = 26;
-
-				const float wfsCurrent = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
-				static float wfsInterp = 0.00f; wfsInterp = g_Draw.EaseIn(wfsInterp, wfsCurrent, 0.89f); Math::Clamp(wfsInterp, 0.00f, 1.00f);
-				// end
 
 				static Color_t color1, color2;
 
@@ -642,11 +642,6 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 255, 46, 46, 255 }, ALIGN_REVERSE, L"DT IMPOSSIBLE");
 						}
-						// else if (!G::WaitForShift && ratioCurrent == 1) // ready (only show if we are fully charged)
-						// {
-						// 	g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
-
-						// }
 						else
 						{
 							g_Draw.String(FONT_INDICATORS, DTBox.x + DTBox.w, DTBox.y - 12, { 66, 255, 0, 255 }, ALIGN_REVERSE, L"READY");
@@ -687,20 +682,21 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 						
 						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, BGcolor);
-						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, {73, 230, 79, 255});
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, ratio * (DTBox.w - 2), DTBox.h - 2, {73, 230, 79, 255});
 						break;
 					}
 					case 7:
 					{
-						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {0,0,0,240});	// it probably isn't pure black probably like 8,8,8
-						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, fastInterp * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
+						const float ratioWFS = std::clamp(((float)G::WaitForShift / (float)WFS), 0.0f, 1.0f);
+
+						g_Draw.Rect(DTBox.x, DTBox.y, DTBox.w, DTBox.h, {8,8,8,240});
+						g_Draw.Rect(DTBox.x + 1, DTBox.y + 1, ratio * (DTBox.w - 2), DTBox.h - 2, Vars::Menu::Colors::MenuAccent);
 						int DTBoxY = DTBox.h * 1.5;
 
-						// wait for shit bar (very cool)
 						if (G::WaitForShift)
 						{
-							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {0,0,0,240});
-							g_Draw.Rect(DTBox.x + 1, DTBoxY + DTBox.y + 1, wfsInterp * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
+							g_Draw.Rect(DTBox.x, DTBoxY + DTBox.y, DTBox.w, DTBox.h, {8,8,8,240});
+							g_Draw.Rect(DTBox.x + 1, DTBoxY + DTBox.y + 1, ratioWFS * (DTBox.w - 2), DTBox.h - 2, Colors::WaitForShift);
 						}
 						break;
 					}
@@ -711,16 +707,19 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						float result = (charged / max) * 100;
 						float result2 = std::ceilf(result);
 
-						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 12, {200,0,0,255}, ALIGN_CENTERHORIZONTAL, L"Charge %.f", result2);
+						std::wstring lithium = L"Charge %.f" + L"%";
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 12, {200,0,0,255}, ALIGN_CENTERHORIZONTAL, lithium.c_str());
 						break;
 					}
 					case 9:
 					{
+						const float ratioWFS = std::clamp(( (float) (G::ShiftedTicks) / Vars::Misc::CL_Move::DTTicks.Value), 0.0f, 1.0f);
 						float Ticks_Time = TICKS_TO_TIME(G::ShiftedTicks);	// testing new stuff
 
 						g_Draw.Rect(10, DTBox.y, DTBox.w, DTBox.h, { 10,10,10,220 });
 						g_Draw.Rect(10, DTBox.y, DTBox.w, DTBox.h / 5, Vars::Menu::Colors::MenuAccent);
-						g_Draw.Rect(10, DTBox.y, fastInterp * DTBox.w, DTBox.h / 5, { 129, 255, 61, 255 });
+						g_Draw.Rect(10, DTBox.y, ratio * DTBox.w, DTBox.h / 5, { 129, 255, 61, 255 });
 
 						g_Draw.String(FONT_MENU, 10 + 3, DTBox.y + (DTBox.h / 5) + 1, { 255,255,255,255 }, ALIGN_DEFAULT, L"nos %.2fs", Ticks_Time);
 						break;
