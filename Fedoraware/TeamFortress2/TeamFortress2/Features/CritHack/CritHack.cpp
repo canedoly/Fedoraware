@@ -539,12 +539,12 @@ void CCritHack::Draw()
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
 		}
 
-		if (!CanCrit() && AreRandomCritsEnabled())
+		if (!CanCrit(pWeapon) && AreRandomCritsEnabled())
 		{
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, Vars::Menu::Colors::MenuAccent, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 		}
 
-		if (CanCrit() && AreRandomCritsEnabled())
+		if (CanCrit(pWeapon) && AreRandomCritsEnabled())
 		{
 			if (ShouldCrit())
 			{
@@ -585,12 +585,12 @@ void CCritHack::Draw()
 			BarClr = Vars::Menu::Colors::MenuAccent;
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"Server disabled crits");
 		}
-		if (!CanCrit() && AreRandomCritsEnabled())
+		if (!CanCrit(pWeapon) && AreRandomCritsEnabled())
 		{
 			BarClr = Vars::Menu::Colors::MenuAccent;
 			g_Draw.String(FONT_INDICATORS, x, currentY += 15, BarClr, ALIGN_CENTERHORIZONTAL, L"This weapon can't randomly crit");
 		}
-		if (CanCrit() && AreRandomCritsEnabled())
+		if (CanCrit(pWeapon) && AreRandomCritsEnabled())
 		{
 			if (observed > needed)
 			{
@@ -707,7 +707,7 @@ void CCritHack::FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash)
 
 				I::EngineClient->GetPlayerInfo(nIndex, &pi);
 
-				if (bCrit && !isMelee && CCritHack::CanCrit())
+				if (bCrit && !isMelee && CanCrit(pWeapon))
 				{
 					G::CritDamage += nDamage;
 				}
