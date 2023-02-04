@@ -442,12 +442,6 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 					else { break; }
 				} // don't remove.
 
-				// we have found a point.
-				if (bNeedsTimeCheck)
-				{
-					if (TICKS_TO_TIME(n - 1) > (pLocal->GetAbsOrigin().DistTo(vPredictedPos) / projInfo.m_flVelocity)) { break; }	//	lol
-				}
-
 				//const Vec3 vAimDelta = predictor.m_pEntity->GetAbsOrigin() - aimPosition;
 				//vPredictedPos.x += abs(vAimDelta.x);
 				//vPredictedPos.y += abs(vAimDelta.y);
@@ -507,21 +501,15 @@ bool CAimbotProjectile::SolveProjectile(CBaseEntity* pLocal, CBaseCombatWeapon* 
 					break;
 				}
 
+				if (TIME_TO_TICKS(out.m_flTime) > (n + 1)) {
+					continue;
+				}
+
 				out.m_flTime += fLatency;
-				if (Vars::Test::ProjTest2.Value)
+				if (GetDetTime() >= out.m_flTime)
 				{
-					if (out.m_flTime < GetDetTime())
-					{
-						float val = GetDetTime() - out.m_flTime;
-
-						g_Draw.String(FONT_MENU, 10, 150, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f val", val);
-						g_Draw.String(FONT_MENU, 10, 150 + 15, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f GetDetTime", GetDetTime());
-						g_Draw.String(FONT_MENU, 10, 150 + 30, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f out.m_flTime", out.m_flTime);
-						g_Draw.String(FONT_MENU, 10, 150 + 30, { 255,255,255,255 }, ALIGN_DEFAULT, L"%.f result", out.m_flTime + val);
-
-						out.m_flTime += val;
-
-					}
+					float result = GetDetTime() - out.m_flTime;
+					out.m_flTime += result;
 				}
 
 				if (out.m_flTime < TICKS_TO_TIME(n))

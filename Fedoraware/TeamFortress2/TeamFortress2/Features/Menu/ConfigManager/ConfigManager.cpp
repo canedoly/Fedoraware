@@ -792,6 +792,9 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_VAR(Vars::Visuals::SkyboxChanger);
 			SAVE_VAR(Vars::Visuals::BulletTracer);
 			SAVE_VAR(Vars::Visuals::BulletTracerRainbow);
+			SAVE_VAR(Vars::Visuals::HalloweenSpellFootsteps);
+			SAVE_VAR(Vars::Visuals::ColorType);
+			SAVE_VAR(Vars::Visuals::DashOnly);
 			SAVE_VAR(Vars::Visuals::AimbotViewmodel);
 			SAVE_VAR(Vars::Visuals::ViewmodelSway);
 			SAVE_VAR(Vars::Visuals::MoveSimLine);
@@ -1089,6 +1092,7 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 			SAVE_OTHER(Colors::bonecolor);
 			SAVE_OTHER(Colors::HitboxFace);
 			SAVE_OTHER(Colors::HitboxEdge);
+			SAVE_OTHER(Colors::FeetColor);
 
 			SAVE_OTHER(Vars::Skybox::SkyboxNum);
 			SAVE_STRING(Vars::Skybox::SkyboxName);
@@ -1718,6 +1722,9 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_VAR(Vars::Visuals::ParticleTracer);
 			LOAD_VAR(Vars::Visuals::BulletTracer);
 			LOAD_VAR(Vars::Visuals::BulletTracerRainbow);
+			LOAD_VAR(Vars::Visuals::HalloweenSpellFootsteps);
+			LOAD_VAR(Vars::Visuals::ColorType);
+			LOAD_VAR(Vars::Visuals::DashOnly);
 			LOAD_VAR(Vars::Visuals::AimbotViewmodel);
 			LOAD_VAR(Vars::Visuals::ViewmodelSway);
 			LOAD_VAR(Vars::Visuals::MoveSimLine);
@@ -2014,6 +2021,7 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 			LOAD_OTHER(Colors::bonecolor);
 			LOAD_OTHER(Colors::HitboxFace);
 			LOAD_OTHER(Colors::HitboxEdge);
+			LOAD_OTHER(Colors::FeetColor);
 
 			LOAD_OTHER(Vars::Chams::Players::Local);
 			LOAD_OTHER(Vars::Chams::Players::FakeAng);
