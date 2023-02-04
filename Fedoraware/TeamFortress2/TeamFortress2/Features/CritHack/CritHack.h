@@ -51,7 +51,7 @@ private:
 	int cdamage = 0;
 
 public:
-	bool CanCrit();
+	bool CanCrit(CBaseCombatWeapon* pWeapon);
 	void Run(CUserCmd* pCmd);
 	void Draw();
 	void FireEvent(CGameEvent* pEvent, const FNV1A_t uNameHash);

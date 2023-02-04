@@ -23,7 +23,7 @@ bool CCritHack::IsEnabled()
 	return true;
 }
 
-bool CCritHack::CanCrit()
+bool CCritHack::CanCrit(CBaseCombatWeapon* pWeapon)
 {
 	float CritChance = Utils::ATTRIB_HOOK_FLOAT(1, "mult_crit_chance", pWeapon, 0, 1);
 	if (CritChance == 0)

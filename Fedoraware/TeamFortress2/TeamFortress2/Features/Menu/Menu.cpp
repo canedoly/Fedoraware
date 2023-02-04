@@ -1207,7 +1207,7 @@ void CMenu::MenuVisuals()
 					}
 					if (Vars::Visuals::HalloweenSpellFootsteps.Value)
 					{
-						if (!Vars::Visuals::ParticleColors.Value) //Particle colors overrides the color picker
+						if (!Vars::Test::CustomParticles.Value) //Particle colors overrides the color picker
 						{
 							WCombo("Color Type", &Vars::Visuals::ColorType.Value, { "Color Picker", "Rainbow" });
 							if (Vars::Visuals::ColorType.Value == 0)
