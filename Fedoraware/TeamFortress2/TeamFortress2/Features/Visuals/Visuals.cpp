@@ -555,6 +555,8 @@ void CVisuals::DrawWatermark()
 		int MarkH2 = Vars::Test::MarkH2.Value;
 		Color_t clr = Vars::Menu::Colors::MenuAccent;
 
+		int textw = MarkW; int texth;
+
 		std::wstring watermark = L"Fedoraware | Build: 1.0.51b Date: 2/4/2023";	// Month / Day / Year
 		I::VGuiSurface->GetTextSize(g_Draw.m_vecFonts.at(FONT_INDICATORS).dwFont, watermark.c_str(), textw, texth);
 
@@ -707,7 +709,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						float result = (charged / max) * 100;
 						float result2 = std::ceilf(result);
 
-						std::wstring lithium = L"Charge %.f" + L"%";
+						std::wstring lithium = L"Charge %.f%";
 
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + 12, {200,0,0,255}, ALIGN_CENTERHORIZONTAL, lithium.c_str());
 						break;
