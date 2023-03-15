@@ -760,7 +760,7 @@ namespace Utils
 		pCmd->upmove = result.z * scale;
 	}
 
-/*	__inline void StopMovement(CUserCmd* pCmd, bool safe = true) {
+	__inline void StopMovement(CUserCmd* pCmd, bool safe = true) {
 		if (safe && G::IsAttacking) { return; }
 
 		if (CBaseEntity* pLocal = g_EntityCache.GetLocal()) {
@@ -771,29 +771,29 @@ namespace Utils
 			pCmd->sidemove = 0; pCmd->forwardmove = 0;
 			G::ShouldStop = false;
 		}
-	}*/
-
-	__inline void StopMovement(CUserCmd* pCmd, bool safe = true) { //credits to fourteen
-		if (safe && G::IsAttacking) { return; }
-
-		if (CBaseEntity* pLocal = g_EntityCache.GetLocal()) {
-			QAngle direction;
-			Vector forward;
-
-			pCmd->viewangles.x = 90;
-			pCmd->viewangles.y = Math::VelocityToAngles(pLocal->m_vecVelocity()).y;
-
-			Math::VectorAngles(pLocal->GetVecVelocity(), direction);
-			direction.y = pCmd->viewangles.y - direction.y;
-			Math::AngleVectors(direction, &forward);
-
-			Vector negated_direction = forward * pLocal->GetVecVelocity().Length2D();
-			pCmd->forwardmove = negated_direction.x;
-			pCmd->sidemove = negated_direction.y;
-
-			G::ShouldStop = false;
-		}
 	}
+
+	//__inline void StopMovement(CUserCmd* pCmd, bool safe = true) { //credits to fourteen
+	//	if (safe && G::IsAttacking) { return; }
+
+	//	if (CBaseEntity* pLocal = g_EntityCache.GetLocal()) {
+	//		QAngle direction;
+	//		Vector forward;
+
+	//		pCmd->viewangles.x = 90;
+	//		pCmd->viewangles.y = Math::VelocityToAngles(pLocal->m_vecVelocity()).y;
+
+	//		Math::VectorAngles(pLocal->GetVecVelocity(), direction);
+	//		direction.y = pCmd->viewangles.y - direction.y;
+	//		Math::AngleVectors(direction, &forward);
+
+	//		Vector negated_direction = forward * pLocal->GetVecVelocity().Length2D();
+	//		pCmd->forwardmove = negated_direction.x;
+	//		pCmd->sidemove = negated_direction.y;
+
+	//		G::ShouldStop = false;
+	//	}
+	//}
 
 	__inline void ConLog(const char* cFunction, const char* cLog, Color_t cColour){
 		I::Cvar->ConsoleColorPrintf(cColour, "[%s] ", cFunction);
@@ -843,6 +843,200 @@ namespace Utils
 		// Nothing found
 		return -1;
 	}
+
+	//__inline ProjectileType_t GetProjectileType(CBaseCombatWeapon* pWeapon)
+	//{
+	//	switch (pWeapon->GetWeaponID())
+	//	{
+	//	case TF_WEAPON_SYRINGEGUN_MEDIC: return TF_PROJECTILE_SYRINGE;
+	//	case TF_WEAPON_ROCKETLAUNCHER:
+	//	case TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT:
+	//	{
+	//		return TF_PROJECTILE_ROCKET;
+	//	}
+	//	case TF_WEAPON_FLAREGUN:
+	//	case TF_WEAPON_FLAREGUN_REVENGE:
+	//	{
+	//		return TF_PROJECTILE_FLARE;
+	//	}
+	//	case TF_WEAPON_COMPOUND_BOW:
+	//	case TF_WEAPON_CROSSBOW:
+	//	{
+	//		return TF_PROJECTILE_ARROW;
+	//	}
+	//	case TF_WEAPON_GRENADELAUNCHER:
+	//	{
+	//		return TF_PROJECTILE_PIPEBOMB;
+	//	}
+	//	case TF_WEAPON_JAR: return TF_PROJECTILE_JAR;
+	//	case TF_WEAPON_JAR_MILK: return TF_PROJECTILE_JAR_MILK;
+	//	default: return TF_PROJECTILE_NONE;
+	//	}
+	//}
+
+	//__inline void GetProjectileBounds(CBaseCombatWeapon* pWeapon, Vec3* vMins, Vec3* vMaxs)
+	//{
+	//	switch (pWeapon->GetWeaponID())
+	//	{
+	//	case TF_WEAPON_CROSSBOW:
+	//	{
+	//		*vMins = Vec3(-3.0f, -3.0f, -3.0f);
+	//		*vMaxs = Vec3(3.0f, 3.0f, 3.0f);
+	//		break;
+	//	}
+	//	case TF_WEAPON_COMPOUND_BOW:
+	//	case TF_WEAPON_JAR:
+	//	case TF_WEAPON_JAR_MILK:
+	//	case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
+	//	{
+	//		*vMins = Vec3(-1.0f, -1.0f, -1.0f);
+	//		*vMaxs = Vec3(1.0f, 1.0f, 1.0f);
+	//		break;
+	//	}
+	//	default:
+	//	{
+	//		*vMins = Vec3(0.0f, 0.0f, 0.0f);
+	//		*vMaxs = Vec3(0.0f, 0.0f, 0.0f);
+	//		break;
+	//	}
+	//	}
+	//}
+
+	//__inline bool RaycastProjectileTrajectory(CBaseEntity* pPlayer, CBaseEntity* pTarget, const ETargetType targetType, const Vector& vShootPos, const Vector& vProjVel, const float fProjGravity, const float fTime, CTraceFilterWorldAndPropsOnly& traceOut, const bool bDraw, const float fRes /* 0,1 - 1,0 */)
+	//{
+	//	if (!pPlayer || !pPlayer->IsAlive())
+	//		return false;
+
+	//	auto pWeapon = pPlayer->GetActiveWeapon();
+
+	//	if (!pWeapon)
+	//		return false;
+
+	//	Vector vStartPos = vShootPos;
+	//	Vector vStartVel = vProjVel;
+
+	//	// Simulation
+	//	const float MAX_TIME = fTime;
+	//	const float DT = TICK_INTERVAL;
+
+	//	static float TIME_STEP = 0.0f;
+	//	static int NUM_STEPS = 0;
+	//	static int NUM_STEP_LAST = 0;
+
+	//	// Save some CPU cycles if possible
+	//	static float fPrevRes = 0.0f;
+	//	static float fPrevMaxTime = 0.0f;
+	//	static float fPrevDT = 0.0f;
+	//	const int iCurWeapon = G::CurItemDefIndex;
+	//	static int iPrevWeapon = iCurWeapon;
+
+	//	if (iPrevWeapon != iCurWeapon || fPrevRes != fRes || fPrevMaxTime != MAX_TIME || fPrevDT != DT)
+	//	{
+	//		fPrevRes = fRes;
+	//		fPrevMaxTime = MAX_TIME;
+	//		fPrevDT = DT;
+	//		iPrevWeapon = iCurWeapon;
+
+	//		TIME_STEP = fProjGravity != 0.0f ? (DT / fRes) : (MAX_TIME);
+	//		NUM_STEPS = static_cast<int>(ceil(MAX_TIME / TIME_STEP)); // if for example is 66.0001, will be 67
+	//		NUM_STEP_LAST = NUM_STEPS - 1;
+	//	}
+
+	//	const Vector vAcceleration = { 0.0f, 0.0f, -g_ConVars.sv_gravity->GetFloat() * fProjGravity * (TIME_STEP * TIME_STEP) };
+	//	Vector vStepVel = vStartVel * TIME_STEP;
+	//	Vector vStepPos = vStartPos;
+	//	Vector vLastStepPos = vStepPos;
+	//	QAngle vaStepAngle;
+	//	Math::VectorAngles(vStepVel, vaStepAngle);
+
+	//	Vector vMins, vMaxs;
+	//	GetProjectileBounds(pWeapon, &vMins, &vMaxs);
+
+	//	Vector vDrawMins = vMins;
+	//	Vector vDrawMaxs = vMaxs;
+
+	//	if (bDraw)
+	//	{
+	//		if (vDrawMins.IsZero() || vDrawMaxs.IsZero())
+	//		{
+	//			vDrawMins = Vector(-2.0f, -2.0f, -2.0f);
+	//			vDrawMaxs = Vector(2.0f, 2.0f, 2.0f);
+	//		}
+	//	}
+
+	//	const float drawTime = TICK_INTERVAL * 2.0f;
+
+	//	if (bDraw)
+	//		I::DebugOverlay->AddBoxOverlay(vStartPos, vDrawMins, vDrawMaxs, vaStepAngle, 255, 255, 255, 127, drawTime);
+
+	//	//CTraceFilterIgnoreTeammates filter(pPlayer, COLLISION_GROUP_PROJECTILE, pPlayer->GetTeamNum());
+
+	//	Ray_t traceRay = {};
+	//	CGameTrace trace = {};
+
+	//	bool bWasHit = false;
+
+	//	for (int i = 0; i < NUM_STEPS; i++)
+	//	{
+	//		const bool bLastStep = i == NUM_STEP_LAST;
+
+	//		Vector vNextPos = vStepPos + vStepVel;
+
+	//		// Last step, fine tune so simulation time hits MAX_TIME exactly
+	//		if (bLastStep)
+	//		{
+	//			if (NUM_STEPS != 1) // single steps are expected to have simulation time == MAX_TIME
+	//			{
+	//				const float t = MAX_TIME - (i * TIME_STEP);
+	//				vNextPos = vStepPos + (vStepVel * t);
+	//			}
+	//		}
+
+	//		Utils::TraceHull(vStepPos, vNextPos, vMins, vMaxs, MASK_SHOT_HULL, &traceOut, &trace);
+
+	//		vStepPos = trace.vEndPos;
+
+	//		if (bDraw)
+	//		{
+	//			I::DebugOverlay->AddLineOverlay(vStepPos, vLastStepPos, 96, 96, 96, true, drawTime);
+
+	//			if (trace.DidHit() || bLastStep)
+	//			{
+	//				if (trace.DidHitNonWorldEntity())
+	//					Math::VectorAngles(trace.Plane, vaStepAngle);
+
+	//				I::DebugOverlay->AddBoxOverlay(vStepPos, vDrawMins, vDrawMaxs, vaStepAngle, 255, 255, 255, 127, drawTime);
+	//			}
+	//			else
+	//				I::DebugOverlay->AddBoxOverlay(vStepPos, vDrawMins * 0.35f, vDrawMaxs * 0.35f, vaStepAngle, 127, 127, 127, 100, drawTime);
+	//		}
+
+	//		if (trace.DidHitNonWorldEntity())
+	//		{
+	//			if (pTarget and trace.entity)
+	//			{
+	//				if (trace.entity == pTarget)
+	//					return true;
+	//			}
+	//			bWasHit = true;
+	//		}
+	//		else
+	//		{
+	//			if (targetType == ETargetType::PLAYER)
+	//			{
+	//				if (!bWasHit and bLastStep)
+	//				{
+	//					return true;
+	//				}
+	//			}
+	//		}
+
+	//		vStepVel += vAcceleration;
+	//		Math::VectorAngles(vStepVel, vaStepAngle);
+	//		vLastStepPos = vStepPos;
+	//	}
+	//	return false;
+	//}
 
 	// Returns the teleporter exit of a given owner
 	__inline bool GetTeleporterExit(int ownerIdx, Vec3* out)

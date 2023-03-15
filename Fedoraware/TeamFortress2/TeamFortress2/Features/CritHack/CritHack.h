@@ -10,7 +10,7 @@ private:
 	bool NoRandomCrits(CBaseCombatWeapon* pWeapon);
 	//bool ShouldForceMelee(CBaseCombatWeapon* pWeapon);	//	compare distances between local & enemies, force crits if we are within swing range of enemy.
 	bool IsAttacking(const CUserCmd* pCmd, CBaseCombatWeapon* pWeapon);
-	void ScanForCrits(const CUserCmd* pCmd, int loops = 10);
+	void ScanForCrits(const CUserCmd* pCmd, int loops = 4096);
 	int LastGoodCritTick(const CUserCmd* pCmd);
 	//int DamageToNextCrit(CBaseCombatWeapon* pWeapon);	//	returns a positive value if we are crit banned
 

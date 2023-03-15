@@ -714,6 +714,9 @@ void CMenu::MenuVisuals()
 							WCombo("Proxy Material", &proxySkinIndex, DMEProxyMaterials);
 
 						}
+						WToggle("Render Original Model", &currentStruct.renderOriginal);
+						WToggle("Original Model Obstructed", &currentStruct.originalObstructed);
+						WCombo("Render Priority", &currentStruct.originalPriority, { "First", "Last" }); HelpMarker("When to render original model? Before custom material (first) or after (last)");
 					}
 
 					SectionTitle("Chams Misc");
@@ -1285,7 +1288,7 @@ void CMenu::MenuVisuals()
 					WToggle("Anti viewmodel flip", &Vars::Misc::AntiViewmodelFlip.Value); HelpMarker("This is scuffed");
 
 					SectionTitle("DT Indicator");
-					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "SEOwned", "Numeric", "DeadFlag" }); HelpMarker("What style the bar should draw in.");
+					WCombo("DT indicator style", &Vars::Misc::CL_Move::DTBarStyle.Value, { "Off", "Default", "Nitro", "Rijin", "SEOwned", "Numeric", "DeadFlag", "So Cool"}); HelpMarker("What style the bar should draw in.");
 					Text("Charging Gradient");
 					ColorPickerL("DT charging right", Colors::DTBarIndicatorsCharging.endColour);
 					ColorPickerL("DT charging left", Colors::DTBarIndicatorsCharging.startColour, 1);
@@ -1842,6 +1845,20 @@ void CMenu::MenuMisc()
 			{
 				WSlider("Target ping", &Vars::Misc::PingTarget.Value, 0, 200); HelpMarker("Target ping that should be reached");
 			}
+
+			SectionTitle("Very cool");
+			WToggle("Glow Replace Z Fail", &Vars::Test::GlowZFailReplace.Value);
+			WSlider("Health Bar Fractions", &Vars::Test::HealthBarFractions.Value, 0, 10, "%d");
+
+			Text("");
+			Text("DT Background");
+			ColorPickerL("DT Background start", Vars::Test::DTBackground.startColour);
+			ColorPickerL("DT Background end", Vars::Test::DTBackground.endColour, 1);
+			Text("DT Background");
+			ColorPickerL("DT Main start", Vars::Test::DTMain.startColour);
+			ColorPickerL("DT Main end", Vars::Test::DTMain.endColour, 1);
+			Text("DT Outline");
+			ColorPickerL("DT Outline", Vars::Test::DTOutline);
 
 			SectionTitle("Party Networking");
 			WToggle("Enable###PartyNetEnable", &Vars::Misc::PartyNetworking.Value); HelpMarker("Enables party networking between Fedoraware users");

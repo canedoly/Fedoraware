@@ -294,7 +294,7 @@ void CCritHack::ScanForCrits(const CUserCmd* pCmd, int loops)
 		CritTicks.clear();
 	}
 
-	if (CritTicks.size() >= 256)
+	if (CritTicks.size() >= 4096)
 	{
 		return;
 	}
@@ -330,7 +330,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 	const auto& pWeapon = g_EntityCache.GetWeapon();
 	if (!pWeapon || !pWeapon->CanFireCriticalShot(false)) { return; }
 
-	ScanForCrits(pCmd, 50); //	fill our vector slowly.
+	ScanForCrits(pCmd, 500); //	fill our vector slowly.
 
 	const int closestGoodTick = LastGoodCritTick(pCmd); //	retrieve our wish
 	if (IsAttacking(pCmd, pWeapon)) //	is it valid & should we even use it
@@ -343,7 +343,7 @@ void CCritHack::Run(CUserCmd* pCmd)
 		}
 		else if (Vars::CritHack::AvoidRandom.Value) //	we don't want to crit
 		{
-			for (int tries = 1; tries < 25; tries++)
+			for (int tries = 0; tries < 25; tries++)
 			{
 				if (std::find(CritTicks.begin(), CritTicks.end(), pCmd->command_number + tries) != CritTicks.end())
 				{
@@ -381,7 +381,7 @@ void CCritHack::Draw()
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255, 255, 255, 255, }, ALIGN_CENTERHORIZONTAL, tfm::format("%x", reinterpret_cast<float*>(pWeapon + 0xA54)).c_str());
 	}
 	// Are we currently forcing crits?
-	if (ShouldCrit() && NoRandomCrits(pWeapon) == false)
+	if (ShouldCrit() && !NoRandomCrits(pWeapon))
 	{
 		if (CritTicks.size() > 0)
 		{ 
@@ -389,12 +389,12 @@ void CCritHack::Draw()
 		}
 	}
 	//Can this weapon do random crits?
-	if (NoRandomCrits(pWeapon) == true)
+	if (NoRandomCrits(pWeapon))
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255, 95, 95, 255 }, ALIGN_CENTERHORIZONTAL, L"No Random Crits");
 	}
 	//Crit banned check
-	if (CritTicks.size() == 0 && NoRandomCrits(pWeapon) == false)
+	if (CritTicks.size() == 0 && !NoRandomCrits(pWeapon))
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
 	}
@@ -402,7 +402,7 @@ void CCritHack::Draw()
 	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 	const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 	// crit bucket string (this sucks)
-	if (NoRandomCrits(pWeapon) == false)
+	if (!NoRandomCrits(pWeapon))
 	{
 		g_Draw.String(FONT_INDICATORS, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str());
 	}

@@ -105,6 +105,9 @@ void CConfigManager::SaveJson(const char* name, const Chams_t& val)
 {
 	boost::property_tree::ptree chamTree;
 	chamTree.put("showObstructed", val.showObstructed);
+	chamTree.put("renderOriginal", val.renderOriginal);
+	chamTree.put("originalObstructed", val.originalObstructed);
+	chamTree.put("originalPriority", val.originalPriority);
 	chamTree.put("drawMaterial", val.drawMaterial);
 	chamTree.put("overlayType", val.overlayType);
 	chamTree.put("chamsActive", val.chamsActive);
@@ -269,6 +272,16 @@ bool CConfigManager::SaveConfig(const std::string& configName)
 
 		SAVE_VAR(Vars::Debug::DebugInfo); //I added this because I felt like it
 		SAVE_VAR(Vars::Menu::MenuKey);
+
+		//Test
+		{
+			SAVE_VAR(Vars::Test::GlowZFailReplace);
+			SAVE_VAR(Vars::Test::HealthBarFractions);
+
+			SAVE_OTHER(Vars::Test::DTBackground);
+			SAVE_OTHER(Vars::Test::DTMain);
+			SAVE_OTHER(Vars::Test::DTOutline);
+		}
 
 		//Aimbot
 		{
@@ -654,6 +667,16 @@ bool CConfigManager::LoadConfig(const std::string& configName)
 
 		LOAD_VAR(Vars::Debug::DebugInfo);
 		LOAD_VAR(Vars::Menu::MenuKey);
+
+		//Test
+		{
+			LOAD_VAR(Vars::Test::GlowZFailReplace);
+			LOAD_VAR(Vars::Test::HealthBarFractions);
+
+			LOAD_OTHER(Vars::Test::DTBackground);
+			LOAD_OTHER(Vars::Test::DTMain);
+			LOAD_OTHER(Vars::Test::DTOutline);
+		}
 
 		//Aimbot
 		{

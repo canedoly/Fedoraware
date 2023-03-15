@@ -183,7 +183,7 @@ void CGlowEffect::Render()
 			StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
 			StencilState.m_PassOp = STENCILOPERATION_REPLACE;
 			StencilState.m_FailOp = STENCILOPERATION_KEEP;
-			StencilState.m_ZFailOp = STENCILOPERATION_REPLACE;
+			StencilState.m_ZFailOp = STENCILOPERATION_KEEP;
 			StencilState.SetStencilState(pRenderContext);
 		}
 
@@ -488,8 +488,8 @@ void CGlowEffect::Render()
 		StencilState.m_nReferenceValue = 0;
 		StencilState.m_CompareFunc = STENCILCOMPARISONFUNCTION_EQUAL;
 		StencilState.m_PassOp = STENCILOPERATION_KEEP;
-		StencilState.m_FailOp = STENCILOPERATION_KEEP;
-		StencilState.m_ZFailOp = STENCILOPERATION_KEEP;
+		StencilState.m_FailOp = Vars::Test::GlowZFailReplace.Value ? STENCILOPERATION_REPLACE : STENCILOPERATION_KEEP;;
+		StencilState.m_ZFailOp = Vars::Test::GlowZFailReplace.Value ? STENCILOPERATION_REPLACE : STENCILOPERATION_KEEP;
 		StencilState.SetStencilState(pRenderContext);
 
 		int nViewportX, nViewportY, nViewportWidth, nViewportHeight;

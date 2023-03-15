@@ -41,7 +41,7 @@ void CFakeAng::Run(CUserCmd* pCmd)
 				pAnimState->Update(G::FakeViewAngles.y, G::FakeViewAngles.x);
 
 				matrix3x4 bones[128];
-				if (pLocal->SetupBones(bones, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime))
+				if (pLocal->SetupBones(bones, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime + 0.5f))
 				{
 					BoneMatrix = *reinterpret_cast<FakeMatrixes*>(bones);
 				}

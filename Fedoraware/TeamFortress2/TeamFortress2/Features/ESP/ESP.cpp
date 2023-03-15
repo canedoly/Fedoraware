@@ -12,7 +12,7 @@ bool CESP::ShouldRun()
 	return true;
 }
 
-void CESP::Run()	// a
+void CESP::Run()
 {
 	if (const auto& pLocal = g_EntityCache.GetLocal())
 	{
@@ -242,6 +242,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				g_Draw.OutlinedRect(x, y, w, height, drawColor);
 				if (Vars::ESP::Main::Outlinedbar.Value)
 				{
+					g_Draw.OutlinedRect(x + 1, y + 1, w - 2, height - 2, Colors::OutlineESP);
 					g_Draw.OutlinedRect(x - 1, y - 1, w + 2, height + 2, Colors::OutlineESP);
 				}
 
@@ -288,16 +289,9 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				if (nHealth > nMaxHealth) {
 					g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::Overheal, ALIGN_DEFAULT, L"+%d", nHealth - nMaxHealth);
 				} else {
-					g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+					g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d HP", nHealth, nMaxHealth);
 				}
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
-			}
-
-			if (Vars::Debug::DebugInfo.Value)
-			{
-				Vec3 vPlayerVelocity{};
-				Player->EstimateAbsVelocity(vPlayerVelocity);
-				g_Draw.String(FONT, nTextX, y + nTextOffset, Colors::White, ALIGN_DEFAULT, L"SPEED (%.0f)", vPlayerVelocity.Length());
 			}
 
 			// Ubercharge status/bar
@@ -584,7 +578,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 					{
 						if ((ping >= 200 || ping <= 10) && ping != 0) // ping warning
 						{
-							g_Draw.String(FONT_ESP_COND, nTextX, y + nTextOffset, { 255, 95, 95, 255 }, ALIGN_DEFAULT, "%dMS", ping); //make it all caps so it matches with the condition esp
+							g_Draw.String(FONT_ESP_COND, nTextX, y + nTextOffset, { 255, 95, 95, 255 }, ALIGN_DEFAULT, "%d MS", ping); //make it all caps so it matches with the condition esp
 							nTextOffset += g_Draw.m_vecFonts[FONT_ESP_COND].nTall;
 						}
 					}
@@ -620,15 +614,7 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				auto flHealth = static_cast<float>(nHealth);
 				auto flMaxHealth = static_cast<float>(nMaxHealth);
 
-				float SPEED_FREQ = 145 / 0.65f;
-				int player_hp = flHealth;
-				int player_hp_max = flMaxHealth;
-				static float prev_player_hp[75];
-
-				if (prev_player_hp[Player->GetIndex()] > player_hp)
-					prev_player_hp[Player->GetIndex()] -= SPEED_FREQ * I::GlobalVars->frametime;
-				else
-					prev_player_hp[Player->GetIndex()] = player_hp;
+				int fractions = Vars::Test::HealthBarFractions.Value + 1;
 
 				Gradient_t clr = flHealth > flMaxHealth ? Colors::GradientOverhealBar : Colors::GradientHealthBar;
 
@@ -650,25 +636,24 @@ void CESP::DrawPlayers(CBaseEntity* pLocal)
 				Color_t barBackground = Vars::ESP::Main::Outlinedbar.Value ? Colors::OutlineESP : transparent;
 				if (Vars::ESP::Players::HealthBarStyle.Value == 0 && Vars::ESP::Players::HealthBar.Value)
 				{
-					if (Vars::ESP::Main::AnimatedHealthBars.Value)
-					{
-						g_Draw.OutlinedGradientBar(x - 4, y + h, 2, h, prev_player_hp[Player->GetIndex()] / player_hp_max, clr.startColour, clr.endColour, barBackground, false);
-					}
-					else
-					{
-						g_Draw.OutlinedGradientBar(x - 4, y + h, 2, h, ratio, clr.startColour, clr.endColour, barBackground, false);
-					}
+					g_Draw.OutlinedGradientBar(x - 4, y + h, 2, h, ratio, clr.startColour, clr.endColour, barBackground, false);
 				}
 
 				else if (Vars::ESP::Players::HealthBarStyle.Value == 1 && Vars::ESP::Players::HealthBar.Value)
 				{
-					if (Vars::ESP::Main::AnimatedHealthBars.Value)
+					g_Draw.RectOverlay(x - 4, y + h, 2, h, ratio, HealthColor, barBackground, false);
+				}
+
+				if (fractions > 1)	// its a scuffed way of fixing something i didn't like lol
+				{
+					float flh = static_cast<float>(h) / fractions;
+
+					//int LineX = (x - 4) - w;
+					//int LineY = (y + h) - h;
+
+					for (int i = 1; i < fractions; i++)
 					{
-						g_Draw.RectOverlay(x - 4, y + h, 2, h, prev_player_hp[Player->GetIndex()] / player_hp_max, HealthColor, barBackground, false);
-					}
-					else
-					{
-						g_Draw.RectOverlay(x - 4, y + h, 2, h, ratio, HealthColor, barBackground, false);
+						g_Draw.Line(x - 4, y + i * flh, x - 1, y + i * flh, { 0, 0, 0, 255 });
 					}
 				}
 
@@ -766,6 +751,7 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 
 				if (Vars::ESP::Main::Outlinedbar.Value)
 				{
+					g_Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, Colors::OutlineESP);
 					g_Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, Colors::OutlineESP);
 				}
 
@@ -897,7 +883,7 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 			// Health text
 			if (Vars::ESP::Buildings::Health.Value)
 			{
-				g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d / %d", nHealth, nMaxHealth);
+				g_Draw.String(FONT, nTextX, y + nTextOffset, healthColor, ALIGN_DEFAULT, L"%d HP", nHealth, nMaxHealth);
 				nTextOffset += g_Draw.m_vecFonts[FONT].nTall;
 			}
 
@@ -997,7 +983,7 @@ void CESP::DrawBuildings(CBaseEntity* pLocal) const
 				}
 				else
 				{
-					g_Draw.RectOverlay(x - 4, y + nHeight - nHeight * ratio, 2, nHeight * ratio, ratio, healthColor, barBackground, false);
+					g_Draw.RectOverlay(x - 4, y + h, 2, h, ratio, healthColor, barBackground, false);
 				}
 
 				if (Vars::ESP::Main::Outlinedbar.Value)

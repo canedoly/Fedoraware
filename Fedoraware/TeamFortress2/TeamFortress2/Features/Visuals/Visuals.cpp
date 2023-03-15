@@ -33,7 +33,20 @@ void CVisuals::DrawHitboxMatrix(CBaseEntity* pEntity, Color_t colourface, Color_
 		Vec3 matrixOrigin;
 		Math::GetMatrixOrigin(matrix, matrixOrigin);
 
-		I::DebugOverlay->AddBoxOverlay2(matrixOrigin, bbox->bbmin, bbox->bbmax, bboxAngle, colourface, colouredge, time);
+		if (G::CurWeaponType != EWeaponType::PROJECTILE) {
+			I::DebugOverlay->AddBoxOverlay2(matrixOrigin, bbox->bbmin, bbox->bbmax, bboxAngle, colourface, colouredge, time);
+		}
+	}
+	const Vec3 absOrigin = pEntity->GetAbsOrigin();
+	const Vec3 absAngles = pEntity->GetAbsAngles();
+
+	const bool bIsDucking = (pEntity->m_bDucked() || pEntity->m_fFlags() & FL_DUCKING);
+
+	const Vec3 vMaxs = I::GameMovement->GetPlayerMaxs(bIsDucking);
+	const auto vMins = Vec3(-vMaxs.x, -vMaxs.y, vMaxs.z - vMaxs.z);
+
+	if (G::CurWeaponType == EWeaponType::PROJECTILE) {
+		I::DebugOverlay->AddBoxOverlay2(absOrigin, vMins, vMaxs, absAngles, colourface, colouredge, time);
 	}
 }
 
@@ -442,7 +455,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						}
 						if (G::WaitForShift)
 						{
-							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight + DTBox.h, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Not Ready");
+							g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y + fontHeight + 3, { 255,255,255,255 }, ALIGN_CENTERHORIZONTAL, L"Not Ready");
 						}
 						break;
 					}
@@ -492,7 +505,7 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - 3, { 255, 255, 255, 255 }, ALIGN_CENTERHORIZONTAL, L"%i/%i", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
 						break;
 					}
-					case 6: // deadflag2 (ascendeds1on gave me this) - was originally made by cardinal
+					case 6:
 					{
 
 						int w = 80;
@@ -529,6 +542,29 @@ void CVisuals::DrawTickbaseInfo(CBaseEntity* pLocal)
 							g_Draw.String(FONT_INDICATORS, g_ScreenSize.c, g_ScreenSize.h / 2 + offset + g_Draw.m_vecFonts[FONT_INDICATORS].nTall, { 60, 160, 110, 255 }, ALIGN_CENTERHORIZONTAL,
 								L"(RapidFire) Ready");
 						}
+						break;
+					}
+					case 7:
+					{
+						Color_t color1, color2, color3, color4;
+						{ 
+							color1 = Vars::Test::DTBackground.startColour;
+							color2 = Vars::Test::DTBackground.endColour;
+
+							color3 = Vars::Test::DTMain.startColour;
+							color4 = Vars::Test::DTMain.endColour;
+						}
+						int x = DTBox.x; int y = DTBox.y;
+						int w = DTBox.w; int h = DTBox.h;
+
+						const auto fontHeight = Vars::Fonts::FONT_INDICATORS::nTall.Value;
+
+						g_Draw.String(FONT_INDICATORS, DTBox.c, DTBox.y - fontHeight - 3, {255, 255, 255, 255}, ALIGN_CENTERHORIZONTAL, L"Shifted %d/%d", G::ShiftedTicks, Vars::Misc::CL_Move::DTTicks.Value);
+						g_Draw.OutlinedRect(x, y, w, h, Vars::Test::DTOutline);
+						g_Draw.GradientRectWH(x + 1, y + 1, w - 2, h - 2, color1, color2, false);
+						g_Draw.GradientRectWH(x + 1, y + 1, ratioCurrent * (w - 2), h - 2, color3, color4, false);
+
+						break;
 					}
 				}
 			}

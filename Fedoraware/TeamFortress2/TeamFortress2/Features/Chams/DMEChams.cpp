@@ -676,11 +676,17 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 
 		if (!chams.chamsActive) { return false; }
 
-		{
+		{	// what is this??
 			pRenderContext->DepthRange(0.0f, 1.f);
 			I::ModelRender->ForcedMaterialOverride(nullptr);
 			I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 			I::RenderView->SetBlend(1.0f);
+		}
+		if (chams.renderOriginal && chams.originalPriority == 0)
+		{
+			pRenderContext->DepthRange(0.0f, chams.originalObstructed ? 0.2f : 1.f);
+			ModelRender_DrawModelExecute->Original<void(__thiscall*)(CModelRender*, const DrawModelState_t&, const ModelRenderInfo_t&, matrix3x4*)>()(I::ModelRender, pState, pInfo, pBoneToWorld);
+			pRenderContext->DepthRange(0.0f, 1.f);	// restore original after rendering
 		}
 
 		// I wanted these to be 1 line each leave me alone.
@@ -805,12 +811,30 @@ bool CDMEChams::Render(const DrawModelState_t& pState, const ModelRenderInfo_t& 
 					ModelRender_DrawModelExecute->Original<void(__thiscall*)(CModelRender*, const DrawModelState_t&, const ModelRenderInfo_t&, matrix3x4*)>()(I::ModelRender, pState, pInfo, pBoneToWorld);
 				}
 			}
-
 			pRenderContext->DepthRange(0.0f, 1.f);
+
 			I::ModelRender->ForcedMaterialOverride(nullptr);
 			I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
-
 			I::RenderView->SetBlend(1.0f);
+
+			if (chams.renderOriginal && chams.originalPriority == 1)
+			{
+				pRenderContext->DepthRange(0.0f, chams.originalObstructed ? 0.2f : 1.f);
+				ModelRender_DrawModelExecute->Original<void(__thiscall*)(CModelRender*, const DrawModelState_t&, const ModelRenderInfo_t&, matrix3x4*)>()(I::ModelRender, pState, pInfo, pBoneToWorld);
+				pRenderContext->DepthRange(0.0f, 1.f);	// restore original after rendering
+			}
+
+			//if (chams.renderOriginal && chams.originalObstructed)
+			//{
+			//	ModelRender_DrawModelExecute->Original<void(__thiscall*)(CModelRender*, const DrawModelState_t&, const ModelRenderInfo_t&, matrix3x4*)>()(I::ModelRender, pState, pInfo, pBoneToWorld);
+			//}
+
+			////pRenderContext->DepthRange(0.0f, 1.f);
+
+			//if (chams.renderOriginal && !chams.originalObstructed)
+			//{
+			//	ModelRender_DrawModelExecute->Original<void(__thiscall*)(CModelRender*, const DrawModelState_t&, const ModelRenderInfo_t&, matrix3x4*)>()(I::ModelRender, pState, pInfo, pBoneToWorld);
+			//}
 
 			return true;
 		}

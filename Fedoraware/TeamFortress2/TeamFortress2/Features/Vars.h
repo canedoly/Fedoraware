@@ -31,6 +31,16 @@ namespace Vars
 		}
 	}
 
+	namespace Test
+	{
+		inline CVar<bool> GlowZFailReplace{ false };
+		inline CVar<int> HealthBarFractions{ 5 };
+
+		inline Gradient_t DTBackground = {{ 35,35,35,255 }, { 45,45,45,255 }};
+		inline Gradient_t DTMain = {{ 0,80,210,255 }, { 0,70,180,255 }};
+		inline Color_t DTOutline{ 35,35,35,255 };
+	}
+
 	namespace CritHack
 	{
 		inline CVar<bool> Active{ false };

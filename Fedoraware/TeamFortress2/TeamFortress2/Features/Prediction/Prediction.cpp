@@ -44,12 +44,15 @@ void CEnginePrediction::Start(CUserCmd* pCmd)
 		I::Prediction->m_bInPrediction = true;
 
 		I::Prediction->SetLocalViewAngles(pCmd->viewangles);
+		I::GameMovement->StartTrackPredictionErrors(pLocal);
 
 		I::MoveHelper->SetHost(pLocal);
 
 		I::Prediction->SetupMove(pLocal, pCmd, I::MoveHelper, &m_MoveData);
 		I::GameMovement->ProcessMovement(pLocal, &m_MoveData);
 		I::Prediction->FinishMove(pLocal, pCmd, &m_MoveData);
+
+		I::GameMovement->FinishTrackPredictionErrors(pLocal);
 
 		pLocal->SetTickBase(nOldTickBase);
 

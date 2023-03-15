@@ -47,6 +47,9 @@ struct Chams_t
 	bool	overlayPulse = false;
 	bool	overlayRainbow = false;
 	float	overlayIntensity = 1;
+	bool	renderOriginal = false;
+	bool	originalObstructed = false;
+	int		originalPriority = 0;	// 0: render first, then custom 1: custom first, then original
 	Color_t fresnelBase = { 0,0,0,255 };
 	Color_t colour = { 255, 255, 255, 255 };
 	Color_t BluColour = { 255, 255, 255, 255 }; //fuck the british
