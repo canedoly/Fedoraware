@@ -383,25 +383,25 @@ void CCritHack::Draw()
 		g_Draw.String(FONT, x, currentY += 15, { 255, 255, 255, 255, }, ALIGN_CENTERHORIZONTAL, std::format("{:#x}", reinterpret_cast<uintptr_t>(pWeapon + 0xA54)).c_str());
 	}
 	//Can this weapon do random crits?
-	if (NoRandomCrits(pWeapon) == true)
+	if (NoRandomCrits(pWeapon))
 	{
 		g_Draw.String(FONT, x, currentY += 15, { 255, 95, 95, 255 }, ALIGN_CENTERHORIZONTAL, L"No Random Crits");
 	}
 	// Are we currently forcing crits?
-	if (ShouldCrit() && NoRandomCrits(pWeapon) == false)
+	if (ShouldCrit() && !NoRandomCrits(pWeapon))
 	{
 		g_Draw.String(FONT, x, currentY += 15, { 70, 190, 50, 255 }, ALIGN_CENTERHORIZONTAL, "Forcing crits...");
 	}
 	//crit banned check
-	if (CritTicks.size() == 0 && NoRandomCrits(pWeapon) == false)
+	if (CritTicks.empty() && !NoRandomCrits(pWeapon))
 	{
-		g_Draw.String(FONT, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"Crit Banned");
+		g_Draw.String(FONT, x, currentY += 15, { 255,0,0,255 }, ALIGN_CENTERHORIZONTAL, L"No Crit Ticks");
 	}
 	static auto tf_weapon_criticals_bucket_cap = g_ConVars.FindVar("tf_weapon_criticals_bucket_cap");
 	const float bucketCap = tf_weapon_criticals_bucket_cap->GetFloat();
 	const std::wstring bucketstr = L"Bucket: " + std::to_wstring(static_cast<int>(bucket)) + L"/" + std::to_wstring(static_cast<int>(bucketCap));
 	// crit bucket (this sucks)
-	if (NoRandomCrits(pWeapon) == false)	
+	if (!NoRandomCrits(pWeapon))	
 	{
 			g_Draw.String(FONT, x, currentY += 15, { 181, 181, 181, 255 }, ALIGN_CENTERHORIZONTAL, bucketstr.c_str()); 
 	}
